@@ -1,0 +1,254 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>skwas.Drawing</name>
+    </assembly>
+    <members>
+        <member name="T:skwas.Drawing.DdsImage">
+            <summary>
+            Summary description for TgaImage.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.DdsImage.DDSURFACEDESC2.dwSize">
+            <summary>
+            Size of structure. This member must be set to 124.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.DdsImage.DDSURFACEDESC2.dwFlags">
+            <summary>
+            Flags to indicate valid fields. Always include DDSD_CAPS, DDSD_PIXELFORMAT, DDSD_WIDTH, DDSD_HEIGHT.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.DdsImage.DDSURFACEDESC2.dwHeight">
+            <summary>
+            Height of the main image in pixels 
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.DdsImage.DDSURFACEDESC2.dwWidth">
+            <summary>
+            Width of the main image in pixels 
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.DdsImage.DDSURFACEDESC2.dwPitchOrLinearSize">
+            <summary>
+            For uncompressed formats, this is the number of bytes per scan line (DWORD> aligned) for the main image. dwFlags should include DDSD_PITCH in this case. For compressed formats, this is the total number of bytes for the main image. dwFlags should be include DDSD_LINEARSIZE in this case.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.DdsImage.DDSURFACEDESC2.dwDepth">
+            <summary>
+            For volume textures, this is the depth of the volume. dwFlags should include DDSD_DEPTH in this case.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.DdsImage.DDSURFACEDESC2.dwMipMapCount">
+            <summary>
+            For items with mipmap levels, this is the total number of levels in the mipmap chain of the main image. dwFlags should include DDSD_MIPMAPCOUNT in this case.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.DdsImage.DDSURFACEDESC2.ddpfPixelFormat">
+            <summary>
+            32-byte value that specifies the pixel format structure.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.DdsImage.DDSURFACEDESC2.ddsCaps">
+            <summary>
+            16-byte value that specifies the capabilities structure.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.DdsImage.DDPIXELFORMAT.dwSize">
+            <summary>
+            Size of structure. This member must be set to 32. 
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.DdsImage.DDPIXELFORMAT.dwFlags">
+            <summary>
+            Flags to indicate valid fields. Uncompressed formats will usually use DDPF_RGB to indicate an RGB format, while compressed formats will use DDPF_FOURCC with a four-character code.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.DdsImage.DDPIXELFORMAT.dwFourCC">
+            <summary>
+            This is the four-character code for compressed formats. dwFlags should include DDPF_FOURCC in this case. For DXTn compression, this is set to "DXT1", "DXT2", "DXT3", "DXT4", or "DXT5". 
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.DdsImage.DDPIXELFORMAT.dwRGBBitCount">
+            <summary>
+            For RGB formats, this is the total number of bits in the format. dwFlags should include DDPF_RGB in this case. This value is usually 16, 24, or 32. For A8R8G8B8, this value would be 32.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.DdsImage.DDPIXELFORMAT.dwRGBAlphaBitMask">
+            <summary>
+            For RGB formats, this contains the mask for the alpha channel, if any. dwFlags should include DDPF_ALPHAPIXELS in this case. For A8R8G8B8, this value would be 0xff000000. 
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.DdsImage.DDCAPS2.dwCaps1">
+            <summary>
+            DDS files should always include DDSCAPS_TEXTURE. If the file contains mipmaps, DDSCAPS_MIPMAP should be set. For any DDS file with more than one main surface, such as a mipmaps, cubic environment map, or volume texture, DDSCAPS_COMPLEX should also be set.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.DdsImage.DDCAPS2.dwCaps2">
+            <summary>
+            For cubic environment maps, DDSCAPS2_CUBEMAP should be included as well as one or more faces of the map (DDSCAPS2_CUBEMAP_POSITIVEX, DDSCAPS2_CUBEMAP_NEGATIVEX, DDSCAPS2_CUBEMAP_POSITIVEY, DDSCAPS2_CUBEMAP_NEGATIVEY, DDSCAPS2_CUBEMAP_POSITIVEZ, DDSCAPS2_CUBEMAP_NEGATIVEZ). For volume textures, DDSCAPS2_VOLUME should be included.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.DdsImage.DDSHEADER.magic">
+            <summary>
+            Magic 'DDS ' = 0x20534444
+            </summary>
+        </member>
+        <member name="M:skwas.Drawing.FontHelper.AddFont(System.String)">
+            <summary>
+            Adds a private font from one or more files. Supported font files are .fon, .fnt, .ttf, .ttc, .fot, .otf, .mmm, .pfb, .pfm. For fonts whose information comes from more than one file, seperate each file with a pipeline (|).
+            </summary>
+            <param name="filename"></param>
+        </member>
+        <member name="F:skwas.Drawing.TgaFileFormat.OriginalTga">
+            <summary>
+            The Original TGA Format, is a basic TGA format that does not have a footer, and does not support extensions and other custom data. This format is included for backwards compatibility. It is recommended to use New TGA Format.  
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaFileFormat.NewTga">
+            <summary>
+            The New TGA Format is the latest tga format and supports extentions and custom data. The TgaImage class is designed to allow for custom data and extentions, and persists any data upon saving.
+            </summary>
+        </member>
+        <member name="T:skwas.Drawing.TgaImage">
+            <summary>
+            Summary description for TgaImage.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaImage.TGA_HEADER.identsize">
+            <summary>
+            Size of ID field that follows 18 byte header (0 usually).
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaImage.TGA_HEADER.colormaptype">
+            <summary>
+            Type of colour map 0=none, 1=has palette.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaImage.TGA_HEADER.imagetype">
+            <summary>
+            Type of image 0=none, 1=indexed, 2=rgb, 3=grey, 9=indexedRLE, 10=rgbRLE, 11=greyRLE.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaImage.TGA_HEADER.colormapstart">
+            <summary>
+            First colour map entry in palette.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaImage.TGA_HEADER.colormaplength">
+            <summary>
+            Number of colours in palette.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaImage.TGA_HEADER.colormapbits">
+            <summary>
+            Number of bits per palette entry 15, 16, 24, 32.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaImage.TGA_HEADER.xstart">
+            <summary>
+            Image x origin.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaImage.TGA_HEADER.ystart">
+            <summary>
+            Image y origin.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaImage.TGA_HEADER.width">
+            <summary>
+            Image width in pixels.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaImage.TGA_HEADER.height">
+            <summary>
+            Image height in pixels.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaImage.TGA_HEADER.bits">
+            <summary>
+            Image bits per pixel 8, 16, 24, 32
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaImage.TGA_HEADER.descriptor">
+            <summary>
+            Image descriptor bits (vh flip bits).
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaImage.TGA_EXTENSION.extensionSize">
+            <summary>
+            This field is a SHORT field which specifies the number of BYTES in the fixed-length portion of the Extension Area. For Version 2.0 of the TGA File Format, this number should be set to 495. If the number found in this field is not 495, then the file will be assumed to be of a version other than 2.0. If it ever becomes necessary to alter this number, the change will be controlled by Truevision, and will be accompanied by a revision to the TGA File Format with an accompanying change in the version number.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaImage.TGA_EXTENSION.authorName">
+            <summary>
+            This field is an ASCII field of 41 bytes where the last byte must be a null (binary zero). This gives a total of 40 ASCII characters for the name. If the field is used, it should contain the name of the person who created the image(author). If the field is not used, you may fill it with nulls or a series of blanks (spaces) terminated by a null. The 41st byte must always be a null.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaImage.TGA_EXTENSION.authorComments1">
+            <summary>
+            This is an ASCII field consisting of 324 bytes which are organized as four lines of 80 characters, each followed by a null terminator. This field is provided, in addition to the original IMAGE ID field (in the original TGA format), because it was determined that a few developers had used the IMAGE ID field for their own purposes. This field gives the developer four lines of 80 characters each, to use as an Author Comment area. Each line is fixed to 81 bytes which makes access to the four lines easy. Each line must be terminated by a null. If you do not use all 80 available characters in the line, place the null after the last character and blank or null fill the rest of the line. The 81st byte of each of the four lines must be null.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaImage.TGA_EXTENSION.jobNameID">
+            <summary>
+            This field is an ASCII field of 41 bytes where the last byte must be a binary zero. This gives a total of 40 ASCII characters for the job name or the ID. If the field is used, it should contain a name or id tag which refers to the job with which the image was associated. This allows production companies (and others) to tie images with jobs by using this field as a job name (i.e., CITY BANK) or job id number (i.e., CITY023). If the field is not used, you may fill it with a null terminated series of blanks (spaces) or nulls. In any case, the 41st byte must be a null.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaImage.TGA_EXTENSION.softwareID">
+            <summary>
+            This field is an ASCII field of 41 bytes where the last byte must be a binary zero (null). This gives a total of 40 ASCII characters for the Software ID. The purpose of this field is to allow software to determine and record with what program a particular image was created. If the field is not used, you may fill it with a null terminated series of blanks (spaces) or nulls. The 41st byte must always be a null.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaImage.TGA_EXTENSION.softwareVersionNumber">
+            <summary>
+            This field consists of two sub-fields, a SHORT and an ASCII BYTE. The purpose of this field is to define the version of software defined by the "Software ID" field above. The SHORT contains the version number as a binary integer times 100. Therefore, software version 4.17 would be the integer value 417. This allows for two decimal positions of sub-version. The ASCII BYTE supports developers who also tag a release letter to the end. For example, if the version number is 1.17b, then the SHORT would contain 117. and the ASCII BYTE would contain "b". The organization is as follows:
+            		SHORT (Bytes 0 - 1): Version Number * 100
+            		BYTE (Byte 2): Version Letter
+            If you do not use this field, set the SHORT to binary zero, and the BYTE to a space (" ").
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaImage.TGA_EXTENSION.keyColor">
+            <summary>
+            This field contains a long value which is the key color in effect at the time the image is saved. The format is in A:R:G:B where ‘A’ (most significant byte) is the alpha channel key color (if you don’t have an alpha channel in your application, keep this byte zero [0]).
+            The Key Color can be thought of as the ‘background color’ or ‘transparent color’. This is the color of the ‘non image’ area of the screen, and the same color that the screen would be cleared to if erased in the application. If you don’t use this field, set it to all zeros (0). Setting the field to all zeros is the same as selecting a key color of black.
+            A good example of a key color is the ‘transparent color’ used in TIPSª for WINDOW loading/saving.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaImage.TGA_EXTENSION.pixelAspectRatio">
+            <summary>
+            This field contains two SHORT sub-fields, which when taken together specify a pixel size ratio.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaImage.TGA_EXTENSION.gammaValue">
+            <summary>
+            This field contains two SHORT sub-fields, which when taken together in a ratio, provide a fractional gamma value.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaImage.TGA_EXTENSION.colorCorrectionOffset">
+            <summary>
+            This field is a 4-byte field containing a single offset value. This is an offset from the beginning of the file to the start of the Color Correction table. This table may be written anywhere between the end of the Image Data field (field 8) and the start of the TGA File Footer. If the image has no Color Correction Table or if the Gamma Value setting is sufficient, set this value to zero and do not write a Correction Table anywhere.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaImage.TGA_EXTENSION.postageStampOffset">
+            <summary>
+            This field is a 4-byte field containing a single offset value. This is an offset from the beginning of the file to the start of the Postage Stamp Image. The Postage Stamp Image must be written after Field 25 (Scan Line Table) but before the start of the TGA File Footer. If no postage stamp is stored, set this field to the value zero (0).
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaImage.TGA_EXTENSION.scanLineOffset">
+            <summary>
+            This field is a 4-byte field containing a single offset value. This is an offset from the beginning of the file to the start of the Scan Line Table.
+            </summary>
+        </member>
+        <member name="F:skwas.Drawing.TgaImage.TGA_EXTENSION.attributesType">
+            <summary>
+            This single byte field contains a value which specifies the type of Alpha channel data contained in the file.
+            </summary>
+        </member>
+        <member name="T:skwas.Drawing.TruevisionRleReader">
+            <summary>
+            Reader for Truevision Run Length Encoding, as used by TGA file format.
+            </summary>
+        </member>
+    </members>
+</doc>
