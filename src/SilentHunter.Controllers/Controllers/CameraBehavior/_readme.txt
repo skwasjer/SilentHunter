@@ -1,0 +1,31 @@
+Implemented controllers:
+HideObj
+AxisRotation
+CameraParams
+FreeMove
+RestrictedRotation
+Optical
+SubFolow
+CameraPositioner
+ShocksCollision
+MechShocksPendulum
+CMechPendulum
+CElasticPendulum
+Spring
+RotSpring
+CameraEffects
+SphericalMove
+EditPosObj
+
+Skipped/not implemented:
+AxisRender
+CameraGlareEffect
+CommandForward
+FollowPath
+FollowPathMonitor
+FollowPathMsgMonitor
+ReportCamera
+
+
+
+

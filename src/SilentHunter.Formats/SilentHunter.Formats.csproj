@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{43331BD7-D4F4-4169-A94D-2200B874BD62}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SilentHunter</RootNamespace>
+    <AssemblyName>SilentHunter.Formats</AssemblyName>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <SccProjectName>"%24/S3D.root/S3D", USBAAAAA</SccProjectName>
+    <SccLocalPath>..\..\..\..</SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>MSSCCI:Microsoft Visual SourceSafe</SccProvider>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="skwas.Drawing, Version=1.4.5848.42276, Culture=neutral, PublicKeyToken=17f8ca7d3b368c56, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\skwas.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="skwas.IO, Version=4.0.5848.42276, Culture=neutral, PublicKeyToken=17f8ca7d3b368c56, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\skwas.IO.dll</HintPath>
+    </Reference>
+    <Reference Include="SlimDX, Version=4.0.13.43, Culture=neutral, PublicKeyToken=b1b0c32fd1ffe4f9, processorArchitecture=x86">
+      <HintPath>..\..\packages\SlimDX.4.0.13.44\lib\NET40\SlimDX.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Dat\AnimationType.cs" />
+    <Compile Include="Dat\Chunks\AuthorInfo.cs" />
+    <Compile Include="Dat\Chunks\Animation1.cs" />
+    <Compile Include="Dat\Chunks\OK\BodyParts2.cs" />
+    <Compile Include="Dat\Chunks\OK\BodyParts3.cs" />
+    <Compile Include="Dat\ControllerCache.cs" />
+    <Compile Include="Dat\ControllerProfile.cs" />
+    <Compile Include="Dat\MaterialAttributes.cs" />
+    <Compile Include="Dat\Chunks\OK\Skeletal\BoneInfluences.cs" />
+    <Compile Include="IO\ISilentHunterFile.cs" />
+    <Compile Include="Off\OffCharacter.cs" />
+    <Compile Include="Off\OffFile.cs" />
+    <Compile Include="Sdl\SdlFile.cs" />
+    <Compile Include="Sdl\SoundCategory.cs" />
+    <Compile Include="Sdl\SoundInfo.cs" />
+    <Compile Include="UnknownChunkData.cs" />
+    <Compile Include="Dat\Chunks\WorldTransform.cs" />
+    <Compile Include="Dat\Chunks\Unknown0.cs" />
+    <Compile Include="Dat\Chunks\OK\Skeletal\BodyParts.cs" />
+    <Compile Include="Dat\Chunks\OK\Controllers.cs" />
+    <Compile Include="Dat\Chunks\Animation0.cs" />
+    <Compile Include="Dat\Chunks\OK\Placement.cs" />
+    <Compile Include="Dat\Chunks\OK\DatChunk.cs" />
+    <Compile Include="Dat\Chunks\OK\Eof.cs" />
+    <Compile Include="Dat\Chunks\OK\Index.cs" />
+    <Compile Include="Dat\Chunks\OK\Label.cs" />
+    <Compile Include="Dat\ControllerAssemblyHelpText.cs" />
+    <Compile Include="Dat\DatChunkResolver.cs" />
+    <Compile Include="Dat\DatFile.Header.cs" />
+    <Compile Include="Dat\DatFileException.cs" />
+    <Compile Include="Dat\DatFile.Magics.cs" />
+    <Compile Include="Dat\Chunks\OK\Material.cs" />
+    <Compile Include="Dat\Chunks\NodeLink.cs" />
+    <Compile Include="Dat\Chunks\Model.cs" />
+    <Compile Include="Dat\Chunks\OK\Properties.cs" />
+    <Compile Include="Dat\Chunks\OK\TextureMap.cs" />
+    <Compile Include="Dat\Chunks\OK\EmbeddedImage.cs" />
+    <Compile Include="Dat\Chunks\S3DSettings.cs" />
+    <Compile Include="Dat\ControllerAssembly.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Dat\ControllerCompiler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Dat\DatFile.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SilentHunter.Core\SilentHunter.Core.csproj">
+      <Project>{C03CC0F3-AAD9-4C0D-BE69-6D5413604C7F}</Project>
+      <Name>SilentHunter.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Bif\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

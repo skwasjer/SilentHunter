@@ -1,0 +1,43 @@
+namespace CameraManager
+{
+	public enum Cameras
+	{
+		None = -1,
+		CommandRoomFree,
+		Free,
+		Periscope,
+		InteriorFore,
+		InteriorAft,
+		ConningDeck,
+		Binocular,
+		DeckGun,
+		RadioSonarRoom,
+		FlakGun,
+		A01Gun,
+		A02Gun,
+		NavigatorView,
+		WeaponsOffView,
+		ObjectView,
+		ConningTower,
+		ConningPeriscope,
+		DeckGunZoom,
+		UZO,
+		RadioRoomFree, ConningTowerFree,
+		HelmsmanView,
+		HydrophoneView,
+		RadioView,
+		CaptainsBed,
+		WatchView,
+		Museum,
+		ObsPeriscope,
+		RadioViewAScope,
+		CareerRoom,
+		Watch_Aft,
+		Watch_Shears,
+		Watch_Opposite,
+		TDC,
+		ObsScope_Out,
+		TBT_Out,
+		Pelorous
+	}
+}

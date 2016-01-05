@@ -1,0 +1,74 @@
+using System.IO;
+using skwas.IO;
+
+namespace SilentHunter.Dat
+{
+	public sealed class Placement : DatChunk
+	{
+		public Placement()
+			: base(DatFile.Magics.Placement)
+		{
+		}
+
+		/// <summary>
+		/// Gets whether the chunk supports an id field.
+		/// </summary>
+		public override bool SupportsId => true;
+
+		/// <summary>
+		/// Gets whether the chunk supports a parent id field.
+		/// </summary>
+		public override bool SupportsParentId => true;
+
+		/// <summary>
+		/// Gets or sets the world offset.
+		/// </summary>
+		public Vector3 Offset { get; set; }
+
+		/// <summary>
+		/// Gets or sets the rotation (or well, I think it is rotation).
+		/// </summary>
+		public Vector3 Rotation { get; set; }
+
+		/// <summary>
+		/// Gets or sets the id of the node that this chunk defines placement for. This is usually an id in an external dat-file/library.
+		/// </summary>
+		public ulong NodeId { get; set; }
+
+		/// <summary>
+		/// Deserializes the chunk.
+		/// </summary>
+		/// <param name="stream">The stream to read from.</param>
+		protected override void Deserialize(Stream stream)
+		{
+			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
+			{
+				Id = reader.ReadUInt64();
+				ParentId = reader.ReadUInt64();
+
+				NodeId = reader.ReadUInt64();
+
+				Offset = reader.ReadStruct<Vector3>();
+				Rotation = reader.ReadStruct<Vector3>();
+			}
+		}
+
+		/// <summary>
+		/// Serializes the chunk.
+		/// </summary>
+		/// <param name="stream">The stream to write to.</param>
+		protected override void Serialize(Stream stream)
+		{
+			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
+			{
+				writer.Write(Id);
+				writer.Write(ParentId);
+
+				writer.Write(NodeId);
+
+				writer.WriteStruct(Offset);
+				writer.WriteStruct(Rotation);
+			}
+		}
+	}
+}

@@ -1,0 +1,28 @@
+Implemented controllers:
+AmmoDamageInfo
+TerrainCollider
+Debris
+StaticObject
+ColisionableObject
+SH3ZonesCtrl
+SinkingEffects
+ShipDamageState
+
+Skipped/not implemented:
+
+ColObjectCtrl
+DamageEffects
+
+Explossive
+ObjectRemains
+RestrictMovement
+ScalableParticleEffect
+SHCollisionEffects
+SHCollisionsCommands
+SHColManager
+
+
+SH3ZonesProps
+
+
+
