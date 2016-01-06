@@ -67,6 +67,7 @@ namespace SilentHunter.Sdl
 		/// <param name="stream">The stream to write to.</param>
 		public void Save(Stream stream)
 		{
+#if !DEBUG
 			var copyright = new SoundInfo
 			{
 				Name = AssemblyPath,
@@ -74,6 +75,7 @@ namespace SilentHunter.Sdl
 				IsFolder = true
 			};
 			((IRawSerializable)copyright).Serialize(stream);
+#endif
 
 			foreach (IRawSerializable sndInfo in this)
 				sndInfo.Serialize(stream);
@@ -101,6 +103,6 @@ namespace SilentHunter.Sdl
 			Save(stream);
 		}
 
-		#endregion
+#endregion
 	}
 }
