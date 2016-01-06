@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Diagnostics;
 using System.IO;
 using skwas.IO;
-using SilentHunter.IO;
 
 namespace SilentHunter.Off
 {

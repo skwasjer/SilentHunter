@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using skwas.IO;
 using SilentHunter.Formats;
-using SilentHunter.IO;
 
 namespace SilentHunter.Sdl
 {

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using skwas.IO;
 
-namespace SilentHunter.IO
+namespace SilentHunter
 {
 	/// <summary>
 	/// Base interface for Silent Hunter files.

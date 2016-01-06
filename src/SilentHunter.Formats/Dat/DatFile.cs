@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using skwas.IO;
-using SilentHunter.IO;
 
 namespace SilentHunter.Dat
 {

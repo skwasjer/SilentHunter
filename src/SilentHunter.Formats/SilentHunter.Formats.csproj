@@ -79,7 +79,7 @@
     <Compile Include="Dat\ControllerProfile.cs" />
     <Compile Include="Dat\MaterialAttributes.cs" />
     <Compile Include="Dat\Chunks\OK\Skeletal\BoneInfluences.cs" />
-    <Compile Include="IO\ISilentHunterFile.cs" />
+    <Compile Include="ISilentHunterFile.cs" />
     <Compile Include="Off\OffCharacter.cs" />
     <Compile Include="Off\OffFile.cs" />
     <Compile Include="Sdl\SdlFile.cs" />
@@ -126,9 +126,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Bif\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
