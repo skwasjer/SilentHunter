@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace SilentHunter.Dat.Chunks
 {
-	public sealed class Index : DatChunk
+	public sealed class IndexChunk : DatChunk
 	{
 		/// <summary>
 		/// Represents a file index of a chunk.
@@ -40,7 +40,7 @@ namespace SilentHunter.Dat.Chunks
 			}
 		}
 
-		public Index()
+		public IndexChunk()
 			: base(DatFile.Magics.Index)
 		{
 		}

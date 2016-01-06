@@ -1,14 +1,16 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using skwas.IO;
 
-namespace SilentHunter.Dat.Chunks.Partial
+namespace SilentHunter.Dat.Chunks
 {
-#if DEBUG
-	public sealed class Animation0 : DatChunk
+	public sealed class BoneInfluencesChunk : DatChunk
 	{
-		public Animation0()
-			: base(DatFile.Magics.Animation0)
+		public BoneInfluencesChunk()
+			: base(DatFile.Magics.BoneInfluences)
 		{
+			WeightsAndIndices = new List<BoneInfluence>();
 		}
 
 		/// <summary>
@@ -49,6 +51,8 @@ namespace SilentHunter.Dat.Chunks.Partial
 		/// </summary>
 		public override bool SupportsParentId => true;
 
+		public List<BoneInfluence> WeightsAndIndices { get; }
+
 		/// <summary>
 		/// Deserializes the chunk.
 		/// </summary>
@@ -59,9 +63,13 @@ namespace SilentHunter.Dat.Chunks.Partial
 			{
 				Id = reader.ReadUInt32(); // Read an id as an uint.
 				ParentId = reader.ReadUInt32(); // Read an id as an uint.
-			}
 
-			base.Deserialize(stream);
+				WeightsAndIndices.Clear();
+
+				var count = reader.ReadInt32();
+				for (var i = 0; i < count; i++)
+					WeightsAndIndices.Add(reader.ReadStruct<BoneInfluence>());
+			}
 		}
 
 		/// <summary>
@@ -74,10 +82,11 @@ namespace SilentHunter.Dat.Chunks.Partial
 			{
 				writer.Write((uint) Id);
 				writer.Write((uint) ParentId);
-			}
 
-			base.Serialize(stream);
+				writer.Write(WeightsAndIndices.Count);
+				foreach (var wi in WeightsAndIndices)
+					writer.WriteStruct(wi);
+			}
 		}
 	}
-#endif
 }

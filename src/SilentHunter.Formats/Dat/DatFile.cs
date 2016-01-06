@@ -14,7 +14,7 @@ namespace SilentHunter.Dat
 		public const uint Magic = 0x716d0da4;
 
 		private Header _header;
-		private S3DSettings _settings;
+		private S3DSettingsChunk _settingsChunk;
 
 		public DatFile()
 		{
@@ -36,8 +36,8 @@ namespace SilentHunter.Dat
 				{
 					if (disposing)
 					{
-						_settings?.Dispose();
-						_settings = null;
+						_settingsChunk?.Dispose();
+						_settingsChunk = null;
 
 						_header = null;
 					}
@@ -92,13 +92,13 @@ namespace SilentHunter.Dat
 		/// <summary>
 		/// Gets a reference to the S3D settings chunk.
 		/// </summary>
-		private S3DSettings Settings
+		private S3DSettingsChunk SettingsChunk
 		{
 			get
 			{
 				if (IsDisposed) throw new ObjectDisposedException(GetType().Name);
 
-				return _settings ?? (_settings = new S3DSettings());
+				return _settingsChunk ?? (_settingsChunk = new S3DSettingsChunk());
 			}
 		}
 
@@ -112,7 +112,7 @@ namespace SilentHunter.Dat
 		{
 			if (IsDisposed) throw new ObjectDisposedException(GetType().Name);
 
-			_settings = null;
+			_settingsChunk = null;
 
 			var bufferedStream = new BufferedStream(stream, 1024);
 
@@ -136,7 +136,7 @@ namespace SilentHunter.Dat
 
 						// If we have a settings chunk, do not add it to collection. Instead, store a reference in a private variable. We don't want this special chunk to show up in the UI.
 						if (chunk.Magic == Magics.S3DSettings)
-							_settings = (S3DSettings)chunk;
+							_settingsChunk = (S3DSettingsChunk)chunk;
 						else
 							Chunks.Add(chunk);
 					}
@@ -166,7 +166,7 @@ namespace SilentHunter.Dat
 					writer.Write(chunk);
 
 				// Write settings.
-				writer.Write(Settings);
+				writer.Write(SettingsChunk);
 			}
 		}
 

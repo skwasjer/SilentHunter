@@ -4,7 +4,7 @@ using skwas.IO;
 namespace SilentHunter.Dat.Chunks.Partial
 {
 #if DEBUG
-	public sealed class WorldTransform : DatChunk
+	public sealed class WorldTransformChunk : DatChunk
 	{
 		private Matrix _matrix;
 		private Vector3 _worldTranslation, _worldRotation;
@@ -34,7 +34,7 @@ namespace SilentHunter.Dat.Chunks.Partial
 			}
 		}
 
-		public WorldTransform()
+		public WorldTransformChunk()
 			: base(DatFile.Magics.WorldTransform)
 		{
 		}

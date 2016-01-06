@@ -3,9 +3,9 @@ using skwas.IO;
 
 namespace SilentHunter.Dat.Chunks
 {
-	public sealed class Label : DatChunk
+	public sealed class LabelChunk : DatChunk
 	{
-		public Label()
+		public LabelChunk()
 			: base(DatFile.Magics.Label)
 		{
 		}

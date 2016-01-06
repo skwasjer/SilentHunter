@@ -6,20 +6,32 @@ using skwas.IO;
 
 namespace SilentHunter.Dat.Chunks
 {
+	/// <summary>
+	/// Represents a base class for extending specific chunks. Alternatively, serves as a raw chunk for unknown magics.
+	/// </summary>
 	public class DatChunk : Chunk<DatFile.Magics>, IChunk<DatFile.Magics>, ICloneable, IDisposable
 	{
 		public const int ChunkHeaderSize = 12;
 
-		private bool _disposed;
 		private ulong _id, _parentId;
 		private long _size;
 
+		#region .ctor/cleanup
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="DatChunk"/> using specified <paramref name="magic"/>.
+		/// </summary>
+		/// <param name="magic">The magic for this chunk.</param>
 		public DatChunk(DatFile.Magics magic)
 			: base(magic)
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="DatChunk"/> using specified <paramref name="magic"/> and chunk <paramref name="subType"/>.
+		/// </summary>
+		/// <param name="magic">The magic for this chunk.</param>
+		/// <param name="subType">The sub type of this chunk.</param>
 		public DatChunk(DatFile.Magics magic, int subType)
 			: this(magic)
 		{
@@ -39,18 +51,17 @@ namespace SilentHunter.Dat.Chunks
 
 		protected virtual void Dispose(bool disposing)
 		{
-			if (_disposed) return;
+			if (IsDisposed) return;
 			if (disposing)
 			{
 			}
 
-			_disposed = true;
+			IsDisposed = true;
 		}
 
-		protected bool IsDisposed
-		{
-			get { return _disposed; }
-		}
+		protected bool IsDisposed { get; private set; }
+
+		#endregion
 
 #if DEBUG
 		internal static string GetBaseStreamName(Stream s)

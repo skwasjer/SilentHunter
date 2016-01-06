@@ -5,9 +5,9 @@ using skwas.IO;
 
 namespace SilentHunter.Dat.Chunks.Partial
 {
-	public sealed class Model : DatChunk
+	public sealed class ModelChunk : DatChunk
 	{
-		public Model()
+		public ModelChunk()
 			: base(DatFile.Magics.Model)
 		{
 			Vertices = new Vector3[0];

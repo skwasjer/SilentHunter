@@ -3,9 +3,9 @@ using skwas.IO;
 
 namespace SilentHunter.Dat.Chunks
 {
-	public sealed class Placement : DatChunk
+	public sealed class PlacementChunk : DatChunk
 	{
-		public Placement()
+		public PlacementChunk()
 			: base(DatFile.Magics.Placement)
 		{
 		}

@@ -4,14 +4,7 @@ using skwas.IO;
 
 namespace SilentHunter.Dat.Chunks
 {
-	public enum TextureMapType
-	{
-		AmbientOcclusionMap,
-		SpecularMap,
-		NormalMap
-	}
-
-	public sealed class TextureMap : DatChunk
+	public sealed class TextureMapChunk : DatChunk
 	{
 		private const int TexmapNameLength = 8;
 
@@ -21,7 +14,7 @@ namespace SilentHunter.Dat.Chunks
 		private string _originalTexture;
 		private TextureMapType _mapType;
 
-		public TextureMap()
+		public TextureMapChunk()
 			: base(DatFile.Magics.TextureMap)
 		{
 			_mapType = TextureMapType.AmbientOcclusionMap;

@@ -1,18 +1,18 @@
-#if DEBUG
 using System;
 using System.IO;
 
-namespace SilentHunter.Dat.Chunks
+namespace SilentHunter.Dat.Chunks.Partial
 {
-	public sealed class BodyParts3 : DatChunk
+#if DEBUG
+	public sealed class Animation0Chunk : DatChunk
 	{
-		public BodyParts3()
-			: base(DatFile.Magics.BodyParts3)
+		public Animation0Chunk()
+			: base(DatFile.Magics.Animation0)
 		{
 		}
 
 		/// <summary>
-		/// Gets or sets the part id.
+		/// Gets or sets the chunk id.
 		/// </summary>
 		public override ulong Id
 		{
@@ -20,13 +20,13 @@ namespace SilentHunter.Dat.Chunks
 			set
 			{
 				if (value > uint.MaxValue)
-					throw new ArgumentOutOfRangeException("The id for this part is only 4 bytes in length (UInt32).");
+					throw new ArgumentOutOfRangeException("The id for this chunk is only 4 bytes in length (UInt32).");
 				base.Id = value;
 			}
 		}
 
 		/// <summary>
-		/// Gets or sets the part its parent id.
+		/// Gets or sets the chunk its parent id.
 		/// </summary>
 		public override ulong ParentId
 		{
@@ -34,7 +34,7 @@ namespace SilentHunter.Dat.Chunks
 			set
 			{
 				if (value > uint.MaxValue)
-					throw new ArgumentOutOfRangeException("The parent id for this part is only 4 bytes in length (UInt32).");
+					throw new ArgumentOutOfRangeException("The parent id for this chunk is only 4 bytes in length (UInt32).");
 				base.ParentId = value;
 			}
 		}
@@ -79,5 +79,5 @@ namespace SilentHunter.Dat.Chunks
 			base.Serialize(stream);
 		}
 	}
-}
 #endif
+}

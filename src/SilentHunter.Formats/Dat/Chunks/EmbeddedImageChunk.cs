@@ -4,16 +4,9 @@ using System.Linq;
 
 namespace SilentHunter.Dat.Chunks
 {
-	public enum EmbeddedImageFormat
+	public sealed class EmbeddedImageChunk : DatChunk
 	{
-		Unknown,
-		Tga,
-		Dds
-	}
-
-	public sealed class EmbeddedImage : DatChunk
-	{
-		public EmbeddedImage()
+		public EmbeddedImageChunk()
 			: base(DatFile.Magics.EmbeddedImage)
 		{
 		}		

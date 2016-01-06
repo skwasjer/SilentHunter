@@ -9,9 +9,9 @@ namespace SilentHunter.Dat.Chunks
 	/// <summary>
 	/// Represents the AuthorInfo chunk of a Silent Hunter game file.
 	/// </summary>
-	public sealed class AuthorInfo : DatChunk
+	public sealed class AuthorInfoChunk : DatChunk
 	{
-		public AuthorInfo()
+		public AuthorInfoChunk()
 			: base(DatFile.Magics.AuthorInfo)
 		{
 		}

@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Runtime.InteropServices;
 using skwas.IO;
 
 namespace SilentHunter.Dat.Chunks.Partial
 {
-	public sealed class NodeLink : DatChunk
+	public sealed class NodeChunk : DatChunk
 	{
-		public NodeLink()
+		public NodeChunk()
 			: base(DatFile.Magics.NodeLink)
 		{
 			Visibility = 1;
@@ -293,38 +292,6 @@ namespace SilentHunter.Dat.Chunks.Partial
 						break;
 				}
 			}
-		}
-	}
-
-	/// <summary>
-	/// Represents meta data for interior nodes.
-	/// </summary>
-	[StructLayout(LayoutKind.Sequential, Pack = 1)]
-	public sealed class Interior
-	{
-		internal Interior()
-		{
-		}
-
-		internal int Reserved0 { get; set; }
-
-		internal byte Reserved1 { get; set; }
-
-		public Vector3 BoundingBoxMin { get; set; }
-
-		public Vector3 BoundingBoxMax { get; set; }
-
-		internal uint Reserved2 { get; set; }
-
-		/// <summary>
-		/// Returns a string that represents the current object.
-		/// </summary>
-		/// <returns>
-		/// A string that represents the current object.
-		/// </returns>
-		public override string ToString()
-		{
-			return BoundingBoxMin + " " + BoundingBoxMax + " " + Reserved0 + " " + Reserved1 + " " + Reserved2;
 		}
 	}
 }

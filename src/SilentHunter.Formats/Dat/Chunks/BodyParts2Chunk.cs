@@ -1,18 +1,19 @@
+#if DEBUG
 using System;
-using System.Collections.Generic;
 using System.IO;
-using skwas.IO;
 
 namespace SilentHunter.Dat.Chunks
 {
-	public sealed class BodyParts : DatChunk
+	public sealed class BodyParts2Chunk : DatChunk
 	{
-		public BodyParts()
-			: base(DatFile.Magics.BodyParts)
+		public BodyParts2Chunk()
+			: base(DatFile.Magics.BodyParts2)
 		{
-			Parts = new List<string>();
 		}
 
+		/// <summary>
+		/// Gets or sets the part id.
+		/// </summary>
 		public override ulong Id
 		{
 			get { return base.Id; }
@@ -24,12 +25,29 @@ namespace SilentHunter.Dat.Chunks
 			}
 		}
 
-		public List<string> Parts { get; }
+		/// <summary>
+		/// Gets or sets the part its parent id.
+		/// </summary>
+		public override ulong ParentId
+		{
+			get { return base.ParentId; }
+			set
+			{
+				if (value > uint.MaxValue)
+					throw new ArgumentOutOfRangeException("The parent id for this chunk is only 4 bytes in length (UInt32).");
+				base.ParentId = value;
+			}
+		}
 
 		/// <summary>
 		/// Gets whether the chunk supports an id field.
 		/// </summary>
 		public override bool SupportsId => true;
+
+		/// <summary>
+		/// Gets whether the chunk supports a parent id field.
+		/// </summary>
+		public override bool SupportsParentId => true;
 
 		/// <summary>
 		/// Deserializes the chunk.
@@ -40,13 +58,10 @@ namespace SilentHunter.Dat.Chunks
 			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
 			{
 				Id = reader.ReadUInt32(); // Read an id as an uint.
-
-				Parts.Clear();
-
-				var partCount = reader.ReadInt32();
-				for (var i = 0; i < partCount; i++)
-					Parts.Add(reader.ReadNullTerminatedString());
+				ParentId = reader.ReadUInt32(); // Read an id as an uint.
 			}
+
+			base.Deserialize(stream);
 		}
 
 		/// <summary>
@@ -57,14 +72,12 @@ namespace SilentHunter.Dat.Chunks
 		{
 			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
 			{
-				writer.Write((uint) Id); // Write an id as an uint.
-
-				writer.Write(Parts.Count);
-				foreach (var partName in Parts)
-				{
-					writer.Write(partName, '\0');
-				}
+				writer.Write((uint) Id);
+				writer.Write((uint) ParentId);
 			}
+
+			base.Serialize(stream);
 		}
 	}
 }
+#endif

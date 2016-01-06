@@ -8,20 +8,13 @@ using skwas.IO;
 
 namespace SilentHunter.Dat.Chunks
 {
-	public enum SpecularMode
-	{
-		Normal,
-		SunOnly,
-		Unknown = 255
-	}
-
-	public sealed class Material : DatChunk
+	public sealed class MaterialChunk : DatChunk
 	{
 		private long _creationTimeSinceEpoch;
 		private static readonly DateTime Epoch = new DateTime(1970, 1, 1);
 
 
-		public Material()
+		public MaterialChunk()
 			: base(DatFile.Magics.Material)
 		{
 			Attributes = MaterialAttributes.MagFilterLinear | MaterialAttributes.MinFilterLinear;

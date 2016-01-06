@@ -1,7 +1,7 @@
 namespace SilentHunter.Dat.Chunks.Partial
 {
 #if DEBUG1
-	public sealed class Unknown0 : DatChunk
+	public sealed class Unknown0Chunk : DatChunk
 	{
 		public Unknown0()
 			: base(Magics.Unknown0)

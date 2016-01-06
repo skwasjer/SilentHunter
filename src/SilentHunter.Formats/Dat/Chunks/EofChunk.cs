@@ -3,9 +3,9 @@ using System.IO;
 
 namespace SilentHunter.Dat.Chunks
 {
-	public sealed class Eof : DatChunk
+	public sealed class EofChunk : DatChunk
 	{
-		public Eof()
+		public EofChunk()
 			: base(DatFile.Magics.Eof)
 		{
 		}

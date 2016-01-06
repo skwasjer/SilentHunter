@@ -5,9 +5,9 @@ using skwas.IO;
 
 namespace SilentHunter.Dat.Chunks
 {
-	public sealed partial class Properties : DatChunk
+	public sealed partial class ControllerDataChunk : DatChunk
 	{
-		public Properties()
+		public ControllerDataChunk()
 			: base(DatFile.Magics.Properties)
 		{
 		}
@@ -90,7 +90,7 @@ namespace SilentHunter.Dat.Chunks
 		/// <returns></returns>
 		private string GetControllerName()
 		{
-			Controllers prevController = null;
+			ControllerChunk prevControllerChunk = null;
 			if (ParentFile.Chunks.Count > 0)
 			{
 				var f = ParentFile as DatFile;
@@ -98,7 +98,7 @@ namespace SilentHunter.Dat.Chunks
 				if (f != null)
 				{
 					// Find it by searching up.
-					prevController = (Controllers) f.Chunks
+					prevControllerChunk = (ControllerChunk) f.Chunks
 						.Reverse()
 						.FirstOrDefault(c =>
 							c.Magic == DatFile.Magics.Controllers && c.Id == ParentId
@@ -106,7 +106,7 @@ namespace SilentHunter.Dat.Chunks
 				}
 			}
 
-			var controllerName = prevController?.Name;
+			var controllerName = prevControllerChunk?.Name;
 
 			// Code needed to detect StateMachineClass.
 			if (string.IsNullOrEmpty(controllerName) && SubType == -1)
