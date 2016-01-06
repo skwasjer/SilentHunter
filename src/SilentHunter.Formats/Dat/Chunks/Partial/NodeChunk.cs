@@ -10,17 +10,15 @@ namespace SilentHunter.Dat.Chunks.Partial
 	public sealed class NodeChunk : DatChunk
 	{
 		public NodeChunk()
-			: base(DatFile.Magics.NodeLink)
+			: base(DatFile.Magics.Node)
 		{
-			Visibility = 1;
+			Visible = true;
 			UnknownData.Add(new UnknownChunkData(0, 0, byte.MinValue, "The byte just before the 'Visibility' byte. No idea what it means. Values found: 1, 2, 128, 64, possibly others."));
 			_transform = Matrix.Identity;
 		}
 
 		private Vector3 _translation, _rotation;
 		private Matrix _transform;
-
-		private List<ulong> _materials;
 
 		// Sub type 2: Light
 		private Light _light;
@@ -50,13 +48,16 @@ namespace SilentHunter.Dat.Chunks.Partial
 		
 		public ulong ModelId { get; set; }
 
-		public List<ulong> Materials
-		{
-			get { return _materials ?? (_materials = new List<ulong>()); }
-		}
+		public List<ulong> Materials { get; } = new List<ulong>();
 
-		public byte Visibility { get; set; }
+		/// <summary>
+		/// Gets or sets whether the node (and/or attached behaviors) is visible in game.
+		/// </summary>
+		public bool Visible { get; set; }
 
+		/// <summary>
+		/// Gets or sets the translation of the node.
+		/// </summary>
 		public Vector3 Translation
 		{
 			get { return _translation; }
@@ -69,6 +70,9 @@ namespace SilentHunter.Dat.Chunks.Partial
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the rotation of the node.
+		/// </summary>
 		public Vector3 Rotation
 		{
 			get { return _rotation; }
@@ -149,7 +153,7 @@ namespace SilentHunter.Dat.Chunks.Partial
 				// 	NodeLink-Unknown1: 64
 #endif
 
-				Visibility = reader.ReadByte();
+				Visible = reader.ReadByte() > 0;
 				Translation = reader.ReadStruct<Vector3>();
 				Rotation = reader.ReadStruct<Vector3>();
 
@@ -246,7 +250,7 @@ namespace SilentHunter.Dat.Chunks.Partial
 				writer.Write(ModelId);
 
 				writer.WriteStruct(UnknownData[0].Data);
-				writer.Write(Visibility);
+				writer.Write(Visible ? 1 : 0);
 
 				writer.WriteStruct(_translation);
 				writer.WriteStruct(_rotation);

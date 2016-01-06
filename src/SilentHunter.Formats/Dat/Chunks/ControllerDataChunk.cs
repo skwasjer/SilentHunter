@@ -8,7 +8,7 @@ namespace SilentHunter.Dat.Chunks
 	public sealed partial class ControllerDataChunk : DatChunk
 	{
 		public ControllerDataChunk()
-			: base(DatFile.Magics.Properties)
+			: base(DatFile.Magics.ControllerData)
 		{
 		}
 
@@ -101,7 +101,7 @@ namespace SilentHunter.Dat.Chunks
 					prevControllerChunk = (ControllerChunk) f.Chunks
 						.Reverse()
 						.FirstOrDefault(c =>
-							c.Magic == DatFile.Magics.Controllers && c.Id == ParentId
+							c.Magic == DatFile.Magics.Controller && c.Id == ParentId
 						);
 				}
 			}

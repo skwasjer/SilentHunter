@@ -7,7 +7,7 @@ namespace SilentHunter.Dat.Chunks
 	public sealed class ControllerChunk : DatChunk
 	{
 		public ControllerChunk()
-			: base(DatFile.Magics.Controllers)
+			: base(DatFile.Magics.Controller)
 		{
 		}
 
