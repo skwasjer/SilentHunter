@@ -1,4 +1,4 @@
-namespace SilentHunter.Dat
+namespace SilentHunter.Dat.Chunks.Partial
 {
 #if DEBUG1
 	public sealed class Unknown0 : DatChunk

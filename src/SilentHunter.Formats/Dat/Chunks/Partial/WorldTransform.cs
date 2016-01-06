@@ -1,7 +1,7 @@
 using System.IO;
 using skwas.IO;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Dat.Chunks.Partial
 {
 #if DEBUG
 	public sealed class WorldTransform : DatChunk

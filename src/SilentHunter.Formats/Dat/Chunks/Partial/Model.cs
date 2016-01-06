@@ -1,32 +1,10 @@
-//#define UPDATE_ALL_AND_COPY_TOMOD
-
 using System;
-using System.IO;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using skwas.IO;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Dat.Chunks.Partial
 {
-	[SuppressMessage("ReSharper", "InconsistentNaming")]
-	public enum MeshDataDescriptor
-	{
-		/// <summary>
-		/// Ambient occlusion map.
-		/// </summary>
-		TMAP,
-		/// <summary>
-		/// Vertex normals.
-		/// </summary>
-		NORM
-	}
-
-	public struct UvMap
-	{
-		public byte Channel;
-		public ushort[] TextureIndices;
-	}
-
 	public sealed class Model : DatChunk
 	{
 		public Model()

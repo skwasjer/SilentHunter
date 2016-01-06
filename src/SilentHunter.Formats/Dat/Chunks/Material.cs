@@ -1,12 +1,12 @@
 using System;
-using System.IO;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using skwas.IO;
 
 // http://www.jalix.org/ressources/graphics/3DS/_unofficials/3ds-info.txt
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Dat.Chunks
 {
 	public enum SpecularMode
 	{

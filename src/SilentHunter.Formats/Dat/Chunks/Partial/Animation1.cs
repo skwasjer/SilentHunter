@@ -1,15 +1,18 @@
 using System;
 using System.IO;
+using skwas.IO;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Dat.Chunks.Partial
 {
 #if DEBUG
-	public sealed class Animation0 : DatChunk
+	public sealed class Animation1 : DatChunk
 	{
-		public Animation0()
-			: base(DatFile.Magics.Animation0)
+		public Animation1()
+			: base(DatFile.Magics.Animation1)
 		{
 		}
+
+		public string Name { get; set; }
 
 		/// <summary>
 		/// Gets or sets the chunk id.
@@ -57,11 +60,19 @@ namespace SilentHunter.Dat
 		{
 			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
 			{
-				Id = reader.ReadUInt32(); // Read an id as an uint.
-				ParentId = reader.ReadUInt32(); // Read an id as an uint.
-			}
+				Id = reader.ReadUInt32();
+				// Read the parent id.
+				ParentId = reader.ReadUInt32();
 
-			base.Deserialize(stream);
+				// The rest of the stream holds the name + terminating zero.
+				if (stream.Length > stream.Position)
+					Name = reader.ReadNullTerminatedString();
+
+				// Make sure we are at end of stream.
+				//if (stream.Length > stream.Position)
+				//	stream.Position = stream.Length;
+				//Debug.WriteLine(_texture);
+			}
 		}
 
 		/// <summary>
@@ -72,11 +83,26 @@ namespace SilentHunter.Dat
 		{
 			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
 			{
-				writer.Write((uint) Id);
-				writer.Write((uint) ParentId);
-			}
+				// Write the parent id.
+				writer.Write(ParentId);
 
-			base.Serialize(stream);
+				// Write name + terminating zero.
+				if (!string.IsNullOrEmpty(Name))
+					writer.Write(Name, '\0');
+				else
+					writer.Write(byte.MinValue);
+			}
+		}
+
+		/// <summary>
+		/// Returns a string that represents the current object.
+		/// </summary>
+		/// <returns>
+		/// A string that represents the current object.
+		/// </returns>
+		public override string ToString()
+		{
+			return base.ToString() + ": " + Name;
 		}
 	}
 #endif

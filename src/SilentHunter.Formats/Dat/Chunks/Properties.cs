@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using skwas.IO;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Dat.Chunks
 {
 	public sealed partial class Properties : DatChunk
 	{

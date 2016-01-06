@@ -1,46 +1,20 @@
-using System;
+using System.Diagnostics;
 using System.IO;
 using skwas.IO;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Dat.Chunks
 {
-#if DEBUG
-	public sealed class Animation1 : DatChunk
+	public sealed class Controllers : DatChunk
 	{
-		public Animation1()
-			: base(DatFile.Magics.Animation1)
+		public Controllers()
+			: base(DatFile.Magics.Controllers)
 		{
 		}
 
+		/// <summary>
+		/// Gets or sets the controller name.
+		/// </summary>
 		public string Name { get; set; }
-
-		/// <summary>
-		/// Gets or sets the chunk id.
-		/// </summary>
-		public override ulong Id
-		{
-			get { return base.Id; }
-			set
-			{
-				if (value > uint.MaxValue)
-					throw new ArgumentOutOfRangeException("The id for this chunk is only 4 bytes in length (UInt32).");
-				base.Id = value;
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets the chunk its parent id.
-		/// </summary>
-		public override ulong ParentId
-		{
-			get { return base.ParentId; }
-			set
-			{
-				if (value > uint.MaxValue)
-					throw new ArgumentOutOfRangeException("The parent id for this chunk is only 4 bytes in length (UInt32).");
-				base.ParentId = value;
-			}
-		}
 
 		/// <summary>
 		/// Gets whether the chunk supports an id field.
@@ -60,18 +34,17 @@ namespace SilentHunter.Dat
 		{
 			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
 			{
-				Id = reader.ReadUInt32();
-				// Read the parent id.
-				ParentId = reader.ReadUInt32();
+				// Read id and parent id.
+				Id = reader.ReadUInt64();
+				ParentId = reader.ReadUInt64();
+
+				// Skip byte.
+				var alwaysZero = reader.ReadByte();
+				Debug.Assert(alwaysZero == byte.MinValue, "Controllers: expecting byte=0.");
 
 				// The rest of the stream holds the name + terminating zero.
 				if (stream.Length > stream.Position)
 					Name = reader.ReadNullTerminatedString();
-
-				// Make sure we are at end of stream.
-				//if (stream.Length > stream.Position)
-				//	stream.Position = stream.Length;
-				//Debug.WriteLine(_texture);
 			}
 		}
 
@@ -83,14 +56,16 @@ namespace SilentHunter.Dat
 		{
 			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
 			{
-				// Write the parent id.
+				// Write id and parent id.
+				writer.Write(Id);
 				writer.Write(ParentId);
+
+				// Zero byte.
+				writer.Write(byte.MinValue);
 
 				// Write name + terminating zero.
 				if (!string.IsNullOrEmpty(Name))
 					writer.Write(Name, '\0');
-				else
-					writer.Write(byte.MinValue);
 			}
 		}
 
@@ -104,6 +79,6 @@ namespace SilentHunter.Dat
 		{
 			return base.ToString() + ": " + Name;
 		}
+
 	}
-#endif
 }

@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using skwas.IO;
+using SilentHunter.Dat.Chunks;
 
 namespace SilentHunter.Dat
 {

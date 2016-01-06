@@ -4,7 +4,7 @@ using System.Reflection;
 using skwas.IO;
 using SilentHunter.Formats;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Dat.Chunks
 {
 	/// <summary>
 	/// Represents the AuthorInfo chunk of a Silent Hunter game file.

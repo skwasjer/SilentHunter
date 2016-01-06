@@ -1,11 +1,10 @@
 using System;
-using System.Reflection;
 using System.Collections.Generic;
 using System.IO;
-
+using System.Reflection;
 using skwas.IO;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Dat.Chunks
 {
 	public class DatChunk : Chunk<DatFile.Magics>, IChunk<DatFile.Magics>, ICloneable, IDisposable
 	{

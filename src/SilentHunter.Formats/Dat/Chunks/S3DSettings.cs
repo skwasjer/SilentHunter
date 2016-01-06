@@ -1,7 +1,7 @@
-using System.IO;
 using System.Diagnostics;
+using System.IO;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Dat.Chunks
 {
 	public sealed class S3DSettings : DatChunk
 	{

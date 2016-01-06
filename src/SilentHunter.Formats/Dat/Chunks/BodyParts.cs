@@ -1,10 +1,9 @@
 using System;
-using System.IO;
 using System.Collections.Generic;
-
+using System.IO;
 using skwas.IO;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Dat.Chunks
 {
 	public sealed class BodyParts : DatChunk
 	{

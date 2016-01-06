@@ -1,12 +1,12 @@
 using System;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
-using System.IO;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Runtime.InteropServices;
 using skwas.IO;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Dat.Chunks.Partial
 {
 	public sealed class NodeLink : DatChunk
 	{
@@ -27,7 +27,7 @@ namespace SilentHunter.Dat
 		private Light _light;
 
 		// Sub type 3: ??
-		private InteriorDef _interiorDef;
+		private Interior _interior;
 
 		public Light Light
 		{
@@ -39,13 +39,13 @@ namespace SilentHunter.Dat
 			}
 		}
 
-		public InteriorDef InteriorDef
+		public Interior Interior
 		{
 			get
 			{
 				if (SubType != 3)
 					throw new NotSupportedException("This object is not valid for sub type (3).");
-				return _interiorDef ?? (_interiorDef = new InteriorDef());
+				return _interior ?? (_interior = new Interior());
 			}
 		}
 		
@@ -201,11 +201,11 @@ namespace SilentHunter.Dat
 
 					case 3:
 						// Interior node.
-						_interiorDef = reader.ReadStruct<InteriorDef>();
+						_interior = reader.ReadStruct<Interior>();
 
-						Debug.Assert(_interiorDef.Reserved0 == 0, "Expected 0.");
-						Debug.Assert(_interiorDef.Reserved1 == byte.MinValue, "Expected 0.");
-						Debug.Assert(_interiorDef.Reserved2 == 0, "Expected 0.");
+						Debug.Assert(_interior.Reserved0 == 0, "Expected 0.");
+						Debug.Assert(_interior.Reserved1 == byte.MinValue, "Expected 0.");
+						Debug.Assert(_interior.Reserved2 == 0, "Expected 0.");
 
 						break;
 
@@ -277,7 +277,7 @@ namespace SilentHunter.Dat
 
 					// Interior first node... ?
 					case 3:
-						writer.WriteStruct(InteriorDef);
+						writer.WriteStruct(Interior);
 						break;
 
 					case 100:
@@ -300,9 +300,9 @@ namespace SilentHunter.Dat
 	/// Represents meta data for interior nodes.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
-	public sealed class InteriorDef
+	public sealed class Interior
 	{
-		internal InteriorDef()
+		internal Interior()
 		{
 		}
 
@@ -325,64 +325,6 @@ namespace SilentHunter.Dat
 		public override string ToString()
 		{
 			return BoundingBoxMin + " " + BoundingBoxMax + " " + Reserved0 + " " + Reserved1 + " " + Reserved2;
-		}
-	}
-
-	/// <summary>
-	/// Types of light sources.
-	/// </summary>
-	public enum LightType
-	{
-		Ambient,
-		Direct,
-		Omni
-	}
-
-	/// <summary>
-	/// Represents a light source.
-	/// </summary>
-	public sealed class Light
-	{
-		internal Light() {
-		}
-
-		/// <summary>
-		/// Always zero.
-		/// </summary>
-		public uint Reserved0 { get; set; }
-
-		/// <summary>
-		/// Gets or sets the light type.
-		/// </summary>
-		public LightType Type { get; set; }
-
-		/// <summary>
-		/// Gets or sets the color.
-		/// </summary>
-		public Color Color { get; set; }
-
-		/// <summary>
-		/// Gets or sets the attenuation.
-		/// </summary>
-		public float Attenuation { get; set; }
-
-		/// <summary>
-		/// Gets or sets the radius of the light source (Omni lights only).
-		/// </summary>
-		public float Radius { get; set; }
-
-		/// <summary>
-		/// Returns a string that represents the current object.
-		/// </summary>
-		/// <returns>
-		/// A string that represents the current object.
-		/// </returns>
-		public override string ToString()
-		{
-			if (Type == LightType.Omni)
-				return string.Format("Light ({0}), color={1}, attenuation={2}, radius={3}", Type, Color, Attenuation, Radius);
-			else
-				return string.Format("Light ({0}), color={1}, intensity={2}", Type, Color, Attenuation);
 		}
 	}
 }

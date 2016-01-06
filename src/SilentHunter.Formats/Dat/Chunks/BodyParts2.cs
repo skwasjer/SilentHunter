@@ -1,35 +1,18 @@
+#if DEBUG
 using System;
 using System.IO;
-using System.Diagnostics;
-using System.Collections.Generic;
 
-using skwas.IO;
-
-namespace SilentHunter.Dat
+namespace SilentHunter.Dat.Chunks
 {
-	[DebuggerDisplay("1: {BoneIndex1} {Weight1} - 2: {BoneIndex2} {Weight2} - 3: {BoneIndex3} {Weight3} - 4: {BoneIndex4} {Weight4}\r\n")]
-	public struct BoneInfluence
+	public sealed class BodyParts2 : DatChunk
 	{
-		public int BoneIndex1;
-		public float Weight1;
-		public int BoneIndex2;
-		public float Weight2;
-		public int BoneIndex3;
-		public float Weight3;
-		public int BoneIndex4;
-		public float Weight4;
-	}
-
-	public sealed class BoneInfluences : DatChunk
-	{
-		public BoneInfluences()
-			: base(DatFile.Magics.BoneInfluences)
+		public BodyParts2()
+			: base(DatFile.Magics.BodyParts2)
 		{
-			WeightsAndIndices = new List<BoneInfluence>();
 		}
 
 		/// <summary>
-		/// Gets or sets the chunk id.
+		/// Gets or sets the part id.
 		/// </summary>
 		public override ulong Id
 		{
@@ -43,7 +26,7 @@ namespace SilentHunter.Dat
 		}
 
 		/// <summary>
-		/// Gets or sets the chunk its parent id.
+		/// Gets or sets the part its parent id.
 		/// </summary>
 		public override ulong ParentId
 		{
@@ -66,8 +49,6 @@ namespace SilentHunter.Dat
 		/// </summary>
 		public override bool SupportsParentId => true;
 
-		public List<BoneInfluence> WeightsAndIndices { get; }
-
 		/// <summary>
 		/// Deserializes the chunk.
 		/// </summary>
@@ -78,13 +59,9 @@ namespace SilentHunter.Dat
 			{
 				Id = reader.ReadUInt32(); // Read an id as an uint.
 				ParentId = reader.ReadUInt32(); // Read an id as an uint.
-
-				WeightsAndIndices.Clear();
-
-				var count = reader.ReadInt32();
-				for (var i = 0; i < count; i++)
-					WeightsAndIndices.Add(reader.ReadStruct<BoneInfluence>());
 			}
+
+			base.Deserialize(stream);
 		}
 
 		/// <summary>
@@ -97,11 +74,10 @@ namespace SilentHunter.Dat
 			{
 				writer.Write((uint) Id);
 				writer.Write((uint) ParentId);
-
-				writer.Write(WeightsAndIndices.Count);
-				foreach (var wi in WeightsAndIndices)
-					writer.WriteStruct(wi);
 			}
+
+			base.Serialize(stream);
 		}
 	}
 }
+#endif

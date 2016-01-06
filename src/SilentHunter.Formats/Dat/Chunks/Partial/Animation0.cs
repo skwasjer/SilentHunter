@@ -1,18 +1,18 @@
-#if DEBUG
 using System;
 using System.IO;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Dat.Chunks.Partial
 {
-	public sealed class BodyParts2 : DatChunk
+#if DEBUG
+	public sealed class Animation0 : DatChunk
 	{
-		public BodyParts2()
-			: base(DatFile.Magics.BodyParts2)
+		public Animation0()
+			: base(DatFile.Magics.Animation0)
 		{
 		}
 
 		/// <summary>
-		/// Gets or sets the part id.
+		/// Gets or sets the chunk id.
 		/// </summary>
 		public override ulong Id
 		{
@@ -26,7 +26,7 @@ namespace SilentHunter.Dat
 		}
 
 		/// <summary>
-		/// Gets or sets the part its parent id.
+		/// Gets or sets the chunk its parent id.
 		/// </summary>
 		public override ulong ParentId
 		{
@@ -79,5 +79,5 @@ namespace SilentHunter.Dat
 			base.Serialize(stream);
 		}
 	}
-}
 #endif
+}

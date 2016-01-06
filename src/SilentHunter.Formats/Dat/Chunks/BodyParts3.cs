@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Dat.Chunks
 {
 	public sealed class BodyParts3 : DatChunk
 	{
