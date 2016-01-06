@@ -12,13 +12,24 @@ namespace SilentHunter.Dat
 
 		private static ReadOnlyDictionary<DatFile.Magics, Type> LoadTypes()
 		{
-			DatFile.Magics parsed;
 			var types = typeof (DatFile).Assembly
 				.DefinedTypes
-				.Where(t => t.IsClass && typeof (IChunk).IsAssignableFrom(t.UnderlyingSystemType) && Enum.TryParse(t.Name, false, out parsed))
+				.Where(t => t.IsClass && typeof (IChunk).IsAssignableFrom(t.UnderlyingSystemType))
+				.Select(t =>
+				{
+					DatFile.Magics m;
+					if (t.Name.Length > 5 && Enum.TryParse(t.Name.Substring(0, t.Name.Length - 5), out m))
+						return new
+						{
+							Magic = m,
+							Type = t.UnderlyingSystemType
+						};
+					return null;
+				})
+				.Where(t => t != null)
 				.ToDictionary(
-					kvp => (DatFile.Magics)Enum.Parse(typeof(DatFile.Magics), kvp.Name, false),
-					kvp => kvp.UnderlyingSystemType
+					kvp => kvp.Magic,
+					kvp => kvp.Type
 				);
 
 			return new ReadOnlyDictionary<DatFile.Magics, Type>(types);
