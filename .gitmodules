@@ -1,0 +1,3 @@
+[submodule "lib/skwas.Drawing"]
+	path = lib/skwas.Drawing
+	url = https://github.com/skwasjer/skwas.Drawing.git

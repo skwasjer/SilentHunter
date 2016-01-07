@@ -49,13 +49,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="skwas.Drawing, Version=1.4.5848.42276, Culture=neutral, PublicKeyToken=17f8ca7d3b368c56, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\skwas.Drawing.dll</HintPath>
+    <Reference Include="skwas.Drawing">
+      <HintPath>..\..\lib\skwas.Drawing\bin\Release\skwas.Drawing.dll</HintPath>
     </Reference>
-    <Reference Include="skwas.IO, Version=4.0.5848.42276, Culture=neutral, PublicKeyToken=17f8ca7d3b368c56, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\skwas.IO.dll</HintPath>
+    <Reference Include="skwas.IO">
+      <HintPath>..\..\lib\skwas.Drawing\bin\Release\skwas.IO.dll</HintPath>
     </Reference>
     <Reference Include="SlimDX, Version=4.0.13.43, Culture=neutral, PublicKeyToken=b1b0c32fd1ffe4f9, processorArchitecture=x86">
       <HintPath>..\..\packages\SlimDX.4.0.13.44\lib\NET40\SlimDX.dll</HintPath>
