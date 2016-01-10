@@ -250,7 +250,7 @@ namespace SilentHunter.Dat.Chunks.Partial
 				writer.Write(ModelId);
 
 				writer.WriteStruct(UnknownData[0].Data);
-				writer.Write(Visible ? 1 : 0);
+				writer.Write(Visible ? (byte)1 : byte.MinValue);
 
 				writer.WriteStruct(_translation);
 				writer.WriteStruct(_rotation);
