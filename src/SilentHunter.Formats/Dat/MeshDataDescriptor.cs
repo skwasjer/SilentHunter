@@ -1,5 +1,3 @@
-//#define UPDATE_ALL_AND_COPY_TOMOD
-
 using System.Diagnostics.CodeAnalysis;
 
 namespace SilentHunter.Dat
