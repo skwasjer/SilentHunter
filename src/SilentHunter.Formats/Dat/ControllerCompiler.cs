@@ -7,9 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-// http://spellcoder.com/blogs/bashmohandes/archive/2006/05/17/72.aspx
-// http://damon.agilefactor.com/2006/02/appdomain-isolation-for-plugin.html
-
 namespace SilentHunter.Dat
 {
 	public sealed class ControllerCompiler
@@ -20,24 +17,21 @@ namespace SilentHunter.Dat
 		private readonly CompilerParameters _compilerParams;
 		private bool _disposed;
 
-		public ControllerCompiler(string outputPath, IEnumerable<ControllerFileReference> dependencies)
+		#region .ctor/cleanup
+
+		public ControllerCompiler()
 		{
 			_codeProvider = (CSharpCodeProvider)CodeDomProvider.CreateProvider("CSharp");
 			_compilerParams = new CompilerParameters
 			{
 				GenerateExecutable = false,
 				GenerateInMemory = false,
-				// When using GenerateInMemory=true, do not name the output assembly, just provide the path.
-				// Otherwise, an empty stub is created and placed in the program folder.
-				OutputAssembly = outputPath,
 #if DEBUG
 				IncludeDebugInformation = true,
 #endif
 				TreatWarningsAsErrors = false
 			};
 
-			_compilerParams.ReferencedAssemblies.AddRange(dependencies.Select(dep => dep.Name).ToArray());
-			
 			// Add DirectX reference.
 			//var refAssembly = typeof(Vector3).Assembly.Location;
 			//_compilerParams.ReferencedAssemblies.Add(refAssembly);
@@ -67,14 +61,34 @@ namespace SilentHunter.Dat
 			GC.SuppressFinalize(this);
 		}
 
+		#endregion
+
+		/// <summary>
+		/// Gets or sets the path of the output assembly.
+		/// </summary>
+		public string OutputPath
+		{
+			get { return _compilerParams.OutputAssembly; }
+			set { _compilerParams.OutputAssembly = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the path of the XML documentation file.
+		/// </summary>
+		public string DocFile { get; set; }
+
+		/// <summary>
+		/// Gets or sets the assembly dependencies.
+		/// </summary>
+		public ISet<ControllerFileReference> Dependencies { get; set; }
+
 		/// <summary>
 		/// Compiles the specified controller <paramref name="filenames"/> and <paramref name="docFile"/> into an <see cref="Assembly"/>.
 		/// </summary>
 		/// <param name="filenames"></param>
-		/// <param name="docFile"></param>
 		/// <param name="loadAssembly"></param>
 		/// <returns></returns>
-		public Assembly CompileCode(ICollection<string> filenames, string docFile, bool loadAssembly = false)
+		public Assembly CompileCode(ICollection<string> filenames, bool loadAssembly = false)
 		{
 			if (_disposed)
 				throw new ObjectDisposedException(GetType().Name);
@@ -84,9 +98,13 @@ namespace SilentHunter.Dat
 			if (filenames.Count == 0)
 				throw new ArgumentOutOfRangeException(nameof(filenames), "Expected at least one filename.");
 
+			_compilerParams.ReferencedAssemblies.Clear();
+			if (Dependencies != null)
+				_compilerParams.ReferencedAssemblies.AddRange(Dependencies.Select(dep => dep.Name).ToArray());
+
 			_compilerParams.CompilerOptions = RequiredCompilerOptions;
-			if (!string.IsNullOrEmpty(docFile))
-				_compilerParams.CompilerOptions += string.Format(" /doc:\"{0}\"", docFile);
+			if (!string.IsNullOrEmpty(DocFile))
+				_compilerParams.CompilerOptions += string.Format(" /doc:\"{0}\"", DocFile);
 
 			var results = _codeProvider.CompileAssemblyFromFile(_compilerParams, filenames.ToArray());
 

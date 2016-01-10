@@ -20,7 +20,7 @@ namespace SilentHunter.Dat
 
 		public static List<Assembly> Assemblies { get; private set; }
 
-		public static void LoadFrom(string applicationPath, string controllerPath, IEnumerable<string> dependencies)
+		public static void LoadFrom(string applicationPath, string controllerPath)
 		{
 			if (Assemblies != null)
 				throw new InvalidOperationException("A controller assembly was previously (attempted) loaded.");
@@ -113,8 +113,15 @@ namespace SilentHunter.Dat
 			// NOTE: Ensure LoaderLock Managed Debugging Assistant in Exception settings is disabled, to allow VS to run dynamic compilation within IDE.
 
 			// Compile the source files, etc.
-			using (var compiler = new ControllerCompiler(outputFile, assemblyCache.Dependencies))
-				compiler.CompileCode(assemblyCache.SourceFiles.Select(cs => Path.Combine(controllerPath, cs.Name)).ToArray(), docFile);
+			using (var compiler = new ControllerCompiler()
+			{
+				OutputPath = outputFile,
+				DocFile = docFile,
+				Dependencies = assemblyCache.Dependencies
+			})
+			{
+				compiler.CompileCode(assemblyCache.SourceFiles.Select(cs => Path.Combine(controllerPath, cs.Name)).ToArray());
+			}
 
 			// Save the cache file.
 			using (var fs = File.Open(cacheFile, FileMode.Create, FileAccess.Write, FileShare.Read))
