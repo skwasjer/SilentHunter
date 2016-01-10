@@ -53,7 +53,7 @@ namespace StateMachineCtl
 		/// When implemented, deserializes the controller from specified <paramref name="stream"/>.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		void IRawController.Deserialize(Stream stream)
+		void IRawSerializable.Deserialize(Stream stream)
 		{
 			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
 			{
@@ -116,7 +116,7 @@ namespace StateMachineCtl
 		/// When implemented, serializes the controller to specified <paramref name="stream"/>.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		void IRawController.Serialize(Stream stream)
+		void IRawSerializable.Serialize(Stream stream)
 		{
 			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
 			{

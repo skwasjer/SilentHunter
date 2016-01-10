@@ -363,7 +363,7 @@ namespace SilentHunter.Dat
 		/// When implemented, deserializes the controller from specified <paramref name="stream"/>.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		void IRawController.Deserialize(Stream stream)
+		void IRawSerializable.Deserialize(Stream stream)
 		{
 			Deserialize(stream);
 		}
@@ -372,7 +372,7 @@ namespace SilentHunter.Dat
 		/// When implemented, serializes the controller to specified <paramref name="stream"/>.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		void IRawController.Serialize(Stream stream)
+		void IRawSerializable.Serialize(Stream stream)
 		{
 			Serialize(stream);
 		}
