@@ -17,7 +17,14 @@ namespace SilentHunter
 		public float Z;
 		public float W;
 
-		public static readonly Quaternion Identity = Microsoft.DirectX.Quaternion.Identity;
+		public static Quaternion Identity =>
+			new Quaternion
+			{
+				X = 0.0f,
+				Y = 0.0f,
+				Z = 0.0f,
+				W = 1f
+			};
 
 		/// <summary>
 		/// Returns the fully qualified type name of this instance.
@@ -29,50 +36,6 @@ namespace SilentHunter
 		{
 			var sep = CultureInfo.CurrentCulture.TextInfo.ListSeparator;
 			return $"X: {X}{sep} Y: {Y}{sep} Z: {Z}{sep} W: {W}";
-		}
-
-		public static implicit operator SlimDX.Quaternion(Quaternion v)
-		{
-			return new SlimDX.Quaternion
-			{
-				X = v.X,
-				Y = v.Y,
-				Z = v.Z,
-				W = v.W
-			};
-		}
-
-		public static implicit operator Quaternion(SlimDX.Quaternion v)
-		{
-			return new Quaternion
-			{
-				X = v.X,
-				Y = v.Y,
-				Z = v.Z,
-				W = v.W
-			};
-		}
-
-		public static implicit operator Microsoft.DirectX.Quaternion(Quaternion v)
-		{
-			return new Microsoft.DirectX.Quaternion
-			{
-				X = v.X,
-				Y = v.Y,
-				Z = v.Z,
-				W = v.W
-			};
-		}
-
-		public static implicit operator Quaternion(Microsoft.DirectX.Quaternion v)
-		{
-			return new Quaternion
-			{
-				X = v.X,
-				Y = v.Y,
-				Z = v.Z,
-				W = v.W
-			};
 		}
 
 		#region Equality members

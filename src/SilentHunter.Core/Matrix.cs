@@ -28,97 +28,106 @@ namespace SilentHunter
 		public float M43;
 		public float M44;
 
-		public static readonly Matrix Identity = Microsoft.DirectX.Matrix.Identity;
-
-		public static implicit operator SlimDX.Matrix(Matrix v)
-		{
-			return new SlimDX.Matrix
+		public static Matrix Identity =>
+			new Matrix
 			{
-				M11 = v.M11,
-				M12 = v.M12,
-				M13 = v.M13,
-				M14 = v.M14,
-				M21 = v.M21,
-				M22 = v.M22,
-				M23 = v.M23,
-				M24 = v.M24,
-				M31 = v.M31,
-				M32 = v.M32,
-				M33 = v.M33,
-				M34 = v.M34,
-				M41 = v.M41,
-				M42 = v.M42,
-				M43 = v.M43,
-				M44 = v.M44,
+				M11 = 1f,
+				M22 = 1f,
+				M33 = 1f,
+				M44 = 1f
 			};
+
+		public static Matrix RotationX(float angle)
+		{
+			Matrix matrix = new Matrix();
+			float num1 = (float)Math.Cos((double)angle);
+			float num2 = (float)Math.Sin((double)angle);
+			matrix.M11 = 1f;
+			matrix.M12 = 0.0f;
+			matrix.M13 = 0.0f;
+			matrix.M14 = 0.0f;
+			matrix.M21 = 0.0f;
+			matrix.M22 = num1;
+			matrix.M23 = num2;
+			matrix.M24 = 0.0f;
+			matrix.M31 = 0.0f;
+			matrix.M32 = -num2;
+			matrix.M33 = num1;
+			matrix.M34 = 0.0f;
+			matrix.M41 = 0.0f;
+			matrix.M42 = 0.0f;
+			matrix.M43 = 0.0f;
+			matrix.M44 = 1f;
+			return matrix;
+		}
+		public static Matrix RotationY(float angle)
+		{
+			Matrix matrix = new Matrix();
+			float num1 = (float)Math.Cos((double)angle);
+			float num2 = (float)Math.Sin((double)angle);
+			matrix.M11 = num1;
+			matrix.M12 = 0.0f;
+			matrix.M13 = -num2;
+			matrix.M14 = 0.0f;
+			matrix.M21 = 0.0f;
+			matrix.M22 = 1f;
+			matrix.M23 = 0.0f;
+			matrix.M24 = 0.0f;
+			matrix.M31 = num2;
+			matrix.M32 = 0.0f;
+			matrix.M33 = num1;
+			matrix.M34 = 0.0f;
+			matrix.M41 = 0.0f;
+			matrix.M42 = 0.0f;
+			matrix.M43 = 0.0f;
+			matrix.M44 = 1f;
+			return matrix;
 		}
 
-		public static implicit operator Matrix(SlimDX.Matrix v)
+		public static Matrix RotationZ(float angle)
 		{
-			return new Matrix
-			{
-				M11 = v.M11,
-				M12 = v.M12,
-				M13 = v.M13,
-				M14 = v.M14,
-				M21 = v.M21,
-				M22 = v.M22,
-				M23 = v.M23,
-				M24 = v.M24,
-				M31 = v.M31,
-				M32 = v.M32,
-				M33 = v.M33,
-				M34 = v.M34,
-				M41 = v.M41,
-				M42 = v.M42,
-				M43 = v.M43,
-				M44 = v.M44,
-			};
+			Matrix matrix = new Matrix();
+			float num1 = (float)Math.Cos((double)angle);
+			float num2 = (float)Math.Sin((double)angle);
+			matrix.M11 = num1;
+			matrix.M12 = num2;
+			matrix.M13 = 0.0f;
+			matrix.M14 = 0.0f;
+			matrix.M21 = -num2;
+			matrix.M22 = num1;
+			matrix.M23 = 0.0f;
+			matrix.M24 = 0.0f;
+			matrix.M31 = 0.0f;
+			matrix.M32 = 0.0f;
+			matrix.M33 = 1f;
+			matrix.M34 = 0.0f;
+			matrix.M41 = 0.0f;
+			matrix.M42 = 0.0f;
+			matrix.M43 = 0.0f;
+			matrix.M44 = 1f;
+			return matrix;
 		}
 
-		public static implicit operator Microsoft.DirectX.Matrix(Matrix v)
+		public static Matrix Translation(Vector3 amount)
 		{
-			return new Microsoft.DirectX.Matrix
+			return new Matrix()
 			{
-				M11 = v.M11,
-				M12 = v.M12,
-				M13 = v.M13,
-				M14 = v.M14,
-				M21 = v.M21,
-				M22 = v.M22,
-				M23 = v.M23,
-				M24 = v.M24,
-				M31 = v.M31,
-				M32 = v.M32,
-				M33 = v.M33,
-				M34 = v.M34,
-				M41 = v.M41,
-				M42 = v.M42,
-				M43 = v.M43,
-				M44 = v.M44,
-			};
-		}
-
-		public static implicit operator Matrix(Microsoft.DirectX.Matrix v)
-		{
-			return new Matrix
-			{
-				M11 = v.M11,
-				M12 = v.M12,
-				M13 = v.M13,
-				M14 = v.M14,
-				M21 = v.M21,
-				M22 = v.M22,
-				M23 = v.M23,
-				M24 = v.M24,
-				M31 = v.M31,
-				M32 = v.M32,
-				M33 = v.M33,
-				M34 = v.M34,
-				M41 = v.M41,
-				M42 = v.M42,
-				M43 = v.M43,
-				M44 = v.M44,
+				M11 = 1f,
+				M12 = 0.0f,
+				M13 = 0.0f,
+				M14 = 0.0f,
+				M21 = 0.0f,
+				M22 = 1f,
+				M23 = 0.0f,
+				M24 = 0.0f,
+				M31 = 0.0f,
+				M32 = 0.0f,
+				M33 = 1f,
+				M34 = 0.0f,
+				M41 = amount.X,
+				M42 = amount.Y,
+				M43 = amount.Z,
+				M44 = 1f
 			};
 		}
 
@@ -183,5 +192,28 @@ namespace SilentHunter
 		}
 
 		#endregion
+
+		public static Matrix operator *(Matrix left, Matrix right)
+		{
+			return new Matrix()
+			{
+				M11 = (float)((double)right.M21 * (double)left.M12 + (double)left.M11 * (double)right.M11 + (double)right.M31 * (double)left.M13 + (double)right.M41 * (double)left.M14),
+				M12 = (float)((double)right.M22 * (double)left.M12 + (double)right.M12 * (double)left.M11 + (double)right.M32 * (double)left.M13 + (double)right.M42 * (double)left.M14),
+				M13 = (float)((double)right.M23 * (double)left.M12 + (double)right.M13 * (double)left.M11 + (double)right.M33 * (double)left.M13 + (double)right.M43 * (double)left.M14),
+				M14 = (float)((double)right.M24 * (double)left.M12 + (double)right.M14 * (double)left.M11 + (double)right.M34 * (double)left.M13 + (double)right.M44 * (double)left.M14),
+				M21 = (float)((double)left.M22 * (double)right.M21 + (double)left.M21 * (double)right.M11 + (double)left.M23 * (double)right.M31 + (double)left.M24 * (double)right.M41),
+				M22 = (float)((double)left.M22 * (double)right.M22 + (double)left.M21 * (double)right.M12 + (double)left.M23 * (double)right.M32 + (double)left.M24 * (double)right.M42),
+				M23 = (float)((double)right.M23 * (double)left.M22 + (double)right.M13 * (double)left.M21 + (double)right.M33 * (double)left.M23 + (double)left.M24 * (double)right.M43),
+				M24 = (float)((double)right.M24 * (double)left.M22 + (double)right.M14 * (double)left.M21 + (double)right.M34 * (double)left.M23 + (double)right.M44 * (double)left.M24),
+				M31 = (float)((double)left.M32 * (double)right.M21 + (double)left.M31 * (double)right.M11 + (double)left.M33 * (double)right.M31 + (double)left.M34 * (double)right.M41),
+				M32 = (float)((double)left.M32 * (double)right.M22 + (double)left.M31 * (double)right.M12 + (double)left.M33 * (double)right.M32 + (double)left.M34 * (double)right.M42),
+				M33 = (float)((double)right.M23 * (double)left.M32 + (double)left.M31 * (double)right.M13 + (double)left.M33 * (double)right.M33 + (double)left.M34 * (double)right.M43),
+				M34 = (float)((double)right.M24 * (double)left.M32 + (double)right.M14 * (double)left.M31 + (double)right.M34 * (double)left.M33 + (double)right.M44 * (double)left.M34),
+				M41 = (float)((double)left.M42 * (double)right.M21 + (double)left.M41 * (double)right.M11 + (double)left.M43 * (double)right.M31 + (double)left.M44 * (double)right.M41),
+				M42 = (float)((double)left.M42 * (double)right.M22 + (double)left.M41 * (double)right.M12 + (double)left.M43 * (double)right.M32 + (double)left.M44 * (double)right.M42),
+				M43 = (float)((double)right.M23 * (double)left.M42 + (double)left.M41 * (double)right.M13 + (double)left.M43 * (double)right.M33 + (double)left.M44 * (double)right.M43),
+				M44 = (float)((double)right.M24 * (double)left.M42 + (double)left.M41 * (double)right.M14 + (double)right.M34 * (double)left.M43 + (double)left.M44 * (double)right.M44)
+			};
+		}
 	}
 }

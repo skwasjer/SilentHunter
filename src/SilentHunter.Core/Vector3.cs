@@ -29,47 +29,7 @@ namespace SilentHunter
 			var sep = CultureInfo.CurrentCulture.TextInfo.ListSeparator;
 			return $"X: {X}{sep} Y: {Y}{sep} Z: {Z}";
 		}
-
-		public static implicit operator SlimDX.Vector3(Vector3 v)
-		{
-			return new SlimDX.Vector3
-			{
-				X = v.X,
-				Y = v.Y,
-				Z = v.Z
-			};
-		}
-
-		public static implicit operator Vector3(SlimDX.Vector3 v)
-		{
-			return new Vector3
-			{
-				X = v.X,
-				Y = v.Y,
-				Z = v.Z
-			};
-		}
-
-		public static implicit operator Microsoft.DirectX.Vector3(Vector3 v)
-		{
-			return new Microsoft.DirectX.Vector3
-			{
-				X = v.X,
-				Y = v.Y,
-				Z = v.Z
-			};
-		}
-
-		public static implicit operator Vector3(Microsoft.DirectX.Vector3 v)
-		{
-			return new Vector3
-			{
-				X = v.X,
-				Y = v.Y,
-				Z = v.Z
-			};
-		}
-
+		
 		#region Equality members
 
 		public bool Equals(Vector3 other)

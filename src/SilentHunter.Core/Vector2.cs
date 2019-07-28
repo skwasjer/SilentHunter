@@ -28,42 +28,6 @@ namespace SilentHunter
 			return $"X: {X}{CultureInfo.CurrentCulture.TextInfo.ListSeparator} Y: {Y}";
 		}
 
-		public static implicit operator SlimDX.Vector2(Vector2 v)
-		{
-			return new SlimDX.Vector2
-			{
-				X = v.X,
-				Y = v.Y
-			};
-		}
-
-		public static implicit operator Vector2(SlimDX.Vector2 v)
-		{
-			return new Vector2
-			{
-				X = v.X,
-				Y = v.Y
-			};
-		}
-
-		public static implicit operator Microsoft.DirectX.Vector2(Vector2 v)
-		{
-			return new Microsoft.DirectX.Vector2
-			{
-				X = v.X,
-				Y = v.Y
-			};
-		}
-
-		public static implicit operator Vector2(Microsoft.DirectX.Vector2 v)
-		{
-			return new Vector2
-			{
-				X = v.X,
-				Y = v.Y
-			};
-		}
-
 		#region Equality members
 
 		public bool Equals(Vector2 other)

@@ -87,18 +87,12 @@ namespace SilentHunter.Dat.Chunks.Partial
 
 		private void UpdateTransform()
 		{
-			var m = SlimDX.Matrix.RotationX(-_rotation.X);
-			m *= SlimDX.Matrix.RotationY(-_rotation.Y);
-			m *= SlimDX.Matrix.RotationZ(-_rotation.Z);
-			m *= SlimDX.Matrix.Translation(_translation);
+			var m = Matrix.RotationX(-_rotation.X);
+			m *= Matrix.RotationY(-_rotation.Y);
+			m *= Matrix.RotationZ(-_rotation.Z);
+			m *= Matrix.Translation(_translation);
 
 			_transform = m;
-
-			//var m = Matrix.RotationX(-_rotation.X);
-			//m.Multiply(Matrix.RotationY(-_rotation.Y));
-			//m.Multiply(Matrix.RotationZ(-_rotation.Z));
-			//m.Multiply(Matrix.Translation(_translation));
-			//_transform = m;
 		}
 
 		public Matrix Transform => _transform;

@@ -20,42 +20,6 @@ namespace SilentHunter
 			return $"X: {X}{CultureInfo.CurrentCulture.TextInfo.ListSeparator} Z: {Z}";
 		}
 
-		public static implicit operator SlimDX.Vector2(Vector2XZ v)
-		{
-			return new SlimDX.Vector2
-			{
-				X = v.X,
-				Y = v.Z
-			};
-		}
-
-		public static implicit operator Vector2XZ(SlimDX.Vector2 v)
-		{
-			return new Vector2XZ
-			{
-				X = v.X,
-				Z = v.Y
-			};
-		}
-
-		public static implicit operator Microsoft.DirectX.Vector2(Vector2XZ v)
-		{
-			return new Microsoft.DirectX.Vector2
-			{
-				X = v.X,
-				Y = v.Z
-			};
-		}
-
-		public static implicit operator Vector2XZ(Microsoft.DirectX.Vector2 v)
-		{
-			return new Vector2XZ
-			{
-				X = v.X,
-				Z = v.Y
-			};
-		}
-
 		public static implicit operator Vector2(Vector2XZ v)
 		{
 			return new Vector2
