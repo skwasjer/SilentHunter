@@ -1,98 +1,29 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C03CC0F3-AAD9-4C0D-BE69-6D5413604C7F}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFramework>net45</TargetFramework>
     <RootNamespace>SilentHunter</RootNamespace>
-    <AssemblyName>SilentHunter.Core</AssemblyName>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
+
+  <!--Import Project="..\Package.props" /-->
+
+  <PropertyGroup>
+    <Description>SilentHunter core library</Description>
+    <!--PackageProjectUrl>https://github.com/skwasjer/...</PackageProjectUrl-->
+    <PackageTags></PackageTags>
   </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="skwas.IO">
-      <HintPath>..\..\lib\skwas.Drawing\bin\Release\skwas.IO.dll</HintPath>
-    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
+	<Reference Include="skwas.IO">
+      <HintPath>..\..\lib\skwas.Drawing\bin\Release\skwas.IO.dll</HintPath>
+    </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Attributes\AutoCompleteListAttribute.cs" />
-    <Compile Include="Attributes\SHVersionAttribute.cs" />
-    <Compile Include="Formats\ConvertExtensions.cs" />
-    <Compile Include="Formats\ControllerReader.cs" />
-    <Compile Include="Dat\AnimationKeyFrame.cs" />
-    <Compile Include="Dat\CompressedVertices.cs" />
-    <Compile Include="Dat\RawController.cs" />
-    <Compile Include="Encoding.cs" />
-    <Compile Include="Dat\IController.cs" />
-    <Compile Include="Dat\IRawController.cs" />
-    <Compile Include="Matrix.cs" />
-    <Compile Include="Quaternion.cs" />
-    <Compile Include="Dat\Controller.cs" />
-    <Compile Include="Axis.cs" />
-    <Compile Include="BoolVector3.cs" />
-    <Compile Include="Attributes\ParseNameAttribute.cs" />
-    <Compile Include="Attributes\FixedStringAttribute.cs" />
-    <Compile Include="Vector2.cs" />
-    <Compile Include="Vector3.cs" />
-    <Compile Include="Dat\BuiltInMeshAnimation.cs" />
-    <Compile Include="Dat\MinMax.cs" />
-    <Compile Include="Attributes\OptionalAttribute.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <None Include="packages.config" />
-    <Compile Include="Dat\RawList.cs" />
-    <Compile Include="Attributes\SHTypeAttribute.cs" />
-    <Compile Include="Dat\SHUnion.cs" />
-    <Compile Include="Attributes\ControllerAttribute.cs" />
-    <Compile Include="Vector2XZ.cs" />
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>
