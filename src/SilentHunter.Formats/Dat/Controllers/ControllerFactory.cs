@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using SilentHunter.Formats;
@@ -18,10 +19,12 @@ namespace SilentHunter.Dat.Controllers
 		{
 			_itemFactory = itemFactory ?? throw new ArgumentNullException(nameof(itemFactory));
 			_controllerAssembly = controllerAssembly ?? throw new ArgumentNullException(nameof(controllerAssembly));
-			Controllers = EnumControllers(_controllerAssembly);
+			Controllers = new ReadOnlyDictionary<ControllerProfile, Dictionary<string, Type>>(
+				EnumControllers(_controllerAssembly)
+			);
 		}
 
-		public IDictionary<ControllerProfile, Dictionary<string, Type>> Controllers { get; }
+		public IReadOnlyDictionary<ControllerProfile, Dictionary<string, Type>> Controllers { get; }
 
 		public bool CanCreate(Type controllerType)
 		{
@@ -94,12 +97,11 @@ namespace SilentHunter.Dat.Controllers
 		/// <param name="controllerAssembly"></param>
 		private static IDictionary<ControllerProfile, Dictionary<string, Type>> EnumControllers(Assembly controllerAssembly)
 		{
-			var controllerTypes = new Dictionary<ControllerProfile, Dictionary<string, Type>>
+			var controllerTypes = new Dictionary<ControllerProfile, Dictionary<string, Type>>();
+			foreach (ControllerProfile cp in Enum.GetValues(typeof(ControllerProfile)))
 			{
-				{ ControllerProfile.SH5, new Dictionary<string, Type>() },
-				{ ControllerProfile.SH4, new Dictionary<string, Type>() },
-				{ ControllerProfile.SH3, new Dictionary<string, Type>() }
-			};
+				controllerTypes.Add(cp, new Dictionary<string, Type>());
+			}
 
 			void NotSupportedMember(IList list, Type type, string memberName)
 			{

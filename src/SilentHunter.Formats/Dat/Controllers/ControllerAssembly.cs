@@ -10,7 +10,7 @@ namespace SilentHunter.Dat.Controllers
 		public static IItemFactory ItemFactory { get; set; }
 		public static IControllerFactory ControllerFactory { get; set; }
 
-		public static IDictionary<ControllerProfile, Dictionary<string, Type>> Controllers => ((ControllerFactory)ControllerFactory).Controllers;
+		public static IReadOnlyDictionary<ControllerProfile, Dictionary<string, Type>> Controllers => ((ControllerFactory)ControllerFactory).Controllers;
 
 		public static ControllerAssemblyHelpText HelpText { get; set; }
 
