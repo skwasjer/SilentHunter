@@ -42,14 +42,16 @@ namespace SilentHunter.Dat.Chunks.Partial
 
 		private void UpdateMatrix()
 		{
-			var m = SlimDX.Matrix.Identity;
+			var m = Matrix.Identity;
 
-			m *= SlimDX.Matrix.RotationX(-_worldRotation.X);
-			m *= SlimDX.Matrix.RotationY(-_worldRotation.Y);
-			m *= SlimDX.Matrix.RotationZ(-_worldRotation.Z);
-			m *= SlimDX.Matrix.Translation(_worldTranslation);
+			m *= Matrix.RotationX(-_worldRotation.X);
+			m *= Matrix.RotationY(-_worldRotation.Y);
+			m *= Matrix.RotationZ(-_worldRotation.Z);
+			m *= Matrix.Translation(_worldTranslation);
 
-			_matrix = SlimDX.Matrix.Invert(m);
+			m.Invert();
+
+			_matrix = m;
 		}
 
 		/// <summary>
