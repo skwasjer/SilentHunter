@@ -3,10 +3,8 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Xml.Serialization;
 using skwas.IO;
 using SilentHunter.Formats;
 
@@ -20,18 +18,10 @@ namespace SilentHunter.Dat
 
 		public static List<Assembly> Assemblies { get; private set; }
 
-		public static void LoadFrom(string applicationPath, string controllerPath)
+		public static void LoadFrom(Assembly assembly)
 		{
 			if (Assemblies != null)
 				throw new InvalidOperationException("A controller assembly was previously (attempted) loaded.");
-
-			if (applicationPath == null)
-				throw new ArgumentNullException(nameof(applicationPath));
-			if (controllerPath == null)
-				throw new ArgumentNullException(nameof(controllerPath));
-
-			applicationPath = Path.GetFullPath(applicationPath);
-			controllerPath = Path.GetFullPath(controllerPath);
 
 			Controllers = new Dictionary<ControllerProfile, Dictionary<string, Type>>
 			{
@@ -40,122 +30,17 @@ namespace SilentHunter.Dat
 				{ControllerProfile.SH3, new Dictionary<string, Type>()}
 			};
 
-			var asmShortName = Path.GetFileNameWithoutExtension(controllerPath);
-			var outputPath = AppDomain.CurrentDomain.DynamicDirectory;
-			var asmOutputFile = Path.Combine(outputPath, asmShortName + ".dll");
-			var docFile = Path.Combine(outputPath, asmShortName + ".xml");
-
-			// Generate a new assembly for the specified controller path, if one of the files has changed since last build.
-			var newCache = new ControllerCache
+			Assemblies = new List<Assembly>
 			{
-#if DEBUG
-				BuildConfiguration = "debug",
-#else
-				BuildConfiguration = "release",
-#endif
-				Version = FileVersionInfo.GetVersionInfo(typeof(ControllerAssembly).Assembly.Location).FileVersion,
-				Dependencies = new HashSet<ControllerFileReference>
-				{
-					new ControllerFileReference { Name = "System.dll" },
-					new ControllerFileReference { Name = "System.Windows.Forms.dll" },
-					new ControllerFileReference { Name = "System.Drawing.dll" },
-					new ControllerFileReference {
-						Name = "Bin\\skwas.IO.dll",
-						LastModified = File.GetLastWriteTimeUtc(Path.Combine(applicationPath, "Bin\\skwas.IO.dll"))
-					},
-					new ControllerFileReference {
-						Name = "Shared\\SilentHunter.Core.dll",
-						LastModified = File.GetLastWriteTimeUtc(Path.Combine(applicationPath, "Shared\\SilentHunter.Core.dll"))
-					}
-				},
-				SourceFiles = new HashSet<ControllerFileReference>(GetCSharpFiles(controllerPath))
+				assembly
 			};
 
-			Compile(newCache, controllerPath, asmOutputFile);
-
-//			EmitAsm(AppDomain.CurrentDomain);
-			Assemblies = new List<Assembly>();
-
-			// Load controller assembly also into local domain. You normally wouldn't want this, because you A) couldn't unload it and B) would create security issues. May have to look at using isolated domain in future.
-			var remoteAsm = AppDomain.CurrentDomain.Load(asmShortName);
-			Assemblies.Add(remoteAsm);
-
 			// Find all types with a ControllerAttribute applied.
-			EnumControllers(remoteAsm);
+			EnumControllers(assembly);
 
+			string docFile = Path.Combine(Path.GetDirectoryName(assembly.Location), Path.GetFileNameWithoutExtension(assembly.Location) + ".xml");
 			HelpText = new ControllerAssemblyHelpText();
 			HelpText.Load(docFile);
-		}
-
-		private static void Compile(ControllerCache assemblyCache, string controllerPath, string outputFile)
-		{
-			var cacheFile = outputFile + ".cache";
-			var docFile = Path.Combine(Path.GetDirectoryName(outputFile), Path.GetFileNameWithoutExtension(outputFile) + ".xml");
-
-			var mustCompile = true;
-			var serializer = new XmlSerializer(typeof (ControllerCache));
-
-			// Load the cache file.
-			if (File.Exists(cacheFile))
-			{
-				ControllerCache oldCache;
-				using (var fs = File.OpenRead(cacheFile))
-					oldCache = (ControllerCache) serializer.Deserialize(fs);
-
-				// Check if cache is out of sync and that all files exist.
-				mustCompile = !File.Exists(outputFile)
-							|| !oldCache.Equals(assemblyCache)
-							|| oldCache.SourceFiles.Any(src => !File.Exists(Path.Combine(controllerPath, src.Name)));
-			}
-
-			if (!mustCompile) return;
-
-			// NOTE: Ensure LoaderLock Managed Debugging Assistant in Exception settings is disabled, to allow VS to run dynamic compilation within IDE.
-
-			// Compile the source files, etc.
-			using (var compiler = new ControllerCompiler()
-			{
-				OutputPath = outputFile,
-				DocFile = docFile,
-				Dependencies = assemblyCache.Dependencies
-			})
-			{
-				compiler.CompileCode(assemblyCache.SourceFiles.Select(cs => Path.Combine(controllerPath, cs.Name)).ToArray());
-			}
-
-			// Save the cache file.
-			using (var fs = File.Open(cacheFile, FileMode.Create, FileAccess.Write, FileShare.Read))
-				serializer.Serialize(fs, assemblyCache);
-		}
-
-		/// <summary>
-		/// Gets *.cs files in specified folder and sorts them where Silent Hunter specific versions come first.
-		/// </summary>
-		/// <param name="path">The path where the controllers are located.</param>
-		/// <returns>A list of controller files.</returns>
-		private static IEnumerable<ControllerFileReference> GetCSharpFiles(string path)
-		{
-			var dir = new DirectoryInfo(path);
-			var codeFiles = new List<ControllerFileReference>(
-				dir.GetFiles("*.cs", SearchOption.AllDirectories).Select(f => 
-					new ControllerFileReference
-					{
-						// Save relative name.
-						Name = f.FullName.Substring(path.Length + 1),
-						LastModified = f.LastWriteTimeUtc
-					}
-				)
-			);
-
-			codeFiles.Sort((first, second) => 
-				Path.GetFileName(first.Name) == Path.GetFileName(second.Name)
-					? 0
-					: (first.Name.Contains("_SH3") || first.Name.Contains("_SH4") || first.Name.Contains("_SH5")
-						? 1
-						: (second.Name.Contains("_SH3") || second.Name.Contains("_SH4") || second.Name.Contains("_SH5") ? -1 : 0))
-			);
-
-			return codeFiles;
 		}
 
 		/// <summary>
@@ -164,32 +49,29 @@ namespace SilentHunter.Dat
 		/// <param name="remoteAsm"></param>
 		private static void EnumControllers(Assembly remoteAsm)
 		{
-			const BindingFlags BindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly |					 BindingFlags.Static;
+			const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly |					 BindingFlags.Static;
 
-			Action<IList, Type, string> notSupportedMember = (list, type, memberName) =>
+			void NotSupportedMember(IList list, Type type, string memberName)
 			{
 				if (list.Count > 0)
-					throw new NotSupportedException(
-						string.Format("The type '{0}' defines one or more {1} which is not supported", type.Name, memberName)
-					);
-			};
-
+					throw new NotSupportedException($"The type '{type.Name}' defines one or more {memberName} which is not supported");
+			}
 
 			foreach (var remoteType in remoteAsm.GetTypes())
 			{
 				// No interfaces allowed.
 				if (remoteType.IsInterface)
-					throw new NotSupportedException(string.Format("The type '{0}' is an interface which is not supported.", remoteType.Name));
+					throw new NotSupportedException($"The type '{remoteType.Name}' is an interface which is not supported.");
 
 				// No properties allowed.
-				notSupportedMember(remoteType.GetProperties(BindingFlags), remoteType, "properties");
+				NotSupportedMember(remoteType.GetProperties(bindingFlags), remoteType, "properties");
 				// No methods allowed.
 				//notSupportedMember(remoteType.GetMethods(BindingFlags), remoteType, "methods");
 
 				if (remoteType.IsValueType && !remoteType.IsDefined(typeof (SerializableAttribute), false))
 				{
 					throw new NotSupportedException(
-						string.Format("The type '{0}' is a value type, which requires a SerializableAttribute.", remoteType.Name)
+						$"The type '{remoteType.Name}' is a value type, which requires a SerializableAttribute."
 					);
 				}
 
@@ -199,26 +81,13 @@ namespace SilentHunter.Dat
 				// Check if type is a controller.
 				if (!remoteType.IsController()) continue;
 
-				if (remoteType.FullName.StartsWith("SH3"))
+				string controllerProfileStr = remoteType.FullName?.Substring(0, 3) ?? string.Empty;
+				if (Enum.TryParse(controllerProfileStr, out ControllerProfile profile))
 				{
-					if (Controllers[ControllerProfile.SH3].ContainsKey(remoteType.Name))
-						Controllers[ControllerProfile.SH3][remoteType.Name] = remoteType;
+					if (Controllers[profile].ContainsKey(remoteType.Name))
+						Controllers[profile][remoteType.Name] = remoteType;
 					else
-						Controllers[ControllerProfile.SH3].Add(remoteType.Name, remoteType);
-				}
-				else if (remoteType.FullName.StartsWith("SH4"))
-				{
-					if (Controllers[ControllerProfile.SH4].ContainsKey(remoteType.Name))
-						Controllers[ControllerProfile.SH4][remoteType.Name] = remoteType;
-					else
-						Controllers[ControllerProfile.SH4].Add(remoteType.Name, remoteType);
-				}
-				else if (remoteType.FullName.StartsWith("SH5"))
-				{
-					if (Controllers[ControllerProfile.SH5].ContainsKey(remoteType.Name))
-						Controllers[ControllerProfile.SH5][remoteType.Name] = remoteType;
-					else
-						Controllers[ControllerProfile.SH5].Add(remoteType.Name, remoteType);
+						Controllers[profile].Add(remoteType.Name, remoteType);
 				}
 				else
 				{
@@ -371,8 +240,7 @@ namespace SilentHunter.Dat
 			if (controller == null)
 				throw new ArgumentNullException(nameof(controller));
 
-			var byteBuffer = controller as byte[];
-			if (byteBuffer != null)
+			if (controller is byte[] byteBuffer)
 			{
 				// This is a raw byte controller. Simply write it.
 				stream.Write(byteBuffer, 0, byteBuffer.Length);
@@ -540,9 +408,9 @@ namespace SilentHunter.Dat
 					{
 						if (fieldType.Name.StartsWith("SHUnion"))
 						{
-							var union = fi.GetValue(original);
-							var newUnion = ((ICloneable)union).Clone();
-							foreach (var unionFi in fieldType.GetProperties())
+							object union = fi.GetValue(original);
+							object newUnion = ((ICloneable)union).Clone();
+							foreach (PropertyInfo unionFi in fieldType.GetProperties())
 							{
 								if (unionFi.Name == "Type")
 								{
