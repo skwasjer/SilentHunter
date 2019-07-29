@@ -1,14 +1,14 @@
 using System;
-using System.Diagnostics;
-using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using skwas.IO;
+using System.Reflection;
 using SilentHunter.Formats;
+using skwas.IO;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Dat.Controllers
 {
 	public static class ControllerAssembly
 	{

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Dat.Controllers.Compiler
 {
 	[XmlRoot("cache")]
 	public class CSharpBuildCache

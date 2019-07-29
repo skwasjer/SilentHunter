@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using Microsoft.CSharp;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Dat.Controllers.Compiler
 {
 	public sealed class CSharpCompiler
 		: IDisposable

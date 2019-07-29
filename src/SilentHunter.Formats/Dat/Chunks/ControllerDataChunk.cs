@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using SilentHunter.Dat.Controllers;
 using skwas.IO;
 
 namespace SilentHunter.Dat.Chunks

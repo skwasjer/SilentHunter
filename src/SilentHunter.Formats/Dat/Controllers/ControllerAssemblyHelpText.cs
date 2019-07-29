@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Xml;
 using SilentHunter.Formats;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Dat.Controllers
 {
 	public class ControllerAssemblyHelpText
 	{

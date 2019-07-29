@@ -5,8 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
+using SilentHunter.Dat.Controllers.Compiler;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Dat.Controllers
 {
 	public class ControllerAssemblyCompiler
 	{

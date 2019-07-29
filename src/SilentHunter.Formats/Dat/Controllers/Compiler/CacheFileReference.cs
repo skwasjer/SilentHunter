@@ -3,7 +3,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Dat.Controllers.Compiler
 {
 	public class CacheFileReference
 		: IXmlSerializable
