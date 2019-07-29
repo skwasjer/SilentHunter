@@ -60,7 +60,7 @@ namespace SilentHunter.Dat.Chunks
 
 				writer.Write((ulong) 0); // Always zero.
 
-				ControllerAssembly.WriteController(stream, ControllerData);
+				ControllerAssembly.Writer.Write(stream, ControllerData);
 			}
 		}
 
