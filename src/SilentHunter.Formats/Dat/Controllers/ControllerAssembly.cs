@@ -1,10 +1,8 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using SilentHunter.Formats;
 using skwas.IO;
 
@@ -12,89 +10,12 @@ namespace SilentHunter.Dat.Controllers
 {
 	public static class ControllerAssembly
 	{
-		public static Dictionary<ControllerProfile, Dictionary<string, Type>> Controllers { get; private set; }
+		public static IItemFactory ItemFactory { get; set; }
+		public static IControllerFactory ControllerFactory { get; set; }
 
-		public static ControllerAssemblyHelpText HelpText;
+		public static IDictionary<ControllerProfile, Dictionary<string, Type>> Controllers => ((ControllerFactory)ControllerFactory).Controllers;
 
-		public static List<Assembly> Assemblies { get; private set; }
-
-		public static void LoadFrom(Assembly assembly)
-		{
-			if (Assemblies != null)
-				throw new InvalidOperationException("A controller assembly was previously (attempted) loaded.");
-
-			Controllers = new Dictionary<ControllerProfile, Dictionary<string, Type>>
-			{
-				{ControllerProfile.SH5, new Dictionary<string, Type>()},
-				{ControllerProfile.SH4, new Dictionary<string, Type>()},
-				{ControllerProfile.SH3, new Dictionary<string, Type>()}
-			};
-
-			Assemblies = new List<Assembly>
-			{
-				assembly
-			};
-
-			// Find all types with a ControllerAttribute applied.
-			EnumControllers(assembly);
-
-			string docFile = Path.Combine(Path.GetDirectoryName(assembly.Location), Path.GetFileNameWithoutExtension(assembly.Location) + ".xml");
-			HelpText = new ControllerAssemblyHelpText();
-			HelpText.Load(docFile);
-		}
-
-		/// <summary>
-		/// Loads controllers from the remote assembly. On order to qualify, the type must have ControllerAttribute applied.
-		/// </summary>
-		/// <param name="remoteAsm"></param>
-		private static void EnumControllers(Assembly remoteAsm)
-		{
-			const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly |					 BindingFlags.Static;
-
-			void NotSupportedMember(IList list, Type type, string memberName)
-			{
-				if (list.Count > 0)
-					throw new NotSupportedException($"The type '{type.Name}' defines one or more {memberName} which is not supported");
-			}
-
-			foreach (var remoteType in remoteAsm.GetTypes())
-			{
-				// No interfaces allowed.
-				if (remoteType.IsInterface)
-					throw new NotSupportedException($"The type '{remoteType.Name}' is an interface which is not supported.");
-
-				// No properties allowed.
-				NotSupportedMember(remoteType.GetProperties(bindingFlags), remoteType, "properties");
-				// No methods allowed.
-				//notSupportedMember(remoteType.GetMethods(BindingFlags), remoteType, "methods");
-
-				if (remoteType.IsValueType && !remoteType.IsDefined(typeof (SerializableAttribute), false))
-				{
-					throw new NotSupportedException(
-						$"The type '{remoteType.Name}' is a value type, which requires a SerializableAttribute."
-					);
-				}
-
-				// Check if type is a controller.
-				if (!remoteType.IsController()) continue;
-
-				string controllerProfileStr = remoteType.FullName?.Substring(0, 3) ?? string.Empty;
-				if (Enum.TryParse(controllerProfileStr, out ControllerProfile profile))
-				{
-					if (Controllers[profile].ContainsKey(remoteType.Name))
-						Controllers[profile][remoteType.Name] = remoteType;
-					else
-						Controllers[profile].Add(remoteType.Name, remoteType);
-				}
-				else
-				{
-					// If not explicit, add to all.
-					Controllers[ControllerProfile.SH3].Add(remoteType.Name, remoteType);
-					Controllers[ControllerProfile.SH4].Add(remoteType.Name, remoteType);
-					Controllers[ControllerProfile.SH5].Add(remoteType.Name, remoteType);
-				}
-			}
-		}
+		public static ControllerAssemblyHelpText HelpText { get; set; }
 
 		/// <summary>
 		/// Reads a controller from a stream. If the controller is not implemented, the raw data is returned as byte array.
@@ -264,7 +185,7 @@ namespace SilentHunter.Dat.Controllers
 				}
 
 				// Test if the type is from our controller assembly.
-				if (!Assemblies.Contains(controllerType.Assembly) || !controllerType.IsController())
+				if (!ControllerFactory.CanCreate(controllerType))
 					throw new NotSupportedException("Invalid controller.");
 
 				// We don't know the size yet, so just write 0 for now.
@@ -331,178 +252,6 @@ namespace SilentHunter.Dat.Controllers
 				throw new ApplicationException("No controllers are loaded yet. Call Initialize() first.");
 
 			return Controllers[profile].ContainsKey(controllerName);
-		}
-
-		/// <summary>
-		/// Creates an new instance of the specified <paramref name="type"/>. All (child) fields that are reference types are also instantiated using the default constructor.
-		/// </summary>
-		/// <param name="type">The type to create.</param>
-		/// <returns>Returns the new instance.  All (child) fields that are reference types are also instantiated using the default constructor.</returns>
-		public static object CreateNewItem(Type type)
-		{
-			if (type == typeof(string)) return "";
-
-			// Handle nullable.
-			type = Nullable.GetUnderlyingType(type) ?? type;
-
-			var newObject = Activator.CreateInstance(type);
-			foreach (var fi in type.GetFields(BindingFlags.Public | BindingFlags.Instance))
-			{
-				var fieldType = fi.FieldType;
-				if (fieldType.IsEnum)
-				{
-					fi.SetValue(newObject, Enum.GetValues(fieldType).GetValue(0));
-					continue;
-				}
-				if (fieldType.Name.StartsWith("SHUnion"))
-				{
-
-				}
-				else if (fieldType.IsGenericType)
-				{
-					var typeArgs = fieldType.GetGenericArguments();					
-					if (typeof(IRawList).IsAssignableFrom(fieldType))
-					{
-					}
-					else
-						if (typeArgs.Length != 1)
-							continue;
-				}
-				else if (fieldType == typeof(DateTime))
-				{
-					fi.SetValue(newObject, new DateTime(1939, 1, 1));
-					continue;
-				}				
-				else if (!fieldType.IsClass)
-					continue;
-
-				fi.SetValue(newObject, CreateNewItem(fi.FieldType));
-			}
-			return newObject;
-		}
-
-		/// <summary>
-		/// Creates an new instance of the same type as the object in <paramref name="original"/>. All (child) fields that are reference types are also instantiated using the default constructor if the original object has this property set.
-		/// </summary>
-		/// <remarks>This method is similar to <see cref="M:CreateNewItem(type)"/> but differs in that it checks the original object to see which fields are non-null. This is generally only used in arrays, and is there to ensure each array item is exactly the same.</remarks>
-		/// <param name="original">The object to create a new type of.</param>
-		/// <returns>Returns the new instance. All (child) fields that are reference types are also instantiated using the default constructor if the original object has this property set.</returns>
-		public static object CreateNewItem(object original)
-		{
-			if (original == null) return null;
-			var t = original.GetType();
-
-			if (t == typeof(string)) return "";
-
-			var newObject = t.Assembly.CreateInstance(t.FullName);
-			foreach (var fi in t.GetFields(BindingFlags.Public | BindingFlags.Instance))
-			{
-				var fieldType = fi.FieldType;
-				if (fieldType.IsGenericType)
-				{
-					var typeArgs = fieldType.GetGenericArguments();
-					if (typeArgs.Length != 1)
-					{
-						if (fieldType.Name.StartsWith("SHUnion"))
-						{
-							object union = fi.GetValue(original);
-							object newUnion = ((ICloneable)union).Clone();
-							foreach (PropertyInfo unionFi in fieldType.GetProperties())
-							{
-								if (unionFi.Name == "Type")
-								{
-									var unionType = (Type)unionFi.GetValue(union, null);
-									unionFi.SetValue(newUnion, unionType, null);
-									fi.SetValue(newObject, newUnion);
-									//break;
-								}
-								else if (unionFi.Name == "Value")
-								{
-									// Reset value to default.
-									var objectType = unionFi.GetValue(union, null).GetType();
-									unionFi.SetValue(newUnion, objectType.Assembly.CreateInstance(objectType.FullName), null);
-								}
-							}
-						}
-						continue;
-					}
-				}
-				else if (fieldType == typeof(DateTime))
-				{
-				}
-				else if (!fieldType.IsClass && !fieldType.IsEnum)
-					continue;
-
-				var orgFieldValue = fi.GetValue(original);
-				if (orgFieldValue != null)
-				{
-					if (fieldType == typeof(DateTime))
-						fi.SetValue(newObject, new DateTime(1939, 1, 1));
-					else if (fieldType.IsEnum)
-						fi.SetValue(newObject, Enum.GetValues(fieldType).GetValue(0));
-					else
-						fi.SetValue(newObject, CreateNewItem(orgFieldValue));
-				}
-			}
-			return newObject;
-		}
-
-/*		/// <summary>
-		/// Clones specified value.
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="value"></param>
-		/// <param name="typeOfValue"></param>
-		/// <returns></returns>
-		public static object Clone(object value, Type typeOfValue)
-		{
-			using (var ms = new MemoryStream())
-			{
-				var wr = new BinaryWriter(ms, Encoding.ParseEncoding);
-				WriteValue(wr, "clone", value, null);
-				ms.Position = 0;
-
-				var rd = new BinaryReader(ms, Encoding.ParseEncoding);
-				return ReadMember(rd, typeOfValue, "clone");
-			}
-		}*/
-
-		/// <summary>
-		/// Creates the specified controller name for the requested profile.
-		/// </summary>
-		/// <param name="controllerName"></param>
-		/// <param name="profile">The profile to search for the controller.</param>
-		/// <returns>Returns the newly created controller. All (child) fields that are reference types are also pre-instantiated.</returns>
-		/// <exception cref="ArgumentException">Thrown when the controller name is empty or cannot be found for the <paramref name="profile"/>.</exception>
-		public static object CreateController(string controllerName, ControllerProfile profile)
-		{
-			if (string.IsNullOrEmpty(controllerName))
-				throw new ArgumentNullException(nameof(controllerName));
-
-			if (Controllers[profile].ContainsKey(controllerName))
-				return CreateController(Controllers[profile][controllerName]);
-
-			throw new ArgumentException("Unknown controller type.");
-		}
-
-		/// <summary>
-		/// Creates the controller for specified <paramref name="type"/>.
-		/// </summary>
-		/// <param name="type">The controller type.</param>
-		/// <returns>Returns the newly created controller. All (child) fields that are reference types are also instantiated using the default constructor.</returns>
-		/// <exception cref="ArgumentException">Thrown when the controller name is empty or cannot be found for the <paramref name="profile"/>.</exception>
-		public static object CreateController(Type type)
-		{		
-			if (type == null)
-				throw new ArgumentNullException(nameof(type));
-
-			if (((ControllerProfile[]) Enum.GetValues(typeof (ControllerProfile)))
-				.Where(profile => profile != ControllerProfile.Unknown)
-				.SelectMany(profile => Controllers[profile].Values)
-				.Any(t => t == type))
-				return CreateNewItem(type);
-
-			throw new ArgumentException("Unknown controller type.");
 		}
 	}
 }
