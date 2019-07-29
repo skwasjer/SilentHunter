@@ -10,9 +10,19 @@ namespace SilentHunter.Dat
 {
 	public class ControllerAssemblyCompiler
 	{
+		private static readonly List<string> RequiredDependencies = new List<string>
+		{
+			"System.dll",
+			"System.Windows.Forms.dll",
+			"System.Drawing.dll",
+			"skwas.IO.dll",
+			"SilentHunter.Core.dll"
+		};
+
 		private string _controllerPath;
 		private string _applicationName;
 		private string _assemblyName;
+		private ICollection<string> _dependencySearchPaths = new List<string>();
 
 		public ControllerAssemblyCompiler(string controllerPath)
 			: this(controllerPath, "S3D.Controllers")
@@ -45,6 +55,12 @@ namespace SilentHunter.Dat
 			return this;
 		}
 
+		public ControllerAssemblyCompiler DependencySearchPaths(params string[] paths)
+		{
+			_dependencySearchPaths = paths ?? throw new ArgumentNullException(nameof(paths));
+			return this;
+		}
+
 		public Assembly Compile()
 		{
 			AppDomain tempDomain = CreateTempAppDomain();
@@ -55,9 +71,8 @@ namespace SilentHunter.Dat
 				Directory.CreateDirectory(outputPath);
 			}
 
-			// Copy our two dependencies.
-			CopyDependencyIfModified("skwas.IO.dll", outputPath);
-			CopyDependencyIfModified("SilentHunter.Core.dll", outputPath);
+			// Copy local dependencies.
+			CopyDependencies(tempDomain.BaseDirectory, outputPath);
 
 			string asmShortName = _assemblyName ?? Path.GetFileNameWithoutExtension(_controllerPath);
 			string asmOutputFile = Path.Combine(outputPath, asmShortName + ".dll");
@@ -66,7 +81,7 @@ namespace SilentHunter.Dat
 			// Generate cache file for the specified controller path, which is used to determine if
 			// we have to rebuild the controller assembly. If one of the files has changed since last build
 			// or a file is missing/added, the assembly will be rebuilt.
-			var newCache = new ControllerCache
+			var newCache = new CSharpBuildCache
 			{
 #if DEBUG
 				BuildConfiguration = "debug",
@@ -74,21 +89,15 @@ namespace SilentHunter.Dat
 				BuildConfiguration = "release",
 #endif
 				Version = FileVersionInfo.GetVersionInfo(typeof(ControllerAssemblyCompiler).Assembly.Location).FileVersion,
-				Dependencies = new HashSet<ControllerFileReference>
-				{
-					new ControllerFileReference { Name = "System.dll" },
-					new ControllerFileReference { Name = "System.Windows.Forms.dll" },
-					new ControllerFileReference { Name = "System.Drawing.dll" },
-					new ControllerFileReference {
-						Name = "skwas.IO.dll",
-						LastModified = File.GetLastWriteTimeUtc(Path.Combine(outputPath, "skwas.IO.dll"))
-					},
-					new ControllerFileReference {
-						Name = "SilentHunter.Core.dll",
-						LastModified = File.GetLastWriteTimeUtc(Path.Combine(outputPath, "SilentHunter.Core.dll"))
-					}
-				},
-				SourceFiles = new HashSet<ControllerFileReference>(GetCSharpFiles(_controllerPath))
+				Dependencies = new HashSet<CacheFileReference>(
+					RequiredDependencies
+						.Select(rd => new CacheFileReference
+						{
+							Name = rd,
+							LastModified = File.GetLastWriteTimeUtc(Path.Combine(outputPath, rd))
+						})
+				),
+				SourceFiles = new HashSet<CacheFileReference>(GetCSharpFiles(_controllerPath))
 			};
 
 			Compile(newCache, _controllerPath, asmOutputFile, docFile);
@@ -98,37 +107,63 @@ namespace SilentHunter.Dat
 			return AppDomain.CurrentDomain.Load(asmName);
 		}
 
+		private void CopyDependencies(string baseDirectory, string outputPath)
+		{
+			foreach (string requiredDependency in RequiredDependencies)
+			{
+				// Find the dependency.
+				string dependencyFullPath = _dependencySearchPaths
+					.Union(new[]
+					{
+						baseDirectory
+					})
+					.Select(p =>
+					{
+						string depFilename = Path.Combine(p, requiredDependency);
+						return File.Exists(depFilename) ? depFilename : null;
+					})
+					.FirstOrDefault(p => p != null);
+
+				if (dependencyFullPath != null)
+				{
+					CopyDependencyIfModified(dependencyFullPath, outputPath);
+				}
+			}
+		}
+
 		private AppDomain CreateTempAppDomain()
 		{
 			// Prepare to create a new application domain.
-			AppDomainSetup setup = new AppDomainSetup();
+			var setup = new AppDomainSetup
+			{
+				ApplicationBase = AppDomain.CurrentDomain.BaseDirectory,
 
-			// Set the application name before setting the dynamic base.
-			setup.ApplicationName = _applicationName;
+				// Set the application name before setting the dynamic base.
+				ApplicationName = _applicationName,
 
-			// Set the location of the base directory where assembly resolution 
-			// probes for dynamic assemblies. Note that the hash code of the 
-			// application name is concatenated to the base directory name you 
-			// supply. 
-			setup.DynamicBase = Path.Combine(Path.GetTempPath(), "S3D", "dynamic", _applicationName);
+				// Set the location of the base directory where assembly resolution 
+				// probes for dynamic assemblies. Note that the hash code of the 
+				// application name is concatenated to the base directory name you 
+				// supply. 
+				DynamicBase = Path.Combine(Path.GetTempPath(), "S3D", "dynamic", _applicationName)
+			};
+
 			Console.WriteLine("DynamicBase is set to '{0}'.", setup.DynamicBase);
 
-			AppDomain tempDomain = AppDomain.CreateDomain(Guid.NewGuid().ToString(), null, setup);
-			return tempDomain;
+			return AppDomain.CreateDomain(Guid.NewGuid().ToString(), null, setup);
 		}
-
 
 		/// <summary>
 		/// Gets *.cs files in specified folder and sorts them where Silent Hunter specific versions come first.
 		/// </summary>
 		/// <param name="path">The path where the controllers are located.</param>
 		/// <returns>A list of controller files.</returns>
-		private static IEnumerable<ControllerFileReference> GetCSharpFiles(string path)
+		private static IEnumerable<CacheFileReference> GetCSharpFiles(string path)
 		{
 			return new DirectoryInfo(path)
 				.GetFiles("*.cs", SearchOption.AllDirectories)
 				.Select(f =>
-					new ControllerFileReference
+					new CacheFileReference
 					{
 						// Save relative name.
 						Name = f.FullName.Substring(path.Length + 1),
@@ -137,39 +172,48 @@ namespace SilentHunter.Dat
 				);
 		}
 
-		private static void Compile(ControllerCache assemblyCache, string controllerPath, string outputFile, string docFile)
+		private static void Compile(CSharpBuildCache assemblyCache, string controllerPath, string outputFile, string docFile)
 		{
 			string cacheFile = outputFile + ".cache";
+			string outputPath = Path.GetDirectoryName(outputFile);
 
 			var mustCompile = true;
-			var serializer = new XmlSerializer(typeof(ControllerCache));
+			var serializer = new XmlSerializer(typeof(CSharpBuildCache));
 
 			// Load the cache file.
 			if (File.Exists(cacheFile))
 			{
-				ControllerCache oldCache;
-				using (var fs = File.OpenRead(cacheFile))
+				CSharpBuildCache oldCache;
+				using (FileStream fs = File.OpenRead(cacheFile))
 				{
-					oldCache = (ControllerCache)serializer.Deserialize(fs);
+					oldCache = (CSharpBuildCache)serializer.Deserialize(fs);
 				}
 
 				// Check if cache is out of sync and that all files exist.
 				mustCompile = !File.Exists(outputFile)
-					|| !oldCache.Equals(assemblyCache)
-					|| oldCache.SourceFiles.Any(src => !File.Exists(Path.Combine(controllerPath, src.Name)));
+				              || !oldCache.Equals(assemblyCache)
+				              || oldCache.SourceFiles.Any(src => !File.Exists(Path.Combine(controllerPath, src.Name)));
 			}
 
 			// If no changes in source files, return.
-			if (!mustCompile) return;
+			if (!mustCompile)
+			{
+				return;
+			}
 
 			// NOTE: Ensure LoaderLock Managed Debugging Assistant in Exception settings is disabled, to allow VS to run dynamic compilation within IDE.
 
 			// Compile the source files, etc.
-			using (var compiler = new ControllerCompiler()
+			using (var compiler = new CSharpCompiler
 			{
 				OutputPath = outputFile,
 				DocFile = docFile,
-				Dependencies = assemblyCache.Dependencies
+				ReferencedAssemblies = assemblyCache.Dependencies.Select(d =>
+					{
+						string localFilePath = Path.Combine(outputPath, d.Name);
+						return File.Exists(localFilePath) ? localFilePath : d.Name;
+					})
+					.ToArray()
 			})
 			{
 				compiler.CompileCode(assemblyCache.SourceFiles.Select(cs => Path.Combine(controllerPath, cs.Name)).ToArray());
@@ -189,11 +233,10 @@ namespace SilentHunter.Dat
 				throw new ArgumentNullException(nameof(sourceFile));
 			}
 
-			string srcPath = Path.GetFileName(sourceFile);
-			string destPath = Path.Combine(destDirectory, sourceFile);
-			if (!File.Exists(destPath) || File.GetLastWriteTimeUtc(destPath) != File.GetLastWriteTimeUtc(srcPath))
+			string destPath = Path.Combine(destDirectory, Path.GetFileName(sourceFile));
+			if (!File.Exists(destPath) || File.GetLastWriteTimeUtc(destPath) != File.GetLastWriteTimeUtc(sourceFile))
 			{
-				File.Copy(srcPath, destPath, true);
+				File.Copy(sourceFile, destPath, true);
 			}
 		}
 	}

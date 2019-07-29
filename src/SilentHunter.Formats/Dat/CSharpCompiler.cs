@@ -1,15 +1,15 @@
 using System;
-using System.Diagnostics;
-using System.Reflection;
-using Microsoft.CSharp;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using Microsoft.CSharp;
 
 namespace SilentHunter.Dat
 {
-	public sealed class ControllerCompiler
+	public sealed class CSharpCompiler
 		: IDisposable
 	{
 		private const string RequiredCompilerOptions = "/target:library";
@@ -19,7 +19,7 @@ namespace SilentHunter.Dat
 
 		#region .ctor/cleanup
 
-		public ControllerCompiler()
+		public CSharpCompiler()
 		{
 			_codeProvider = (CSharpCodeProvider)CodeDomProvider.CreateProvider("CSharp");
 			_compilerParams = new CompilerParameters
@@ -31,20 +31,19 @@ namespace SilentHunter.Dat
 #endif
 				TreatWarningsAsErrors = false
 			};
-
-			// Add DirectX reference.
-			//var refAssembly = typeof(Vector3).Assembly.Location;
-			//_compilerParams.ReferencedAssemblies.Add(refAssembly);
 		}
 
-		~ControllerCompiler()
+		~CSharpCompiler()
 		{
 			Dispose(false);
 		}
 
 		private void Dispose(bool disposing)
 		{
-			if (_disposed) return;
+			if (_disposed)
+			{
+				return;
+			}
 
 			if (disposing)
 			{
@@ -68,8 +67,8 @@ namespace SilentHunter.Dat
 		/// </summary>
 		public string OutputPath
 		{
-			get { return _compilerParams.OutputAssembly; }
-			set { _compilerParams.OutputAssembly = value; }
+			get => _compilerParams.OutputAssembly;
+			set => _compilerParams.OutputAssembly = value;
 		}
 
 		/// <summary>
@@ -80,59 +79,80 @@ namespace SilentHunter.Dat
 		/// <summary>
 		/// Gets or sets the assembly dependencies.
 		/// </summary>
-		public ISet<ControllerFileReference> Dependencies { get; set; }
+		public ICollection<string> ReferencedAssemblies { get; set; }
 
 		/// <summary>
-		/// Compiles the specified controller <paramref name="filenames"/> and <paramref name="docFile"/> into an <see cref="Assembly"/>.
+		/// Compiles the specified <paramref name="fileNames" /> and <see name="DocFile" /> into an <see cref="Assembly" />.
 		/// </summary>
-		/// <param name="filenames"></param>
+		/// <param name="fileNames"></param>
 		/// <param name="loadAssembly"></param>
 		/// <returns></returns>
-		public Assembly CompileCode(ICollection<string> filenames, bool loadAssembly = false)
+		public Assembly CompileCode(ICollection<string> fileNames, bool loadAssembly = false)
 		{
 			if (_disposed)
+			{
 				throw new ObjectDisposedException(GetType().Name);
+			}
 
-			if (filenames == null)
-				throw new ArgumentNullException(nameof(filenames));
-			if (filenames.Count == 0)
-				throw new ArgumentOutOfRangeException(nameof(filenames), "Expected at least one filename.");
+			if (fileNames == null)
+			{
+				throw new ArgumentNullException(nameof(fileNames));
+			}
+
+			if (fileNames.Count == 0)
+			{
+				throw new ArgumentOutOfRangeException(nameof(fileNames), "Expected at least one filename.");
+			}
 
 			_compilerParams.ReferencedAssemblies.Clear();
-			if (Dependencies != null)
-				_compilerParams.ReferencedAssemblies.AddRange(Dependencies.Select(dep => dep.Name).ToArray());
+			if (ReferencedAssemblies != null)
+			{
+				_compilerParams.ReferencedAssemblies.AddRange(new HashSet<string>(ReferencedAssemblies).ToArray());
+			}
 
 			_compilerParams.CompilerOptions = RequiredCompilerOptions;
 			if (!string.IsNullOrEmpty(DocFile))
-				_compilerParams.CompilerOptions += string.Format(" /doc:\"{0}\"", DocFile);
+			{
+				_compilerParams.CompilerOptions += $" /doc:\"{DocFile}\"";
+			}
 
-			var results = _codeProvider.CompileAssemblyFromFile(_compilerParams, filenames.ToArray());
+			CompilerResults results = _codeProvider.CompileAssemblyFromFile(_compilerParams, fileNames.ToArray());
 
 			LogResults(results);
 
 			// Display a successful compilation message.
-			Debug.WriteLine("Code built into assembly '{0}' successfully.", new object[] { _compilerParams.OutputAssembly });
+			Debug.WriteLine("Code built into assembly '{0}' successfully.", new object[]
+			{
+				_compilerParams.OutputAssembly
+			});
 			return loadAssembly ? results.CompiledAssembly : null;
-		}		
+		}
 
 		/// <summary>
-		/// Compiles controller code into an <see cref="Assembly"/>.
+		/// Compiles code into an <see cref="Assembly" />.
 		/// </summary>
 		/// <param name="code"></param>
 		/// <returns></returns>
 		public Assembly CompileCode(string code)
 		{
 			if (_disposed)
+			{
 				throw new ObjectDisposedException(GetType().Name);
+			}
 
 			if (code == null)
+			{
 				throw new ArgumentNullException(nameof(code));
+			}
+
 			if (code.Length == 0)
+			{
 				throw new ArgumentOutOfRangeException(nameof(code), "Insufficient data.");
+			}
 
 			_compilerParams.CompilerOptions = RequiredCompilerOptions;
 
-			var results = _codeProvider.CompileAssemblyFromSource(_compilerParams, code);
+			CompilerResults results = _codeProvider.CompileAssemblyFromSource(_compilerParams, code);
 
 			LogResults(results);
 
@@ -150,8 +170,10 @@ namespace SilentHunter.Dat
 				// Display compilation errors.
 				var errorMsg = new StringBuilder();
 				errorMsg.AppendLine("Errors building assembly...");
-				foreach (var error in results.Errors.Cast<CompilerError>().Where(ce => !ce.IsWarning))
+				foreach (CompilerError error in results.Errors.Cast<CompilerError>().Where(ce => !ce.IsWarning))
+				{
 					errorMsg.AppendFormat("  - {0}\r\n", error);
+				}
 
 				Debug.Write(errorMsg.ToString());
 				throw new Exception(errorMsg.ToString());

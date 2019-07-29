@@ -75,9 +75,6 @@ namespace SilentHunter.Dat
 					);
 				}
 
-				// Skip enums.
-				if (remoteType.IsEnum) continue;
-
 				// Check if type is a controller.
 				if (!remoteType.IsController()) continue;
 
