@@ -8,14 +8,19 @@ using SilentHunter.Formats;
 
 namespace SilentHunter.Dat.Controllers
 {
-	public class ControllerFactory : IControllerFactory
+	public class ControllerFactory : IControllerFactory, IItemFactory
 	{
 		private const BindingFlags ResolveBindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly | BindingFlags.Static;
 
 		private readonly IItemFactory _itemFactory;
 		private readonly Assembly _controllerAssembly;
 
-		public ControllerFactory(IItemFactory itemFactory, Assembly controllerAssembly)
+		public ControllerFactory(Assembly controllerAssembly)
+			: this(controllerAssembly, new ItemFactory())
+		{
+		}
+
+		public ControllerFactory(Assembly controllerAssembly, IItemFactory itemFactory)
 		{
 			_itemFactory = itemFactory ?? throw new ArgumentNullException(nameof(itemFactory));
 			_controllerAssembly = controllerAssembly ?? throw new ArgumentNullException(nameof(controllerAssembly));
@@ -84,12 +89,16 @@ namespace SilentHunter.Dat.Controllers
 				
 				if (Controllers.Any(profile => profile.Value.Any(ctrl => ctrl.Value == type)))
 				{
-					return (IRawController)_itemFactory.CreateNewItem(type);
+					return (IRawController)CreateNewItem(type);
 				}
 			}
 
 			throw new ArgumentException("Unknown controller type.");
 		}
+
+		public object CreateNewItem(Type type) => _itemFactory.CreateNewItem(type);
+
+		public object CreateNewItem(object original) => _itemFactory.CreateNewItem(original);
 
 		/// <summary>
 		/// Loads controllers from the remote assembly. On order to qualify, the type must have ControllerAttribute applied.

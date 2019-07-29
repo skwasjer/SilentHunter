@@ -62,7 +62,7 @@ namespace SilentHunter.Dat.Controllers
 			return this;
 		}
 
-		public Assembly Compile()
+		public ControllerAssembly Compile()
 		{
 			AppDomain tempDomain = CreateTempAppDomain();
 			string outputPath = tempDomain.DynamicDirectory;
@@ -105,7 +105,7 @@ namespace SilentHunter.Dat.Controllers
 
 			// Load controller assembly also into local domain. You normally wouldn't want this, because you A) couldn't unload it and B) would create security issues. May have to look at using isolated domain.
 			AssemblyName asmName = System.Reflection.AssemblyName.GetAssemblyName(asmOutputFile);
-			return AppDomain.CurrentDomain.Load(asmName);
+			return new ControllerAssembly(AppDomain.CurrentDomain.Load(asmName));
 		}
 
 		private void CopyDependencies(string baseDirectory, string outputPath)
