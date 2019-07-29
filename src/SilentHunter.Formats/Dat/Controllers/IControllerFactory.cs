@@ -22,5 +22,6 @@ namespace SilentHunter.Dat.Controllers
 		IRawController CreateController(Type type);
 
 		bool CanCreate(Type controllerType);
+		bool GetControllerType(string controllerName, ControllerProfile profile, out Type controllerType);
 	}
 }

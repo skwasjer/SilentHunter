@@ -30,6 +30,17 @@ namespace SilentHunter.Dat.Controllers
 				.Any(t => t == controllerType) && controllerType.IsController();
 		}
 
+		public bool GetControllerType(string controllerName, ControllerProfile profile, out Type controllerType)
+		{
+			if (Controllers.TryGetValue(profile, out Dictionary<string, Type> ctrls) && ctrls.TryGetValue(controllerName, out controllerType))
+			{
+				return true;
+			}
+
+			controllerType = null;
+			return false;
+		}
+
 		/// <summary>
 		/// Creates the specified controller name for the requested profile.
 		/// </summary>
@@ -44,9 +55,9 @@ namespace SilentHunter.Dat.Controllers
 				throw new ArgumentNullException(nameof(controllerName));
 			}
 
-			if (Controllers[profile].ContainsKey(controllerName))
+			if (GetControllerType(controllerName, profile, out Type controllerType))
 			{
-				return CreateController(Controllers[profile][controllerName]);
+				return CreateController(controllerType);
 			}
 
 			throw new ArgumentException("Unknown controller type.");
@@ -65,12 +76,13 @@ namespace SilentHunter.Dat.Controllers
 				throw new ArgumentNullException(nameof(type));
 			}
 
-			if (((ControllerProfile[])Enum.GetValues(typeof(ControllerProfile)))
-				.Where(profile => profile != ControllerProfile.Unknown)
-				.SelectMany(profile => Controllers[profile].Values)
-				.Any(t => t == type))
+			if (typeof(IRawController).IsAssignableFrom(type))
 			{
-				return (IRawController)_itemFactory.CreateNewItem(type);
+				
+				if (Controllers.Any(profile => profile.Value.Any(ctrl => ctrl.Value == type)))
+				{
+					return (IRawController)_itemFactory.CreateNewItem(type);
+				}
 			}
 
 			throw new ArgumentException("Unknown controller type.");
