@@ -17,11 +17,6 @@ namespace SilentHunter.Dat.Controllers
 	{
 		private class Dependency
 		{
-			public Dependency(object instance, bool isLocal = false)
-				: this(instance.GetType(), isLocal)
-			{
-			}
-
 			public Dependency(Type type, bool isLocal = false)
 				: this(type.Assembly.Location, isLocal)
 			{
@@ -46,8 +41,8 @@ namespace SilentHunter.Dat.Controllers
 			new Dependency("System.Drawing.dll"),
 #else
 			new Dependency(Assembly.Load("netstandard, Version=2.0.0.0").Location),
-			new Dependency(typeof(object).GetTypeInfo().Assembly.Location),
-			new Dependency(typeof(Color).GetTypeInfo().Assembly.Location),
+			new Dependency(typeof(object)),
+			new Dependency(typeof(Color)),
 			new Dependency(Assembly.Load("System.Runtime, PublicKeyToken=b03f5f7f11d50a3a").Location),
 			new Dependency(Assembly.Load("System.Runtime.Extensions, PublicKeyToken=b03f5f7f11d50a3a").Location),
 #endif
@@ -55,8 +50,8 @@ namespace SilentHunter.Dat.Controllers
 			new Dependency("SilentHunter.Core.dll", true)
 		};
 
-		private string _controllerPath;
-		private string _applicationName;
+		private readonly string _controllerPath;
+		private readonly string _applicationName;
 		private string _assemblyName;
 		private ICollection<string> _dependencySearchPaths = new List<string>();
 		private Func<string, bool> _ignorePaths;
