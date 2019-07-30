@@ -5,8 +5,9 @@ using SilentHunter.Dat;
 
 namespace SilentHunter.Formats
 {
-	public static class ConvertExtensions
+	public static class TypeExtensions
 	{
+		// ReSharper disable once InconsistentNaming
 		public static bool IsControllerOrSHType(this Type type)
 		{
 			return type.IsController() || type.IsSHType();
@@ -18,7 +19,7 @@ namespace SilentHunter.Formats
 		/// <param name="type">The type to check.</param>
 		public static bool IsController(this Type type)
 		{
-			return typeof(IRawController).IsAssignableFrom(type);// memberInfo.HasAttribute<ControllerAttribute>();
+			return typeof(IRawController).IsAssignableFrom(type); // memberInfo.HasAttribute<ControllerAttribute>();
 		}
 
 		/// <summary>
@@ -30,6 +31,7 @@ namespace SilentHunter.Formats
 			return typeof(IRawController).IsAssignableFrom(type) && !typeof(IController).IsAssignableFrom(type);
 		}
 
+		// ReSharper disable once InconsistentNaming
 		public static bool IsSHType(this Type type)
 		{
 			return type.HasAttribute<SHTypeAttribute>();
@@ -45,13 +47,14 @@ namespace SilentHunter.Formats
 		}
 
 		/// <summary>
-		/// Indicates if one or more instances of attribute <typeparamref name="T"/> is defined on this member.
+		/// Indicates if one or more instances of attribute <typeparamref name="T" /> is defined on this member.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="attributeProvider"></param>
 		/// <param name="inherit"></param>
 		/// <returns></returns>
-		public static bool HasAttribute<T>(this ICustomAttributeProvider attributeProvider, bool inherit = false) where T : Attribute
+		public static bool HasAttribute<T>(this ICustomAttributeProvider attributeProvider, bool inherit = false)
+			where T : Attribute
 		{
 			return attributeProvider.IsDefined(typeof(T), inherit);
 		}
@@ -63,7 +66,8 @@ namespace SilentHunter.Formats
 		/// <param name="attributeProvider">The provider.</param>
 		/// <param name="inherit">When true, look up the hierarchy chain for the inherited custom attribute.</param>
 		/// <returns>Returns the first attribute if found or null otherwise.</returns>
-		public static T GetAttribute<T>(this ICustomAttributeProvider attributeProvider, bool inherit = false) where T : Attribute
+		public static T GetAttribute<T>(this ICustomAttributeProvider attributeProvider, bool inherit = false)
+			where T : Attribute
 		{
 			return attributeProvider.GetCustomAttributes(typeof(T), inherit).Cast<T>().FirstOrDefault();
 		}

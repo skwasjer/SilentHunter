@@ -3,60 +3,73 @@ using System;
 namespace SilentHunter.Dat
 {
 	[Serializable]
-	public class SHUnion<TypeA, TypeB>
-		: ICloneable
-		where TypeA : struct
-		where TypeB: struct
+	// ReSharper disable once InconsistentNaming
+	public class SHUnion<TTypeA, TTypeB> : ICloneable
+		where TTypeA : struct
+		where TTypeB : struct
 	{
 		private object _value;
 		private Type _currentType;
 
 		public SHUnion()
 		{
-			_currentType = typeof(TypeA);
+			_currentType = typeof(TTypeA);
 		}
 
 		public Type Type
 		{
-			get 
+			get => _currentType;
+			set
 			{
-//				if (_currentType == null) _currentType = typeof(TypeA);
-				return _currentType; 
-			}
-			set 
-			{
-				if (value == _currentType) return;
-				if ((value == typeof(TypeA)) || (value == typeof(TypeB)))
+				if (value == _currentType)
+				{
+					return;
+				}
+
+				if (value == typeof(TTypeA) || value == typeof(TTypeB))
 				{
 					_currentType = value;
 					if (_value != null)
+					{
 						_value = Convert.ChangeType(_value, _currentType);
+					}
 				}
 				else
-					throw new ArgumentException(string.Format("The specified type is not valid. This union only supports types {0} and {1}.", typeof(TypeA).Name, typeof(TypeB).Name), "value");
+				{
+					throw new ArgumentException($"The specified type is not valid. This union only supports types {typeof(TTypeA).Name} and {typeof(TTypeB).Name}.", nameof(value));
+				}
 			}
 		}
 
 		public object Value
 		{
-			get 
+			get
 			{
 				if (_value == null)
 				{
-					if (_currentType == typeof(TypeA))
-						return default(TypeA);
-					else
-						return default(TypeB);
+					if (_currentType == typeof(TTypeA))
+					{
+						return default(TTypeA);
+					}
+
+					return default(TTypeB);
 				}
-				return _value; 
+
+				return _value;
 			}
-			set 
+			set
 			{
 				if (value == null)
-					throw new ArgumentNullException("value");
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
 				if (value.GetType() != Type)
-					throw new ArgumentException("The specified value is of invalid type.", "value");
-				_value = value; 
+				{
+					throw new ArgumentException("The specified value is of invalid type.", nameof(value));
+				}
+
+				_value = value;
 			}
 		}
 
@@ -67,11 +80,12 @@ namespace SilentHunter.Dat
 
 		public object Clone()
 		{
-			var clone = new SHUnion<TypeA, TypeB>();
-			clone._currentType = _currentType;
-			clone._value = _value;
+			var clone = new SHUnion<TTypeA, TTypeB>
+			{
+				_currentType = _currentType,
+				_value = _value
+			};
 			return clone;
 		}
 	}
-
 }

@@ -1,22 +1,22 @@
-﻿using System.IO;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.IO;
 using skwas.IO;
 
 namespace SilentHunter.Dat
 {
-	public abstract class BuiltInMeshAnimation
-		: IRawController
+	public abstract class BuiltInMeshAnimation : IRawController
 	{
-		// NOTE: Only Frames is currently a field. S3D only uses fields currently in the property editor to distinguish if it's an editable value. The CompressedVertices property is hidden in S3D because it's a property and not a field.
+		// NOTE: Only Frames is currently a field. S3D only uses fields currently in the property editor to distinguish if it's an editable value. The CompressedFrames property is hidden in S3D because it's a property and not a field.
 
 		/// <summary>
 		/// A list of key frames. Each frame describes which set of compressed vertices to use at which time. The 3D engine will have to perform vertex interpolation to smooth out the animation in between two frames.
 		/// </summary>
 		public List<AnimationKeyFrame> Frames;
+
 		/// <summary>
 		/// A list of compressed vertices. Each set of compressed vertices replaces the vertices of the source mesh for a given key frame and can used/referenced once or multiple times.
 		/// </summary>
-		public List<CompressedVertices> CompressedVertices { get; } = new List<CompressedVertices>();
+		public List<CompressedVertices> CompressedFrames { get; } = new List<CompressedVertices>();
 
 		/// <summary>
 		/// Extra unknown data (only found on chunk related to head morphing I believe).
@@ -24,7 +24,7 @@ namespace SilentHunter.Dat
 		private byte[] UnsupportedData { get; set; }
 
 		/// <summary>
-		/// When implemented, deserializes the controller from specified <paramref name="stream"/>.
+		/// When implemented, deserializes the controller from specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
 		void IRawSerializable.Deserialize(Stream stream)
@@ -35,20 +35,22 @@ namespace SilentHunter.Dat
 				int frameCount;
 				Frames = new List<AnimationKeyFrame>(frameCount = reader.ReadUInt16());
 				for (var i = 0; i < frameCount; i++)
+				{
 					Frames.Add(new AnimationKeyFrame
 					{
-						Time = reader.ReadSingle(),						
+						Time = reader.ReadSingle(),
 						FrameNumber = reader.ReadUInt16()
 					});
+				}
 
-				// Get the number of transforms and vertices.
-				var meshTransformCount = reader.ReadInt32();
-				var vertexCount = reader.ReadInt32();
+				// Get the number of compressed frames and vertices.
+				int compressedFrameCount = reader.ReadInt32();
+				int vertexCount = reader.ReadInt32();
 
-				CompressedVertices.Clear();
-				for (var i = 0; i < meshTransformCount; i++)
+				CompressedFrames.Clear();
+				for (var i = 0; i < compressedFrameCount; i++)
 				{
-					var meshTransform = new CompressedVertices
+					var cv = new CompressedVertices
 					{
 						Scale = reader.ReadSingle(),
 						Translation = reader.ReadSingle(),
@@ -56,20 +58,22 @@ namespace SilentHunter.Dat
 					};
 
 					for (var j = 0; j < vertexCount; j++)
-						meshTransform.Vertices.Add(reader.ReadInt16());
+					{
+						cv.Vertices.Add(reader.ReadInt16());
+					}
 
-					CompressedVertices.Add(meshTransform);
+					CompressedFrames.Add(cv);
 				}
 
 				if (stream.Position != stream.Length)
-				{					
-					UnsupportedData = reader.ReadBytes((int) (stream.Length - stream.Position));
+				{
+					UnsupportedData = reader.ReadBytes((int)(stream.Length - stream.Position));
 				}
 			}
 		}
 
 		/// <summary>
-		/// When implemented, serializes the controller to specified <paramref name="stream"/>.
+		/// When implemented, serializes the controller to specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
 		void IRawSerializable.Serialize(Stream stream)
@@ -77,30 +81,33 @@ namespace SilentHunter.Dat
 			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
 			{
 				// Write frames.
-				writer.Write((ushort) Frames.Count);
-				foreach (var frame in Frames)
+				writer.Write((ushort)Frames.Count);
+				foreach (AnimationKeyFrame frame in Frames)
 				{
 					writer.Write(frame.Time);
 					writer.Write(frame.FrameNumber);
 				}
 
 				// Write mesh transforms.
-				writer.Write(CompressedVertices.Count);
-				writer.Write(CompressedVertices.Count > 0 ? CompressedVertices[0].Vertices.Count : 0);
-				if (CompressedVertices.Count > 0)
-				{
-					foreach (var meshTransform in CompressedVertices)
-					{
-						writer.Write(meshTransform.Scale);
-						writer.Write(meshTransform.Translation);
+				writer.Write(CompressedFrames.Count);
 
-						foreach (var i in meshTransform.Vertices)
-							writer.Write(i);
+				// Each frame should be same size, so if we have a frame, use vertex count of first.
+				writer.Write(CompressedFrames.Count > 0 ? CompressedFrames[0].Vertices.Count : 0);
+				foreach (CompressedVertices cv in CompressedFrames)
+				{
+					writer.Write(cv.Scale);
+					writer.Write(cv.Translation);
+
+					foreach (short i in cv.Vertices)
+					{
+						writer.Write(i);
 					}
 				}
 
 				if (UnsupportedData != null && UnsupportedData.Length > 0)
+				{
 					writer.Write(UnsupportedData, 0, UnsupportedData.Length);
+				}
 			}
 		}
 	}

@@ -7,6 +7,7 @@ namespace SilentHunter.Dat
 		/// Minimum value.
 		/// </summary>
 		public float Min;
+
 		/// <summary>
 		/// Maximum value.
 		/// </summary>

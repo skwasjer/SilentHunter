@@ -6,6 +6,7 @@ namespace SilentHunter.Dat
 		/// The time of the key frame.
 		/// </summary>
 		public float Time;
+
 		/// <summary>
 		/// The index of the set of compressed vertices to use.
 		/// </summary>
