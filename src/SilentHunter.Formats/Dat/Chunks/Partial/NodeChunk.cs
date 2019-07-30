@@ -14,11 +14,10 @@ namespace SilentHunter.Dat.Chunks.Partial
 		{
 			Visible = true;
 			UnknownData.Add(new UnknownChunkData(0, 0, byte.MinValue, "The byte just before the 'Visibility' byte. No idea what it means. Values found: 1, 2, 128, 64, possibly others."));
-			_transform = Matrix.Identity;
+			Transform = Matrix.Identity;
 		}
 
 		private Vector3 _translation, _rotation;
-		private Matrix _transform;
 
 		// Sub type 2: Light
 		private Light _light;
@@ -31,7 +30,10 @@ namespace SilentHunter.Dat.Chunks.Partial
 			get
 			{
 				if (SubType != 2)
+				{
 					throw new NotSupportedException("This object is not valid for sub type (2).");
+				}
+
 				return _light ?? (_light = new Light());
 			}
 		}
@@ -41,11 +43,14 @@ namespace SilentHunter.Dat.Chunks.Partial
 			get
 			{
 				if (SubType != 3)
+				{
 					throw new NotSupportedException("This object is not valid for sub type (3).");
+				}
+
 				return _interior ?? (_interior = new Interior());
 			}
 		}
-		
+
 		public ulong ModelId { get; set; }
 
 		public List<ulong> Materials { get; } = new List<ulong>();
@@ -60,11 +65,14 @@ namespace SilentHunter.Dat.Chunks.Partial
 		/// </summary>
 		public Vector3 Translation
 		{
-			get { return _translation; }
+			get => _translation;
 			set
 			{
 				if (_translation.Equals(value))
+				{
 					return;
+				}
+
 				_translation = value;
 				UpdateTransform();
 			}
@@ -75,11 +83,14 @@ namespace SilentHunter.Dat.Chunks.Partial
 		/// </summary>
 		public Vector3 Rotation
 		{
-			get { return _rotation; }
+			get => _rotation;
 			set
 			{
 				if (_rotation.Equals(value))
+				{
 					return;
+				}
+
 				_rotation = value;
 				UpdateTransform();
 			}
@@ -87,15 +98,33 @@ namespace SilentHunter.Dat.Chunks.Partial
 
 		private void UpdateTransform()
 		{
-			var m = Matrix.RotationX(-_rotation.X);
-			m *= Matrix.RotationY(-_rotation.Y);
-			m *= Matrix.RotationZ(-_rotation.Z);
-			m *= Matrix.Translation(_translation);
+			SharpDX.Matrix m = SharpDX.Matrix.RotationX(-_rotation.X);
+			m *= SharpDX.Matrix.RotationY(-_rotation.Y);
+			m *= SharpDX.Matrix.RotationZ(-_rotation.Z);
+			m *= SharpDX.Matrix.Translation(new SharpDX.Vector3(_translation.X, _translation.Y, _translation.Z));
 
-			_transform = m;
+			Transform = new Matrix
+			{
+				M11 = m.M11,
+				M12 = m.M12,
+				M13 = m.M13,
+				M14 = m.M14,
+				M21 = m.M21,
+				M22 = m.M22,
+				M23 = m.M23,
+				M24 = m.M24,
+				M31 = m.M31,
+				M32 = m.M32,
+				M33 = m.M33,
+				M34 = m.M34,
+				M41 = m.M41,
+				M42 = m.M42,
+				M43 = m.M43,
+				M44 = m.M44
+			};
 		}
 
-		public Matrix Transform => _transform;
+		public Matrix Transform { get; private set; }
 
 		/// <summary>
 		/// Gets whether the chunk supports an id field.
@@ -154,7 +183,7 @@ namespace SilentHunter.Dat.Chunks.Partial
 				Materials.Clear();
 
 				// Read material id's that apply to this node.
-				var count = reader.ReadInt32();
+				int count = reader.ReadInt32();
 				if (count > 0) // If 0, then we are at end of chunk...
 				{
 					for (var i = 0; i < count; i++)
@@ -166,15 +195,17 @@ namespace SilentHunter.Dat.Chunks.Partial
 				else
 				{
 					// No materials linked. We should now have a uint64 of 0.
-					var expectZero = reader.ReadUInt64();
+					ulong expectZero = reader.ReadUInt64();
 					// However, some mods are broken in that they do list a material id here (even though count was 0).
 					// To fix this problem we simply store the material, upon next save it will be serialized correctly.
 					if (expectZero != 0)
+					{
 						Materials.Add(expectZero);
+					}
 				}
 
-				var basePos = regionStream?.BaseStream.Position ?? stream.Position;
-				var curPos = stream.Position;
+				long basePos = regionStream?.BaseStream.Position ?? stream.Position;
+				long curPos = stream.Position;
 
 				switch (SubType)
 				{
@@ -185,7 +216,7 @@ namespace SilentHunter.Dat.Chunks.Partial
 						// Read a 0.
 						Light.Reserved0 = reader.ReadUInt32();
 
-						_light.Type = (LightType) reader.ReadInt32();
+						_light.Type = (LightType)reader.ReadInt32();
 
 						// Ignore alpha component.
 						_light.Color = Color.FromArgb(byte.MaxValue, reader.ReadStruct<Color>());
@@ -208,7 +239,7 @@ namespace SilentHunter.Dat.Chunks.Partial
 
 					case 100:
 						// Some chunks with this sub type seem to have a size specifier, followed by an int-array of data. The 'size' seems to match the number of vertices of a linked model, and is related to animation.
-						var size = reader.ReadInt32();
+						int size = reader.ReadInt32();
 						if (size > 0)
 						{
 							UnknownData.Add(new UnknownChunkData(basePos, curPos, size,
@@ -216,7 +247,9 @@ namespace SilentHunter.Dat.Chunks.Partial
 
 							var remainingIntData = new int[size];
 							for (var i = 0; i < size; i++)
+							{
 								remainingIntData[i] = reader.ReadInt32();
+							}
 
 							UnknownData.Add(new UnknownChunkData(basePos + 4, curPos + 4, remainingIntData,
 								"Array. Some chunks with subtype 100 seem to have this array of ints.  The number of items seems to match the number of vertices of a linked model, and looks to be related to animation."));
@@ -224,7 +257,9 @@ namespace SilentHunter.Dat.Chunks.Partial
 
 						if (stream.Length > stream.Position)
 							// GWX error? Still data remaining in some files. As far as I know, this is not allowed/used by the game. Ignore the data.
+						{
 							stream.Position = stream.Length;
+						}
 
 						break;
 				}
@@ -252,11 +287,15 @@ namespace SilentHunter.Dat.Chunks.Partial
 				writer.Write(Materials.Count);
 				if (Materials.Count > 0)
 				{
-					foreach (var matId in Materials)
+					foreach (ulong matId in Materials)
+					{
 						writer.Write(matId);
+					}
 				}
 				else
+				{
 					writer.Write(ulong.MinValue);
+				}
 
 				switch (SubType)
 				{
@@ -264,12 +303,15 @@ namespace SilentHunter.Dat.Chunks.Partial
 					case 2:
 						writer.Write(Light.Reserved0);
 
-						writer.Write((int) Light.Type);
+						writer.Write((int)Light.Type);
 						// Ignore alpha component.
 						writer.WriteStruct(Color.FromArgb(byte.MinValue, Light.Color));
 						writer.Write(Light.Attenuation);
 						if (Light.Type == LightType.Omni)
+						{
 							writer.WriteStruct(Light.Radius);
+						}
+
 						break;
 
 					// Interior first node... ?
@@ -280,13 +322,18 @@ namespace SilentHunter.Dat.Chunks.Partial
 					case 100:
 						if (UnknownData.Count > 1)
 						{
-							var remainingIntData = (int[]) UnknownData[2].Data;
+							var remainingIntData = (int[])UnknownData[2].Data;
 							writer.Write(remainingIntData.Length);
-							foreach (var t in remainingIntData)
+							foreach (int t in remainingIntData)
+							{
 								writer.Write(t);
+							}
 						}
 						else
+						{
 							writer.Write(0);
+						}
+
 						break;
 				}
 			}

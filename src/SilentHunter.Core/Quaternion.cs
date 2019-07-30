@@ -17,24 +17,23 @@ namespace SilentHunter
 		public float Z;
 		public float W;
 
-		public static Quaternion Identity =>
-			new Quaternion
-			{
-				X = 0.0f,
-				Y = 0.0f,
-				Z = 0.0f,
-				W = 1f
-			};
+		public static readonly Quaternion Identity = new Quaternion
+		{
+			X = 0.0f,
+			Y = 0.0f,
+			Z = 0.0f,
+			W = 1f
+		};
 
 		/// <summary>
 		/// Returns the fully qualified type name of this instance.
 		/// </summary>
 		/// <returns>
-		/// A <see cref="T:System.String"/> containing a fully qualified type name.
+		/// A <see cref="T:System.String" /> containing a fully qualified type name.
 		/// </returns>
 		public override string ToString()
 		{
-			var sep = CultureInfo.CurrentCulture.TextInfo.ListSeparator;
+			string sep = CultureInfo.CurrentCulture.TextInfo.ListSeparator;
 			return $"X: {X}{sep} Y: {Y}{sep} Z: {Z}{sep} W: {W}";
 		}
 
@@ -49,12 +48,16 @@ namespace SilentHunter
 		/// Indicates whether this instance and a specified object are equal.
 		/// </summary>
 		/// <returns>
-		/// true if <paramref name="obj"/> and this instance are the same type and represent the same value; otherwise, false. 
+		/// true if <paramref name="obj" /> and this instance are the same type and represent the same value; otherwise, false.
 		/// </returns>
 		/// <param name="obj">The object to compare with the current instance. </param>
 		public override bool Equals(object obj)
 		{
-			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(null, obj))
+			{
+				return false;
+			}
+
 			return obj is Quaternion && Equals((Quaternion)obj);
 		}
 
@@ -68,7 +71,7 @@ namespace SilentHunter
 		{
 			unchecked
 			{
-				var hashCode = X.GetHashCode();
+				int hashCode = X.GetHashCode();
 				hashCode = (hashCode * 397) ^ Y.GetHashCode();
 				hashCode = (hashCode * 397) ^ Z.GetHashCode();
 				hashCode = (hashCode * 397) ^ W.GetHashCode();
@@ -87,5 +90,27 @@ namespace SilentHunter
 		}
 
 		#endregion
+
+		public static implicit operator SharpDX.Quaternion(Quaternion quad)
+		{
+			return new SharpDX.Quaternion
+			{
+				X = quad.X,
+				Y = quad.Y,
+				Z = quad.Z,
+				W = quad.W
+			};
+		}
+
+		public static implicit operator Quaternion(SharpDX.Quaternion quad)
+		{
+			return new Quaternion
+			{
+				X = quad.X,
+				Y = quad.Y,
+				Z = quad.Z,
+				W = quad.W
+			};
+		}
 	}
 }

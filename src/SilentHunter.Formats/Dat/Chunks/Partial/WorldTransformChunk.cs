@@ -6,17 +6,13 @@ namespace SilentHunter.Dat.Chunks.Partial
 #if DEBUG
 	public sealed class WorldTransformChunk : DatChunk
 	{
-		private Matrix _matrix;
 		private Vector3 _worldTranslation, _worldRotation;
 
-		//public Matrix Matrix
-		//{
-		//	get { return _matrix; }
-		//}
+		public Matrix Matrix { get; private set; }
 
 		public Vector3 Rotation
 		{
-			get { return _worldRotation; }
+			get => _worldRotation;
 			set
 			{
 				_worldRotation = value;
@@ -26,7 +22,7 @@ namespace SilentHunter.Dat.Chunks.Partial
 
 		public Vector3 Translation
 		{
-			get { return _worldTranslation; }
+			get => _worldTranslation;
 			set
 			{
 				_worldTranslation = value;
@@ -39,19 +35,32 @@ namespace SilentHunter.Dat.Chunks.Partial
 		{
 		}
 
-
 		private void UpdateMatrix()
 		{
-			var m = Matrix.Identity;
+			SharpDX.Matrix m = SharpDX.Matrix.RotationX(-_worldRotation.X);
+			m *= SharpDX.Matrix.RotationY(-_worldRotation.Y);
+			m *= SharpDX.Matrix.RotationZ(-_worldRotation.Z);
+			m *= SharpDX.Matrix.Translation(new SharpDX.Vector3(_worldTranslation.X, _worldTranslation.Y, _worldTranslation.Z));
 
-			m *= Matrix.RotationX(-_worldRotation.X);
-			m *= Matrix.RotationY(-_worldRotation.Y);
-			m *= Matrix.RotationZ(-_worldRotation.Z);
-			m *= Matrix.Translation(_worldTranslation);
-
-			m.Invert();
-
-			_matrix = m;
+			Matrix = new Matrix
+			{
+				M11 = m.M11,
+				M12 = m.M12,
+				M13 = m.M13,
+				M14 = m.M14,
+				M21 = m.M21,
+				M22 = m.M22,
+				M23 = m.M23,
+				M24 = m.M24,
+				M31 = m.M31,
+				M32 = m.M32,
+				M33 = m.M33,
+				M34 = m.M34,
+				M41 = m.M41,
+				M42 = m.M42,
+				M43 = m.M43,
+				M44 = m.M44
+			};
 		}
 
 		/// <summary>
@@ -64,8 +73,7 @@ namespace SilentHunter.Dat.Chunks.Partial
 			{
 				_worldTranslation = reader.ReadStruct<Vector3>();
 				_worldRotation = reader.ReadStruct<Vector3>();
-				//UpdateMatrix();
-//			base.OnDeserialize(stream);
+				UpdateMatrix();
 			}
 		}
 
@@ -79,7 +87,6 @@ namespace SilentHunter.Dat.Chunks.Partial
 			{
 				writer.WriteStruct(_worldTranslation);
 				writer.WriteStruct(_worldRotation);
-//			base.OnSerialize(stream);
 			}
 		}
 	}

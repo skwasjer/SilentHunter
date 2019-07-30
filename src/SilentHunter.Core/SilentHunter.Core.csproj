@@ -15,13 +15,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="SharpDX.Mathematics" Version="4.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
-	<Reference Include="skwas.IO">
+    <Reference Include="skwas.IO">
       <HintPath>..\..\lib\skwas.Drawing\bin\Release\skwas.IO.dll</HintPath>
     </Reference>
   </ItemGroup>

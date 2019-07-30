@@ -22,14 +22,14 @@ namespace SilentHunter
 		/// Returns the fully qualified type name of this instance.
 		/// </summary>
 		/// <returns>
-		/// A <see cref="T:System.String"/> containing a fully qualified type name.
+		/// A <see cref="T:System.String" /> containing a fully qualified type name.
 		/// </returns>
 		public override string ToString()
 		{
-			var sep = CultureInfo.CurrentCulture.TextInfo.ListSeparator;
+			string sep = CultureInfo.CurrentCulture.TextInfo.ListSeparator;
 			return $"X: {X}{sep} Y: {Y}{sep} Z: {Z}";
 		}
-		
+
 		#region Equality members
 
 		public bool Equals(Vector3 other)
@@ -41,12 +41,16 @@ namespace SilentHunter
 		/// Indicates whether this instance and a specified object are equal.
 		/// </summary>
 		/// <returns>
-		/// true if <paramref name="obj"/> and this instance are the same type and represent the same value; otherwise, false. 
+		/// true if <paramref name="obj" /> and this instance are the same type and represent the same value; otherwise, false.
 		/// </returns>
 		/// <param name="obj">The object to compare with the current instance. </param>
 		public override bool Equals(object obj)
 		{
-			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(null, obj))
+			{
+				return false;
+			}
+
 			return obj is Vector3 && Equals((Vector3)obj);
 		}
 
@@ -60,7 +64,7 @@ namespace SilentHunter
 		{
 			unchecked
 			{
-				var hashCode = X.GetHashCode();
+				int hashCode = X.GetHashCode();
 				hashCode = (hashCode * 397) ^ Y.GetHashCode();
 				hashCode = (hashCode * 397) ^ Z.GetHashCode();
 				return hashCode;
@@ -78,5 +82,25 @@ namespace SilentHunter
 		}
 
 		#endregion
+
+		public static implicit operator SharpDX.Vector3(Vector3 vector)
+		{
+			return new SharpDX.Vector3
+			{
+				X = vector.X,
+				Y = vector.Y,
+				Z = vector.Z
+			};
+		}
+
+		public static implicit operator Vector3(SharpDX.Vector3 vector)
+		{
+			return new Vector3
+			{
+				X = vector.X,
+				Y = vector.Y,
+				Z = vector.Z
+			};
+		}
 	}
 }

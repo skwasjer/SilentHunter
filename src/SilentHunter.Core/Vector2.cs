@@ -21,7 +21,7 @@ namespace SilentHunter
 		/// Returns the fully qualified type name of this instance.
 		/// </summary>
 		/// <returns>
-		/// A <see cref="T:System.String"/> containing a fully qualified type name.
+		/// A <see cref="T:System.String" /> containing a fully qualified type name.
 		/// </returns>
 		public override string ToString()
 		{
@@ -39,12 +39,16 @@ namespace SilentHunter
 		/// Indicates whether this instance and a specified object are equal.
 		/// </summary>
 		/// <returns>
-		/// true if <paramref name="obj"/> and this instance are the same type and represent the same value; otherwise, false. 
+		/// true if <paramref name="obj" /> and this instance are the same type and represent the same value; otherwise, false.
 		/// </returns>
 		/// <param name="obj">The object to compare with the current instance. </param>
 		public override bool Equals(object obj)
 		{
-			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(null, obj))
+			{
+				return false;
+			}
+
 			return obj is Vector2 && Equals((Vector2)obj);
 		}
 
@@ -58,7 +62,7 @@ namespace SilentHunter
 		{
 			unchecked
 			{
-				var hashCode = X.GetHashCode();
+				int hashCode = X.GetHashCode();
 				hashCode = (hashCode * 397) ^ Y.GetHashCode();
 				return hashCode;
 			}
@@ -75,5 +79,23 @@ namespace SilentHunter
 		}
 
 		#endregion
+
+		public static implicit operator SharpDX.Vector2(Vector2 vector)
+		{
+			return new SharpDX.Vector2
+			{
+				X = vector.X,
+				Y = vector.Y
+			};
+		}
+
+		public static implicit operator Vector2(SharpDX.Vector2 vector)
+		{
+			return new Vector2
+			{
+				X = vector.X,
+				Y = vector.Y
+			};
+		}
 	}
 }
