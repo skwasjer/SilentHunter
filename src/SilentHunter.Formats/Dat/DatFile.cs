@@ -15,6 +15,11 @@ namespace SilentHunter.Dat
 		private Header _header;
 		private S3DSettingsChunk _settingsChunk;
 
+		public DatFile()
+			: this(true)
+		{
+		}
+
 		public DatFile(bool saveSignature = true)
 		{
 			SaveSignature = saveSignature;
