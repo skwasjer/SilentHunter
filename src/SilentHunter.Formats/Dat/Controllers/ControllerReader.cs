@@ -9,10 +9,12 @@ namespace SilentHunter.Dat.Controllers
 {
 	public class ControllerReader : IControllerReader
 	{
+		private readonly ControllerAssembly _controllerAssembly;
 		private readonly IControllerFactory _controllerFactory;
 
-		public ControllerReader(IControllerFactory controllerFactory)
+		public ControllerReader(ControllerAssembly controllerAssembly, IControllerFactory controllerFactory)
 		{
+			_controllerAssembly = controllerAssembly ?? throw new ArgumentNullException(nameof(controllerAssembly));
 			_controllerFactory = controllerFactory ?? throw new ArgumentNullException(nameof(controllerFactory));
 		}
 
@@ -55,9 +57,9 @@ namespace SilentHunter.Dat.Controllers
 				// Only continue reading if we have a controller name.
 				if (!string.IsNullOrEmpty(controllerName))
 				{
-					profile = GetFirstMatchingControllerProfile(controllerName);
+					profile = _controllerAssembly.GetControllerProfilesByName(controllerName).FirstOrDefault();
 
-					if (profile != ControllerProfile.Unknown && _controllerFactory.GetControllerType(controllerName, profile, out Type controllerType))
+					if (profile != ControllerProfile.Unknown && _controllerAssembly.TryGetControllerType(controllerName, profile, out Type controllerType))
 					{
 						// Check if the controller is indeed a raw controller. If it isn't, the size descriptor may have contained an invalid size for controller data. We just attempt normal deserialization then.
 						if (controllerType.IsRawController())
@@ -97,7 +99,7 @@ namespace SilentHunter.Dat.Controllers
 					controllerName = readControllerName;
 				}
 
-				profile = GetFirstMatchingControllerProfile(controllerName);
+				profile = _controllerAssembly.GetControllerProfilesByName(controllerName).FirstOrDefault();
 			}
 
 			// If we have found a profile to use, try to read the controller.
@@ -150,36 +152,6 @@ namespace SilentHunter.Dat.Controllers
 			{
 				reader.BaseStream.Position = currentPos;
 			}
-		}
-
-		/// <summary>
-		/// Get the controller type for the first profile that implements the controller.
-		/// </summary>
-		/// <param name="controllerName">The controller name.</param>
-		/// <returns>The first found profile.</returns>
-		private Type GetFirstMatchingController(string controllerName)
-		{
-			ControllerProfile profile = GetFirstMatchingControllerProfile(controllerName);
-			if (profile == ControllerProfile.Unknown)
-			{
-				return null;
-			}
-
-			_controllerFactory.GetControllerType(controllerName, profile, out Type controllerType);
-			return controllerType;
-		}
-
-		/// <summary>
-		/// Get the first profile that implements the controller.
-		/// </summary>
-		/// <param name="controllerName">The controller name.</param>
-		/// <returns>The first found profile.</returns>
-		private ControllerProfile GetFirstMatchingControllerProfile(string controllerName)
-		{
-			return Enum
-				.GetValues(typeof(ControllerProfile))
-				.Cast<ControllerProfile>()
-				.FirstOrDefault(cp => cp != ControllerProfile.Unknown && _controllerFactory.GetControllerType(controllerName, cp, out _));
 		}
 	}
 }

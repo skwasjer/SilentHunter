@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace SilentHunter.Dat.Controllers
 {
@@ -22,6 +23,5 @@ namespace SilentHunter.Dat.Controllers
 		IRawController CreateController(Type type);
 
 		bool CanCreate(Type controllerType);
-		bool GetControllerType(string controllerName, ControllerProfile profile, out Type controllerType);
 	}
 }
