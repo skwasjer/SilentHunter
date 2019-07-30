@@ -24,6 +24,7 @@ namespace SilentHunter.Dat.Controllers
 		private string _applicationName;
 		private string _assemblyName;
 		private ICollection<string> _dependencySearchPaths = new List<string>();
+		private Func<string, bool> _ignorePaths;
 
 		public ControllerAssemblyCompiler(string controllerPath)
 			: this(controllerPath, "S3D.Controllers")
@@ -59,6 +60,12 @@ namespace SilentHunter.Dat.Controllers
 		public ControllerAssemblyCompiler DependencySearchPaths(params string[] paths)
 		{
 			_dependencySearchPaths = paths ?? throw new ArgumentNullException(nameof(paths));
+			return this;
+		}
+
+		public ControllerAssemblyCompiler IgnorePaths(Func<string, bool> ignorePaths)
+		{
+			_ignorePaths = ignorePaths ?? throw new ArgumentNullException(nameof(ignorePaths));
 			return this;
 		}
 
@@ -170,11 +177,12 @@ namespace SilentHunter.Dat.Controllers
 		/// </summary>
 		/// <param name="path">The path where the controllers are located.</param>
 		/// <returns>A list of controller files.</returns>
-		private static ICollection<CacheFileReference> GetCSharpFiles(string path)
+		private ICollection<CacheFileReference> GetCSharpFiles(string path)
 		{
 			string p = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), path));
 			return new DirectoryInfo(p)
 				.GetFiles("*.cs", SearchOption.AllDirectories)
+				.Where(f => _ignorePaths == null || !_ignorePaths(f.FullName))
 				.Select(f =>
 					new CacheFileReference
 					{

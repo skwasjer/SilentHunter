@@ -37,10 +37,11 @@ namespace SilentHunter.Tests
 		[Fact]
 		public void ErrorInReader()
 		{
-			string controllerPath = @"..\..\..\..\src\SilentHunter.Controllers";
+			string controllerPath = @"..\..\..\..\..\src\SilentHunter.Controllers";
 
 			var controllerAssemblyCompiler = new ControllerAssemblyCompiler(controllerPath)
-				.AssemblyName("Controllers");
+				.AssemblyName("Controllers")
+				.IgnorePaths(f => f.Contains(@"\obj\"));
 			ControllerAssembly assembly = controllerAssemblyCompiler.Compile();
 
 			ControllerAssembly.Current = assembly;
@@ -72,10 +73,11 @@ namespace SilentHunter.Tests
 		[Fact]
 		public void TestDat()
 		{
-			string controllerPath = @"..\..\..\..\src\SilentHunter.Controllers";
+			string controllerPath = @"..\..\..\..\..\src\SilentHunter.Controllers";
 
 			var controllerAssemblyCompiler = new ControllerAssemblyCompiler(controllerPath)
-				.AssemblyName("Controllers");
+				.AssemblyName("Controllers")
+				.IgnorePaths(f => f.Contains(@"\obj\"));
 			//controllerAssemblyCompiler.CleanArtifacts();
 			ControllerAssembly assembly = controllerAssemblyCompiler.Compile();
 
