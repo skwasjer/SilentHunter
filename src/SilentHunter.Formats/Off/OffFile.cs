@@ -14,7 +14,7 @@ namespace SilentHunter.Off
 		{
 		}
 
-		[field: DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		public Point CharacterSpacing { get; set; }
 
 		#region Implementation of ISilentHunterFile

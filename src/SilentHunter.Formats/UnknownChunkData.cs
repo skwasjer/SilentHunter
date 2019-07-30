@@ -33,13 +33,13 @@ namespace SilentHunter.Dat
 		/// </summary>
 		public Type Type => Data.GetType();
 
-		[field: DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		public string MyGuess { get; }
 
 		/// <summary>
 		/// Gets the data.
 		/// </summary>
-		[field: DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		public object Data { get; }
 
 		public byte[] GetDataAsByteArray()
@@ -63,13 +63,13 @@ namespace SilentHunter.Dat
 		/// <summary>
 		/// Gets the absolute file offset.
 		/// </summary>
-		[field: DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		public long Offset { get; }
 
 		/// <summary>
 		/// Gets the relative offset in the chunk.
 		/// </summary>
-		[field: DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		public long RelativeOffset { get; }
 
 		/// <summary>
