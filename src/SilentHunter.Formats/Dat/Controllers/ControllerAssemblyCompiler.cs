@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Versioning;
 using System.Xml.Serialization;
 #if NETSTANDARD2_0
 using System.Drawing;
@@ -185,7 +186,20 @@ namespace SilentHunter.Dat.Controllers
 
 		private string GetTargetDir()
 		{
-			return Path.Combine(Path.GetTempPath(), "S3D", "dynamic", _applicationName);
+			string frameworkVersion = Assembly.GetExecutingAssembly()
+				.GetCustomAttribute<TargetFrameworkAttribute>()
+				.FrameworkName.ToLowerInvariant()
+				.Replace(",version=v", string.Empty)
+				.TrimStart('.');
+
+			if (frameworkVersion.StartsWith("netframework"))
+			{
+				frameworkVersion = frameworkVersion
+					.Replace("netframework", "net")
+					.Replace(".", string.Empty);
+			}
+
+			return Path.Combine(Path.GetTempPath(), "S3D", _applicationName, frameworkVersion);
 		}
 
 		/// <summary>
@@ -286,7 +300,10 @@ namespace SilentHunter.Dat.Controllers
 		public void CleanArtifacts()
 		{
 			string dir = GetTargetDir();
-			Directory.Delete(dir, true);
+			if (Directory.Exists(dir))
+			{
+				Directory.Delete(dir, true);
+			}
 		}
 	}
 }

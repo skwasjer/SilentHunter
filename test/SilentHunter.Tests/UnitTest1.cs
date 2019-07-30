@@ -55,8 +55,6 @@ namespace SilentHunter.Tests
 
 			var x = ControllerAssembly.Current.HelpText["asd"];
 
-			//			ControllerAssembly.LoadFrom(assembly);
-
 			using (var fs = File.OpenRead(@"N:\Games\SH Mods\Animated Fans (v1.2)\Data\Interior\NSS_Gato\error.dat"))
 			using (var datFile = new DatFile(false))
 			{
@@ -90,14 +88,12 @@ namespace SilentHunter.Tests
 			var controllerAssemblyCompiler = new ControllerAssemblyCompiler(compiler, controllerPath)
 				.AssemblyName("Controllers")
 				.IgnorePaths(f => f.Contains(@"\obj\"));
-			controllerAssemblyCompiler.CleanArtifacts();
+//			controllerAssemblyCompiler.CleanArtifacts();
 			ControllerAssembly assembly = controllerAssemblyCompiler.Compile();
 
 			ControllerAssembly.Current = assembly;
 
 			var x = ControllerAssembly.Current.HelpText["asd"];
-
-//			ControllerAssembly.LoadFrom(assembly);
 
 			using (var fs = File.OpenRead(@"N:\Games\SH Mods\Animated Fans (v1.2)\Data\Interior\NSS_Gato\NSS_Gato_CT.dat"))
 			using (var datFile = new DatFile(false))
