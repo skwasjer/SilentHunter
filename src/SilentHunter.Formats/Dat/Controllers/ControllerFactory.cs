@@ -1,14 +1,11 @@
 using System;
 using System.Linq;
-using System.Reflection;
 using SilentHunter.Formats;
 
 namespace SilentHunter.Dat.Controllers
 {
 	public class ControllerFactory : IControllerFactory, IItemFactory
 	{
-		private const BindingFlags ResolveBindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly | BindingFlags.Static;
-
 		private readonly ControllerAssembly _controllerAssembly;
 		private readonly IItemFactory _itemFactory;
 
@@ -26,8 +23,8 @@ namespace SilentHunter.Dat.Controllers
 		public bool CanCreate(Type controllerType)
 		{
 			return _controllerAssembly.Controllers
-				       .SelectMany(c => c.Value.Values)
-				       .Any(t => t == controllerType) && controllerType.IsController();
+				.SelectMany(c => c.Value.Values)
+				.Any(t => t == controllerType) && controllerType.IsController();
 		}
 
 		/// <summary>
@@ -69,7 +66,9 @@ namespace SilentHunter.Dat.Controllers
 
 			if (CanCreate(controllerType) && _controllerAssembly.Controllers.Any(profile => profile.Value.Any(ctrl => ctrl.Value == controllerType)))
 			{
-				return initializeFields ? (IRawController)CreateNewItem(controllerType) : (IRawController)Activator.CreateInstance(controllerType);
+				return initializeFields
+					? (IRawController)CreateNewItem(controllerType)
+					: (IRawController)Activator.CreateInstance(controllerType);
 			}
 
 			throw new ArgumentException("Unknown controller type.");

@@ -47,23 +47,17 @@ namespace SilentHunter.Dat.Controllers.Compiler
 				references,
 				new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
-			FileStream docStream = string.IsNullOrEmpty(options.DocFile) ? null : File.Open(options.DocFile, FileMode.Create);
-			try
+			
+			string pdbPath = Path.Combine(Path.GetDirectoryName(options.OutputPath), Path.GetFileNameWithoutExtension(options.OutputPath) + ".pdb");
+			using (Stream dllStream = File.Open(options.OutputPath, FileMode.Create))
+			using (Stream pdbStream = File.Open(pdbPath, FileMode.Create))
+			using (Stream docStream = string.IsNullOrEmpty(options.DocFile) ? Stream.Null : File.Open(options.DocFile, FileMode.Create))
 			{
-				string pdbPath = Path.Combine(Path.GetDirectoryName(options.OutputPath), Path.GetFileNameWithoutExtension(options.OutputPath) + ".pdb");
-				using (FileStream dllStream = File.Open(options.OutputPath, FileMode.Create))
-				using (FileStream pdbStream = File.Open(pdbPath, FileMode.Create))
-				{
-					EmitResult emitResult = compilation.Emit(dllStream, pdbStream, docStream);
-					LogResults(emitResult);
+				EmitResult emitResult = compilation.Emit(dllStream, pdbStream, docStream);
+				LogResults(emitResult);
 
-					// Display a successful compilation message.
-					Debug.WriteLine("Code built into assembly '{0}' successfully.", options.OutputPath);
-				}
-			}
-			finally
-			{
-				docStream?.Dispose();
+				// Display a successful compilation message.
+				Debug.WriteLine("Code built into assembly '{0}' successfully.", options.OutputPath);
 			}
 
 			return loadAssembly ? Assembly.Load(options.OutputPath) : null;
