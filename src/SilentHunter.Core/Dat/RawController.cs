@@ -1,10 +1,11 @@
 using System;
 using System.Collections;
-using System.Drawing;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
+using SilentHunter.Dat.Controllers.Serialization;
+using SilentHunter.Extensions;
 using SilentHunter.Formats;
 using skwas.IO;
 
@@ -20,6 +21,20 @@ namespace SilentHunter.Dat
 	/// </remarks>
 	public abstract class RawController : IRawController
 	{
+		private ICollection<IControllerValueSerializer> _serializers = new List<IControllerValueSerializer>
+		{
+			new FixedStringValueSerializer(),
+			new StringValueSerializer(),
+			new ColorValueSerializer(),
+			new DateTimeValueSerializer(),
+			new BooleanValueSerializer(),
+			new NullableValueSerializer(),
+			//new ArrayValueSerializer(),
+			//new ListValueSerializer(),
+			new SHUnionValueSerializer(),
+			//new DefaultObjectSerializer()	// Should be last.
+		};
+
 		/// <summary>
 		/// When implemented, deserializes the controller from specified <paramref name="stream" />.
 		/// </summary>
@@ -155,39 +170,15 @@ namespace SilentHunter.Dat
 
 			object retVal = null;
 
-			if (typeOfValue == typeof(string))
+			var ctx = new ControllerDeserializationContext(memberInfo);
+			IControllerValueSerializer serializer = _serializers.FirstOrDefault(s => s.IsSupported(ctx));
+			if (serializer != null)
 			{
-				if (reader.ReadString(memberInfo, expectedEndPos, out string str))
-				{
-					return str;
-				}
+				retVal = serializer.Deserialize(reader, ctx);
 			}
 			else if (typeOfValue.IsArray)
 			{
 				throw new NotSupportedException("Arrays are not supported. Use List<> instead.");
-			}
-			else if (typeOfValue == typeof(DateTime))
-			{
-				if (reader.ReadDateTime(field, expectedEndPos, out DateTime dt))
-				{
-					return dt;
-				}
-			}
-			else if (typeOfValue == typeof(Color))
-			{
-				// Alpha component is ignored in SH.
-				retVal = Color.FromArgb(byte.MaxValue, reader.ReadStruct<Color>());
-			}
-			else if (typeOfValue == typeof(bool))
-			{
-				if (reader.ReadBoolean(field, expectedEndPos, out bool bVal))
-				{
-					return bVal;
-				}
-			}
-			else if (typeOfValue.IsNullable())
-			{
-				retVal = reader.ReadStruct(Nullable.GetUnderlyingType(typeOfValue));
 			}
 			else if (typeOfValue.IsGenericType)
 			{
@@ -196,27 +187,6 @@ namespace SilentHunter.Dat
 				if (typeof(IList).IsAssignableFrom(typeOfValue))
 				{
 					retVal = ReadList(reader, typeOfValue);
-				}
-				else
-				{
-					// SHUnion
-					long dataSize = reader.BaseStream.Length - reader.BaseStream.Position;
-
-					retVal = typeArgs
-						.Where(type => Marshal.SizeOf(type) == dataSize)
-						.Select(type =>
-						{
-							object union = Activator.CreateInstance(typeOfValue);
-							typeOfValue.GetProperty("Type").SetValue(union, type, null);
-							typeOfValue.GetProperty("Value").SetValue(union, reader.ReadStruct(type), null);
-							return union;
-						})
-						.FirstOrDefault();
-
-					if (retVal == null)
-					{
-						throw new IOException($"The available stream data does not match the size one of the two union types for property '{field?.Name ?? typeOfValue.FullName}'.");
-					}
 				}
 			}
 			// FIX: for types containing color, ReadStruct can't read the entire type. So in case a class, enumerate all class properties separately.
@@ -252,38 +222,11 @@ namespace SilentHunter.Dat
 			var field = memberInfo as FieldInfo;
 			Type typeOfValue = field?.FieldType ?? (Type)memberInfo;
 
-			if (typeOfValue == typeof(string))
+			var ctx = new ControllerSerializationContext(memberInfo, value);
+			IControllerValueSerializer serializer = _serializers.FirstOrDefault(s => s.IsSupported(ctx));
+			if (serializer != null)
 			{
-				int fixedLength = memberInfo.GetAttribute<FixedStringAttribute>()?.Length ?? -1;
-
-				var s = (string)value;
-				if (fixedLength > 0)
-				{
-					if (s == null)
-					{
-						s = string.Empty;
-					}
-
-					if (s.Length > fixedLength)
-					{
-						throw new ArgumentException($"The string '{s}' for property '{memberInfo.Name}' exceeds the fixed length {fixedLength}", nameof(value));
-					}
-
-					// Write the fixed string with zeros at the end.
-					writer.Write(s, fixedLength);
-				}
-				else
-				{
-					if (s != null)
-						// Write the variable string with one zero.
-					{
-						writer.Write(s, '\0');
-					}
-				}
-			}
-			else if (typeOfValue == typeof(Color))
-			{
-				writer.WriteStruct(Color.FromArgb(0, (Color)value));
+				serializer.Serialize(writer, ctx);
 			}
 			else if (typeOfValue.IsArray)
 			{
@@ -303,27 +246,11 @@ namespace SilentHunter.Dat
 					}
 				}
 			}
-			else if (typeOfValue == typeof(DateTime))
-			{
-				var dt = (DateTime)value;
-				string sDate = dt.ToString("yyyyMMdd");
-				int iDate = int.Parse(sDate);
-				writer.Write(iDate);
-			}
-			else if (typeOfValue.IsNullable())
-			{
-				writer.WriteStruct(value);
-			}
 			else if (typeOfValue.IsGenericType)
 			{
 				if (value is IList list)
 				{
 					WriteList(writer, list);
-				}
-				else
-				{
-					// SHUnion
-					writer.WriteStruct(typeOfValue.GetProperty("Value").GetValue(value, null));
 				}
 			}
 			// FIX: for types containing color, ReadStruct can't read the entire type. So in case a class, enumerate all class properties separately.
