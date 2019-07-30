@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -98,33 +97,23 @@ namespace SilentHunter.Dat.Controllers
 
 			Dictionary<ControllerProfile, Dictionary<string, Type>> controllerTypes = profilesWithoutUnknown.ToDictionary(cp => cp, cp => new Dictionary<string, Type>());
 
-			foreach (Type remoteType in controllerAssembly.GetTypes())
+			foreach (TypeInfo typeInfo in controllerAssembly.DefinedTypes.Where(t => !t.IsEnum && !t.IsAbstract && !t.IsInterface))
 			{
-				AddOrUpdate(controllerTypes, remoteType);
+				AddOrUpdate(controllerTypes, typeInfo);
 			}
 
 			return controllerTypes;
 		}
 
-		private static void AddOrUpdate(Dictionary<ControllerProfile, Dictionary<string, Type>> controllerTypes, Type remoteType)
+		private static void AddOrUpdate(Dictionary<ControllerProfile, Dictionary<string, Type>> controllerTypes, TypeInfo remoteType)
 		{
-			void NotSupportedMember(IList list, Type type, string memberName)
-			{
-				if (list.Count > 0)
-				{
-					throw new NotSupportedException($"The type '{type.Name}' defines one or more {memberName} which is not supported");
-				}
-			}
-
-			// No interfaces allowed.
-			if (remoteType.IsInterface)
-			{
-				throw new NotSupportedException($"The type '{remoteType.Name}' is an interface which is not supported.");
-			}
-
 			// No properties allowed.
-			NotSupportedMember(remoteType.GetProperties(ResolveBindingFlags), remoteType, "properties");
+			if (remoteType.GetProperties(ResolveBindingFlags).Any())
+			{
+				throw new NotSupportedException($"The type '{remoteType.Name}' defines one or more properties which is not supported.");
+			}
 
+			// For structs, must have SerializableAttribute.
 			if (remoteType.IsValueType && !remoteType.IsDefined(typeof(SerializableAttribute), false))
 			{
 				throw new NotSupportedException(

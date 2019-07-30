@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 namespace SilentHunter.Dat.Controllers.Compiler
 {
 	[XmlRoot("cache")]
-	public class CSharpBuildCache
+	public class CompilerBuildCache
 	{
 		[XmlAttribute("appver")]
 		public string Version { get; set; }
@@ -22,7 +22,7 @@ namespace SilentHunter.Dat.Controllers.Compiler
 
 		#region Equality members
 
-		protected bool Equals(CSharpBuildCache other)
+		protected bool Equals(CompilerBuildCache other)
 		{
 			return string.Equals(Version, other.Version) && string.Equals(BuildConfiguration, other.BuildConfiguration)
 			                                             && SetEquals(Dependencies, other.Dependencies)
@@ -68,7 +68,7 @@ namespace SilentHunter.Dat.Controllers.Compiler
 				return false;
 			}
 
-			return Equals((CSharpBuildCache)obj);
+			return Equals((CompilerBuildCache)obj);
 		}
 
 		/// <summary>
@@ -89,12 +89,12 @@ namespace SilentHunter.Dat.Controllers.Compiler
 			}
 		}
 
-		public static bool operator ==(CSharpBuildCache left, CSharpBuildCache right)
+		public static bool operator ==(CompilerBuildCache left, CompilerBuildCache right)
 		{
 			return Equals(left, right);
 		}
 
-		public static bool operator !=(CSharpBuildCache left, CSharpBuildCache right)
+		public static bool operator !=(CompilerBuildCache left, CompilerBuildCache right)
 		{
 			return !Equals(left, right);
 		}

@@ -13,9 +13,11 @@ namespace SilentHunter.Dat.Controllers
 	{
 		private static readonly List<string> RequiredDependencies = new List<string>
 		{
+#if NET45
 			"System.dll",
-			"System.Windows.Forms.dll",
 			"System.Drawing.dll",
+#else
+#endif
 			"skwas.IO.dll",
 			"SilentHunter.Core.dll"
 		};
@@ -71,16 +73,14 @@ namespace SilentHunter.Dat.Controllers
 
 		public ControllerAssembly Compile()
 		{
-			AppDomain tempDomain = CreateTempAppDomain();
-			string outputPath = tempDomain.DynamicDirectory;
-
+			string outputPath = GetTargetDir();
 			if (!Directory.Exists(outputPath))
 			{
 				Directory.CreateDirectory(outputPath);
 			}
 
 			// Copy local dependencies.
-			CopyDependencies(tempDomain.BaseDirectory, outputPath);
+			CopyDependencies(AppDomain.CurrentDomain.BaseDirectory, outputPath);
 
 			string asmShortName = _assemblyName ?? Path.GetFileNameWithoutExtension(_controllerPath);
 			string asmOutputFile = Path.Combine(outputPath, asmShortName + ".dll");
@@ -95,7 +95,7 @@ namespace SilentHunter.Dat.Controllers
 			// Generate cache file for the specified controller path, which is used to determine if
 			// we have to rebuild the controller assembly. If one of the files has changed since last build
 			// or a file is missing/added, the assembly will be rebuilt.
-			var newCache = new CSharpBuildCache
+			var newCache = new CompilerBuildCache
 			{
 #if DEBUG
 				BuildConfiguration = "debug",
@@ -105,10 +105,14 @@ namespace SilentHunter.Dat.Controllers
 				Version = FileVersionInfo.GetVersionInfo(typeof(ControllerAssemblyCompiler).Assembly.Location).FileVersion,
 				Dependencies = new HashSet<CacheFileReference>(
 					RequiredDependencies
-						.Select(rd => new CacheFileReference
+						.Select(rd =>
 						{
-							Name = rd,
-							LastModified = File.GetLastWriteTimeUtc(Path.Combine(outputPath, rd))
+							string path = Path.Combine(outputPath, rd);
+							return new CacheFileReference
+							{
+								Name = rd,
+								LastModified = File.Exists(path) ? (DateTime?)File.GetLastWriteTimeUtc(path) : null
+							};
 						})
 				),
 				SourceFiles = new HashSet<CacheFileReference>(sourceFiles)
@@ -117,8 +121,7 @@ namespace SilentHunter.Dat.Controllers
 			Compile(newCache, _controllerPath, asmOutputFile, docFile);
 
 			// Load controller assembly also into local domain. You normally wouldn't want this, because you A) couldn't unload it and B) would create security issues. May have to look at using isolated domain.
-			AssemblyName asmName = System.Reflection.AssemblyName.GetAssemblyName(asmOutputFile);
-			return new ControllerAssembly(AppDomain.CurrentDomain.Load(asmName));
+			return new ControllerAssembly(Assembly.LoadFile(asmOutputFile));
 		}
 
 		private void CopyDependencies(string baseDirectory, string outputPath)
@@ -145,27 +148,6 @@ namespace SilentHunter.Dat.Controllers
 			}
 		}
 
-		private AppDomain CreateTempAppDomain()
-		{
-			// Prepare to create a new application domain.
-			var setup = new AppDomainSetup
-			{
-				ApplicationBase = AppDomain.CurrentDomain.BaseDirectory,
-
-				// Set the application name before setting the dynamic base.
-				ApplicationName = _applicationName,
-
-				// Set the location of the base directory where assembly resolution 
-				// probes for dynamic assemblies. Note that the hash code of the 
-				// application name is concatenated to the base directory name you 
-				// supply. 
-				DynamicBase = GetTargetDir()
-			};
-
-			Console.WriteLine("DynamicBase is set to '{0}'.", setup.DynamicBase);
-
-			return AppDomain.CreateDomain(Guid.NewGuid().ToString(), null, setup);
-		}
 
 		private string GetTargetDir()
 		{
@@ -194,21 +176,21 @@ namespace SilentHunter.Dat.Controllers
 				.ToList();
 		}
 
-		private static void Compile(CSharpBuildCache assemblyCache, string controllerPath, string outputFile, string docFile)
+		private static void Compile(CompilerBuildCache assemblyCache, string controllerPath, string outputFile, string docFile)
 		{
 			string cacheFile = outputFile + ".cache";
 			string outputPath = Path.GetDirectoryName(outputFile);
 
 			var mustCompile = true;
-			var serializer = new XmlSerializer(typeof(CSharpBuildCache));
+			var serializer = new XmlSerializer(typeof(CompilerBuildCache));
 
 			// Load the cache file.
 			if (File.Exists(cacheFile))
 			{
-				CSharpBuildCache oldCache;
+				CompilerBuildCache oldCache;
 				using (FileStream fs = File.OpenRead(cacheFile))
 				{
-					oldCache = (CSharpBuildCache)serializer.Deserialize(fs);
+					oldCache = (CompilerBuildCache)serializer.Deserialize(fs);
 				}
 
 				// Check if cache is out of sync and that all files exist.
@@ -226,7 +208,11 @@ namespace SilentHunter.Dat.Controllers
 			// NOTE: Ensure LoaderLock Managed Debugging Assistant in Exception settings is disabled, to allow VS to run dynamic compilation within IDE.
 
 			// Compile the source files, etc.
-			using (var compiler = new CSharpCompiler
+#if NET45
+			ICSharpCompiler compiler = new CSharpCompiler
+#else
+			ICSharpCompiler compiler = new RoslynCompiler
+#endif
 			{
 				OutputPath = outputFile,
 				DocFile = docFile,
@@ -236,7 +222,10 @@ namespace SilentHunter.Dat.Controllers
 						return File.Exists(localFilePath) ? localFilePath : d.Name;
 					})
 					.ToArray()
-			})
+			};
+
+			var disposableCompiler = compiler as IDisposable;
+			using (disposableCompiler)
 			{
 				compiler.CompileCode(assemblyCache.SourceFiles.Select(cs => Path.Combine(controllerPath, cs.Name)).ToArray());
 			}

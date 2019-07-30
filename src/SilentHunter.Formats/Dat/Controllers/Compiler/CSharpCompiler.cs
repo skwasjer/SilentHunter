@@ -9,8 +9,7 @@ using Microsoft.CSharp;
 
 namespace SilentHunter.Dat.Controllers.Compiler
 {
-	public sealed class CSharpCompiler
-		: IDisposable
+	public sealed class CSharpCompiler : ICSharpCompiler, IDisposable
 	{
 		private const string RequiredCompilerOptions = "/target:library";
 		private CSharpCodeProvider _codeProvider;
@@ -121,10 +120,7 @@ namespace SilentHunter.Dat.Controllers.Compiler
 			LogResults(results);
 
 			// Display a successful compilation message.
-			Debug.WriteLine("Code built into assembly '{0}' successfully.", new object[]
-			{
-				_compilerParams.OutputAssembly
-			});
+			Debug.WriteLine("Code built into assembly '{0}' successfully.", OutputPath);
 			return loadAssembly ? results.CompiledAssembly : null;
 		}
 
@@ -172,7 +168,8 @@ namespace SilentHunter.Dat.Controllers.Compiler
 				errorMsg.AppendLine("Errors building assembly...");
 				foreach (CompilerError error in results.Errors.Cast<CompilerError>().Where(ce => !ce.IsWarning))
 				{
-					errorMsg.AppendFormat("  - {0}\r\n", error);
+					errorMsg.AppendFormat("  - {0}", error);
+					errorMsg.AppendLine();
 				}
 
 				Debug.Write(errorMsg.ToString());
