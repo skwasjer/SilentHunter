@@ -79,6 +79,12 @@ namespace SilentHunter.Dat.Controllers
 			string asmOutputFile = Path.Combine(outputPath, asmShortName + ".dll");
 			string docFile = Path.Combine(outputPath, asmShortName + ".xml");
 
+			var sourceFiles = GetCSharpFiles(_controllerPath);
+			if (!sourceFiles.Any())
+			{
+				throw new InvalidOperationException("No controller source files found.");
+			}
+
 			// Generate cache file for the specified controller path, which is used to determine if
 			// we have to rebuild the controller assembly. If one of the files has changed since last build
 			// or a file is missing/added, the assembly will be rebuilt.
@@ -98,7 +104,7 @@ namespace SilentHunter.Dat.Controllers
 							LastModified = File.GetLastWriteTimeUtc(Path.Combine(outputPath, rd))
 						})
 				),
-				SourceFiles = new HashSet<CacheFileReference>(GetCSharpFiles(_controllerPath))
+				SourceFiles = new HashSet<CacheFileReference>(sourceFiles)
 			};
 
 			Compile(newCache, _controllerPath, asmOutputFile, docFile);
@@ -164,18 +170,20 @@ namespace SilentHunter.Dat.Controllers
 		/// </summary>
 		/// <param name="path">The path where the controllers are located.</param>
 		/// <returns>A list of controller files.</returns>
-		private static IEnumerable<CacheFileReference> GetCSharpFiles(string path)
+		private static ICollection<CacheFileReference> GetCSharpFiles(string path)
 		{
-			return new DirectoryInfo(path)
+			string p = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), path));
+			return new DirectoryInfo(p)
 				.GetFiles("*.cs", SearchOption.AllDirectories)
 				.Select(f =>
 					new CacheFileReference
 					{
 						// Save relative name.
-						Name = f.FullName.Substring(path.Length + 1),
+						Name = f.FullName.Substring(p.Length + 1),
 						LastModified = f.LastWriteTimeUtc
 					}
-				);
+				)
+				.ToList();
 		}
 
 		private static void Compile(CSharpBuildCache assemblyCache, string controllerPath, string outputFile, string docFile)
