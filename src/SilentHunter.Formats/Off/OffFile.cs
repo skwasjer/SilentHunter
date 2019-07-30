@@ -1,28 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using skwas.IO;
 
 namespace SilentHunter.Off
 {
-	public sealed class OffFile
-		: KeyedCollection<char, OffCharacter>, ISilentHunterFile
+	public sealed class OffFile : KeyedCollection<char, OffCharacter>, ISilentHunterFile
 	{
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private Point _characterSpacing;
-
 		public OffFile()
 			: base(EqualityComparer<char>.Default, -1)
 		{
 		}
 
-		public Point CharacterSpacing
-		{
-			get { return _characterSpacing; }
-			set { _characterSpacing = value; }
-		}
+		[field: DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		public Point CharacterSpacing { get; set; }
 
 		#region Implementation of ISilentHunterFile
 
@@ -34,8 +27,8 @@ namespace SilentHunter.Off
 		{
 			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
 			{
-				var characterCount = reader.ReadInt32();
-				_characterSpacing = reader.ReadStruct<Point>();
+				int characterCount = reader.ReadInt32();
+				CharacterSpacing = reader.ReadStruct<Point>();
 
 				Clear();
 				for (var i = 0; i < characterCount; i++)
@@ -45,8 +38,11 @@ namespace SilentHunter.Off
 
 					Add(offChar);
 				}
+
 				if (reader.BaseStream.Position != reader.BaseStream.Length)
-					throw new IOException(string.Format("The stream contains unexpected data at 0x{0:x8}", reader.BaseStream.Position));
+				{
+					throw new IOException($"The stream contains unexpected data at 0x{reader.BaseStream.Position:x8}");
+				}
 			}
 		}
 
@@ -59,12 +55,13 @@ namespace SilentHunter.Off
 			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
 			{
 				writer.Write(Count);
-				writer.WriteStruct(_characterSpacing);
+				writer.WriteStruct(CharacterSpacing);
 
-				foreach (var c in this)
+				foreach (OffCharacter c in this)
 				{
 					((IRawSerializable)c).Serialize(stream);
 				}
+
 				writer.Flush();
 			}
 		}
@@ -74,7 +71,7 @@ namespace SilentHunter.Off
 		#region Implementation of IRawSerializable
 
 		/// <summary>
-		/// When implemented, deserializes the implemented class from specified <paramref name="stream"/>.
+		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
 		void IRawSerializable.Deserialize(Stream stream)
@@ -83,7 +80,7 @@ namespace SilentHunter.Off
 		}
 
 		/// <summary>
-		/// When implemented, serializes the implemented class to specified <paramref name="stream"/>.
+		/// When implemented, serializes the implemented class to specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
 		void IRawSerializable.Serialize(Stream stream)

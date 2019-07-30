@@ -15,11 +15,14 @@ namespace SilentHunter.Dat.Chunks
 
 		public override ulong Id
 		{
-			get { return base.Id; }
+			get => base.Id;
 			set
 			{
 				if (value > uint.MaxValue)
-					throw new ArgumentOutOfRangeException("The id for this chunk is only 4 bytes in length (UInt32).");
+				{
+					throw new ArgumentOutOfRangeException(nameof(value), "The id for this chunk is only 4 bytes in length (UInt32).");
+				}
+
 				base.Id = value;
 			}
 		}
@@ -43,9 +46,11 @@ namespace SilentHunter.Dat.Chunks
 
 				Parts.Clear();
 
-				var partCount = reader.ReadInt32();
+				int partCount = reader.ReadInt32();
 				for (var i = 0; i < partCount; i++)
+				{
 					Parts.Add(reader.ReadNullTerminatedString());
+				}
 			}
 		}
 
@@ -57,10 +62,10 @@ namespace SilentHunter.Dat.Chunks
 		{
 			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
 			{
-				writer.Write((uint) Id); // Write an id as an uint.
+				writer.Write((uint)Id); // Write an id as an uint.
 
 				writer.Write(Parts.Count);
-				foreach (var partName in Parts)
+				foreach (string partName in Parts)
 				{
 					writer.Write(partName, '\0');
 				}

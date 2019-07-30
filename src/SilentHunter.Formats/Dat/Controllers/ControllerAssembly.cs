@@ -43,7 +43,7 @@ namespace SilentHunter.Dat.Controllers
 		public ControllerAssemblyHelpText HelpText { get; }
 
 		/// <summary>
-		/// Gets a controller type by <paramref name="controllerName"/> and <paramref name="profile"/>.
+		/// Gets a controller type by <paramref name="controllerName" /> and <paramref name="profile" />.
 		/// </summary>
 		/// <param name="controllerName">The controller name.</param>
 		/// <param name="profile">The SH-profile.</param>
@@ -60,7 +60,7 @@ namespace SilentHunter.Dat.Controllers
 		}
 
 		/// <summary>
-		/// Get the controller type for each profile that matches the <paramref name="controllerName"/>.
+		/// Get the controller type for each profile that matches the <paramref name="controllerName" />.
 		/// </summary>
 		/// <param name="controllerName">The controller name.</param>
 		/// <returns>All controller types that contain the controller by name.</returns>
@@ -74,7 +74,7 @@ namespace SilentHunter.Dat.Controllers
 		}
 
 		/// <summary>
-		/// Get each controller profile that contains the <paramref name="controllerName"/>.
+		/// Get each controller profile that contains the <paramref name="controllerName" />.
 		/// </summary>
 		/// <param name="controllerName">The controller name.</param>
 		/// <returns>All profiles that contain the controller by name.</returns>
@@ -92,11 +92,11 @@ namespace SilentHunter.Dat.Controllers
 		/// <param name="controllerAssembly"></param>
 		private static IDictionary<ControllerProfile, Dictionary<string, Type>> EnumControllers(Assembly controllerAssembly)
 		{
-			var profilesWithoutUnknown = Enum.GetValues(typeof(ControllerProfile))
+			IEnumerable<ControllerProfile> profilesWithoutUnknown = Enum.GetValues(typeof(ControllerProfile))
 				.Cast<ControllerProfile>()
 				.Where(p => p != ControllerProfile.Unknown);
 
-			var controllerTypes = profilesWithoutUnknown.ToDictionary(cp => cp, cp => new Dictionary<string, Type>());
+			Dictionary<ControllerProfile, Dictionary<string, Type>> controllerTypes = profilesWithoutUnknown.ToDictionary(cp => cp, cp => new Dictionary<string, Type>());
 
 			foreach (Type remoteType in controllerAssembly.GetTypes())
 			{

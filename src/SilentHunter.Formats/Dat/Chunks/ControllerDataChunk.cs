@@ -6,7 +6,7 @@ using skwas.IO;
 
 namespace SilentHunter.Dat.Chunks
 {
-	public sealed partial class ControllerDataChunk : DatChunk
+	public sealed class ControllerDataChunk : DatChunk
 	{
 		public ControllerDataChunk()
 			: base(DatFile.Magics.ControllerData)
@@ -20,10 +20,11 @@ namespace SilentHunter.Dat.Chunks
 
 		public dynamic ControllerData
 		{
-			get {
+			get
+			{
 				if (_controllerData == null && _rawControllerData != null)
 				{
-					var controllerName = GetControllerName();
+					string controllerName = GetControllerName();
 
 					using (var ms = new MemoryStream(_rawControllerData))
 					{
@@ -43,9 +44,10 @@ namespace SilentHunter.Dat.Chunks
 					// We no longer need raw data.
 					_rawControllerData = null;
 				}
+
 				return _controllerData;
 			}
-			set { _controllerData = value; }
+			set => _controllerData = value;
 		}
 
 		public string ControllerName => _controllerData?.GetType().Name ?? string.Empty;
@@ -59,7 +61,7 @@ namespace SilentHunter.Dat.Chunks
 			{
 				writer.Write(ParentId);
 
-				writer.Write((ulong) 0); // Always zero.
+				writer.Write((ulong)0); // Always zero.
 
 				var controllerWriter = new ControllerWriter(new ControllerFactory(ControllerAssembly.Current));
 				controllerWriter.Write(stream, ControllerData);
@@ -75,7 +77,7 @@ namespace SilentHunter.Dat.Chunks
 				// Read parent id.
 				ParentId = reader.ReadUInt64();
 
-				var alwaysZero = reader.ReadUInt64();
+				ulong alwaysZero = reader.ReadUInt64();
 				Debug.Assert(alwaysZero == 0, "Expected 0.");
 
 				// Cache position.
@@ -83,7 +85,7 @@ namespace SilentHunter.Dat.Chunks
 				_origin = regionStream?.BaseStream.Position ?? _localOrigin;
 
 				// Read raw controller data.
-				_rawControllerData = reader.ReadBytes((int) (stream.Length - _localOrigin));
+				_rawControllerData = reader.ReadBytes((int)(stream.Length - _localOrigin));
 			}
 		}
 
@@ -96,12 +98,10 @@ namespace SilentHunter.Dat.Chunks
 			ControllerChunk prevControllerChunk = null;
 			if (ParentFile.Chunks.Count > 0)
 			{
-				var f = ParentFile as DatFile;
-
-				if (f != null)
+				if (ParentFile is DatFile f)
 				{
 					// Find it by searching up.
-					prevControllerChunk = (ControllerChunk) f.Chunks
+					prevControllerChunk = (ControllerChunk)f.Chunks
 						.Reverse()
 						.FirstOrDefault(c =>
 							c.Magic == DatFile.Magics.Controller && c.Id == ParentId
@@ -109,11 +109,13 @@ namespace SilentHunter.Dat.Chunks
 				}
 			}
 
-			var controllerName = prevControllerChunk?.Name;
+			string controllerName = prevControllerChunk?.Name;
 
 			// Code needed to detect StateMachineClass.
 			if (string.IsNullOrEmpty(controllerName) && SubType == -1)
+			{
 				controllerName = "StateMachineClass";
+			}
 
 			return controllerName;
 		}

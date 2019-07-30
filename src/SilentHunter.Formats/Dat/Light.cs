@@ -7,7 +7,8 @@ namespace SilentHunter.Dat
 	/// </summary>
 	public sealed class Light
 	{
-		internal Light() {
+		internal Light()
+		{
 		}
 
 		/// <summary>
@@ -43,10 +44,9 @@ namespace SilentHunter.Dat
 		/// </returns>
 		public override string ToString()
 		{
-			if (Type == LightType.Omni)
-				return string.Format("Light ({0}), color={1}, attenuation={2}, radius={3}", Type, Color, Attenuation, Radius);
-			else
-				return string.Format("Light ({0}), color={1}, intensity={2}", Type, Color, Attenuation);
+			return Type == LightType.Omni 
+				? $"Light ({Type}), color={Color}, attenuation={Attenuation}, radius={Radius}"
+				: $"Light ({Type}), color={Color}, intensity={Attenuation}";
 		}
 	}
 }

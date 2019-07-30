@@ -26,17 +26,17 @@ namespace SilentHunter.Dat.Chunks
 			/// <summary>
 			/// The size of this structure.
 			/// </summary>
-			public static readonly int Size = Marshal.SizeOf(typeof (Entry));
+			public static readonly int Size = Marshal.SizeOf(typeof(Entry));
 
 			/// <summary>
 			/// Returns the fully qualified type name of this instance.
 			/// </summary>
 			/// <returns>
-			/// A <see cref="T:System.String"/> containing a fully qualified type name.
+			/// A <see cref="T:System.String" /> containing a fully qualified type name.
 			/// </returns>
 			public override string ToString()
 			{
-				return "0x" + Id.ToString("x16") + ", offset 0x" + FileOffset.ToString("x8");
+				return $"0x{Id:x16}, offset 0x{FileOffset:x8}";
 			}
 		}
 
@@ -60,10 +60,10 @@ namespace SilentHunter.Dat.Chunks
 			{
 				Entries.Clear();
 
-				var indexItems = (int) (stream.Length - stream.Position)/Entry.Size;
+				int indexItems = (int)(stream.Length - stream.Position) / Entry.Size;
 				for (var i = 0; i < indexItems; i++)
 				{
-					Entries.Add(new Entry()
+					Entries.Add(new Entry
 					{
 						Id = reader.ReadUInt64(),
 						FileOffset = reader.ReadInt32()
@@ -72,7 +72,10 @@ namespace SilentHunter.Dat.Chunks
 			}
 
 			// Some GWX IndexEntry chunks contain some extra invalid data (not divisible by 12). We fix this by forwarding to end of stream. Upon the next save, the index is rebuilt and the problem will restore itself.
-			if (stream.Length > stream.Position) stream.Position = stream.Length;
+			if (stream.Length > stream.Position)
+			{
+				stream.Position = stream.Length;
+			}
 		}
 
 		/// <summary>

@@ -18,11 +18,14 @@ namespace SilentHunter.Dat.Chunks
 		/// </summary>
 		public override ulong Id
 		{
-			get { return base.Id; }
+			get => base.Id;
 			set
 			{
 				if (value > uint.MaxValue)
-					throw new ArgumentOutOfRangeException("The id for this chunk is only 4 bytes in length (UInt32).");
+				{
+					throw new ArgumentOutOfRangeException(nameof(value), "The id for this chunk is only 4 bytes in length (UInt32).");
+				}
+
 				base.Id = value;
 			}
 		}
@@ -32,11 +35,14 @@ namespace SilentHunter.Dat.Chunks
 		/// </summary>
 		public override ulong ParentId
 		{
-			get { return base.ParentId; }
+			get => base.ParentId;
 			set
 			{
 				if (value > uint.MaxValue)
-					throw new ArgumentOutOfRangeException("The parent id for this chunk is only 4 bytes in length (UInt32).");
+				{
+					throw new ArgumentOutOfRangeException(nameof(value), "The parent id for this chunk is only 4 bytes in length (UInt32).");
+				}
+
 				base.ParentId = value;
 			}
 		}
@@ -66,9 +72,11 @@ namespace SilentHunter.Dat.Chunks
 
 				WeightsAndIndices.Clear();
 
-				var count = reader.ReadInt32();
+				int count = reader.ReadInt32();
 				for (var i = 0; i < count; i++)
+				{
 					WeightsAndIndices.Add(reader.ReadStruct<BoneInfluence>());
+				}
 			}
 		}
 
@@ -80,12 +88,14 @@ namespace SilentHunter.Dat.Chunks
 		{
 			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
 			{
-				writer.Write((uint) Id);
-				writer.Write((uint) ParentId);
+				writer.Write((uint)Id);
+				writer.Write((uint)ParentId);
 
 				writer.Write(WeightsAndIndices.Count);
-				foreach (var wi in WeightsAndIndices)
+				foreach (BoneInfluence wi in WeightsAndIndices)
+				{
 					writer.WriteStruct(wi);
+				}
 			}
 		}
 	}

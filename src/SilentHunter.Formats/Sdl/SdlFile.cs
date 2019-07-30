@@ -1,15 +1,14 @@
 using System;
-using System.Reflection;
-using System.IO;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using skwas.IO;
+using System.IO;
+using System.Reflection;
 using SilentHunter.Formats;
+using skwas.IO;
 
 namespace SilentHunter.Sdl
 {
-	public class SdlFile
-		: KeyedCollection<string, SoundInfo>, ISilentHunterFile
+	public class SdlFile : KeyedCollection<string, SoundInfo>, ISilentHunterFile
 	{
 		private static readonly string AssemblyPath = "Sdl.dll";
 
@@ -29,13 +28,13 @@ namespace SilentHunter.Sdl
 		/// <returns>Returns the S3D signature.</returns>
 		private static string GetSignature()
 		{
-			var asm = Assembly.GetEntryAssembly();
-			var title = asm.GetAttribute<AssemblyTitleAttribute>().Title;
-			var product = asm.GetAttribute<AssemblyProductAttribute>().Product;
-			var version = asm.GetAttribute<AssemblyFileVersionAttribute>().Version;
-			var cw = asm.GetAttribute<AssemblyCopyrightAttribute>().Copyright;
+			Assembly asm = Assembly.GetEntryAssembly();
+			string title = asm.GetAttribute<AssemblyTitleAttribute>().Title;
+			string product = asm.GetAttribute<AssemblyProductAttribute>().Product;
+			string version = asm.GetAttribute<AssemblyFileVersionAttribute>().Version;
+			string cw = asm.GetAttribute<AssemblyCopyrightAttribute>().Copyright;
 
-			return string.Format("Modified with {0} - {1} (version {2}). {3}", product, title, version, cw);
+			return $"Modified with {product} - {title} (version {version}). {cw}";
 		}
 
 		#region Implementation of ISilentHunterFile
@@ -55,7 +54,9 @@ namespace SilentHunter.Sdl
 				((IRawSerializable)sndInfo).Deserialize(bs);
 
 				if (string.Compare(sndInfo.Name, AssemblyPath, StringComparison.OrdinalIgnoreCase) == 0)
+				{
 					continue;
+				}
 
 				Add(sndInfo);
 			}
@@ -78,7 +79,9 @@ namespace SilentHunter.Sdl
 #endif
 
 			foreach (IRawSerializable sndInfo in this)
+			{
 				sndInfo.Serialize(stream);
+			}
 		}
 
 		#endregion
@@ -86,7 +89,7 @@ namespace SilentHunter.Sdl
 		#region Implementation of IRawSerializable
 
 		/// <summary>
-		/// When implemented, deserializes the implemented class from specified <paramref name="stream"/>.
+		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
 		void IRawSerializable.Deserialize(Stream stream)
@@ -95,7 +98,7 @@ namespace SilentHunter.Sdl
 		}
 
 		/// <summary>
-		/// When implemented, serializes the implemented class to specified <paramref name="stream"/>.
+		/// When implemented, serializes the implemented class to specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
 		void IRawSerializable.Serialize(Stream stream)
@@ -103,6 +106,6 @@ namespace SilentHunter.Sdl
 			Save(stream);
 		}
 
-#endregion
+		#endregion
 	}
 }

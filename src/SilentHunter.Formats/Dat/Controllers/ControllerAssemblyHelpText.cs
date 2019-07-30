@@ -11,7 +11,7 @@ namespace SilentHunter.Dat.Controllers
 {
 	public class ControllerAssemblyHelpText
 	{
-		private Lazy<IDictionary<string, string>> _loadHelpText;
+		private readonly Lazy<IDictionary<string, string>> _loadHelpText;
 
 		public ControllerAssemblyHelpText(string docFile)
 			: this(XmlReader.Create(docFile), true)

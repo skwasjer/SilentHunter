@@ -1,29 +1,37 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using skwas.IO;
 
 namespace SilentHunter.Dat
 {
-	public class DatChunkResolver
-		: IChunkResolver<DatFile.Magics>
+	public class DatChunkResolver : IChunkResolver<DatFile.Magics>
 	{
 		private static readonly ReadOnlyDictionary<DatFile.Magics, Type> ResolvedTypes = LoadTypes();
 
 		private static ReadOnlyDictionary<DatFile.Magics, Type> LoadTypes()
 		{
-			var types = typeof (DatFile).Assembly
+			Dictionary<DatFile.Magics, Type> types = typeof(DatFile).Assembly
 				.DefinedTypes
-				.Where(t => t.IsClass && typeof (IChunk).IsAssignableFrom(t.UnderlyingSystemType))
+				.Where(t => t.IsClass && !t.IsAbstract && typeof(IChunk).IsAssignableFrom(t.UnderlyingSystemType))
 				.Select(t =>
 				{
-					DatFile.Magics m;
-					if (t.Name.Length > 5 && Enum.TryParse(t.Name.Substring(0, t.Name.Length - 5), out m))
+					string chunkName = t.Name;
+					if (chunkName.EndsWith("Chunk"))
+					{
+						chunkName = chunkName.Substring(0, t.Name.Length - "Chunk".Length);
+					}
+
+					if (Enum.TryParse(chunkName, out DatFile.Magics m))
+					{
 						return new
 						{
 							Magic = m,
 							Type = t.UnderlyingSystemType
 						};
+					}
+
 					return null;
 				})
 				.Where(t => t != null)
@@ -54,7 +62,7 @@ namespace SilentHunter.Dat
 		/// <returns>The type or null if the magic is not supported/implemented.</returns>
 		Type IChunkResolver.Resolve(object magic)
 		{
-			return Resolve((DatFile.Magics) magic);
+			return Resolve((DatFile.Magics)magic);
 		}
 
 		#endregion

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Text;
 
 namespace SilentHunter.Dat
 {
@@ -11,7 +12,7 @@ namespace SilentHunter.Dat
 		: IOException
 	{
 		/// <summary>
-		/// Initializes a new instance of <see cref="DatFileException"/>.
+		/// Initializes a new instance of <see cref="DatFileException" />.
 		/// </summary>
 		/// <param name="chunkIndex">The index of the chunk at which the exception occurred.</param>
 		/// <param name="chunkOffset">The index of the chunk at which the exception occurred.</param>
@@ -55,9 +56,16 @@ namespace SilentHunter.Dat
 		{
 			get
 			{
-				return base.Message + "\r\n   Chunk index: " + ChunkIndex + 
-						"\r\n   Chunk offset: 0x" + ChunkOffset.ToString("x8") + 
-						"\r\n   Parsing stopped at: 0x" + FileOffset.ToString("x8") + "\r\n\r\n";
+				var sb = new StringBuilder(base.Message);
+				sb.AppendLine();
+				sb.AppendFormat("  Chunk index: {0}", ChunkIndex);
+				sb.AppendLine();
+				sb.AppendFormat("  Chunk offset: 0x{0:x8}", ChunkOffset);
+				sb.AppendLine();
+				sb.AppendFormat("  Parsing stopped at: 0x{0:x8}", FileOffset);
+				sb.AppendLine();
+				sb.AppendLine();
+				return sb.ToString();
 			}
 		}
 	}

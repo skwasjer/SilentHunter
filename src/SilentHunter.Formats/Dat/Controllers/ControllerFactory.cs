@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using SilentHunter.Formats;
@@ -27,8 +26,8 @@ namespace SilentHunter.Dat.Controllers
 		public bool CanCreate(Type controllerType)
 		{
 			return _controllerAssembly.Controllers
-				.SelectMany(c => c.Value.Values)
-				.Any(t => t == controllerType) && controllerType.IsController();
+				       .SelectMany(c => c.Value.Values)
+				       .Any(t => t == controllerType) && controllerType.IsController();
 		}
 
 		/// <summary>
@@ -74,8 +73,14 @@ namespace SilentHunter.Dat.Controllers
 			throw new ArgumentException("Unknown controller type.");
 		}
 
-		public object CreateNewItem(Type type) => _itemFactory.CreateNewItem(type);
+		public object CreateNewItem(Type type)
+		{
+			return _itemFactory.CreateNewItem(type);
+		}
 
-		public object CreateNewItem(object original) => _itemFactory.CreateNewItem(original);
+		public object CreateNewItem(object original)
+		{
+			return _itemFactory.CreateNewItem(original);
+		}
 	}
 }

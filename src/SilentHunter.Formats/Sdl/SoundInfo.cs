@@ -1,13 +1,12 @@
 using System;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
 using skwas.IO;
 
 namespace SilentHunter.Sdl
 {
 	[DebuggerDisplay("Name = {Name}, WaveName = {WaveName}")]
-	public class SoundInfo
-		: IRawSerializable, ICloneable
+	public class SoundInfo : IRawSerializable, ICloneable
 	{
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private string _name, _waveName;
@@ -22,36 +21,42 @@ namespace SilentHunter.Sdl
 		{
 			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
 			{
-				var size = reader.ReadUInt16();
-				var subSize = reader.ReadUInt32();
+				ushort size = reader.ReadUInt16();
+				uint subSize = reader.ReadUInt32();
 				if (size != subSize + 4)
+				{
 					throw new IOException("The file appears invalid. Unexpected size specifier encountered.");
+				}
 
-				var currentPos = reader.BaseStream.Position;
+				long currentPos = reader.BaseStream.Position;
 
-				var controllerName = reader.ReadNullTerminatedString();
+				string controllerName = reader.ReadNullTerminatedString();
 				if (controllerName != "SoundInfo")
+				{
 					throw new NotImplementedException();
+				}
 
-				Name = (string) DeserializeProperty(reader, "Name", typeof (string));
-				WaveName = (string) DeserializeProperty(reader, "WaveName", typeof (string));
-				IsFolder = (bool) DeserializeProperty(reader, "IsFolder", typeof (bool));
-				Loop = (bool) DeserializeProperty(reader, "Loop", typeof (bool));
-				Play = (bool) DeserializeProperty(reader, "Play", typeof (bool));
-				Volume = (float) DeserializeProperty(reader, "Volume", typeof (float));
-				VolumeVar = (float) DeserializeProperty(reader, "VolumeVar", typeof (float));
-				Pitch = (float) DeserializeProperty(reader, "Pitch", typeof (float));
-				PitchVar = (float) DeserializeProperty(reader, "PitchVar", typeof (float));
-				Is3D = (bool) DeserializeProperty(reader, "Is3D", typeof (bool));
-				DopplerFactor = (float) DeserializeProperty(reader, "DopplerFactor", typeof (float));
-				MinRadius = (float) DeserializeProperty(reader, "MinRadius", typeof (float));
-				MaxRadius = (float) DeserializeProperty(reader, "MaxRadius", typeof (float));
-				Category = (SoundCategory) DeserializeProperty(reader, "Category", typeof (SoundCategory));
-				Priority = (int) DeserializeProperty(reader, "Priority", typeof (int));
-				Delay = (float) DeserializeProperty(reader, "Delay", typeof (float));
+				Name = (string)DeserializeProperty(reader, "Name", typeof(string));
+				WaveName = (string)DeserializeProperty(reader, "WaveName", typeof(string));
+				IsFolder = (bool)DeserializeProperty(reader, "IsFolder", typeof(bool));
+				Loop = (bool)DeserializeProperty(reader, "Loop", typeof(bool));
+				Play = (bool)DeserializeProperty(reader, "Play", typeof(bool));
+				Volume = (float)DeserializeProperty(reader, "Volume", typeof(float));
+				VolumeVar = (float)DeserializeProperty(reader, "VolumeVar", typeof(float));
+				Pitch = (float)DeserializeProperty(reader, "Pitch", typeof(float));
+				PitchVar = (float)DeserializeProperty(reader, "PitchVar", typeof(float));
+				Is3D = (bool)DeserializeProperty(reader, "Is3D", typeof(bool));
+				DopplerFactor = (float)DeserializeProperty(reader, "DopplerFactor", typeof(float));
+				MinRadius = (float)DeserializeProperty(reader, "MinRadius", typeof(float));
+				MaxRadius = (float)DeserializeProperty(reader, "MaxRadius", typeof(float));
+				Category = (SoundCategory)DeserializeProperty(reader, "Category", typeof(SoundCategory));
+				Priority = (int)DeserializeProperty(reader, "Priority", typeof(int));
+				Delay = (float)DeserializeProperty(reader, "Delay", typeof(float));
 
 				if (reader.BaseStream.Position != currentPos + subSize)
+				{
 					throw new IOException("The file appears invalid. Unexpected size specifier encountered.");
+				}
 			}
 		}
 
@@ -59,7 +64,7 @@ namespace SilentHunter.Sdl
 		{
 			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
 			{
-				var currentPos = writer.BaseStream.Position;
+				long currentPos = writer.BaseStream.Position;
 				writer.BaseStream.Position += 6;
 
 				writer.Write("SoundInfo", '\0');
@@ -81,54 +86,62 @@ namespace SilentHunter.Sdl
 				SerializeProperty(writer, "Priority", Priority);
 				SerializeProperty(writer, "Delay", Delay);
 
-				var endPos = writer.BaseStream.Position;
+				long endPos = writer.BaseStream.Position;
 				writer.BaseStream.Position = currentPos;
-				writer.Write((ushort) (endPos - currentPos - 2));
-				writer.Write((uint) (endPos - currentPos - 6));
+				writer.Write((ushort)(endPos - currentPos - 2));
+				writer.Write((uint)(endPos - currentPos - 6));
 				writer.BaseStream.Position = endPos;
 			}
 		}
 
 		protected virtual object DeserializeProperty(BinaryReader reader, string propertyName, Type propertyType)
 		{
-			var size = reader.ReadUInt32();
-			var currentPos = reader.BaseStream.Position;
-			var name = reader.ReadString(propertyName.Length);
+			uint size = reader.ReadUInt32();
+			long currentPos = reader.BaseStream.Position;
+			string name = reader.ReadString(propertyName.Length);
 			if (propertyName != name)
+			{
 				throw new IOException("The file appears invalid. Unexpected property name encountered.");
+			}
 
 			// Skip past the terminating null.
 			reader.BaseStream.Position++;
 
 			// Read value.
-			var value = propertyType == typeof(string) 
+			object value = propertyType == typeof(string)
 				? reader.ReadNullTerminatedString()
 				: reader.ReadStruct(propertyType);
 
 			if (reader.BaseStream.Position != currentPos + size)
+			{
 				throw new IOException("The file appears invalid. The data type does not match.");
+			}
+
 			return value;
 		}
 
 		protected virtual void SerializeProperty(BinaryWriter writer, string propertyName, object value)
 		{
-			var currentPos = writer.BaseStream.Position;
-			
+			long currentPos = writer.BaseStream.Position;
+
 			// Write size descriptor. We don't know final size yet.
 			writer.Write(0);
-			
+
 			// Write name.
 			writer.Write(propertyName, '\0');
 
 			// Write value.
-			var str = value as string;
-			if (str != null)
+			if (value is string str)
+			{
 				writer.Write(str, '\0');
+			}
 			else
+			{
 				writer.WriteStruct(value);
+			}
 
 			// Overwrite size descriptor with total size.
-			var endPos = writer.BaseStream.Position;
+			long endPos = writer.BaseStream.Position;
 			writer.BaseStream.Position = currentPos;
 			writer.Write((int)(endPos - currentPos - 4));
 			writer.BaseStream.Position = endPos;
@@ -138,14 +151,14 @@ namespace SilentHunter.Sdl
 
 		public string WaveName
 		{
-			get { return _waveName ?? string.Empty; }
-			set { _waveName = value; }
+			get => _waveName ?? string.Empty;
+			set => _waveName = value;
 		}
 
 		public string Name
 		{
-			get { return _name ?? string.Empty; }
-			set { _name = value; }
+			get => _name ?? string.Empty;
+			set => _name = value;
 		}
 
 		public bool Is3D { get; set; }
@@ -178,6 +191,7 @@ namespace SilentHunter.Sdl
 
 				((IRawSerializable)clone).Deserialize(ms);
 			}
+
 			return clone;
 		}
 
@@ -199,14 +213,26 @@ namespace SilentHunter.Sdl
 		/// <param name="obj">The object to compare with the current object. </param>
 		public override bool Equals(object obj)
 		{
-			if (ReferenceEquals(null, obj)) return false;
-			if (ReferenceEquals(this, obj)) return true;
-			if (obj.GetType() != GetType()) return false;
+			if (ReferenceEquals(null, obj))
+			{
+				return false;
+			}
+
+			if (ReferenceEquals(this, obj))
+			{
+				return true;
+			}
+
+			if (obj.GetType() != GetType())
+			{
+				return false;
+			}
+
 			return Equals((SoundInfo)obj);
 		}
 
 		/// <summary>
-		/// Serves as the default hash function. 
+		/// Serves as the default hash function.
 		/// </summary>
 		/// <returns>
 		/// A hash code for the current object.
@@ -231,7 +257,7 @@ namespace SilentHunter.Sdl
 		#region Implementation of IRawSerializable
 
 		/// <summary>
-		/// When implemented, deserializes the implemented class from specified <paramref name="stream"/>.
+		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
 		void IRawSerializable.Deserialize(Stream stream)
@@ -240,7 +266,7 @@ namespace SilentHunter.Sdl
 		}
 
 		/// <summary>
-		/// When implemented, serializes the implemented class to specified <paramref name="stream"/>.
+		/// When implemented, serializes the implemented class to specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
 		void IRawSerializable.Serialize(Stream stream)

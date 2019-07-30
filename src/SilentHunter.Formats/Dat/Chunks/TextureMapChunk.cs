@@ -18,7 +18,7 @@ namespace SilentHunter.Dat.Chunks
 			: base(DatFile.Magics.TextureMap)
 		{
 			_mapType = TextureMapType.AmbientOcclusionMap;
-			MapChannel = 2;	// Default to 2 because in 99% this is the case.
+			MapChannel = 2; // Default to 2 because in 99% this is the case.
 			Attributes = MaterialAttributes.MagFilterLinear | MaterialAttributes.MinFilterLinear;
 
 			CreationTime = DateTime.Now.ToUniversalTime();
@@ -46,7 +46,7 @@ namespace SilentHunter.Dat.Chunks
 				Id = reader.ReadUInt64();
 				ParentId = reader.ReadUInt64();
 
-				var name = reader.ReadString(TexmapNameLength).TrimEnd('\0');
+				string name = reader.ReadString(TexmapNameLength).TrimEnd('\0');
 
 				switch (name)
 				{
@@ -66,7 +66,6 @@ namespace SilentHunter.Dat.Chunks
 						break;
 				}
 
-
 				MapChannel = reader.ReadInt32();
 #if DEBUG
 				/*	if (_mapChannel != 2)
@@ -76,15 +75,16 @@ namespace SilentHunter.Dat.Chunks
 				}*/
 #endif
 
-				Attributes = (MaterialAttributes) reader.ReadInt32();
+				Attributes = (MaterialAttributes)reader.ReadInt32();
 
 				TgaTextureSize = reader.ReadInt32();
 				_creationTimeSinceEpoch = reader.ReadInt64();
 
-
 				// The rest of the stream holds the texture name + terminating zero.
 				if (stream.Length > stream.Position)
+				{
 					Texture = reader.ReadNullTerminatedString();
+				}
 
 				_originalTexture = Texture;
 			}
@@ -117,20 +117,25 @@ namespace SilentHunter.Dat.Chunks
 					default:
 						throw new ArgumentOutOfRangeException();
 				}
+
 				writer.Write(mapTypeStr.PadRight(TexmapNameLength, '\0'), false);
 
 				writer.Write(MapChannel);
 
-				writer.WriteStruct((int) Attributes);
+				writer.WriteStruct((int)Attributes);
 
 				writer.Write(TgaTextureSize);
 				writer.Write(_creationTimeSinceEpoch);
 
 				// Write texture + terminating zero.
 				if (!string.IsNullOrEmpty(Texture))
+				{
 					writer.Write(Texture, '\0');
+				}
 				else
+				{
 					writer.Write(byte.MinValue); // Write terminating 0.
+				}
 			}
 		}
 
@@ -138,11 +143,14 @@ namespace SilentHunter.Dat.Chunks
 
 		public TextureMapType MapType
 		{
-			get { return _mapType; }
+			get => _mapType;
 			set
 			{
-				if (!Enum.IsDefined(typeof (TextureMapType), value))
+				if (!Enum.IsDefined(typeof(TextureMapType), value))
+				{
 					throw new ArgumentException(@"Specified value is not a valid enumeration value.", nameof(value));
+				}
+
 				_mapType = value;
 			}
 		}
@@ -165,8 +173,8 @@ namespace SilentHunter.Dat.Chunks
 		/// <remarks>This property is not available for non-explicit textures, nor does it's value matter a whole lot anyway. It's not used by the game and probably a old/legacy attribute of Ubi's own exporter tools.</remarks>
 		public DateTime CreationTime
 		{
-			get { return Epoch + TimeSpan.FromSeconds(_creationTimeSinceEpoch); }
-			set { _creationTimeSinceEpoch = (long) value.Subtract(Epoch).TotalSeconds; }
+			get => Epoch + TimeSpan.FromSeconds(_creationTimeSinceEpoch);
+			set => _creationTimeSinceEpoch = (long)value.Subtract(Epoch).TotalSeconds;
 		}
 
 		/// <summary>

@@ -6,8 +6,7 @@ using skwas.IO;
 namespace SilentHunter.Off
 {
 	[DebuggerDisplay("{Character}, {Rectangle}")]
-	public class OffCharacter
-		: IRawSerializable
+	public class OffCharacter : IRawSerializable
 	{
 		public char Character { get; set; }
 		public Rectangle Rectangle { get; set; }
@@ -46,14 +45,26 @@ namespace SilentHunter.Off
 		/// <param name="obj">The object to compare with the current object. </param>
 		public override bool Equals(object obj)
 		{
-			if (ReferenceEquals(null, obj)) return false;
-			if (ReferenceEquals(this, obj)) return true;
-			if (obj.GetType() != this.GetType()) return false;
-			return Equals((OffCharacter) obj);
+			if (ReferenceEquals(null, obj))
+			{
+				return false;
+			}
+
+			if (ReferenceEquals(this, obj))
+			{
+				return true;
+			}
+
+			if (obj.GetType() != GetType())
+			{
+				return false;
+			}
+
+			return Equals((OffCharacter)obj);
 		}
 
 		/// <summary>
-		/// Serves as the default hash function. 
+		/// Serves as the default hash function.
 		/// </summary>
 		/// <returns>
 		/// A hash code for the current object.
@@ -78,7 +89,7 @@ namespace SilentHunter.Off
 		#region Implementation of IRawSerializable
 
 		/// <summary>
-		/// When implemented, deserializes the implemented class from specified <paramref name="stream"/>.
+		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
 		void IRawSerializable.Deserialize(Stream stream)
@@ -87,7 +98,7 @@ namespace SilentHunter.Off
 		}
 
 		/// <summary>
-		/// When implemented, serializes the implemented class to specified <paramref name="stream"/>.
+		/// When implemented, serializes the implemented class to specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
 		void IRawSerializable.Serialize(Stream stream)

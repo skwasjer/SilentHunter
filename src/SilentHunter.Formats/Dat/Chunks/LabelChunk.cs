@@ -33,11 +33,16 @@ namespace SilentHunter.Dat.Chunks
 
 				// The rest of the stream holds the name + terminating zero.
 				if (stream.Length > stream.Position)
+				{
 					Text = reader.ReadNullTerminatedString();
+				}
 			}
 
 			// Some files contain more data, problem seen mainly in older mods. Chunk will be correctly serialized upon next save.
-			if (stream.Length > stream.Position) stream.Position = stream.Length;
+			if (stream.Length > stream.Position)
+			{
+				stream.Position = stream.Length;
+			}
 		}
 
 		/// <summary>
@@ -53,7 +58,9 @@ namespace SilentHunter.Dat.Chunks
 
 				// Write name + terminating zero.
 				if (!string.IsNullOrEmpty(Text))
+				{
 					writer.Write(Text, '\0');
+				}
 			}
 		}
 

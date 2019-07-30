@@ -6,8 +6,7 @@ namespace SilentHunter
 	/// <summary>
 	/// Base interface for Silent Hunter files.
 	/// </summary>
-	public interface ISilentHunterFile
-		: IRawSerializable
+	public interface ISilentHunterFile : IRawSerializable
 	{
 		/// <summary>
 		/// Loads the file from specified stream.

@@ -1,8 +1,8 @@
-using System.IO;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
-using skwas.IO;
 using SilentHunter.Formats;
+using skwas.IO;
 
 namespace SilentHunter.Dat.Chunks
 {
@@ -16,14 +16,8 @@ namespace SilentHunter.Dat.Chunks
 		{
 		}
 
-		private long _unknown;
+		public long Unknown { get; set; }
 
-		public long Unknown
-		{
-			get { return _unknown; }
-			set { _unknown = value; }
-		}
-		
 		/// <summary>
 		/// Gets or sets the author that created or last modified the file.
 		/// </summary>
@@ -47,13 +41,15 @@ namespace SilentHunter.Dat.Chunks
 
 			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
 			{
-				_unknown = reader.ReadInt64();
+				Unknown = reader.ReadInt64();
 				UnknownData.Add(new UnknownChunkData(regionStream?.BaseStream.Position - 8 ?? stream.Position - 8,
-					stream.Position - 8, _unknown, "No idea"));
+					stream.Position - 8, Unknown, "No idea"));
 
 				Author = reader.ReadNullTerminatedString();
 				if (stream.Position < stream.Length)
+				{
 					Description = reader.ReadNullTerminatedString();
+				}
 				else
 				{
 					Description = Author;
@@ -62,8 +58,12 @@ namespace SilentHunter.Dat.Chunks
 
 				// Discard remaining data. Original files don't have more data here, but our OnSerialize implementation writes an extra line with copyright info.
 				IsOriginalFile = stream.Position == stream.Length;
-				if (IsOriginalFile) return;
-				LastSavedString = reader.ReadString((int) (stream.Length - stream.Position - 1))?.TrimEnd(" \0".ToCharArray());
+				if (IsOriginalFile)
+				{
+					return;
+				}
+
+				LastSavedString = reader.ReadString((int)(stream.Length - stream.Position - 1))?.TrimEnd(" \0".ToCharArray());
 				stream.Position = stream.Length;
 			}
 
@@ -76,7 +76,7 @@ namespace SilentHunter.Dat.Chunks
 		{
 			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
 			{
-				writer.WriteStruct(_unknown);
+				writer.WriteStruct(Unknown);
 
 				writer.Write(Author, '\0');
 				writer.Write(Description, '\0');
@@ -93,13 +93,13 @@ namespace SilentHunter.Dat.Chunks
 		/// <returns>Returns the S3D signature.</returns>
 		private static string GetSignature()
 		{
-			var asm = Assembly.GetEntryAssembly();
-			var title = asm.GetAttribute<AssemblyTitleAttribute>().Title;
-			var product = asm.GetAttribute<AssemblyProductAttribute>().Product;
-			var version = asm.GetAttribute<AssemblyFileVersionAttribute>().Version;
-			var cw = asm.GetAttribute<AssemblyCopyrightAttribute>().Copyright;
+			Assembly asm = Assembly.GetEntryAssembly();
+			string title = asm.GetAttribute<AssemblyTitleAttribute>().Title;
+			string product = asm.GetAttribute<AssemblyProductAttribute>().Product;
+			string version = asm.GetAttribute<AssemblyFileVersionAttribute>().Version;
+			string cw = asm.GetAttribute<AssemblyCopyrightAttribute>().Copyright;
 
-			return string.Format("Modified with {0} - {1} (version {2}). {3}", product, title, version, cw);
+			return $"Modified with {product} - {title} (version {version}). {cw}";
 		}
 	}
 }

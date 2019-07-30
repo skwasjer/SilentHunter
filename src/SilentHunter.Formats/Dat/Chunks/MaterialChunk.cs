@@ -13,7 +13,6 @@ namespace SilentHunter.Dat.Chunks
 		private long _creationTimeSinceEpoch;
 		private static readonly DateTime Epoch = new DateTime(1970, 1, 1);
 
-
 		public MaterialChunk()
 			: base(DatFile.Magics.Material)
 		{
@@ -24,12 +23,10 @@ namespace SilentHunter.Dat.Chunks
 			Opacity = 255;
 		}
 
-
 		/// <summary>
 		/// Gets whether the chunk supports an id field.
 		/// </summary>
 		public override bool SupportsId => true;
-
 
 		// http://people.scs.fsu.edu/~burkardt/data/mtl/mtl.html
 
@@ -61,8 +58,8 @@ namespace SilentHunter.Dat.Chunks
 		/// <remarks>This property is not available for non-explicit textures, nor does it's value matter a whole lot anyway. It's not used by the game and probably a old/legacy attribute of Ubi's own exporter tools.</remarks>
 		public DateTime CreationTime
 		{
-			get { return Epoch + TimeSpan.FromSeconds(_creationTimeSinceEpoch); }
-			set { _creationTimeSinceEpoch = (long)value.Subtract(Epoch).TotalSeconds; }
+			get => Epoch + TimeSpan.FromSeconds(_creationTimeSinceEpoch);
+			set => _creationTimeSinceEpoch = (long)value.Subtract(Epoch).TotalSeconds;
 		}
 
 		/// <summary>
@@ -102,12 +99,14 @@ namespace SilentHunter.Dat.Chunks
 		/// </summary>
 		public bool ZBufferWriteEnabled
 		{
-			get { return !Attributes.HasFlag(MaterialAttributes.DisableZBufferWrite); }
+			get => !Attributes.HasFlag(MaterialAttributes.DisableZBufferWrite);
 			set
 			{
 				Attributes = Attributes | MaterialAttributes.DisableZBufferWrite;
 				if (value)
+				{
 					Attributes ^= MaterialAttributes.DisableZBufferWrite;
+				}
 			}
 		}
 
@@ -116,12 +115,14 @@ namespace SilentHunter.Dat.Chunks
 		/// </summary>
 		public bool UseCounterClockwiseCulling
 		{
-			get { return !Attributes.HasFlag(MaterialAttributes.CullNone); }
+			get => !Attributes.HasFlag(MaterialAttributes.CullNone);
 			set
 			{
 				Attributes = Attributes | MaterialAttributes.CullNone;
 				if (value)
+				{
 					Attributes ^= MaterialAttributes.CullNone;
+				}
 			}
 		}
 
@@ -130,12 +131,14 @@ namespace SilentHunter.Dat.Chunks
 		/// </summary>
 		public bool MinFilterLinear
 		{
-			get { return Attributes.HasFlag(MaterialAttributes.MinFilterLinear); }
+			get => Attributes.HasFlag(MaterialAttributes.MinFilterLinear);
 			set
 			{
 				Attributes = Attributes | MaterialAttributes.MinFilterLinear;
 				if (!value)
+				{
 					Attributes ^= MaterialAttributes.MinFilterLinear;
+				}
 			}
 		}
 
@@ -144,12 +147,14 @@ namespace SilentHunter.Dat.Chunks
 		/// </summary>
 		public bool MagFilterLinear
 		{
-			get { return Attributes.HasFlag(MaterialAttributes.MagFilterLinear); }
+			get => Attributes.HasFlag(MaterialAttributes.MagFilterLinear);
 			set
 			{
 				Attributes = Attributes | MaterialAttributes.MagFilterLinear;
 				if (!value)
+				{
 					Attributes ^= MaterialAttributes.MagFilterLinear;
+				}
 			}
 		}
 
@@ -158,12 +163,14 @@ namespace SilentHunter.Dat.Chunks
 		/// </summary>
 		public bool DxtCompression
 		{
-			get { return !Attributes.HasFlag(MaterialAttributes.NoDxtCompression); }
+			get => !Attributes.HasFlag(MaterialAttributes.NoDxtCompression);
 			set
 			{
 				Attributes = Attributes | MaterialAttributes.NoDxtCompression;
 				if (value)
+				{
 					Attributes ^= MaterialAttributes.NoDxtCompression;
+				}
 			}
 		}
 
@@ -173,7 +180,7 @@ namespace SilentHunter.Dat.Chunks
 		/// <param name="stream">The stream to read from.</param>
 		protected override void Deserialize(Stream stream)
 		{
-			var isExtendedMaterial = stream.Length >= 36;
+			bool isExtendedMaterial = stream.Length >= 36;
 
 			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
 			{
@@ -189,7 +196,7 @@ namespace SilentHunter.Dat.Chunks
 				color = reader.ReadBytes(3);
 				Diffuse = Color.FromArgb(color[2], color[1], color[0]);
 
-				SpecularMode = (SpecularMode) reader.ReadByte();
+				SpecularMode = (SpecularMode)reader.ReadByte();
 
 				// Again a 'flipped' color.
 				color = reader.ReadBytes(3);
@@ -200,11 +207,11 @@ namespace SilentHunter.Dat.Chunks
 				Glossiness = reader.ReadByte();
 				Emission = reader.ReadByte();
 
-				var always0 = reader.ReadByte();
+				byte always0 = reader.ReadByte();
 				Debug.Assert(always0 == byte.MinValue, "Material always0, excepted 0.");
 
 				// External texture resource.
-				Attributes = (MaterialAttributes) reader.ReadInt32();
+				Attributes = (MaterialAttributes)reader.ReadInt32();
 
 				// A texture size indicates if the referenced texture is internal. If 0, then it's an external texture.
 				TgaTextureSize = reader.ReadInt32();
@@ -212,14 +219,19 @@ namespace SilentHunter.Dat.Chunks
 				// For support of incorrect files, we still look for more bytes, even if the resource is external.
 				if (IsInternalResource || isExtendedMaterial)
 				{
-					if (!IsInternalResource) TgaTextureSize = -1; // If extended material (stream len >= 36).
+					if (!IsInternalResource)
+					{
+						TgaTextureSize = -1; // If extended material (stream len >= 36).
+					}
 
 					if (isExtendedMaterial)
 					{
 						_creationTimeSinceEpoch = reader.ReadInt64();
 						// The rest of the stream holds the name + terminating zero.
 						if (stream.Length > stream.Position)
+						{
 							Texture = reader.ReadNullTerminatedString();
+						}
 					}
 					else
 					{
@@ -245,7 +257,7 @@ namespace SilentHunter.Dat.Chunks
 				writer.Write(Diffuse.G);
 				writer.Write(Diffuse.R);
 
-				writer.Write((byte) SpecularMode);
+				writer.Write((byte)SpecularMode);
 				writer.Write(Specular.B);
 				writer.Write(Specular.G);
 				writer.Write(Specular.R);
@@ -255,7 +267,7 @@ namespace SilentHunter.Dat.Chunks
 				writer.Write(Emission);
 
 				writer.Write(byte.MinValue);
-				writer.Write((int) Attributes);
+				writer.Write((int)Attributes);
 
 				if (IsInternalResource)
 				{
@@ -278,10 +290,14 @@ namespace SilentHunter.Dat.Chunks
 					writer.Write(TgaTextureSize);
 					writer.Write(_creationTimeSinceEpoch);
 					if (!string.IsNullOrEmpty(Texture))
+					{
 						writer.Write(Texture, '\0');
+					}
 				}
 				else
+				{
 					writer.Write(0); // Texture size is 0.
+				}
 			}
 		}
 

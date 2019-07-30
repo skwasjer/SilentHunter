@@ -7,7 +7,7 @@ namespace SilentHunter.Dat
 	partial class DatFile
 	{
 		[StructLayout(LayoutKind.Sequential)]
-		class Header
+		private class Header
 		{
 			[Flags]
 			public enum Flags : uint
@@ -16,10 +16,12 @@ namespace SilentHunter.Dat
 				/// This is the generic flag. Every file has this...
 				/// </summary>
 				Generic = 2,
+
 				/// <summary>
 				/// This flag is set when the file contains renderable objects.
 				/// </summary>
 				HasRenderableObjects = 0x10000,
+
 				/// <summary>
 				/// This flag is set when the file contains animations.
 				/// </summary>
@@ -29,15 +31,18 @@ namespace SilentHunter.Dat
 			/// <summary>
 			/// Always 0x716d0da4
 			/// </summary>
-			private uint Magic;
+			// ReSharper disable once MemberHidesStaticFromOuterClass
+			private readonly uint Magic;
+
 			/// <summary>
 			/// 0x00010002 and 0x00000002
 			/// </summary>
 			public Flags FileType;
+
 			/// <summary>
-			///	Always 0?
+			/// Always 0?
 			/// </summary>
-			private uint Unknown1;
+			private readonly uint Unknown1;
 
 			public Header()
 			{
@@ -49,8 +54,11 @@ namespace SilentHunter.Dat
 			public bool IsValid()
 			{
 				if ((FileType & Flags.Generic) == 0)
+				{
 					Debug.WriteLine("Unexpected header flag");
-				return (Magic == DatFile.Magic) && (Unknown1 == 0);
+				}
+
+				return Magic == DatFile.Magic && Unknown1 == 0;
 			}
 		}
 	}

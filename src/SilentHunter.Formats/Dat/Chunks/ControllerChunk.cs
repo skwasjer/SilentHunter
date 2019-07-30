@@ -39,12 +39,14 @@ namespace SilentHunter.Dat.Chunks
 				ParentId = reader.ReadUInt64();
 
 				// Skip byte.
-				var alwaysZero = reader.ReadByte();
+				byte alwaysZero = reader.ReadByte();
 				Debug.Assert(alwaysZero == byte.MinValue, "Controllers: expecting byte=0.");
 
 				// The rest of the stream holds the name + terminating zero.
 				if (stream.Length > stream.Position)
+				{
 					Name = reader.ReadNullTerminatedString();
+				}
 			}
 		}
 
@@ -65,7 +67,9 @@ namespace SilentHunter.Dat.Chunks
 
 				// Write name + terminating zero.
 				if (!string.IsNullOrEmpty(Name))
+				{
 					writer.Write(Name, '\0');
+				}
 			}
 		}
 
@@ -79,6 +83,5 @@ namespace SilentHunter.Dat.Chunks
 		{
 			return base.ToString() + ": " + Name;
 		}
-
 	}
 }

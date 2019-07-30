@@ -19,7 +19,7 @@ namespace SilentHunter.Dat.Chunks
 		#region .ctor/cleanup
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="DatChunk"/> using specified <paramref name="magic"/>.
+		/// Initializes a new instance of <see cref="DatChunk" /> using specified <paramref name="magic" />.
 		/// </summary>
 		/// <param name="magic">The magic for this chunk.</param>
 		public DatChunk(DatFile.Magics magic)
@@ -28,7 +28,7 @@ namespace SilentHunter.Dat.Chunks
 		}
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="DatChunk"/> using specified <paramref name="magic"/> and chunk <paramref name="subType"/>.
+		/// Initializes a new instance of <see cref="DatChunk" /> using specified <paramref name="magic" /> and chunk <paramref name="subType" />.
 		/// </summary>
 		/// <param name="magic">The magic for this chunk.</param>
 		/// <param name="subType">The sub type of this chunk.</param>
@@ -51,7 +51,11 @@ namespace SilentHunter.Dat.Chunks
 
 		protected virtual void Dispose(bool disposing)
 		{
-			if (IsDisposed) return;
+			if (IsDisposed)
+			{
+				return;
+			}
+
 			if (disposing)
 			{
 			}
@@ -66,28 +70,36 @@ namespace SilentHunter.Dat.Chunks
 #if DEBUG
 		internal static string GetBaseStreamName(Stream s)
 		{
-			var baseStream = s;
+			Stream baseStream = s;
 			if (baseStream is RegionStream)
+			{
 				baseStream = ((RegionStream)s).BaseStream;
+			}
+
+			// TODO: can we remove reflection to get base stream?? Even though we only use this in DEBUG..
 			if (baseStream is BufferedStream)
 			{
 				// Get the private field _s.
 				baseStream = (Stream)typeof(BufferedStream).GetField("_stream", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(baseStream);
 			}
 
-			var t = baseStream.GetType();
+			Type t = baseStream.GetType();
 			if (t.Name == "SyncStream")
 			{
 				baseStream = (Stream)t.GetField("_stream", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(baseStream);
 			}
+
 			if (baseStream is BufferedStream)
 			{
 				// Get the private field _s.
 				baseStream = (Stream)typeof(BufferedStream).GetField("_stream", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(baseStream);
 			}
 
-			if (baseStream is FileStream)
-				return ((FileStream)baseStream).Name;
+			if (baseStream is FileStream fileStream)
+			{
+				return fileStream.Name;
+			}
+
 			return null;
 		}
 #endif
@@ -112,11 +124,14 @@ namespace SilentHunter.Dat.Chunks
 		/// </summary>
 		public virtual ulong Id
 		{
-			get { return _id; }
-			set 
+			get => _id;
+			set
 			{
 				if (!SupportsId)
+				{
 					throw new NotSupportedException("Id is not supported.");
+				}
+
 				_id = value;
 			}
 		}
@@ -126,50 +141,45 @@ namespace SilentHunter.Dat.Chunks
 		/// </summary>
 		public virtual ulong ParentId
 		{
-			get { return _parentId; }
-			set 
+			get => _parentId;
+			set
 			{
 				if (!SupportsParentId)
+				{
 					throw new NotSupportedException("ParentId is not supported.");
+				}
+
 				_parentId = value;
 			}
-		}		
+		}
 
 		/// <summary>
 		/// Gets the size of the chunk.
 		/// </summary>
-		public override long Size
-		{
-			get
-			{
-				return _size;
-			}
-		}
+		public override long Size => _size;
 
 		private List<UnknownChunkData> _unknownData;
 
-		public List<UnknownChunkData> UnknownData
-		{
-			get { return _unknownData ?? (_unknownData = new List<UnknownChunkData>()); }
-		}
-
+		public List<UnknownChunkData> UnknownData => _unknownData ?? (_unknownData = new List<UnknownChunkData>());
 
 		#region Overrides of Chunk<Magics>
 
 		/// <summary>
-		/// Deserializes the chunk. Note that the first 12 bytes (type, subtype and chunk size) are already read by the base class. Inheritors can override the default behavior, which is nothing more then reading all data, and caching it for later (ie. for serialization). 
+		/// Deserializes the chunk. Note that the first 12 bytes (type, subtype and chunk size) are already read by the base class. Inheritors can override the default behavior, which is nothing more then reading all data, and caching it for later (ie. for serialization).
 		/// </summary>
 		/// <param name="stream">The stream to read from.</param>
 		protected override void Deserialize(Stream stream)
 		{
 			var regionStream = stream as RegionStream;
-			var origin = regionStream?.BaseStream.Position ?? stream.Position;
-			var relativeOrigin = stream.Position;
+			long origin = regionStream?.BaseStream.Position ?? stream.Position;
+			long relativeOrigin = stream.Position;
 
 			base.Deserialize(stream);
 
 			if (Bytes != null && Bytes.Length > 0)
+			{
 				UnknownData.Add(new UnknownChunkData(origin, relativeOrigin, Bytes, "Unknown"));
+			}
 		}
 
 		/// <summary>
@@ -191,9 +201,13 @@ namespace SilentHunter.Dat.Chunks
 		public void Deserialize(Stream stream, bool includeHeader)
 		{
 			if (includeHeader)
+			{
 				((IRawSerializable)this).Deserialize(stream);
+			}
 			else
+			{
 				Deserialize(stream);
+			}
 		}
 
 		/// <summary>
@@ -204,15 +218,19 @@ namespace SilentHunter.Dat.Chunks
 		public void Serialize(Stream stream, bool includeHeader)
 		{
 			if (includeHeader)
+			{
 				((IRawSerializable)this).Serialize(stream);
+			}
 			else
+			{
 				Serialize(stream);
+			}
 		}
 
 		#region Implementation of IRawSerializable
 
 		/// <summary>
-		/// When implemented, deserializes the implemented class from specified <paramref name="stream"/>.
+		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
 		void IRawSerializable.Deserialize(Stream stream)
@@ -224,40 +242,45 @@ namespace SilentHunter.Dat.Chunks
 				SubType = reader.ReadInt32();
 
 				// Read chunk size.
-				var chunkSize = reader.ReadInt32();
+				int chunkSize = reader.ReadInt32();
 				_size = chunkSize + ChunkHeaderSize;
 				if (_size < 0)
 				{
 					stream.Position -= 4;
-					throw new IOException(string.Format("Invalid chunk size ({0} bytes). Can't be negative.", _size));
+					throw new IOException($"Invalid chunk size ({_size} bytes). Can't be negative.");
 				}
 
-				var startPos = stream.Position;
+				long startPos = stream.Position;
 				if (startPos + chunkSize > stream.Length)
 				{
 					stream.Position -= 4;
-					throw new IOException(string.Format("Invalid chunk size ({0} bytes). The stream has {1} bytes left.", _size,
-						stream.Length - stream.Position));
+					throw new IOException($"Invalid chunk size ({_size} bytes). The stream has {stream.Length - stream.Position} bytes left.");
 				}
 
 				// Allow inheritors to deserialize the remainder of the chunk.
 				using (var regionStream = new RegionStream(stream, chunkSize))
+				{
 					Deserialize(regionStream);
+				}
 
 				// Verify that the inheritor read the entire chunk. If not, the inheritor does not implement it correctly, so we have to halt.
-				if (stream.Position == startPos + chunkSize) return;
+				if (stream.Position == startPos + chunkSize)
+				{
+					return;
+				}
 
 				if (stream.Position < startPos + chunkSize)
 				{
 					throw new IOException("Invalid deserialization of " + ToString() + ". More unparsed data in chunk.");
 					//				stream.Position = startPos + chunkSize;
 				}
+
 				throw new IOException("Invalid deserialization of " + ToString() + ". Too much data was read while deserializing. This may indicate an invalid size specifier somewhere.");
 			}
 		}
 
 		/// <summary>
-		/// When implemented, serializes the implemented class to specified <paramref name="stream"/>.
+		/// When implemented, serializes the implemented class to specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
 		void IRawSerializable.Serialize(Stream stream)
@@ -266,15 +289,15 @@ namespace SilentHunter.Dat.Chunks
 			{
 				writer.Write(SubType);
 
-				var origin = stream.Position;
+				long origin = stream.Position;
 				writer.Write(0); // Empty placeholder for size.
 
 				Serialize(stream);
 
-				var currentPos = stream.Position;
+				long currentPos = stream.Position;
 				stream.Seek(origin, SeekOrigin.Begin);
 				_size = currentPos - origin - 4 + ChunkHeaderSize;
-				writer.Write((uint) (_size - ChunkHeaderSize));
+				writer.Write((uint)(_size - ChunkHeaderSize));
 				stream.Seek(currentPos, SeekOrigin.Begin);
 			}
 		}
@@ -291,7 +314,7 @@ namespace SilentHunter.Dat.Chunks
 		/// </returns>
 		public override string ToString()
 		{
-			return Enum.IsDefined(typeof (DatFile.Magics), Magic) ? Magic.ToString() : GetType().Name;
+			return Enum.IsDefined(typeof(DatFile.Magics), Magic) ? Magic.ToString() : GetType().Name;
 		}
 
 		#endregion
@@ -303,12 +326,16 @@ namespace SilentHunter.Dat.Chunks
 			using (var ms = new MemoryStream())
 			{
 				using (var writer = new ChunkWriter<DatFile.Magics, DatChunk>(ms, true))
+				{
 					writer.Write(this);
+				}
 
 				ms.Position = 0;
 
 				using (var reader = new ChunkReader<DatFile.Magics, DatChunk>(ms, new DatChunkResolver(), false))
+				{
 					return reader.Read();
+				}
 			}
 		}
 

@@ -1,12 +1,11 @@
 using System;
 using System.IO;
-using skwas.IO;
 using SilentHunter.Dat.Chunks;
+using skwas.IO;
 
 namespace SilentHunter.Dat
 {
-	public sealed partial class DatFile 
-		: ChunkFile<DatChunk>, ISilentHunterFile
+	public sealed partial class DatFile : ChunkFile<DatChunk>, ISilentHunterFile
 	{
 		/// <summary>
 		/// Every DAT-file starts with this magic.
@@ -29,7 +28,7 @@ namespace SilentHunter.Dat
 		}
 
 		protected override void Dispose(bool disposing)
-		{			
+		{
 			try
 			{
 				if (!IsDisposed)
@@ -51,41 +50,46 @@ namespace SilentHunter.Dat
 
 		public uint HeaderFlags
 		{
-			get { return (uint)_header.FileType; }
-			set { _header.FileType = (Header.Flags)value; }
+			get => (uint)_header.FileType;
+			set => _header.FileType = (Header.Flags)value;
 		}
 
 		public bool HasGenericFlag
 		{
-			get { return _header.FileType.HasFlag(Header.Flags.Generic); }
+			get => _header.FileType.HasFlag(Header.Flags.Generic);
 			set
 			{
 				_header.FileType = _header.FileType | Header.Flags.Generic;
 				if (!value)
+				{
 					_header.FileType ^= Header.Flags.Generic;
+				}
 			}
 		}
 
 		public bool ContainsAnimations
 		{
-			get { return _header.FileType.HasFlag(Header.Flags.HasAnimations); }
+			get => _header.FileType.HasFlag(Header.Flags.HasAnimations);
 			set
 			{
 				_header.FileType = _header.FileType | Header.Flags.HasAnimations;
 				if (!value)
+				{
 					_header.FileType ^= Header.Flags.HasAnimations;
+				}
 			}
 		}
 
 		public bool ContainsRenderableObjects
 		{
-			get { return _header.FileType.HasFlag(Header.Flags.HasRenderableObjects); }
+			get => _header.FileType.HasFlag(Header.Flags.HasRenderableObjects);
 			set
 			{
 				_header.FileType = _header.FileType | Header.Flags.HasRenderableObjects;
 				if (!value)
+				{
 					_header.FileType ^= Header.Flags.HasRenderableObjects;
-
+				}
 			}
 		}
 
@@ -96,7 +100,10 @@ namespace SilentHunter.Dat
 		{
 			get
 			{
-				if (IsDisposed) throw new ObjectDisposedException(GetType().Name);
+				if (IsDisposed)
+				{
+					throw new ObjectDisposedException(GetType().Name);
+				}
 
 				return _settingsChunk ?? (_settingsChunk = new S3DSettingsChunk());
 			}
@@ -110,7 +117,10 @@ namespace SilentHunter.Dat
 		/// <param name="stream">The stream to load from.</param>
 		public override void Load(Stream stream)
 		{
-			if (IsDisposed) throw new ObjectDisposedException(GetType().Name);
+			if (IsDisposed)
+			{
+				throw new ObjectDisposedException(GetType().Name);
+			}
 
 			_settingsChunk = null;
 
@@ -118,10 +128,14 @@ namespace SilentHunter.Dat
 
 			using (var reader = new BinaryReader(bufferedStream, Encoding.ParseEncoding, true))
 				// Check the magic.
+			{
 				_header = reader.ReadStruct<Header>();
+			}
 
 			if (!_header.IsValid())
+			{
 				throw new ArgumentException("Unexpected header in stream.", nameof(stream));
+			}
 
 			using (var reader = new ChunkReader<Magics, DatChunk>(bufferedStream, new DatChunkResolver(), true))
 			{
@@ -131,14 +145,22 @@ namespace SilentHunter.Dat
 					while (true)
 					{
 						chunkStart = bufferedStream.Position;
-						var chunk = reader.Read();
-						if (chunk == null) break;   // EOF.
+						DatChunk chunk = reader.Read();
+						if (chunk == null)
+						{
+							// EOF.
+							break;
+						}
 
 						// If we have a settings chunk, do not add it to collection. Instead, store a reference in a private variable. We don't want this special chunk to show up in the UI.
 						if (chunk.Magic == Magics.S3DSettings)
+						{
 							_settingsChunk = (S3DSettingsChunk)chunk;
+						}
 						else
+						{
 							Chunks.Add(chunk);
+						}
 					}
 				}
 				catch (Exception ex) when (chunkStart != 0)
@@ -154,16 +176,22 @@ namespace SilentHunter.Dat
 		/// <param name="stream">The stream to write to.</param>
 		public override void Save(Stream stream)
 		{
-			if (IsDisposed) throw new ObjectDisposedException(GetType().Name);
+			if (IsDisposed)
+			{
+				throw new ObjectDisposedException(GetType().Name);
+			}
 
 			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
+			{
 				writer.WriteStruct(_header);
+			}
 
 			using (var writer = new ChunkWriter<Magics, DatChunk>(stream, true))
 			{
-				foreach (var chunk in Chunks)
-					// Write chunk.
+				foreach (DatChunk chunk in Chunks)
+				{
 					writer.Write(chunk);
+				}
 
 				// Write settings.
 				writer.Write(SettingsChunk);
@@ -175,7 +203,7 @@ namespace SilentHunter.Dat
 		#region Implementation of IRawSerializable
 
 		/// <summary>
-		/// When implemented, deserializes the implemented class from specified <paramref name="stream"/>.
+		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
 		void IRawSerializable.Deserialize(Stream stream)
@@ -184,7 +212,7 @@ namespace SilentHunter.Dat
 		}
 
 		/// <summary>
-		/// When implemented, serializes the implemented class to specified <paramref name="stream"/>.
+		/// When implemented, serializes the implemented class to specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
 		void IRawSerializable.Serialize(Stream stream)
