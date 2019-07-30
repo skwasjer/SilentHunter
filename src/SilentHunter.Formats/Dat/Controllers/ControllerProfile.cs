@@ -1,4 +1,4 @@
-namespace SilentHunter.Dat
+namespace SilentHunter.Dat.Controllers
 {
 	public enum ControllerProfile
 	{
