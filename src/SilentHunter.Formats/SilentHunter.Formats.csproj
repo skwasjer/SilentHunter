@@ -26,9 +26,6 @@
     <Reference Include="skwas.Drawing">
       <HintPath>..\..\lib\skwas.Drawing\bin\Release\skwas.Drawing.dll</HintPath>
     </Reference>
-    <Reference Include="skwas.IO">
-      <HintPath>..\..\lib\skwas.Drawing\bin\Release\skwas.IO.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>

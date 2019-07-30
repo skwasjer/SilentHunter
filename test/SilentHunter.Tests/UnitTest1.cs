@@ -78,7 +78,7 @@ namespace SilentHunter.Tests
 			var controllerAssemblyCompiler = new ControllerAssemblyCompiler(controllerPath)
 				.AssemblyName("Controllers")
 				.IgnorePaths(f => f.Contains(@"\obj\"));
-			//controllerAssemblyCompiler.CleanArtifacts();
+			controllerAssemblyCompiler.CleanArtifacts();
 			ControllerAssembly assembly = controllerAssemblyCompiler.Compile();
 
 			ControllerAssembly.Current = assembly;

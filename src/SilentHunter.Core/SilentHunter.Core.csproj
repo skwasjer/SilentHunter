@@ -19,15 +19,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\skwas.IO\skwas.IO.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
-    <Reference Include="skwas.IO">
-      <HintPath>..\..\lib\skwas.Drawing\bin\Release\skwas.IO.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

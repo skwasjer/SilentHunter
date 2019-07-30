@@ -2,26 +2,19 @@
 
   <PropertyGroup>
     <TargetFramework>net45</TargetFramework>
-    <RootNamespace>SilentHunter.Dat</RootNamespace>
     <DebugType>full</DebugType>
   </PropertyGroup>
 
   <!--Import Project="..\Package.props" /-->
 
   <PropertyGroup>
-    <Description>SilentHunter controllers library</Description>
+    <Description>SilentHunter IO library</Description>
     <!--PackageProjectUrl>https://github.com/skwasjer/...</PackageProjectUrl-->
     <PackageTags></PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\SilentHunter.Core\SilentHunter.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -4,9 +4,9 @@
     <TargetFramework>net452</TargetFramework>
     <IsTestProject>true</IsTestProject>
     <IsPackable>false</IsPackable>
-    <RootNamespace>SilentHunter</RootNamespace>
+    <RootNamespace>skwas.IO</RootNamespace>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.7.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
@@ -18,10 +18,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-  
+
   <ItemGroup>
-    <ProjectReference Include="..\..\src\SilentHunter.Core\SilentHunter.Core.csproj" />
-    <ProjectReference Include="..\..\src\SilentHunter.Formats\SilentHunter.Formats.csproj" />
+    <ProjectReference Include="..\..\src\skwas.IO\skwas.IO.csproj" />
   </ItemGroup>
 
 </Project>
