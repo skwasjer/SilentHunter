@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IO;
+using SilentHunter.Extensions;
 
 namespace SilentHunter.Dat.Chunks
 {
@@ -17,7 +18,7 @@ namespace SilentHunter.Dat.Chunks
 		{
 			base.Deserialize(stream);
 #if DEBUG
-			Debug.WriteLine("Contains S3DSettings : " + GetBaseStreamName(stream));
+			Debug.WriteLine("Contains S3DSettings : " + stream.GetBaseStreamName());
 #endif
 		}
 	}

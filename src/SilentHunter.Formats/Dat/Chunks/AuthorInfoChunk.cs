@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using SilentHunter.Extensions;
 using SilentHunter.Formats;
 using skwas.IO;
 
@@ -68,7 +69,7 @@ namespace SilentHunter.Dat.Chunks
 			}
 
 #if DEBUG
-			Debug.WriteLine(LastSavedString + " : " + GetBaseStreamName(stream));
+			Debug.WriteLine(LastSavedString + " : " + stream.GetBaseStreamName());
 #endif
 		}
 

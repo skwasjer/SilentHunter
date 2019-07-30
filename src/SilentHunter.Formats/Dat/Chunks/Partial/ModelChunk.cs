@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using SilentHunter.Extensions;
 using skwas.IO;
 
 namespace SilentHunter.Dat.Chunks.Partial
@@ -68,7 +69,7 @@ namespace SilentHunter.Dat.Chunks.Partial
 					);
 
 #if DEBUG
-				var debugMsg = "Model:\t" + Path.GetFileName(GetBaseStreamName(stream));
+				var debugMsg = "Model:\t" + Path.GetFileName(stream.GetBaseStreamName());
 				debugMsg += "\t" + UnknownData[0].Data.ToString();
 				//Debug.WriteLine(debugMsg);
 #endif
