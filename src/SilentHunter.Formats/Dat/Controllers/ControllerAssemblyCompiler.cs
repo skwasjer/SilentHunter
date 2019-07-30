@@ -146,12 +146,17 @@ namespace SilentHunter.Dat.Controllers
 				// probes for dynamic assemblies. Note that the hash code of the 
 				// application name is concatenated to the base directory name you 
 				// supply. 
-				DynamicBase = Path.Combine(Path.GetTempPath(), "S3D", "dynamic", _applicationName)
+				DynamicBase = GetTargetDir()
 			};
 
 			Console.WriteLine("DynamicBase is set to '{0}'.", setup.DynamicBase);
 
 			return AppDomain.CreateDomain(Guid.NewGuid().ToString(), null, setup);
+		}
+
+		private string GetTargetDir()
+		{
+			return Path.Combine(Path.GetTempPath(), "S3D", "dynamic", _applicationName);
 		}
 
 		/// <summary>
@@ -239,6 +244,18 @@ namespace SilentHunter.Dat.Controllers
 			{
 				File.Copy(sourceFile, destPath, true);
 			}
+		}
+
+		/// <summary>
+		/// Cleans the assembly output directory.
+		/// </summary>
+		/// <remarks>
+		/// This removes the all files from previous builds, including cache.
+		/// </remarks>
+		public void CleanArtifacts()
+		{
+			string dir = GetTargetDir();
+			Directory.Delete(dir, true);
 		}
 	}
 }
