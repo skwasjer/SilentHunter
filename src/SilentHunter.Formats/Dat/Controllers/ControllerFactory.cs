@@ -35,9 +35,10 @@ namespace SilentHunter.Dat.Controllers
 		/// </summary>
 		/// <param name="controllerName"></param>
 		/// <param name="profile">The profile to search for the controller.</param>
+		/// <param name="initializeFields">True to initialize fields.</param>
 		/// <returns>Returns the newly created controller. All (child) fields that are reference types are also pre-instantiated.</returns>
 		/// <exception cref="ArgumentException">Thrown when the controller name is empty or cannot be found for the <paramref name="profile" />.</exception>
-		public IRawController CreateController(string controllerName, ControllerProfile profile)
+		public IRawController CreateController(string controllerName, ControllerProfile profile, bool initializeFields)
 		{
 			if (string.IsNullOrEmpty(controllerName))
 			{
@@ -46,28 +47,29 @@ namespace SilentHunter.Dat.Controllers
 
 			if (_controllerAssembly.TryGetControllerType(controllerName, profile, out Type controllerType))
 			{
-				return CreateController(controllerType);
+				return CreateController(controllerType, initializeFields);
 			}
 
 			throw new ArgumentException("Unknown controller type.");
 		}
 
 		/// <summary>
-		/// Creates the controller for specified <paramref name="type" />.
+		/// Creates the controller for specified <paramref name="controllerType" />.
 		/// </summary>
-		/// <param name="type">The controller type.</param>
+		/// <param name="controllerType">The controller type.</param>
+		/// <param name="initializeFields">True to initialize fields.</param>
 		/// <returns>Returns the newly created controller. All (child) fields that are reference types are also instantiated using the default constructor.</returns>
 		/// <exception cref="ArgumentException">Thrown when the controller name is empty or cannot be found for the <paramref name="profile" />.</exception>
-		public IRawController CreateController(Type type)
+		public IRawController CreateController(Type controllerType, bool initializeFields)
 		{
-			if (type == null)
+			if (controllerType == null)
 			{
-				throw new ArgumentNullException(nameof(type));
+				throw new ArgumentNullException(nameof(controllerType));
 			}
 
-			if (CanCreate(type) && _controllerAssembly.Controllers.Any(profile => profile.Value.Any(ctrl => ctrl.Value == type)))
+			if (CanCreate(controllerType) && _controllerAssembly.Controllers.Any(profile => profile.Value.Any(ctrl => ctrl.Value == controllerType)))
 			{
-				return (IRawController)CreateNewItem(type);
+				return initializeFields ? (IRawController)CreateNewItem(controllerType) : (IRawController)Activator.CreateInstance(controllerType);
 			}
 
 			throw new ArgumentException("Unknown controller type.");

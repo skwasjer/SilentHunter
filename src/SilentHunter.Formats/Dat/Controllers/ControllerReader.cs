@@ -112,7 +112,7 @@ namespace SilentHunter.Dat.Controllers
 				{
 					try
 					{
-						IRawController controller = _controllerFactory.CreateController(controllerName, profile);
+						IRawController controller = _controllerFactory.CreateController(controllerName, profile, false);
 						controller.Deserialize(stream);
 						return controller;
 					}

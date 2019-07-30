@@ -10,17 +10,19 @@ namespace SilentHunter.Dat.Controllers
 		/// </summary>
 		/// <param name="controllerName"></param>
 		/// <param name="profile">The profile to search for the controller.</param>
+		/// <param name="initializeFields">True to initialize fields.</param>
 		/// <returns>Returns the newly created controller. All (child) fields that are reference types are also pre-instantiated.</returns>
 		/// <exception cref="ArgumentException">Thrown when the controller name is empty or cannot be found for the <paramref name="profile" />.</exception>
-		IRawController CreateController(string controllerName, ControllerProfile profile);
+		IRawController CreateController(string controllerName, ControllerProfile profile, bool initializeFields);
 
 		/// <summary>
-		/// Creates the controller for specified <paramref name="type" />.
+		/// Creates the controller for specified <paramref name="controllerType" />.
 		/// </summary>
-		/// <param name="type">The controller type.</param>
+		/// <param name="controllerType">The controller type.</param>
+		/// <param name="initializeFields">True to initialize fields.</param>
 		/// <returns>Returns the newly created controller. All (child) fields that are reference types are also instantiated using the default constructor.</returns>
 		/// <exception cref="ArgumentException">Thrown when the controller name is empty or cannot be found for the <paramref name="profile" />.</exception>
-		IRawController CreateController(Type type);
+		IRawController CreateController(Type controllerType, bool initializeFields);
 
 		bool CanCreate(Type controllerType);
 	}
