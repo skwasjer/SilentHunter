@@ -29,7 +29,7 @@ namespace StateMachineCtl
 		/// The key code to activate the debug mode.
 		/// </summary>
 		/// <remarks>.NET equivalent: System.Windows.Forms.Keys</remarks>
-		public System.Windows.Forms.Keys ShowDebug;
+		public Keys ShowDebug;
 		/// <summary>
 		/// Initially show debug.
 		/// </summary>

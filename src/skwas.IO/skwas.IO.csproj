@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net45</TargetFramework>
+    <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
     <DebugType>full</DebugType>
   </PropertyGroup>
 
@@ -13,7 +13,7 @@
     <PackageTags></PackageTags>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="$(TargetFramework) == 'net45'">
     <Reference Include="System" />
   </ItemGroup>
 
