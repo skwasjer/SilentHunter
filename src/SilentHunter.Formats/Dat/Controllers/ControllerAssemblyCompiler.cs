@@ -8,7 +8,6 @@ using System.Runtime.Versioning;
 using System.Xml.Serialization;
 #if NETSTANDARD2_0
 using System.Drawing;
-using Microsoft.CodeAnalysis;
 #endif
 using SilentHunter.Dat.Controllers.Compiler;
 
@@ -62,30 +61,11 @@ namespace SilentHunter.Dat.Controllers
 		private ICollection<string> _dependencySearchPaths = new List<string>();
 		private Func<string, bool> _ignorePaths;
 
-		public ControllerAssemblyCompiler(ICSharpCompiler compiler, string controllerPath)
-			: this(compiler, controllerPath, "S3D.Controllers")
-		{
-			ControllerPath(controllerPath);
-			ApplicationName(_applicationName);
-		}
-
-		internal ControllerAssemblyCompiler(ICSharpCompiler compiler, string controllerPath, string applicationName)
+		public ControllerAssemblyCompiler(ICSharpCompiler compiler, string applicationName, string controllerPath)
 		{
 			_compiler = compiler ?? throw new ArgumentNullException(nameof(compiler));
-			ControllerPath(controllerPath);
-			ApplicationName(applicationName);
-		}
-
-		public ControllerAssemblyCompiler ControllerPath(string controllerPath)
-		{
-			_controllerPath = controllerPath ?? throw new ArgumentNullException(nameof(controllerPath));
-			return this;
-		}
-
-		public ControllerAssemblyCompiler ApplicationName(string applicationName)
-		{
 			_applicationName = applicationName ?? throw new ArgumentNullException(nameof(applicationName));
-			return this;
+			_controllerPath = controllerPath ?? throw new ArgumentNullException(nameof(controllerPath));
 		}
 
 		public ControllerAssemblyCompiler AssemblyName(string assemblyName)
@@ -199,7 +179,7 @@ namespace SilentHunter.Dat.Controllers
 					.Replace(".", string.Empty);
 			}
 
-			return Path.Combine(Path.GetTempPath(), "S3D", _applicationName, frameworkVersion);
+			return Path.Combine(Path.GetTempPath(), _applicationName, "SilentHunter.Controllers", frameworkVersion);
 		}
 
 		/// <summary>

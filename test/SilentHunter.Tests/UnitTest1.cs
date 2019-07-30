@@ -46,7 +46,7 @@ namespace SilentHunter.Tests
 			var compiler = new RoslynCompiler();
 #endif
 
-			var controllerAssemblyCompiler = new ControllerAssemblyCompiler(compiler, controllerPath)
+			var controllerAssemblyCompiler = new ControllerAssemblyCompiler(compiler, "SilentHunter.Tests", controllerPath)
 				.AssemblyName("Controllers")
 				.IgnorePaths(f => f.Contains(@"\obj\"));
 			ControllerAssembly assembly = controllerAssemblyCompiler.Compile();
@@ -85,7 +85,7 @@ namespace SilentHunter.Tests
 #else
 			var compiler = new RoslynCompiler();
 #endif
-			var controllerAssemblyCompiler = new ControllerAssemblyCompiler(compiler, controllerPath)
+			var controllerAssemblyCompiler = new ControllerAssemblyCompiler(compiler, "SilentHunter.Tests", controllerPath)
 				.AssemblyName("Controllers")
 				.IgnorePaths(f => f.Contains(@"\obj\"));
 //			controllerAssemblyCompiler.CleanArtifacts();
