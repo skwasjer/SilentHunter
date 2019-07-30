@@ -3,10 +3,20 @@ using System.Linq;
 using System.Reflection;
 using SilentHunter.Dat;
 
-namespace SilentHunter.Formats
+namespace SilentHunter.Extensions
 {
 	public static class TypeExtensions
 	{
+		public static bool IsClosedTypeOf(this Type closedType, Type openType)
+		{
+			if (openType.IsGenericType && !openType.ContainsGenericParameters)
+			{
+				throw new InvalidOperationException("The generic type argument T is not an open type.");
+			}
+
+			return closedType.IsGenericType && closedType.GetGenericTypeDefinition() == openType;
+		}
+
 		// ReSharper disable once InconsistentNaming
 		public static bool IsControllerOrSHType(this Type type)
 		{

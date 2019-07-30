@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using SilentHunter.Formats;
+using SilentHunter.Extensions;
 using skwas.IO;
 
 namespace SilentHunter.Dat.Controllers

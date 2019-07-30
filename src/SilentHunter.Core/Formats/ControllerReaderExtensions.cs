@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using SilentHunter.Dat;
+using SilentHunter.Extensions;
 using skwas.IO;
 
 namespace SilentHunter.Formats

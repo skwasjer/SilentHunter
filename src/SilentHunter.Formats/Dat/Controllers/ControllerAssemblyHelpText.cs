@@ -5,7 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Xml;
-using SilentHunter.Formats;
+using SilentHunter.Extensions;
 
 namespace SilentHunter.Dat.Controllers
 {

@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using SilentHunter.Formats;
+using SilentHunter.Extensions;
 
 namespace SilentHunter.Dat.Controllers
 {

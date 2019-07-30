@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using SilentHunter.Formats;
+using SilentHunter.Extensions;
 
 namespace SilentHunter.Dat.Controllers
 {
