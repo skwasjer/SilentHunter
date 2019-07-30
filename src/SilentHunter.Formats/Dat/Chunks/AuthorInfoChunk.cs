@@ -82,9 +82,10 @@ namespace SilentHunter.Dat.Chunks
 				writer.Write(Author, '\0');
 				writer.Write(Description, '\0');
 
-#if !DEBUG
-				writer.Write(LastSavedString = GetSignature(), '\0');
-#endif
+				if (((DatFile)ParentFile).SaveSignature)
+				{
+					writer.Write(LastSavedString = GetSignature(), '\0');
+				}
 			}
 		}
 

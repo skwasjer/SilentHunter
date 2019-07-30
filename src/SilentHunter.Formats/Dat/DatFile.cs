@@ -15,8 +15,9 @@ namespace SilentHunter.Dat
 		private Header _header;
 		private S3DSettingsChunk _settingsChunk;
 
-		public DatFile()
+		public DatFile(bool saveSignature = true)
 		{
+			SaveSignature = saveSignature;
 			_header = new Header();
 
 			HasGenericFlag = true;
@@ -92,6 +93,8 @@ namespace SilentHunter.Dat
 				}
 			}
 		}
+
+		public bool SaveSignature { get; }
 
 		/// <summary>
 		/// Gets a reference to the S3D settings chunk.
