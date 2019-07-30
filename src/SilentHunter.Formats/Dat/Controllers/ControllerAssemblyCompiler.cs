@@ -11,6 +11,8 @@ namespace SilentHunter.Dat.Controllers
 {
 	public class ControllerAssemblyCompiler
 	{
+		private readonly ICSharpCompiler _compiler;
+
 		private static readonly List<string> RequiredDependencies = new List<string>
 		{
 #if NET45
@@ -28,15 +30,16 @@ namespace SilentHunter.Dat.Controllers
 		private ICollection<string> _dependencySearchPaths = new List<string>();
 		private Func<string, bool> _ignorePaths;
 
-		public ControllerAssemblyCompiler(string controllerPath)
-			: this(controllerPath, "S3D.Controllers")
+		public ControllerAssemblyCompiler(ICSharpCompiler compiler, string controllerPath)
+			: this(compiler, controllerPath, "S3D.Controllers")
 		{
 			ControllerPath(controllerPath);
 			ApplicationName(_applicationName);
 		}
 
-		internal ControllerAssemblyCompiler(string controllerPath, string applicationName)
+		internal ControllerAssemblyCompiler(ICSharpCompiler compiler, string controllerPath, string applicationName)
 		{
+			_compiler = compiler ?? throw new ArgumentNullException(nameof(compiler));
 			ControllerPath(controllerPath);
 			ApplicationName(applicationName);
 		}
@@ -176,7 +179,7 @@ namespace SilentHunter.Dat.Controllers
 				.ToList();
 		}
 
-		private static void Compile(CompilerBuildCache assemblyCache, string controllerPath, string outputFile, string docFile)
+		private void Compile(CompilerBuildCache assemblyCache, string controllerPath, string outputFile, string docFile)
 		{
 			string cacheFile = outputFile + ".cache";
 			string outputPath = Path.GetDirectoryName(outputFile);
@@ -208,11 +211,7 @@ namespace SilentHunter.Dat.Controllers
 			// NOTE: Ensure LoaderLock Managed Debugging Assistant in Exception settings is disabled, to allow VS to run dynamic compilation within IDE.
 
 			// Compile the source files, etc.
-#if NET45
-			ICSharpCompiler compiler = new CSharpCompiler
-#else
-			ICSharpCompiler compiler = new RoslynCompiler
-#endif
+			var compilerOptions = new CompilerOptions
 			{
 				OutputPath = outputFile,
 				DocFile = docFile,
@@ -224,11 +223,7 @@ namespace SilentHunter.Dat.Controllers
 					.ToArray()
 			};
 
-			var disposableCompiler = compiler as IDisposable;
-			using (disposableCompiler)
-			{
-				compiler.CompileCode(assemblyCache.SourceFiles.Select(cs => Path.Combine(controllerPath, cs.Name)).ToArray());
-			}
+			_compiler.CompileCode(assemblyCache.SourceFiles.Select(cs => Path.Combine(controllerPath, cs.Name)).ToArray(), compilerOptions);
 
 			// Save the cache file.
 			using (FileStream fs = File.Open(cacheFile, FileMode.Create, FileAccess.Write, FileShare.Read))

@@ -62,31 +62,13 @@ namespace SilentHunter.Dat.Controllers.Compiler
 		#endregion
 
 		/// <summary>
-		/// Gets or sets the path of the output assembly.
-		/// </summary>
-		public string OutputPath
-		{
-			get => _compilerParams.OutputAssembly;
-			set => _compilerParams.OutputAssembly = value;
-		}
-
-		/// <summary>
-		/// Gets or sets the path of the XML documentation file.
-		/// </summary>
-		public string DocFile { get; set; }
-
-		/// <summary>
-		/// Gets or sets the assembly dependencies.
-		/// </summary>
-		public ICollection<string> ReferencedAssemblies { get; set; }
-
-		/// <summary>
 		/// Compiles the specified <paramref name="fileNames" /> and <see name="DocFile" /> into an <see cref="Assembly" />.
 		/// </summary>
 		/// <param name="fileNames"></param>
+		/// <param name="options"></param>
 		/// <param name="loadAssembly"></param>
 		/// <returns></returns>
-		public Assembly CompileCode(ICollection<string> fileNames, bool loadAssembly = false)
+		public Assembly CompileCode(ICollection<string> fileNames, CompilerOptions options, bool loadAssembly = false)
 		{
 			if (_disposed)
 			{
@@ -98,21 +80,28 @@ namespace SilentHunter.Dat.Controllers.Compiler
 				throw new ArgumentNullException(nameof(fileNames));
 			}
 
+			if (options == null)
+			{
+				throw new ArgumentNullException(nameof(options));
+			}
+
 			if (fileNames.Count == 0)
 			{
 				throw new ArgumentOutOfRangeException(nameof(fileNames), "Expected at least one filename.");
 			}
 
+			_compilerParams.OutputAssembly = options.OutputPath;
+
 			_compilerParams.ReferencedAssemblies.Clear();
-			if (ReferencedAssemblies != null)
+			if (options.ReferencedAssemblies != null)
 			{
-				_compilerParams.ReferencedAssemblies.AddRange(new HashSet<string>(ReferencedAssemblies).ToArray());
+				_compilerParams.ReferencedAssemblies.AddRange(new HashSet<string>(options.ReferencedAssemblies).ToArray());
 			}
 
 			_compilerParams.CompilerOptions = RequiredCompilerOptions;
-			if (!string.IsNullOrEmpty(DocFile))
+			if (!string.IsNullOrEmpty(options.DocFile))
 			{
-				_compilerParams.CompilerOptions += $" /doc:\"{DocFile}\"";
+				_compilerParams.CompilerOptions += $" /doc:\"{options.DocFile}\"";
 			}
 
 			CompilerResults results = _codeProvider.CompileAssemblyFromFile(_compilerParams, fileNames.ToArray());
@@ -120,7 +109,7 @@ namespace SilentHunter.Dat.Controllers.Compiler
 			LogResults(results);
 
 			// Display a successful compilation message.
-			Debug.WriteLine("Code built into assembly '{0}' successfully.", OutputPath);
+			Debug.WriteLine("Code built into assembly '{0}' successfully.", options.OutputPath);
 			return loadAssembly ? results.CompiledAssembly : null;
 		}
 
@@ -128,8 +117,9 @@ namespace SilentHunter.Dat.Controllers.Compiler
 		/// Compiles code into an <see cref="Assembly" />.
 		/// </summary>
 		/// <param name="code"></param>
+		/// <param name="options"></param>
 		/// <returns></returns>
-		public Assembly CompileCode(string code)
+		public Assembly CompileCode(string code, CompilerOptions options)
 		{
 			if (_disposed)
 			{
@@ -141,11 +131,17 @@ namespace SilentHunter.Dat.Controllers.Compiler
 				throw new ArgumentNullException(nameof(code));
 			}
 
+			if (options == null)
+			{
+				throw new ArgumentNullException(nameof(options));
+			}
+
 			if (code.Length == 0)
 			{
 				throw new ArgumentOutOfRangeException(nameof(code), "Insufficient data.");
 			}
 
+			_compilerParams.OutputAssembly = options.OutputPath;
 			_compilerParams.CompilerOptions = RequiredCompilerOptions;
 
 			CompilerResults results = _codeProvider.CompileAssemblyFromSource(_compilerParams, code);

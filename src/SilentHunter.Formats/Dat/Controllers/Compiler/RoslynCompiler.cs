@@ -28,14 +28,16 @@ namespace SilentHunter.Dat.Controllers.Compiler
 			_parseOptions = new CSharpParseOptions(LanguageVersion.CSharp8, DocumentationMode.Diagnose);
 		}
 
-		public string OutputPath { get; set; }
-		public string DocFile { get; set; }
-		public ICollection<string> ReferencedAssemblies { get; set; }
-		public Assembly CompileCode(ICollection<string> fileNames, bool loadAssembly = false)
+		public Assembly CompileCode(ICollection<string> fileNames, CompilerOptions options, bool loadAssembly = false)
 		{
 			if (fileNames == null)
 			{
 				throw new ArgumentNullException(nameof(fileNames));
+			}
+
+			if (options == null)
+			{
+				throw new ArgumentNullException(nameof(options));
 			}
 
 			if (fileNames.Count == 0)
@@ -51,9 +53,9 @@ namespace SilentHunter.Dat.Controllers.Compiler
 				Runtime,
 				RuntimeExtensions
 			};
-			if (ReferencedAssemblies != null)
+			if (options.ReferencedAssemblies != null)
 			{
-				references.AddRange(ReferencedAssemblies.Select(ra => MetadataReference.CreateFromFile(ra)));
+				references.AddRange(options.ReferencedAssemblies.Select(ra => MetadataReference.CreateFromFile(ra)));
 			}
 
 			CSharpCompilation compilation = CSharpCompilation.Create(
@@ -62,16 +64,16 @@ namespace SilentHunter.Dat.Controllers.Compiler
 				references,
 				new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
-			FileStream docStream = string.IsNullOrEmpty(DocFile) ? null : File.Open(DocFile, FileMode.Create);
+			FileStream docStream = string.IsNullOrEmpty(options.DocFile) ? null : File.Open(options.DocFile, FileMode.Create);
 			try
 			{
-				using (FileStream dllStream = File.Open(OutputPath, FileMode.Create))
+				using (FileStream dllStream = File.Open(options.OutputPath, FileMode.Create))
 				{
 					EmitResult emitResult = compilation.Emit(dllStream, xmlDocumentationStream: docStream);
 					LogResults(emitResult);
 
 					// Display a successful compilation message.
-					Debug.WriteLine("Code built into assembly '{0}' successfully.", OutputPath);
+					Debug.WriteLine("Code built into assembly '{0}' successfully.", options.OutputPath);
 				}
 			}
 			finally
@@ -79,7 +81,12 @@ namespace SilentHunter.Dat.Controllers.Compiler
 				docStream?.Dispose();
 			}
 
-			return loadAssembly ? Assembly.Load(OutputPath) : null;
+			return loadAssembly ? Assembly.Load(options.OutputPath) : null;
+		}
+
+		public Assembly CompileCode(string code, CompilerOptions options)
+		{
+			throw new NotImplementedException();
 		}
 
 		private static void LogResults(EmitResult results)
@@ -105,11 +112,6 @@ namespace SilentHunter.Dat.Controllers.Compiler
 				Debug.Write(errorMsg.ToString());
 				throw new Exception(errorMsg.ToString());
 			}
-		}
-
-		public Assembly CompileCode(string code)
-		{
-			throw new NotImplementedException();
 		}
 	}
 }

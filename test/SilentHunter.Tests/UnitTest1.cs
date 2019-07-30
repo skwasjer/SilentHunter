@@ -7,6 +7,7 @@ using FluentAssertions;
 using SilentHunter.Dat;
 using SilentHunter.Dat.Chunks;
 using SilentHunter.Dat.Controllers;
+using SilentHunter.Dat.Controllers.Compiler;
 using skwas.IO;
 using Xunit;
 
@@ -39,7 +40,13 @@ namespace SilentHunter.Tests
 		{
 			string controllerPath = @"..\..\..\..\..\src\SilentHunter.Controllers";
 
-			var controllerAssemblyCompiler = new ControllerAssemblyCompiler(controllerPath)
+#if NETFRAMEWORK
+			var compiler = new CSharpCompiler();
+#else
+			var compiler = new RoslynCompiler();
+#endif
+
+			var controllerAssemblyCompiler = new ControllerAssemblyCompiler(compiler, controllerPath)
 				.AssemblyName("Controllers")
 				.IgnorePaths(f => f.Contains(@"\obj\"));
 			ControllerAssembly assembly = controllerAssemblyCompiler.Compile();
@@ -75,7 +82,12 @@ namespace SilentHunter.Tests
 		{
 			string controllerPath = @"..\..\..\..\..\src\SilentHunter.Controllers";
 
-			var controllerAssemblyCompiler = new ControllerAssemblyCompiler(controllerPath)
+#if NETFRAMEWORK
+			var compiler = new CSharpCompiler();
+#else
+			var compiler = new RoslynCompiler();
+#endif
+			var controllerAssemblyCompiler = new ControllerAssemblyCompiler(compiler, controllerPath)
 				.AssemblyName("Controllers")
 				.IgnorePaths(f => f.Contains(@"\obj\"));
 			controllerAssemblyCompiler.CleanArtifacts();
