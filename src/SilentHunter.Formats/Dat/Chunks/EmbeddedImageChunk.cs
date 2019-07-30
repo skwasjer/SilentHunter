@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using skwas.Drawing;
 
 namespace SilentHunter.Dat.Chunks
 {
@@ -110,9 +109,10 @@ namespace SilentHunter.Dat.Chunks
 
 				try
 				{
-					TgaImage.ValidateStream(stream, stream.CanWrite && fix);
+					EmbeddedImageFormatDetection.ValidateTgaStream(stream, stream.CanWrite && fix);
 					return EmbeddedImageFormat.Tga;
 				}
+				// ReSharper disable once EmptyGeneralCatchClause - Justification: We revert to unknown format.
 				catch
 				{
 				}
