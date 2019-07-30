@@ -184,11 +184,11 @@ namespace Particles
 		/// </summary>
 		public float InertiaCoef;
 		/// <summary>
-		/// Scene light scale for particle color. (( I = ((&;t';factor&gt;+1)*Light-1)*&lt;Scale&gt;+1 )
+		/// Scene light scale for particle color. (( I = ((&lt;factor&gt;+1)*Light-1)*&lt;Scale&gt;+1 )
 		/// </summary>
 		public float GlobalColorScale;
 		/// <summary>
-		/// Scene light factor for particle color. (( I = ((&;t';factor&gt;+1)*Light-1)*&lt;Scale&gt;+1 )
+		/// Scene light factor for particle color. (( I = ((&lt;factor&gt;+1)*Light-1)*&lt;Scale&gt;+1 )
 		/// </summary>
 		[SilentHunter.Dat.Optional]
 		public float? GlobalColorFactor;
