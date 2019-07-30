@@ -39,20 +39,22 @@ namespace SilentHunter.Dat.Controllers.Compiler
 				throw new ArgumentOutOfRangeException(nameof(fileNames), "Expected at least one filename.");
 			}
 
-			var references = options.ReferencedAssemblies.Select(ra => MetadataReference.CreateFromFile(ra))?.ToList() ?? new List<PortableExecutableReference>();
+			List<PortableExecutableReference> references = options.ReferencedAssemblies?.Select(ra => MetadataReference.CreateFromFile(ra)).ToList() ?? new List<PortableExecutableReference>();
 
 			CSharpCompilation compilation = CSharpCompilation.Create(
 				Path.GetFileNameWithoutExtension(options.OutputPath),
-				fileNames.Select(fn => CSharpSyntaxTree.ParseText(SourceText.From(File.ReadAllText(fn)), _parseOptions).WithFilePath(fn)),
+				fileNames.Select(fn => CSharpSyntaxTree.ParseText(SourceText.From(File.ReadAllText(fn), System.Text.Encoding.UTF8), _parseOptions).WithFilePath(fn)),
 				references,
 				new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
 			FileStream docStream = string.IsNullOrEmpty(options.DocFile) ? null : File.Open(options.DocFile, FileMode.Create);
 			try
 			{
+				string pdbPath = Path.Combine(Path.GetDirectoryName(options.OutputPath), Path.GetFileNameWithoutExtension(options.OutputPath) + ".pdb");
 				using (FileStream dllStream = File.Open(options.OutputPath, FileMode.Create))
+				using (FileStream pdbStream = File.Open(pdbPath, FileMode.Create))
 				{
-					EmitResult emitResult = compilation.Emit(dllStream, xmlDocumentationStream: docStream);
+					EmitResult emitResult = compilation.Emit(dllStream, pdbStream, docStream);
 					LogResults(emitResult);
 
 					// Display a successful compilation message.
