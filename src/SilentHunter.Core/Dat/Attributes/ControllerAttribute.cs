@@ -20,7 +20,7 @@ namespace SilentHunter.Dat
 			SubType = subType;
 			HasCountField = hasCountField;
 		}
-		
+
 		public ushort? SubType { get; }
 
 		public bool HasCountField { get; }
