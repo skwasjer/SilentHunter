@@ -13,8 +13,6 @@ namespace SilentHunter.Dat.Controllers
 	{
 		private const BindingFlags ResolveBindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly | BindingFlags.Static;
 
-		private readonly ControllerFactory _controllerFactory;
-
 		public ControllerAssembly(Assembly controllerAssembly)
 		{
 			Assembly = controllerAssembly ?? throw new ArgumentNullException(nameof(controllerAssembly));
@@ -23,30 +21,33 @@ namespace SilentHunter.Dat.Controllers
 				EnumControllers(Assembly)
 			);
 
-			_controllerFactory = new ControllerFactory(this);
-			Reader = new ControllerReader(this, _controllerFactory);
-			Writer = new ControllerWriter(_controllerFactory);
-
 			string docFile = Path.Combine(Path.GetDirectoryName(controllerAssembly.Location), Path.GetFileNameWithoutExtension(controllerAssembly.Location) + ".xml");
 			HelpText = new ControllerAssemblyHelpText(docFile);
 		}
 
 		public static ControllerAssembly Current { get; set; }
 
+		/// <summary>
+		/// Gets the assembly.
+		/// </summary>
 		public Assembly Assembly { get; }
 
-		public IItemFactory ItemFactory => _controllerFactory;
-
-		public IControllerFactory ControllerFactory => _controllerFactory;
-
+		/// <summary>
+		/// Gets the controller types per SH-profile.
+		/// </summary>
 		public IReadOnlyDictionary<ControllerProfile, Dictionary<string, Type>> Controllers { get; }
 
+		/// <summary>
+		/// Gets the help text (documentation) helper.
+		/// </summary>
 		public ControllerAssemblyHelpText HelpText { get; }
 
-		public IControllerReader Reader { get; }
-
-		public IControllerWriter Writer { get; }
-
+		/// <summary>
+		/// Gets a controller type by <paramref name="controllerName"/> and <paramref name="profile"/>.
+		/// </summary>
+		/// <param name="controllerName">The controller name.</param>
+		/// <param name="profile">The SH-profile.</param>
+		/// <param name="controllerType">Returns the controller type.</param>
 		public bool TryGetControllerType(string controllerName, ControllerProfile profile, out Type controllerType)
 		{
 			if (Controllers.TryGetValue(profile, out Dictionary<string, Type> ctrls) && ctrls.TryGetValue(controllerName, out controllerType))
@@ -59,10 +60,10 @@ namespace SilentHunter.Dat.Controllers
 		}
 
 		/// <summary>
-		/// Get the controller type for the first profile that implements the controller.
+		/// Get the controller type for each profile that matches the <paramref name="controllerName"/>.
 		/// </summary>
 		/// <param name="controllerName">The controller name.</param>
-		/// <returns>The first found profile.</returns>
+		/// <returns>All controller types that contain the controller by name.</returns>
 		public IEnumerable<Type> GetControllerTypesByName(string controllerName)
 		{
 			IEnumerable<ControllerProfile> profiles = GetControllerProfilesByName(controllerName);
@@ -73,10 +74,10 @@ namespace SilentHunter.Dat.Controllers
 		}
 
 		/// <summary>
-		/// Get the first profile that implements the controller.
+		/// Get each controller profile that contains the <paramref name="controllerName"/>.
 		/// </summary>
 		/// <param name="controllerName">The controller name.</param>
-		/// <returns>The first found profile.</returns>
+		/// <returns>All profiles that contain the controller by name.</returns>
 		public IEnumerable<ControllerProfile> GetControllerProfilesByName(string controllerName)
 		{
 			return Enum
@@ -91,16 +92,22 @@ namespace SilentHunter.Dat.Controllers
 		/// <param name="controllerAssembly"></param>
 		private static IDictionary<ControllerProfile, Dictionary<string, Type>> EnumControllers(Assembly controllerAssembly)
 		{
-			var controllerTypes = new Dictionary<ControllerProfile, Dictionary<string, Type>>();
 			var profilesWithoutUnknown = Enum.GetValues(typeof(ControllerProfile))
 				.Cast<ControllerProfile>()
 				.Where(p => p != ControllerProfile.Unknown);
 
-			foreach (ControllerProfile cp in profilesWithoutUnknown)
+			var controllerTypes = profilesWithoutUnknown.ToDictionary(cp => cp, cp => new Dictionary<string, Type>());
+
+			foreach (Type remoteType in controllerAssembly.GetTypes())
 			{
-				controllerTypes.Add(cp, new Dictionary<string, Type>());
+				AddOrUpdate(controllerTypes, remoteType);
 			}
 
+			return controllerTypes;
+		}
+
+		private static void AddOrUpdate(Dictionary<ControllerProfile, Dictionary<string, Type>> controllerTypes, Type remoteType)
+		{
 			void NotSupportedMember(IList list, Type type, string memberName)
 			{
 				if (list.Count > 0)
@@ -109,46 +116,41 @@ namespace SilentHunter.Dat.Controllers
 				}
 			}
 
-			foreach (Type remoteType in controllerAssembly.GetTypes())
+			// No interfaces allowed.
+			if (remoteType.IsInterface)
 			{
-				// No interfaces allowed.
-				if (remoteType.IsInterface)
-				{
-					throw new NotSupportedException($"The type '{remoteType.Name}' is an interface which is not supported.");
-				}
-
-				// No properties allowed.
-				NotSupportedMember(remoteType.GetProperties(ResolveBindingFlags), remoteType, "properties");
-
-				if (remoteType.IsValueType && !remoteType.IsDefined(typeof(SerializableAttribute), false))
-				{
-					throw new NotSupportedException(
-						$"The type '{remoteType.Name}' is a value type, which requires a SerializableAttribute."
-					);
-				}
-
-				// Check if type is a controller.
-				if (!remoteType.IsController())
-				{
-					continue;
-				}
-
-				string controllerProfileStr = remoteType.FullName?.Substring(0, 3) ?? string.Empty;
-				if (Enum.TryParse(controllerProfileStr, out ControllerProfile profile))
-				{
-					// Last wins.
-					AddOrUpdate(controllerTypes, profile, remoteType);
-				}
-				else
-				{
-					// If not explicit, add to all.
-					controllerTypes[ControllerProfile.SH3].Add(remoteType.Name, remoteType);
-					controllerTypes[ControllerProfile.SH4].Add(remoteType.Name, remoteType);
-					controllerTypes[ControllerProfile.SH5].Add(remoteType.Name, remoteType);
-				}
+				throw new NotSupportedException($"The type '{remoteType.Name}' is an interface which is not supported.");
 			}
 
-			return controllerTypes;
+			// No properties allowed.
+			NotSupportedMember(remoteType.GetProperties(ResolveBindingFlags), remoteType, "properties");
+
+			if (remoteType.IsValueType && !remoteType.IsDefined(typeof(SerializableAttribute), false))
+			{
+				throw new NotSupportedException(
+					$"The type '{remoteType.Name}' is a value type, which requires a SerializableAttribute."
+				);
+			}
+
+			// Check if type is a controller.
+			if (!remoteType.IsController())
+			{
+				return;
+			}
+
+			string controllerProfileStr = remoteType.FullName?.Substring(0, 3) ?? string.Empty;
+			if (Enum.TryParse(controllerProfileStr, out ControllerProfile profile))
+			{
+				// Last wins.
+				AddOrUpdate(controllerTypes, profile, remoteType);
+			}
+			else
+			{
+				// If not explicit, add to all.
+				controllerTypes[ControllerProfile.SH3].Add(remoteType.Name, remoteType);
+				controllerTypes[ControllerProfile.SH4].Add(remoteType.Name, remoteType);
+				controllerTypes[ControllerProfile.SH5].Add(remoteType.Name, remoteType);
+			}
 		}
 
 		private static void AddOrUpdate(IDictionary<ControllerProfile, Dictionary<string, Type>> controllerTypes, ControllerProfile profile, Type remoteType)

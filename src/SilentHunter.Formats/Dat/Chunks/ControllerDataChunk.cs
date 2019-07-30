@@ -28,7 +28,8 @@ namespace SilentHunter.Dat.Chunks
 					using (var ms = new MemoryStream(_rawControllerData))
 					{
 						// Attempt to deserialize.
-						_controllerData = ControllerAssembly.Current.Reader.Read(ms, controllerName);
+						var reader = new ControllerReader(ControllerAssembly.Current, new ControllerFactory(ControllerAssembly.Current));
+						_controllerData = reader.Read(ms, controllerName);
 
 						// If controller data is a byte array, the controller was not deserialized. Either it's not implemented, or the data or the implementation contains a bug.
 						// To keep file integrity, we just store the data as unknown data.
@@ -60,7 +61,8 @@ namespace SilentHunter.Dat.Chunks
 
 				writer.Write((ulong) 0); // Always zero.
 
-				ControllerAssembly.Current.Writer.Write(stream, ControllerData);
+				var controllerWriter = new ControllerWriter(new ControllerFactory(ControllerAssembly.Current));
+				controllerWriter.Write(stream, ControllerData);
 			}
 		}
 
