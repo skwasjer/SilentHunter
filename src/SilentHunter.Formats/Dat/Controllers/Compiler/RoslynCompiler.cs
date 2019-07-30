@@ -42,7 +42,7 @@ namespace SilentHunter.Dat.Controllers.Compiler
 			var references = options.ReferencedAssemblies.Select(ra => MetadataReference.CreateFromFile(ra))?.ToList() ?? new List<PortableExecutableReference>();
 
 			CSharpCompilation compilation = CSharpCompilation.Create(
-				"Controllers",
+				Path.GetFileNameWithoutExtension(options.OutputPath),
 				fileNames.Select(fn => CSharpSyntaxTree.ParseText(SourceText.From(File.ReadAllText(fn)), _parseOptions).WithFilePath(fn)),
 				references,
 				new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
