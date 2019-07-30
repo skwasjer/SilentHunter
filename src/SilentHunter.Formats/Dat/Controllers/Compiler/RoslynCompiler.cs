@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -17,11 +16,6 @@ namespace SilentHunter.Dat.Controllers.Compiler
 	public class RoslynCompiler : ICSharpCompiler
 	{
 		private readonly CSharpParseOptions _parseOptions;
-		private static readonly MetadataReference NetStandard = MetadataReference.CreateFromFile(Assembly.Load("netstandard, Version=2.0.0.0").Location);
-		private static MetadataReference Corlib = MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location);
-		private static MetadataReference Primitives = MetadataReference.CreateFromFile(typeof(Color).GetTypeInfo().Assembly.Location);
-		private static MetadataReference Runtime = MetadataReference.CreateFromFile(Assembly.Load("System.Runtime, PublicKeyToken=b03f5f7f11d50a3a").Location);
-		private static MetadataReference RuntimeExtensions = MetadataReference.CreateFromFile(Assembly.Load("System.Runtime.Extensions, PublicKeyToken=b03f5f7f11d50a3a").Location);
 
 		public RoslynCompiler()
 		{
@@ -45,18 +39,7 @@ namespace SilentHunter.Dat.Controllers.Compiler
 				throw new ArgumentOutOfRangeException(nameof(fileNames), "Expected at least one filename.");
 			}
 
-			var references = new List<MetadataReference>
-			{
-				NetStandard,
-				Corlib,
-				Primitives,
-				Runtime,
-				RuntimeExtensions
-			};
-			if (options.ReferencedAssemblies != null)
-			{
-				references.AddRange(options.ReferencedAssemblies.Select(ra => MetadataReference.CreateFromFile(ra)));
-			}
+			var references = options.ReferencedAssemblies.Select(ra => MetadataReference.CreateFromFile(ra))?.ToList() ?? new List<PortableExecutableReference>();
 
 			CSharpCompilation compilation = CSharpCompilation.Create(
 				"Controllers",

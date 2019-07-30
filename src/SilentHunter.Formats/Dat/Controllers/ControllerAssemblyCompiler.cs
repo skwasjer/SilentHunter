@@ -5,23 +5,54 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
+#if NETSTANDARD2_0
+using System.Drawing;
+using Microsoft.CodeAnalysis;
+#endif
 using SilentHunter.Dat.Controllers.Compiler;
 
 namespace SilentHunter.Dat.Controllers
 {
 	public class ControllerAssemblyCompiler
 	{
+		private class Dependency
+		{
+			public Dependency(object instance, bool isLocal = false)
+				: this(instance.GetType(), isLocal)
+			{
+			}
+
+			public Dependency(Type type, bool isLocal = false)
+				: this(type.Assembly.Location, isLocal)
+			{
+			}
+
+			public Dependency(string location, bool isLocal = false)
+			{
+				Location = location;
+				IsLocal = isLocal;
+			}
+
+			public string Location { get; set; }
+			public bool IsLocal { get; set; }
+		}
+
 		private readonly ICSharpCompiler _compiler;
 
-		private static readonly List<string> RequiredDependencies = new List<string>
+		private static readonly List<Dependency> RequiredDependencies = new List<Dependency>
 		{
-#if NET45
-			"System.dll",
-			"System.Drawing.dll",
+#if NETFRAMEWORK
+			new Dependency("System.dll"),
+			new Dependency("System.Drawing.dll"),
 #else
+			new Dependency(Assembly.Load("netstandard, Version=2.0.0.0").Location),
+			new Dependency(typeof(object).GetTypeInfo().Assembly.Location),
+			new Dependency(typeof(Color).GetTypeInfo().Assembly.Location),
+			new Dependency(Assembly.Load("System.Runtime, PublicKeyToken=b03f5f7f11d50a3a").Location),
+			new Dependency(Assembly.Load("System.Runtime.Extensions, PublicKeyToken=b03f5f7f11d50a3a").Location),
 #endif
-			"skwas.IO.dll",
-			"SilentHunter.Core.dll"
+			new Dependency("skwas.IO.dll", true),
+			new Dependency("SilentHunter.Core.dll", true)
 		};
 
 		private string _controllerPath;
@@ -83,7 +114,7 @@ namespace SilentHunter.Dat.Controllers
 			}
 
 			// Copy local dependencies.
-			CopyDependencies(AppDomain.CurrentDomain.BaseDirectory, outputPath);
+			CopyLocalDependencies(AppDomain.CurrentDomain.BaseDirectory, outputPath);
 
 			string asmShortName = _assemblyName ?? Path.GetFileNameWithoutExtension(_controllerPath);
 			string asmOutputFile = Path.Combine(outputPath, asmShortName + ".dll");
@@ -110,11 +141,11 @@ namespace SilentHunter.Dat.Controllers
 					RequiredDependencies
 						.Select(rd =>
 						{
-							string path = Path.Combine(outputPath, rd);
+							string path = rd.IsLocal ? Path.Combine(outputPath, rd.Location) : rd.Location;
 							return new CacheFileReference
 							{
-								Name = rd,
-								LastModified = File.Exists(path) ? (DateTime?)File.GetLastWriteTimeUtc(path) : null
+								Name = rd.Location,
+								LastModified = rd.IsLocal && File.Exists(path) ? (DateTime?)File.GetLastWriteTimeUtc(path) : null
 							};
 						})
 				),
@@ -127,9 +158,9 @@ namespace SilentHunter.Dat.Controllers
 			return new ControllerAssembly(Assembly.LoadFile(asmOutputFile));
 		}
 
-		private void CopyDependencies(string baseDirectory, string outputPath)
+		private void CopyLocalDependencies(string baseDirectory, string outputPath)
 		{
-			foreach (string requiredDependency in RequiredDependencies)
+			foreach (Dependency requiredDependency in RequiredDependencies.Where(rd => rd.IsLocal))
 			{
 				// Find the dependency.
 				string dependencyFullPath = _dependencySearchPaths
@@ -139,7 +170,7 @@ namespace SilentHunter.Dat.Controllers
 					})
 					.Select(p =>
 					{
-						string depFilename = Path.Combine(p, requiredDependency);
+						string depFilename = Path.Combine(p, requiredDependency.Location);
 						return File.Exists(depFilename) ? depFilename : null;
 					})
 					.FirstOrDefault(p => p != null);
