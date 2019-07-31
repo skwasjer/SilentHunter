@@ -31,10 +31,6 @@ namespace SilentHunter.Dat
 			new DefaultObjectSerializer()	// Should be last.
 		};
 
-		/// <summary>
-		/// When implemented, deserializes the controller from specified <paramref name="stream" />.
-		/// </summary>
-		/// <param name="stream">The stream.</param>
 		public void Deserialize(Stream stream, Type controllerType, object instance)
 		{
 			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
@@ -50,10 +46,6 @@ namespace SilentHunter.Dat
 			DeserializeFields(reader, controllerType, instance);
 		}
 
-		/// <summary>
-		/// When implemented, serializes the controller to specified <paramref name="stream" />.
-		/// </summary>
-		/// <param name="stream">The stream.</param>
 		public void Serialize(Stream stream, Type controllerType, object instance)
 		{
 			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
@@ -123,21 +115,20 @@ namespace SilentHunter.Dat
 		{
 			CheckArguments(reader, memberInfo);
 
-			var field = memberInfo as FieldInfo;
-			Type typeOfValue = field?.FieldType ?? (Type)memberInfo;
+			var ctx = new ControllerDeserializationContext(this, memberInfo);
 
 			object retVal;
 
-			if (typeOfValue.IsControllerOrSHType())
+			if (ctx.Type.IsControllerOrSHType())
 			{
 				// Create a new instance of this type.
-				retVal = Activator.CreateInstance(typeOfValue);
+				retVal = Activator.CreateInstance(ctx.Type);
 
-				DeserializeFields(reader, typeOfValue, retVal);
+				DeserializeFields(reader, ctx.Type, retVal);
 			}
 			else
 			{
-				retVal = ReadValue(reader, memberInfo);
+				retVal = ReadValue(reader, ctx);
 			}
 
 			return retVal;
@@ -150,22 +141,19 @@ namespace SilentHunter.Dat
 
 		protected virtual void WriteField(BinaryWriter writer, MemberInfo memberInfo, object instance)
 		{
-			var field = memberInfo as FieldInfo;
-			Type typeOfValue = field?.FieldType ?? (Type)memberInfo;
-
-			if (typeOfValue.IsControllerOrSHType())
+			var ctx = new ControllerSerializationContext(this, memberInfo, instance);
+			if (ctx.Type.IsControllerOrSHType())
 			{
-				SerializeFields(writer, typeOfValue, instance);
+				SerializeFields(writer, ctx.Type, instance);
 			}
 			else
 			{
-				WriteValue(writer, memberInfo, instance);
+				WriteValue(writer, ctx);
 			}
 		}
 
-		protected virtual object ReadValue(BinaryReader reader, MemberInfo memberInfo)
+		private object ReadValue(BinaryReader reader, ControllerDeserializationContext ctx)
 		{
-			var ctx = new ControllerDeserializationContext(this, memberInfo);
 			IControllerValueSerializer serializer = _serializers.FirstOrDefault(s => s.IsSupported(ctx));
 			object result = serializer?.Deserialize(reader, ctx);
 			if (result == null)
@@ -176,9 +164,8 @@ namespace SilentHunter.Dat
 			return result;
 		}
 
-		protected virtual void WriteValue(BinaryWriter writer, MemberInfo memberInfo, object value)
+		private void WriteValue(BinaryWriter writer, ControllerSerializationContext ctx)
 		{
-			var ctx = new ControllerSerializationContext(this, memberInfo, value);
 			IControllerValueSerializer serializer = _serializers.FirstOrDefault(s => s.IsSupported(ctx));
 			if (serializer == null)
 			{
