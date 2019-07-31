@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using SilentHunter.Dat.Controllers.Serialization;
 using SilentHunter.Extensions;
 using skwas.IO;
 
@@ -120,8 +121,10 @@ namespace SilentHunter.Dat.Controllers
 						}
 						else
 						{
-							// TODO: use serializer
-							throw new NotImplementedException();
+							IControllerSerializer cs = controller is IController
+								? new ControllerSerializer()
+								: new RawControllerSerializer();
+							cs.Deserialize(stream, controller);
 						}
 
 						return controller;

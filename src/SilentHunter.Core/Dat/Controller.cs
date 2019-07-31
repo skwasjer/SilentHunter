@@ -1,5 +1,3 @@
-using System;
-
 namespace SilentHunter.Dat
 {
 	/// <summary>
@@ -7,6 +5,5 @@ namespace SilentHunter.Dat
 	/// </summary>
 	public abstract class Controller : RawController, IController
 	{
-		public override Type ControllerSerializerType { get; } = typeof(ControllerSerializer);
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using SilentHunter.Dat.Controllers.Serialization;
 using SilentHunter.Extensions;
 using skwas.IO;
 
@@ -38,6 +39,9 @@ namespace SilentHunter.Dat.Controllers
 			{
 				Type controllerType = controller.GetType();
 				var serializable = controller as IRawSerializable;
+				IControllerSerializer cs = controller is IController
+					? new ControllerSerializer()
+					: new RawControllerSerializer();
 
 				if (controllerType.IsRawController())
 				{
@@ -62,8 +66,7 @@ namespace SilentHunter.Dat.Controllers
 					}
 					else
 					{
-						// TODO: use serializer
-						throw new NotImplementedException();
+						cs.Serialize(stream, (IRawController)controller);
 					}
 
 					return;
@@ -86,8 +89,7 @@ namespace SilentHunter.Dat.Controllers
 				}
 				else
 				{
-					// TODO: use serializer
-					throw new NotImplementedException();
+					cs.Serialize(stream, (IRawController)controller);
 				}
 
 				// After the controller is written, determine and write the size.
