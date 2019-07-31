@@ -15,7 +15,14 @@ namespace SilentHunter.Dat.Controllers.Serialization
 		public ControllerSerializationContext(IControllerSerializer controllerSerializer, MemberInfo member, object value)
 		{
 			Serializer = controllerSerializer ?? throw new ArgumentNullException(nameof(controllerSerializer));
-			Member = member ?? throw new ArgumentNullException(nameof(member));
+
+			// Member info can only be a Type or a FieldInfo.
+			if (!(member is Type || member is FieldInfo))
+			{
+				throw new ArgumentException("Expected a Type or FieldInfo.", nameof(member));
+			}
+
+			Member = member;
 			var fieldInfo = Member as FieldInfo;
 			Type = fieldInfo?.FieldType ?? (Type)Member;
 			Name = fieldInfo?.Name ?? Type.FullName;
@@ -34,7 +41,14 @@ namespace SilentHunter.Dat.Controllers.Serialization
 		public ControllerDeserializationContext(IControllerSerializer controllerSerializer, MemberInfo member)
 		{
 			Serializer = controllerSerializer ?? throw new ArgumentNullException(nameof(controllerSerializer));
-			Member = member ?? throw new ArgumentNullException(nameof(member));
+			
+			// Member info can only be a Type or a FieldInfo.
+			if (!(member is Type || member is FieldInfo))
+			{
+				throw new ArgumentException("Expected a Type or FieldInfo.", nameof(member));
+			}
+
+			Member = member;
 			var fieldInfo = Member as FieldInfo;
 			Type = fieldInfo?.FieldType ?? (Type)Member;
 			Name = fieldInfo?.Name ?? Type.FullName;
