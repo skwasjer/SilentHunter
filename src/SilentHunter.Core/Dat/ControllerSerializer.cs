@@ -29,17 +29,17 @@ namespace SilentHunter.Dat
 		/// <summary>
 		/// When implemented, deserializes the controller from specified <paramref name="stream" />.
 		/// </summary>
-		public override void Deserialize(BinaryReader reader, Type controllerType, object instance)
+		public override void Deserialize(BinaryReader reader, Type instanceType, object instance)
 		{
 			// Read the size of the controller.
 			int size = reader.ReadInt32();
 			// Save current position of stream. At the end, we compare the size with the number of bytes read for validation purposes.
 			long startPos = reader.BaseStream.Position;
 
-			string controllerName = controllerType.Name;
-			reader.SkipMember(controllerType, controllerName);
+			string controllerName = instanceType.Name;
+			reader.SkipMember(instanceType, controllerName);
 
-			base.Deserialize(reader, controllerType, instance);
+			base.Deserialize(reader, instanceType, instance);
 
 			reader.BaseStream.EnsureStreamPosition(startPos + size, controllerName);
 		}
@@ -47,22 +47,22 @@ namespace SilentHunter.Dat
 		/// <summary>
 		/// </summary>
 		/// <param name="reader"></param>
-		/// <param name="typeOfValue"></param>
+		/// <param name="instanceType"></param>
 		/// <param name="instance"></param>
 		/// <exception cref="ArgumentNullException">Thrown for arguments that can't be null.</exception>
 		/// <exception cref="IOException">Thrown for any IO error or parsing error.</exception>
-		/// <exception cref="NotSupportedException">Thrown when <paramref name="typeOfValue" /> is not supported.</exception>
+		/// <exception cref="NotSupportedException">Thrown when <paramref name="instanceType" /> is not supported.</exception>
 		/// <exception cref="NotImplementedException">Thrown when <see cref="Array" />s array used in the controller definitions.</exception>
-		protected override void DeserializeFields(BinaryReader reader, Type typeOfValue, object instance)
+		protected override void DeserializeFields(BinaryReader reader, Type instanceType, object instance)
 		{
 			if (reader == null)
 			{
 				throw new ArgumentNullException(nameof(reader));
 			}
 
-			if (typeOfValue == null)
+			if (instanceType == null)
 			{
-				throw new ArgumentNullException(nameof(typeOfValue));
+				throw new ArgumentNullException(nameof(instanceType));
 			}
 
 			if (instance == null)
@@ -70,12 +70,12 @@ namespace SilentHunter.Dat
 				throw new ArgumentNullException(nameof(instance));
 			}
 
-			if (!typeOfValue.IsControllerOrSHType())
+			if (!instanceType.IsControllerOrSHType())
 			{
-				throw new NotSupportedException($"Unsupported type '{typeOfValue}'");
+				throw new NotSupportedException($"Unsupported type '{instanceType}'");
 			}
 
-			FieldInfo[] fields = typeOfValue.GetFields(BindingFlags.Public | BindingFlags.Instance);
+			FieldInfo[] fields = instanceType.GetFields(BindingFlags.Public | BindingFlags.Instance);
 			foreach (FieldInfo fld in fields)
 			{
 				object fieldValue = ReadField(reader, fld);
@@ -150,7 +150,7 @@ namespace SilentHunter.Dat
 		/// When implemented, serializes the controller to specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		public override void Serialize(BinaryWriter writer, Type controllerType, object instance)
+		public override void Serialize(BinaryWriter writer, Type instanceType, object instance)
 		{
 			// We don't know the size yet, so just write 0 for now.
 			writer.Write(0);
@@ -158,10 +158,10 @@ namespace SilentHunter.Dat
 			// Save current position of stream. At the end, we have to set the size.
 			long startPos = writer.BaseStream.Position;
 
-			string controllerName = controllerType.Name;
+			string controllerName = instanceType.Name;
 			writer.WriteNullTerminatedString(controllerName);
 
-			SerializeFields(writer, controllerType, instance);
+			SerializeFields(writer, instanceType, instance);
 
 			// After the object is written, determine and write the size.
 			long currentPos = writer.BaseStream.Position;

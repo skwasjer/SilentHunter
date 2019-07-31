@@ -11,13 +11,13 @@ namespace SilentHunter.Dat
 		public void Deserialize(Stream stream)
 		{
 			IControllerSerializer serializer = (IControllerSerializer)Activator.CreateInstance(ControllerSerializerType);
-			serializer.Deserialize(stream, GetType(), this);
+			serializer.Deserialize(stream, this);
 		}
 
 		public void Serialize(Stream stream)
 		{
 			IControllerSerializer serializer = (IControllerSerializer)Activator.CreateInstance(ControllerSerializerType);
-			serializer.Serialize(stream, GetType(), this);
+			serializer.Serialize(stream, this);
 		}
 	}
 }

@@ -31,44 +31,66 @@ namespace SilentHunter.Dat
 			new DefaultObjectSerializer()	// Should be last.
 		};
 
-		public void Deserialize(Stream stream, Type controllerType, object instance)
+		public void Deserialize(Stream stream, IRawController controller)
 		{
+			if (stream == null)
+			{
+				throw new ArgumentNullException(nameof(stream));
+			}
+
+			if (controller == null)
+			{
+				throw new ArgumentNullException(nameof(controller));
+			}
+
+			Type controllerType = controller.GetType();
 			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
 			{
-				Deserialize(reader, controllerType, instance);
+				Deserialize(reader, controllerType, controller);
 
 				reader.BaseStream.EnsureStreamPosition(reader.BaseStream.Length, controllerType.Name);
 			}
 		}
 
-		public virtual void Deserialize(BinaryReader reader, Type controllerType, object instance)
+		public void Serialize(Stream stream, IRawController controller)
 		{
-			DeserializeFields(reader, controllerType, instance);
-		}
+			if (stream == null)
+			{
+				throw new ArgumentNullException(nameof(stream));
+			}
 
-		public void Serialize(Stream stream, Type controllerType, object instance)
-		{
+			if (controller == null)
+			{
+				throw new ArgumentNullException(nameof(controller));
+			}
+
+			Type controllerType = controller.GetType();
 			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
 			{
-				Serialize(writer, controllerType, instance);
+				Serialize(writer, controllerType, controller);
 			}
 		}
 
-		public virtual void Serialize(BinaryWriter writer, Type controllerType, object instance)
+		public virtual void Deserialize(BinaryReader reader, Type instanceType, object instance)
 		{
-			SerializeFields(writer, controllerType, instance);
+			DeserializeFields(reader, instanceType, instance);
 		}
 
-		protected virtual void DeserializeFields(BinaryReader reader, Type typeOfValue, object instance)
+		public virtual void Serialize(BinaryWriter writer, Type instanceType, object instance)
+		{
+			SerializeFields(writer, instanceType, instance);
+		}
+
+		protected virtual void DeserializeFields(BinaryReader reader, Type instanceType, object instance)
 		{
 			if (reader == null)
 			{
 				throw new ArgumentNullException(nameof(reader));
 			}
 
-			if (typeOfValue == null)
+			if (instanceType == null)
 			{
-				throw new ArgumentNullException(nameof(typeOfValue));
+				throw new ArgumentNullException(nameof(instanceType));
 			}
 
 			if (instance == null)
@@ -76,7 +98,7 @@ namespace SilentHunter.Dat
 				throw new ArgumentNullException(nameof(instance));
 			}
 			
-			FieldInfo[] fields = typeOfValue.GetFields(BindingFlags.Public | BindingFlags.Instance);
+			FieldInfo[] fields = instanceType.GetFields(BindingFlags.Public | BindingFlags.Instance);
 			foreach (FieldInfo fld in fields)
 			{
 				object fieldValue = ReadField(reader, fld);

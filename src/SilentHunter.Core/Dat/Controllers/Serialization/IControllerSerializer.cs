@@ -6,8 +6,8 @@ namespace SilentHunter.Dat.Controllers.Serialization
 {
 	public interface IControllerSerializer
 	{
-		void Deserialize(Stream stream, Type typeOfValue, object instance);
-		void Serialize(Stream stream, Type valueOfType, object instance);
+		void Deserialize(Stream stream, IRawController controller);
+		void Serialize(Stream stream, IRawController controller);
 		object ReadField(BinaryReader reader, MemberInfo memberInfo);
 		void WriteField(BinaryWriter writer, MemberInfo memberInfo, object instance);
 	}
