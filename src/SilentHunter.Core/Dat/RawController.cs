@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,7 +18,7 @@ namespace SilentHunter.Dat
 	/// 
 	/// Every type that inherits from <see cref="RawController" /> will be parsed following these rules.
 	/// </remarks>
-	public abstract class RawController : IRawController
+	public abstract class RawController : IRawController, IControllerSerializer
 	{
 		private ICollection<IControllerValueSerializer> _serializers = new List<IControllerValueSerializer>
 		{
@@ -30,7 +29,7 @@ namespace SilentHunter.Dat
 			new BooleanValueSerializer(),
 			new NullableValueSerializer(),
 			//new ArrayValueSerializer(),
-			//new ListValueSerializer(),
+			new ListValueSerializer(),
 			new SHUnionValueSerializer(),
 			//new DefaultObjectSerializer()	// Should be last.
 		};
@@ -59,6 +58,11 @@ namespace SilentHunter.Dat
 			{
 				SerializeFields(writer, GetType(), this);
 			}
+		}
+
+		void IControllerSerializer.DeserializeFields(BinaryReader reader, Type typeOfValue, object instance)
+		{
+			DeserializeFields(reader, typeOfValue, instance);
 		}
 
 		protected virtual void DeserializeFields(BinaryReader reader, Type typeOfValue, object instance)
@@ -94,6 +98,11 @@ namespace SilentHunter.Dat
 			}
 		}
 
+		void IControllerSerializer.SerializeFields(BinaryWriter writer, Type typeOfValue, object instance)
+		{
+			SerializeFields(writer, typeOfValue, instance);
+		}
+
 		protected virtual void SerializeFields(BinaryWriter writer, Type typeOfValue, object instance)
 		{
 			if (writer == null)
@@ -122,6 +131,11 @@ namespace SilentHunter.Dat
 			}
 		}
 
+		object IControllerSerializer.ReadField(BinaryReader reader, MemberInfo memberInfo)
+		{
+			return ReadField(reader, memberInfo);
+		}
+
 		protected virtual object ReadField(BinaryReader reader, MemberInfo memberInfo)
 		{
 			CheckArguments(reader, memberInfo);
@@ -146,6 +160,11 @@ namespace SilentHunter.Dat
 			return retVal;
 		}
 
+		void IControllerSerializer.WriteField(BinaryWriter writer, MemberInfo memberInfo, object instance)
+		{
+			WriteField(writer, memberInfo, instance);
+		}
+
 		protected virtual void WriteField(BinaryWriter writer, MemberInfo memberInfo, object instance)
 		{
 			var field = memberInfo as FieldInfo;
@@ -161,16 +180,21 @@ namespace SilentHunter.Dat
 			}
 		}
 
-		protected virtual object ReadValue(BinaryReader reader, MemberInfo memberInfo, long expectedEndPos = -1)
+		object IControllerSerializer.ReadValue(BinaryReader reader, MemberInfo memberInfo)
+		{
+			return ReadValue(reader, memberInfo);
+		}
+
+		protected virtual object ReadValue(BinaryReader reader, MemberInfo memberInfo)
 		{
 			CheckArguments(reader, memberInfo);
 
 			var field = memberInfo as FieldInfo;
 			Type typeOfValue = field?.FieldType ?? (Type)memberInfo;
 
-			object retVal = null;
+			object retVal;
 
-			var ctx = new ControllerDeserializationContext(memberInfo);
+			var ctx = new ControllerDeserializationContext(this, memberInfo);
 			IControllerValueSerializer serializer = _serializers.FirstOrDefault(s => s.IsSupported(ctx));
 			if (serializer != null)
 			{
@@ -182,12 +206,7 @@ namespace SilentHunter.Dat
 			}
 			else if (typeOfValue.IsGenericType)
 			{
-				Type[] typeArgs = typeOfValue.GetGenericArguments();
-
-				if (typeof(IList).IsAssignableFrom(typeOfValue))
-				{
-					retVal = ReadList(reader, typeOfValue);
-				}
+				throw new NotSupportedException("Generics are not supported.");
 			}
 			// FIX: for types containing color, ReadStruct can't read the entire type. So in case a class, enumerate all class properties separately.
 			else if (!typeOfValue.IsClass)
@@ -217,12 +236,17 @@ namespace SilentHunter.Dat
 			return retVal;
 		}
 
+		void IControllerSerializer.WriteValue(BinaryWriter writer, MemberInfo memberInfo, object value)
+		{
+			WriteValue(writer, memberInfo, value);
+		}
+
 		protected virtual void WriteValue(BinaryWriter writer, MemberInfo memberInfo, object value)
 		{
 			var field = memberInfo as FieldInfo;
 			Type typeOfValue = field?.FieldType ?? (Type)memberInfo;
 
-			var ctx = new ControllerSerializationContext(memberInfo, value);
+			var ctx = new ControllerSerializationContext(this, memberInfo, value);
 			IControllerValueSerializer serializer = _serializers.FirstOrDefault(s => s.IsSupported(ctx));
 			if (serializer != null)
 			{
@@ -248,10 +272,6 @@ namespace SilentHunter.Dat
 			}
 			else if (typeOfValue.IsGenericType)
 			{
-				if (value is IList list)
-				{
-					WriteList(writer, list);
-				}
 			}
 			// FIX: for types containing color, ReadStruct can't read the entire type. So in case a class, enumerate all class properties separately.
 			else if (!typeOfValue.IsClass)
@@ -270,63 +290,6 @@ namespace SilentHunter.Dat
 
 					writer.WriteStruct(f.GetValue(value));
 				}
-			}
-		}
-
-		protected virtual IList ReadList(BinaryReader reader, Type typeOfValue)
-		{
-			if (reader == null)
-			{
-				throw new ArgumentNullException(nameof(reader));
-			}
-
-			// There are two types of lists. The only difference is that for RawList, the number of items is stored right before each entry. The type of this count-field is determined by the 2nd generic parameter. See RawList for info.
-
-			Type[] typeArgs = typeOfValue.GetGenericArguments();
-			var col = (IList)Activator.CreateInstance(typeOfValue);
-			Type elementType = typeArgs[0];
-
-			if (typeof(IRawList).IsAssignableFrom(typeOfValue))
-			{
-				int count = Convert.ToInt32(reader.ReadStruct(typeArgs[1]));
-				for (var i = 0; i < count; i++)
-				{
-					col.Add(ReadField(reader, elementType));
-				}
-			}
-			else
-			{
-				while (reader.BaseStream.Position < reader.BaseStream.Length)
-				{
-					col.Add(ReadField(reader, elementType));
-				}
-			}
-
-			return col;
-		}
-
-		protected virtual void WriteList(BinaryWriter writer, IList instance)
-		{
-			if (writer == null)
-			{
-				throw new ArgumentNullException(nameof(writer));
-			}
-
-			// There are two types of lists. The only difference is that for RawList, the number of items is stored right before each entry. The type of this count-field is determined by the 2nd generic parameter. See RawList for info.
-
-			Type typeOfValue = instance.GetType();
-			Type[] typeArgs = typeOfValue.GetGenericArguments();
-			Type elementType = typeArgs[0];
-
-			if (typeof(IRawList).IsAssignableFrom(typeOfValue))
-			{
-				object count = Convert.ChangeType(instance.Count, typeArgs[1]);
-				writer.WriteStruct(count);
-			}
-
-			foreach (object item in instance)
-			{
-				WriteField(writer, elementType, item);
 			}
 		}
 

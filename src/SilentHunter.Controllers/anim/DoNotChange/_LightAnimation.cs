@@ -10,6 +10,7 @@
  * 
 */
 
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using SilentHunter.Dat;
 
@@ -26,7 +27,8 @@ namespace anim
 		/// <summary>
 		/// A list of key frames.
 		/// </summary>
-		public RawList<LightKeyFrame, ushort> Frames;
+		[CountType(typeof(ushort))]
+		public List<LightKeyFrame> Frames;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

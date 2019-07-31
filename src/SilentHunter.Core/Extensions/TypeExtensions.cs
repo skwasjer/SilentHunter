@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using SilentHunter.Dat;
@@ -7,14 +8,15 @@ namespace SilentHunter.Extensions
 {
 	public static class TypeExtensions
 	{
-		public static bool IsClosedTypeOf(this Type closedType, Type openType)
+		public static bool IsClosedTypeOf(this Type @this, Type openGeneric)
 		{
-			if (openType.IsGenericType && !openType.ContainsGenericParameters)
-			{
-				throw new InvalidOperationException("The generic type argument T is not an open type.");
-			}
+			return TypesAssignableFrom(@this).Any(t => t.GetTypeInfo().IsGenericType && !@this.GetTypeInfo().ContainsGenericParameters && t.GetGenericTypeDefinition() == openGeneric);
+		}
 
-			return closedType.IsGenericType && closedType.GetGenericTypeDefinition() == openType;
+		private static IEnumerable<Type> TypesAssignableFrom(Type candidateType)
+		{
+			return candidateType.GetTypeInfo().ImplementedInterfaces.Concat(
+				Traverse.Across(candidateType, t => t.GetTypeInfo().BaseType));
 		}
 
 		// ReSharper disable once InconsistentNaming

@@ -12,6 +12,7 @@
  * 
 */
 
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using SilentHunter;
 using SilentHunter.Dat;
@@ -69,7 +70,8 @@ namespace anim
 		/// <summary>
 		/// A list of key frames.
 		/// </summary>
-		public RawList<RotationKeyFrame, ushort> Frames;
+		[CountType(typeof(ushort))]
+		public List<RotationKeyFrame> Frames;
 	}
 
 	/// <summary>
@@ -105,7 +107,8 @@ namespace anim
 		/// <summary>
 		/// A list of key frames.
 		/// </summary>
-		public RawList<PositionKeyFrame, ushort> Frames;
+		[CountType(typeof(ushort))]
+		public List<PositionKeyFrame> Frames;
 	}
 
 	/// <summary>

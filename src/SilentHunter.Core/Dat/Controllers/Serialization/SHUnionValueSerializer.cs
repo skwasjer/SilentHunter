@@ -6,7 +6,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using SilentHunter.Extensions;
-using SilentHunter.Formats;
 using skwas.IO;
 
 namespace SilentHunter.Dat.Controllers.Serialization

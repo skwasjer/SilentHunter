@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
+using SilentHunter.Extensions;
 
 namespace SilentHunter.Dat.Controllers
 {
@@ -35,11 +37,8 @@ namespace SilentHunter.Dat.Controllers
 				}
 				else if (fieldType.IsGenericType)
 				{
-					Type[] typeArgs = fieldType.GetGenericArguments();
-					if (typeof(IRawList).IsAssignableFrom(fieldType))
-					{
-					}
-					else if (typeArgs.Length != 1)
+					// Lists are supported, other generics are not
+					if (!fieldType.IsClosedTypeOf(typeof(IList<>)))
 					{
 						continue;
 					}
