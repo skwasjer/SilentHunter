@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using SilentHunter.Extensions;
 
 namespace SilentHunter.Dat.Controllers
@@ -37,7 +38,7 @@ namespace SilentHunter.Dat.Controllers
 				Type controllerType = controller.GetType();
 				if (controllerType.IsRawController())
 				{
-					ControllerAttribute controllerAttribute = controllerType.GetAttribute<ControllerAttribute>() ?? new ControllerAttribute();
+					ControllerAttribute controllerAttribute = controllerType.GetCustomAttribute<ControllerAttribute>() ?? new ControllerAttribute();
 					if (controllerAttribute.SubType.HasValue)
 					{
 						writer.Write(controllerAttribute.SubType.Value);

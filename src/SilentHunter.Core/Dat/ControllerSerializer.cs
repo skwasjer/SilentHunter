@@ -89,7 +89,7 @@ namespace SilentHunter.Dat
 				}
 
 				// The expected field or controller name to find on the stream. If null, then the name is not required and the object instead is stored as raw data, and name checking is ignored.
-				name = field.GetAttribute<ParseNameAttribute>()?.Name ?? field.Name;
+				name = field.GetCustomAttribute<ParseNameAttribute>()?.Name ?? field.Name;
 			}
 			else
 			{
@@ -157,7 +157,7 @@ namespace SilentHunter.Dat
 					return;
 				}
 
-				string fieldName = field.GetAttribute<ParseNameAttribute>()?.Name ?? field.Name;
+				string fieldName = field.GetCustomAttribute<ParseNameAttribute>()?.Name ?? field.Name;
 				throw new IOException($"The field '{fieldName}' is not defined as optional.");
 			}
 
@@ -173,7 +173,7 @@ namespace SilentHunter.Dat
 
 			if (memberInfo is FieldInfo fieldInfo)
 			{
-				string name = fieldInfo.GetAttribute<ParseNameAttribute>()?.Name ?? fieldInfo.Name;
+				string name = fieldInfo.GetCustomAttribute<ParseNameAttribute>()?.Name ?? fieldInfo.Name;
 				if (!string.IsNullOrEmpty(name))
 				{
 					writer.WriteNullTerminatedString(name);

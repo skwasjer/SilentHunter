@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using SilentHunter.Extensions;
 using skwas.IO;
 
@@ -64,7 +65,7 @@ namespace SilentHunter.Dat.Controllers
 						// Check if the controller is indeed a raw controller. If it isn't, the size descriptor may have contained an invalid size for controller data. We just attempt normal deserialization then.
 						if (controllerType.IsRawController())
 						{
-							ControllerAttribute controllerAttribute = controllerType.GetAttribute<ControllerAttribute>() ?? new ControllerAttribute();
+							ControllerAttribute controllerAttribute = controllerType.GetCustomAttribute<ControllerAttribute>() ?? new ControllerAttribute();
 							// Check that the detected controller matches subtype.
 							if (controllerAttribute.SubType.HasValue && controllerAttribute.SubType.Value == subType)
 							{

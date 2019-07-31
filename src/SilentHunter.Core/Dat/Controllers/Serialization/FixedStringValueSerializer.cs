@@ -29,7 +29,7 @@ namespace SilentHunter.Dat.Controllers.Serialization
 
 		public override object Deserialize(BinaryReader reader, ControllerDeserializationContext context)
 		{
-			int fixedLength = context.Member.GetAttribute<FixedStringAttribute>().Length;
+			int fixedLength = context.Member.GetCustomAttribute<FixedStringAttribute>().Length;
 			if (reader.BaseStream.Length > fixedLength)
 			{
 				throw new InvalidOperationException($"The stream contains more data than expected for '{context.Member.Name}', length {fixedLength}.");

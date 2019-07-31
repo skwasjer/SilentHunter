@@ -62,10 +62,10 @@ namespace SilentHunter.Dat.Controllers
 
 		public string this[string key] => _loadHelpText.Value.ContainsKey(key) ? _loadHelpText.Value[key] : null;
 
-		public string this[Type type] => type.GetAttribute<DescriptionAttribute>()?.Description ?? this["T:" + type.FullName];
+		public string this[Type type] => type.GetCustomAttribute<DescriptionAttribute>()?.Description ?? this["T:" + type.FullName];
 
 		public string this[MemberInfo member] =>
-			member.GetAttribute<DescriptionAttribute>()?.Description
+			member.GetCustomAttribute<DescriptionAttribute>()?.Description
 			?? this[$"{member.MemberType.ToString()[0]}:{member.DeclaringType.FullName}.{member.Name}"];
 	}
 }

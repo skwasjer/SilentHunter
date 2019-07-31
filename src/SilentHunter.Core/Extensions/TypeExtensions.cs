@@ -70,18 +70,5 @@ namespace SilentHunter.Extensions
 		{
 			return attributeProvider.IsDefined(typeof(T), inherit);
 		}
-
-		/// <summary>
-		/// Return the first custom attribute of type T or null otherwise.
-		/// </summary>
-		/// <typeparam name="T">The attribute type.</typeparam>
-		/// <param name="attributeProvider">The provider.</param>
-		/// <param name="inherit">When true, look up the hierarchy chain for the inherited custom attribute.</param>
-		/// <returns>Returns the first attribute if found or null otherwise.</returns>
-		public static T GetAttribute<T>(this ICustomAttributeProvider attributeProvider, bool inherit = false)
-			where T : Attribute
-		{
-			return attributeProvider.GetCustomAttributes(typeof(T), inherit).Cast<T>().FirstOrDefault();
-		}
 	}
 }

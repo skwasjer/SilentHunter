@@ -29,10 +29,10 @@ namespace SilentHunter.Sdl
 		private static string GetSignature()
 		{
 			Assembly asm = Assembly.GetEntryAssembly();
-			string title = asm.GetAttribute<AssemblyTitleAttribute>().Title;
-			string product = asm.GetAttribute<AssemblyProductAttribute>().Product;
-			string version = asm.GetAttribute<AssemblyFileVersionAttribute>().Version;
-			string cw = asm.GetAttribute<AssemblyCopyrightAttribute>().Copyright;
+			string title = asm.GetCustomAttribute<AssemblyTitleAttribute>().Title;
+			string product = asm.GetCustomAttribute<AssemblyProductAttribute>().Product;
+			string version = asm.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
+			string cw = asm.GetCustomAttribute<AssemblyCopyrightAttribute>().Copyright;
 
 			return $"Modified with {product} - {title} (version {version}). {cw}";
 		}
