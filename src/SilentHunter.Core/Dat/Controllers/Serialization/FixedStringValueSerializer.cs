@@ -6,7 +6,7 @@ using skwas.IO;
 
 namespace SilentHunter.Dat.Controllers.Serialization
 {
-	public class FixedStringValueSerializer : StringValueSerializer
+	public class FixedStringValueSerializer : ControllerValueSerializer<string>
 	{
 		public override bool IsSupported(IControllerSerializationContext context)
 		{

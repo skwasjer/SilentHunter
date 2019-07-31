@@ -1,11 +1,16 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using SilentHunter.Extensions;
 using skwas.IO;
 
 namespace SilentHunter.Dat.Controllers.Serialization
 {
 	public class StringValueSerializer : ControllerValueSerializer<string>
 	{
+		public override bool IsSupported(IControllerSerializationContext context)
+		{
+			return base.IsSupported(context) && !context.Member.HasAttribute<FixedStringAttribute>();
+		}
+
 		public override void Serialize(BinaryWriter writer, ControllerSerializationContext context)
 		{
 			if (context.Value != null)
