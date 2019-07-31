@@ -29,7 +29,7 @@ namespace SilentHunter.Dat
 		/// <summary>
 		/// When implemented, deserializes the controller from specified <paramref name="stream" />.
 		/// </summary>
-		public override void Deserialize(BinaryReader reader, Type instanceType, object instance)
+		protected override void Deserialize(BinaryReader reader, Type instanceType, object instance)
 		{
 			// Read the size of the controller.
 			int size = reader.ReadInt32();
@@ -125,7 +125,7 @@ namespace SilentHunter.Dat
 		/// When implemented, serializes the controller to specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		public override void Serialize(BinaryWriter writer, Type instanceType, object instance)
+		protected override void Serialize(BinaryWriter writer, Type instanceType, object instance)
 		{
 			// We don't know the size yet, so just write 0 for now.
 			writer.Write(0);

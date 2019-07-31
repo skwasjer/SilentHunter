@@ -17,7 +17,7 @@ namespace SilentHunter.Dat
 	/// </remarks>
 	public class RawControllerSerializer : IControllerSerializer
 	{
-		private ICollection<IControllerValueSerializer> _serializers = new List<IControllerValueSerializer>
+		private readonly ICollection<IControllerValueSerializer> _serializers = new List<IControllerValueSerializer>
 		{
 			new FixedStringValueSerializer(),
 			new StringValueSerializer(),
@@ -52,7 +52,7 @@ namespace SilentHunter.Dat
 			}
 		}
 
-		public virtual void Deserialize(BinaryReader reader, Type instanceType, object instance)
+		protected virtual void Deserialize(BinaryReader reader, Type instanceType, object instance)
 		{
 			DeserializeFields(reader, instanceType, instance);
 		}
@@ -144,7 +144,7 @@ namespace SilentHunter.Dat
 			}
 		}
 
-		public virtual void Serialize(BinaryWriter writer, Type instanceType, object instance)
+		protected virtual void Serialize(BinaryWriter writer, Type instanceType, object instance)
 		{
 			SerializeFields(writer, instanceType, instance);
 		}
