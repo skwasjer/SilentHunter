@@ -12,9 +12,9 @@ namespace SilentHunter.Dat.Controllers.Serialization
 			return context.Type.IsArray && (context.Type.GetElementType()?.IsPrimitive ?? false);
 		}
 
-		public void Serialize(BinaryWriter writer, ControllerSerializationContext context)
+		public void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext)
 		{
-			if (context.Value is byte[] byteArray)
+			if (serializationContext.Value is byte[] byteArray)
 			{
 				// Slightly more efficient to write directly.
 				writer.Write(byteArray, 0, byteArray.Length);
@@ -22,14 +22,14 @@ namespace SilentHunter.Dat.Controllers.Serialization
 			}
 
 			// Otherwise write each primitive separately.
-			var array = (Array)context.Value;
+			var array = (Array)serializationContext.Value;
 			for (var i = 0; i < array.Length; i++)
 			{
 				writer.WriteStruct(array.GetValue(i));
 			}
 		}
 
-		public object Deserialize(BinaryReader reader, ControllerDeserializationContext context)
+		public object Deserialize(BinaryReader reader, ControllerDeserializationContext deserializationContext)
 		{
 			throw new NotSupportedException("Arrays are not supported. Use List<> instead.");
 		}

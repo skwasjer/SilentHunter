@@ -11,16 +11,16 @@ namespace SilentHunter.Dat.Controllers.Serialization
 			return base.IsSupported(context) && !context.Member.HasAttribute<FixedStringAttribute>();
 		}
 
-		public override void Serialize(BinaryWriter writer, ControllerSerializationContext context)
+		public override void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext)
 		{
-			if (context.Value != null)
+			if (serializationContext.Value != null)
 			{
 				// Write the variable string with one zero.
-				writer.Write((string)context.Value, '\0');
+				writer.Write((string)serializationContext.Value, '\0');
 			}
 		}
 
-		public override object Deserialize(BinaryReader reader, ControllerDeserializationContext context)
+		public override object Deserialize(BinaryReader reader, ControllerDeserializationContext deserializationContext)
 		{
 			if (reader.BaseStream.Position == reader.BaseStream.Length)
 			{

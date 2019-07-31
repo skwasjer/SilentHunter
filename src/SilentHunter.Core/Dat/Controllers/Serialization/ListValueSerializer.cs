@@ -22,14 +22,14 @@ namespace SilentHunter.Dat.Controllers.Serialization
 			return context.Type.IsClosedTypeOf(typeof(IList<>));
 		}
 
-		public void Serialize(BinaryWriter writer, ControllerSerializationContext context)
+		public void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext)
 		{
-			var list = (IList)context.Value;
+			var list = (IList)serializationContext.Value;
 
-			Type[] typeArgs = context.Type.GetGenericArguments();
+			Type[] typeArgs = serializationContext.Type.GetGenericArguments();
 			Type elementType = typeArgs[0];
 
-			Type countType = context.Member.GetCustomAttribute<CountTypeAttribute>()?.SerializationType;
+			Type countType = serializationContext.Member.GetCustomAttribute<CountTypeAttribute>()?.SerializationType;
 			if (countType != null)
 			{
 				// Output count field.
@@ -39,25 +39,27 @@ namespace SilentHunter.Dat.Controllers.Serialization
 
 			foreach (object item in list)
 			{
-				context.Serializer.WriteField(writer, elementType, item);
+				var innerContext = new ControllerSerializationContext(serializationContext.Serializer, elementType, item);
+				serializationContext.Serializer.WriteField(writer, innerContext);
 			}
 		}
 
-		public object Deserialize(BinaryReader reader, ControllerDeserializationContext context)
+		public object Deserialize(BinaryReader reader, ControllerDeserializationContext deserializationContext)
 		{
-			var list = (IList)Activator.CreateInstance(context.Type);
+			var list = (IList)Activator.CreateInstance(deserializationContext.Type);
 
-			Type[] typeArgs = context.Type.GetGenericArguments();
+			Type[] typeArgs = deserializationContext.Type.GetGenericArguments();
 			Type elementType = typeArgs[0];
+			var innerContext = new ControllerDeserializationContext(deserializationContext.Serializer, elementType);
 
-			Type countType = context.Member.GetCustomAttribute<CountTypeAttribute>()?.SerializationType;
+			Type countType = deserializationContext.Member.GetCustomAttribute<CountTypeAttribute>()?.SerializationType;
 			if (countType != null)
 			{
 				// Read n times, determined by prefixed count field.
 				int count = Convert.ToInt32(reader.ReadStruct(countType));
 				for (var i = 0; i < count; i++)
 				{
-					list.Add(context.Serializer.ReadField(reader, elementType));
+					list.Add(deserializationContext.Serializer.ReadField(reader, innerContext));
 				}
 			}
 			else
@@ -65,7 +67,7 @@ namespace SilentHunter.Dat.Controllers.Serialization
 				// Read until end of stream.
 				while (reader.BaseStream.Position < reader.BaseStream.Length)
 				{
-					list.Add(context.Serializer.ReadField(reader, elementType));
+					list.Add(deserializationContext.Serializer.ReadField(reader, innerContext));
 				}
 			}
 

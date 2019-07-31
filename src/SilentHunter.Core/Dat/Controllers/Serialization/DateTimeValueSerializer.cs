@@ -8,13 +8,13 @@ namespace SilentHunter.Dat.Controllers.Serialization
 	{
 		private const string DateFormat = "yyyyMMdd";
 
-		public override void Serialize(BinaryWriter writer, ControllerSerializationContext context)
+		public override void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext)
 		{
-			string date = ((DateTime)context.Value).ToString("yyyyMMdd");
+			string date = ((DateTime)serializationContext.Value).ToString("yyyyMMdd");
 			writer.Write(int.Parse(date));
 		}
 
-		public override object Deserialize(BinaryReader reader, ControllerDeserializationContext context)
+		public override object Deserialize(BinaryReader reader, ControllerDeserializationContext deserializationContext)
 		{
 			string sDate = reader.ReadInt32().ToString();
 			if (DateTime.TryParseExact(sDate, DateFormat, null, DateTimeStyles.None, out DateTime date))

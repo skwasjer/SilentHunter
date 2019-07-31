@@ -9,8 +9,8 @@ namespace SilentHunter.Dat.Controllers.Serialization
 			return context.Type == typeof(T);
 		}
 
-		public abstract void Serialize(BinaryWriter writer, ControllerSerializationContext context);
+		public abstract void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext);
 
-		public abstract object Deserialize(BinaryReader reader, ControllerDeserializationContext context);
+		public abstract object Deserialize(BinaryReader reader, ControllerDeserializationContext deserializationContext);
 	}
 }

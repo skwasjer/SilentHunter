@@ -13,23 +13,23 @@ namespace SilentHunter.Dat.Controllers.Serialization
 			return Nullable.GetUnderlyingType(context.Type) != null;
 		}
 
-		public void Serialize(BinaryWriter writer, ControllerSerializationContext context)
+		public void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext)
 		{
-			Type underlyingType = Nullable.GetUnderlyingType(context.Type);
+			Type underlyingType = Nullable.GetUnderlyingType(serializationContext.Type);
 			if (underlyingType == typeof(bool))
 			{
-				_booleanValueSerializer.Serialize(writer, context);
+				_booleanValueSerializer.Serialize(writer, serializationContext);
 			}
 			else
 			{
-				writer.WriteStruct(context.Value);
+				writer.WriteStruct(serializationContext.Value);
 			}
 		}
 
-		public object Deserialize(BinaryReader reader, ControllerDeserializationContext context)
+		public object Deserialize(BinaryReader reader, ControllerDeserializationContext deserializationContext)
 		{
-			Type underlyingType = Nullable.GetUnderlyingType(context.Type);
-			return underlyingType == typeof(bool) ? _booleanValueSerializer.Deserialize(reader, context) : reader.ReadStruct(underlyingType);
+			Type underlyingType = Nullable.GetUnderlyingType(deserializationContext.Type);
+			return underlyingType == typeof(bool) ? _booleanValueSerializer.Deserialize(reader, deserializationContext) : reader.ReadStruct(underlyingType);
 		}
 	}
 }

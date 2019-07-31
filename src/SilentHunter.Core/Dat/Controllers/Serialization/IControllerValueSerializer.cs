@@ -6,8 +6,8 @@ namespace SilentHunter.Dat.Controllers.Serialization
 	{
 		bool IsSupported(IControllerSerializationContext context);
 
-		void Serialize(BinaryWriter writer, ControllerSerializationContext context);
+		void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext);
 
-		object Deserialize(BinaryReader reader, ControllerDeserializationContext context);
+		object Deserialize(BinaryReader reader, ControllerDeserializationContext deserializationContext);
 	}
 }

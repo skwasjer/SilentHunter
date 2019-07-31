@@ -25,27 +25,27 @@ namespace SilentHunter.Dat.Controllers.Serialization
 			return context.Type.IsClosedTypeOf(typeof(SHUnion<,>));
 		}
 
-		public void Serialize(BinaryWriter writer, ControllerSerializationContext context)
+		public void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext)
 		{
-			SHUnionPropertyCache propertyCache = GetCachedProperties(context.Type);
-			writer.WriteStruct(propertyCache.ValueProperty.GetValue(context.Value, null));
+			SHUnionPropertyCache propertyCache = GetCachedProperties(serializationContext.Type);
+			writer.WriteStruct(propertyCache.ValueProperty.GetValue(serializationContext.Value, null));
 		}
 
-		public object Deserialize(BinaryReader reader, ControllerDeserializationContext context)
+		public object Deserialize(BinaryReader reader, ControllerDeserializationContext deserializationContext)
 		{
 			long dataSize = reader.BaseStream.Length - reader.BaseStream.Position;
 
-			SHUnionPropertyCache propertyCache = GetCachedProperties(context.Type);
+			SHUnionPropertyCache propertyCache = GetCachedProperties(deserializationContext.Type);
 
-			Type[] typeArgs = context.Type.GetGenericArguments();
+			Type[] typeArgs = deserializationContext.Type.GetGenericArguments();
 			// Using size of data to determine which of the SHUnion generic type arguments to use.
 			Type valueType = typeArgs.FirstOrDefault(type => Marshal.SizeOf(type) == dataSize);
 			if (valueType == null)
 			{
-				throw new IOException($"The available stream data does not match the size one of the two union types for property '{context.Name}'.");
+				throw new IOException($"The available stream data does not match the size one of the two union types for property '{deserializationContext.Name}'.");
 			}
 
-			object union = Activator.CreateInstance(context.Type);
+			object union = Activator.CreateInstance(deserializationContext.Type);
 			propertyCache.TypeProperty.SetValue(union, valueType, null);
 			propertyCache.ValueProperty.SetValue(union, reader.ReadStruct(valueType), null);
 			return union;

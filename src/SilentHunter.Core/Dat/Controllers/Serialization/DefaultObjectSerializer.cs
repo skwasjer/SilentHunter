@@ -23,11 +23,11 @@ namespace SilentHunter.Dat.Controllers.Serialization
 			return !context.Type.IsArray;
 		}
 
-		public void Serialize(BinaryWriter writer, ControllerSerializationContext context)
+		public void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext)
 		{
-			if (context.Type.IsClass)
+			if (serializationContext.Type.IsClass)
 			{
-				IEnumerable<FieldInfo> fields = GetCachedFieldInfos(context.Type);
+				IEnumerable<FieldInfo> fields = GetCachedFieldInfos(serializationContext.Type);
 				foreach (FieldInfo f in fields)
 				{
 					if (f.FieldType.IsClass)
@@ -35,24 +35,24 @@ namespace SilentHunter.Dat.Controllers.Serialization
 						// TODO: if field type is class, drill down, to support nesting.
 					}
 
-					writer.WriteStruct(f.GetValue(context.Value));
+					writer.WriteStruct(f.GetValue(serializationContext.Value));
 				}
 			}
 			else
 			{
-				writer.WriteStruct(context.Value);
+				writer.WriteStruct(serializationContext.Value);
 			}
 		}
 
-		public object Deserialize(BinaryReader reader, ControllerDeserializationContext context)
+		public object Deserialize(BinaryReader reader, ControllerDeserializationContext deserializationContext)
 		{
-			if (!context.Type.IsClass)
+			if (!deserializationContext.Type.IsClass)
 			{
-				return reader.ReadStruct(context.Type);
+				return reader.ReadStruct(deserializationContext.Type);
 			}
 
-			IEnumerable<FieldInfo> fields = GetCachedFieldInfos(context.Type);
-			object instance = Activator.CreateInstance(context.Type);
+			IEnumerable<FieldInfo> fields = GetCachedFieldInfos(deserializationContext.Type);
+			object instance = Activator.CreateInstance(deserializationContext.Type);
 			foreach (FieldInfo f in fields)
 			{
 				if (f.FieldType.IsClass)

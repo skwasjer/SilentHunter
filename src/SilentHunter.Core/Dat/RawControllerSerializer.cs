@@ -94,32 +94,29 @@ namespace SilentHunter.Dat
 
 		protected virtual object DeserializeField(BinaryReader reader, FieldInfo fieldInfo)
 		{
-			return ReadField(reader, fieldInfo);
+			var ctx = new ControllerDeserializationContext(this, fieldInfo);
+			return ReadField(reader, ctx);
 		}
 
-		object IControllerSerializer.ReadField(BinaryReader reader, Type elementType)
+		object IControllerSerializer.ReadField(BinaryReader reader, ControllerDeserializationContext deserializationContext)
 		{
-			return ReadField(reader, elementType);
+			return ReadField(reader, deserializationContext);
 		}
 
-		protected virtual object ReadField(BinaryReader reader, MemberInfo memberInfo)
+		protected virtual object ReadField(BinaryReader reader, ControllerDeserializationContext deserializationContext)
 		{
-			CheckArguments(reader, memberInfo);
-
-			var ctx = new ControllerDeserializationContext(this, memberInfo);
-
 			object retVal;
 
-			if (ctx.Type.IsControllerOrSHType())
+			if (deserializationContext.Type.IsControllerOrSHType())
 			{
 				// Create a new instance of this type.
-				retVal = Activator.CreateInstance(ctx.Type);
+				retVal = Activator.CreateInstance(deserializationContext.Type);
 
-				DeserializeFields(reader, ctx.Type, retVal);
+				DeserializeFields(reader, deserializationContext.Type, retVal);
 			}
 			else
 			{
-				retVal = ReadValue(reader, ctx);
+				retVal = ReadValue(reader, deserializationContext);
 			}
 
 			return retVal;
@@ -172,24 +169,24 @@ namespace SilentHunter.Dat
 		protected virtual void SerializeField(BinaryWriter writer, FieldInfo field, object value)
 		{
 			// Write the value.
-			WriteField(writer, field, value);
+			var ctx = new ControllerSerializationContext(this, field, value);
+			WriteField(writer, ctx);
 		}
 
-		void IControllerSerializer.WriteField(BinaryWriter writer, Type elementType, object value)
+		void IControllerSerializer.WriteField(BinaryWriter writer, ControllerSerializationContext serializationContext)
 		{
-			WriteField(writer, elementType, value);
+			WriteField(writer, serializationContext);
 		}
 
-		protected virtual void WriteField(BinaryWriter writer, MemberInfo memberInfo, object value)
+		protected virtual void WriteField(BinaryWriter writer, ControllerSerializationContext serializationContext)
 		{
-			var ctx = new ControllerSerializationContext(this, memberInfo, value);
-			if (ctx.Type.IsControllerOrSHType())
+			if (serializationContext.Type.IsControllerOrSHType())
 			{
-				SerializeFields(writer, ctx.Type, value);
+				SerializeFields(writer, serializationContext.Type, serializationContext.Value);
 			}
 			else
 			{
-				WriteValue(writer, ctx);
+				WriteValue(writer, serializationContext);
 			}
 		}
 

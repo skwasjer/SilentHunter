@@ -10,12 +10,12 @@ namespace SilentHunter.Dat.Controllers.Serialization
 	/// </remarks>
 	public class BooleanValueSerializer : ControllerValueSerializer<bool>
 	{
-		public override void Serialize(BinaryWriter writer, ControllerSerializationContext context)
+		public override void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext)
 		{
-			writer.Write((bool)context.Value);
+			writer.Write((bool)serializationContext.Value);
 		}
 
-		public override object Deserialize(BinaryReader reader, ControllerDeserializationContext context)
+		public override object Deserialize(BinaryReader reader, ControllerDeserializationContext deserializationContext)
 		{
 			long boolLen = reader.BaseStream.Length;
 			switch (boolLen)

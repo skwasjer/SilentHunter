@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using SilentHunter.Dat.Controllers.Serialization;
 using SilentHunter.Extensions;
 using SilentHunter.Formats;
 using skwas.IO;
@@ -71,17 +72,12 @@ namespace SilentHunter.Dat
 		/// <returns>Returns the object read from stream.</returns>
 		/// <exception cref="IOException">Thrown when an error occurred during parsing.</exception>
 		/// <exception cref="NotImplementedException">Thrown when a type is not implemented.</exception>
-		protected override object ReadField(BinaryReader reader, MemberInfo memberInfo)
+		protected override object ReadField(BinaryReader reader, ControllerDeserializationContext deserializationContext)
 		{
-			CheckArguments(reader, memberInfo);
-
 			string name = null;
-			var field = memberInfo as FieldInfo;
-			Type typeOfValue;
+			var field = deserializationContext.Member as FieldInfo;
 			if (field != null)
 			{
-				typeOfValue = field.FieldType;
-
 				if (field.HasAttribute<OptionalAttribute>() && reader.BaseStream.Position == reader.BaseStream.Length)
 				{
 					// Exit because field is optional, and we are at end of stream.
@@ -90,10 +86,6 @@ namespace SilentHunter.Dat
 
 				// The expected field or controller name to find on the stream. If null, then the name is not required and the object instead is stored as raw data, and name checking is ignored.
 				name = field.GetCustomAttribute<ParseNameAttribute>()?.Name ?? field.Name;
-			}
-			else
-			{
-				typeOfValue = (Type)memberInfo;
 			}
 
 			// Read the size of the data.
@@ -114,8 +106,8 @@ namespace SilentHunter.Dat
 			{
 				using (var regionReader = new BinaryReader(regionStream, Encoding.ParseEncoding, true))
 				{
-					object retVal = base.ReadField(regionReader, memberInfo);
-					reader.BaseStream.EnsureStreamPosition(expectedPosition, name ?? typeOfValue.FullName);
+					object retVal = base.ReadField(regionReader, deserializationContext);
+					reader.BaseStream.EnsureStreamPosition(expectedPosition, name ?? deserializationContext.Name);
 					return retVal;
 				}
 			}
@@ -164,20 +156,20 @@ namespace SilentHunter.Dat
 			base.SerializeField(writer, field, value);
 		}
 
-		protected override void WriteField(BinaryWriter writer, MemberInfo memberInfo, object value)
+		protected override void WriteField(BinaryWriter writer, ControllerSerializationContext serializationContext)
 		{
 			// Write size 0. We don't know actual the size yet.
 			writer.Write(0);
 
 			long startPos = writer.BaseStream.Position;
 
-			if (memberInfo is FieldInfo fieldInfo)
+			if (serializationContext.Member is FieldInfo fieldInfo)
 			{
 				string name = fieldInfo.GetCustomAttribute<ParseNameAttribute>()?.Name ?? fieldInfo.Name;
 				writer.WriteNullTerminatedString(name);
 			}
 
-			base.WriteField(writer, memberInfo, value);
+			base.WriteField(writer, serializationContext);
 
 			long currentPos = writer.BaseStream.Position;
 			writer.BaseStream.Position = startPos - 4;
