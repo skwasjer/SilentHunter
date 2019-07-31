@@ -67,11 +67,6 @@ namespace SilentHunter.Dat
 			}
 		}
 
-		void IControllerSerializer.DeserializeFields(BinaryReader reader, Type typeOfValue, object instance)
-		{
-			DeserializeFields(reader, typeOfValue, instance);
-		}
-
 		protected virtual void DeserializeFields(BinaryReader reader, Type typeOfValue, object instance)
 		{
 			if (reader == null)
@@ -103,11 +98,6 @@ namespace SilentHunter.Dat
 					fld.SetValue(instance, fieldValue);
 				}
 			}
-		}
-
-		void IControllerSerializer.SerializeFields(BinaryWriter writer, Type typeOfValue, object instance)
-		{
-			SerializeFields(writer, typeOfValue, instance);
 		}
 
 		protected virtual void SerializeFields(BinaryWriter writer, Type typeOfValue, object instance)
@@ -187,11 +177,6 @@ namespace SilentHunter.Dat
 			}
 		}
 
-		object IControllerSerializer.ReadValue(BinaryReader reader, MemberInfo memberInfo)
-		{
-			return ReadValue(reader, memberInfo);
-		}
-
 		protected virtual object ReadValue(BinaryReader reader, MemberInfo memberInfo)
 		{
 			var ctx = new ControllerDeserializationContext(this, memberInfo);
@@ -203,11 +188,6 @@ namespace SilentHunter.Dat
 			}
 
 			return result;
-		}
-
-		void IControllerSerializer.WriteValue(BinaryWriter writer, MemberInfo memberInfo, object value)
-		{
-			WriteValue(writer, memberInfo, value);
 		}
 
 		protected virtual void WriteValue(BinaryWriter writer, MemberInfo memberInfo, object value)
