@@ -17,6 +17,13 @@ namespace SilentHunter.Dat.Controllers.Serialization
 	/// </remarks>
 	public class ListValueSerializer : IControllerValueSerializer
 	{
+		private readonly IControllerFieldSerializer _controllerFieldSerializer;
+
+		public ListValueSerializer(IControllerFieldSerializer controllerFieldSerializer)
+		{
+			_controllerFieldSerializer = controllerFieldSerializer ?? throw new ArgumentNullException(nameof(controllerFieldSerializer));
+		}
+
 		public bool IsSupported(IControllerSerializationContext context)
 		{
 			return context.Type.IsClosedTypeOf(typeof(IList<>));
@@ -39,8 +46,8 @@ namespace SilentHunter.Dat.Controllers.Serialization
 
 			foreach (object item in list)
 			{
-				var innerContext = new ControllerSerializationContext(serializationContext.Serializer, elementType, item);
-				serializationContext.Serializer.WriteField(writer, innerContext);
+				var innerContext = new ControllerSerializationContext(elementType, item);
+				_controllerFieldSerializer.WriteField(writer, innerContext);
 			}
 		}
 
@@ -50,7 +57,7 @@ namespace SilentHunter.Dat.Controllers.Serialization
 
 			Type[] typeArgs = deserializationContext.Type.GetGenericArguments();
 			Type elementType = typeArgs[0];
-			var innerContext = new ControllerDeserializationContext(deserializationContext.Serializer, elementType);
+			var innerContext = new ControllerDeserializationContext(elementType);
 
 			Type countType = deserializationContext.Member.GetCustomAttribute<CountTypeAttribute>()?.SerializationType;
 			if (countType != null)
@@ -59,7 +66,7 @@ namespace SilentHunter.Dat.Controllers.Serialization
 				int count = Convert.ToInt32(reader.ReadStruct(countType));
 				for (var i = 0; i < count; i++)
 				{
-					list.Add(deserializationContext.Serializer.ReadField(reader, innerContext));
+					list.Add(_controllerFieldSerializer.ReadField(reader, innerContext));
 				}
 			}
 			else
@@ -67,7 +74,7 @@ namespace SilentHunter.Dat.Controllers.Serialization
 				// Read until end of stream.
 				while (reader.BaseStream.Position < reader.BaseStream.Length)
 				{
-					list.Add(deserializationContext.Serializer.ReadField(reader, innerContext));
+					list.Add(_controllerFieldSerializer.ReadField(reader, innerContext));
 				}
 			}
 

@@ -15,21 +15,26 @@ namespace SilentHunter.Dat
 	/// <remarks>
 	/// Raw controllers are typically stored where each property is serialized in binary form, in a sequential order.
 	/// </remarks>
-	public class RawControllerSerializer : IControllerSerializer
+	public class RawControllerSerializer : IControllerSerializer, IControllerFieldSerializer
 	{
-		private readonly ICollection<IControllerValueSerializer> _serializers = new List<IControllerValueSerializer>
+		private readonly ICollection<IControllerValueSerializer> _serializers;
+
+		public RawControllerSerializer()
 		{
-			new FixedStringValueSerializer(),
-			new StringValueSerializer(),
-			new ColorValueSerializer(),
-			new DateTimeValueSerializer(),
-			new BooleanValueSerializer(),
-			new NullableValueSerializer(),
-			new PrimitiveArrayValueSerializer(),
-			new ListValueSerializer(),
-			new SHUnionValueSerializer(),
-			new DefaultObjectSerializer()	// Should be last.
-		};
+			_serializers = new List<IControllerValueSerializer>
+			{
+				new FixedStringValueSerializer(),
+				new StringValueSerializer(),
+				new ColorValueSerializer(),
+				new DateTimeValueSerializer(),
+				new BooleanValueSerializer(),
+				new NullableValueSerializer(),
+				new PrimitiveArrayValueSerializer(),
+				new ListValueSerializer(this),
+				new SHUnionValueSerializer(),
+				new DefaultObjectSerializer()	// Should be last.
+			};
+		}
 
 		public void Deserialize(Stream stream, IRawController controller)
 		{
@@ -94,11 +99,11 @@ namespace SilentHunter.Dat
 
 		protected virtual object DeserializeField(BinaryReader reader, FieldInfo fieldInfo)
 		{
-			var ctx = new ControllerDeserializationContext(this, fieldInfo);
+			var ctx = new ControllerDeserializationContext(fieldInfo);
 			return ReadField(reader, ctx);
 		}
 
-		object IControllerSerializer.ReadField(BinaryReader reader, ControllerDeserializationContext deserializationContext)
+		object IControllerFieldSerializer.ReadField(BinaryReader reader, ControllerDeserializationContext deserializationContext)
 		{
 			return ReadField(reader, deserializationContext);
 		}
@@ -169,11 +174,11 @@ namespace SilentHunter.Dat
 		protected virtual void SerializeField(BinaryWriter writer, FieldInfo field, object value)
 		{
 			// Write the value.
-			var ctx = new ControllerSerializationContext(this, field, value);
+			var ctx = new ControllerSerializationContext(field, value);
 			WriteField(writer, ctx);
 		}
 
-		void IControllerSerializer.WriteField(BinaryWriter writer, ControllerSerializationContext serializationContext)
+		void IControllerFieldSerializer.WriteField(BinaryWriter writer, ControllerSerializationContext serializationContext)
 		{
 			WriteField(writer, serializationContext);
 		}
