@@ -174,10 +174,7 @@ namespace SilentHunter.Dat
 			if (memberInfo is FieldInfo fieldInfo)
 			{
 				string name = fieldInfo.GetCustomAttribute<ParseNameAttribute>()?.Name ?? fieldInfo.Name;
-				if (!string.IsNullOrEmpty(name))
-				{
-					writer.WriteNullTerminatedString(name);
-				}
+				writer.WriteNullTerminatedString(name);
 			}
 
 			base.WriteField(writer, memberInfo, value);
