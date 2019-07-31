@@ -7,13 +7,20 @@ using skwas.IO;
 
 namespace SilentHunter.Dat.Controllers.Serialization
 {
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <remarks>
+	/// Because reference types (aka controllers, etc) can contain primitives that are not (de)serializable with ReadStruct/WriteStruct, we have to enumerate all fields separately then.
+	///
+	/// </remarks>
 	public class DefaultObjectSerializer : IControllerValueSerializer
 	{
 		private static readonly ConcurrentDictionary<Type, FieldInfo[]> FieldInfoCache = new ConcurrentDictionary<Type, FieldInfo[]>();
 
 		public bool IsSupported(IControllerSerializationContext context)
 		{
-			return true;
+			return !context.Type.IsArray;
 		}
 
 		public void Serialize(BinaryWriter writer, ControllerSerializationContext context)

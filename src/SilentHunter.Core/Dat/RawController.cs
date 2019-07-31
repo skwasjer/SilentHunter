@@ -28,10 +28,10 @@ namespace SilentHunter.Dat
 			new DateTimeValueSerializer(),
 			new BooleanValueSerializer(),
 			new NullableValueSerializer(),
-			//new ArrayValueSerializer(),
+			new PrimitiveArrayValueSerializer(),
 			new ListValueSerializer(),
 			new SHUnionValueSerializer(),
-			//new DefaultObjectSerializer()	// Should be last.
+			new DefaultObjectSerializer()	// Should be last.
 		};
 
 		/// <summary>
@@ -187,53 +187,15 @@ namespace SilentHunter.Dat
 
 		protected virtual object ReadValue(BinaryReader reader, MemberInfo memberInfo)
 		{
-			CheckArguments(reader, memberInfo);
-
-			var field = memberInfo as FieldInfo;
-			Type typeOfValue = field?.FieldType ?? (Type)memberInfo;
-
-			object retVal;
-
 			var ctx = new ControllerDeserializationContext(this, memberInfo);
 			IControllerValueSerializer serializer = _serializers.FirstOrDefault(s => s.IsSupported(ctx));
-			if (serializer != null)
+			object result = serializer?.Deserialize(reader, ctx);
+			if (result == null)
 			{
-				retVal = serializer.Deserialize(reader, ctx);
-			}
-			else if (typeOfValue.IsArray)
-			{
-				throw new NotSupportedException("Arrays are not supported. Use List<> instead.");
-			}
-			else if (typeOfValue.IsGenericType)
-			{
-				throw new NotSupportedException("Generics are not supported.");
-			}
-			// FIX: for types containing color, ReadStruct can't read the entire type. So in case a class, enumerate all class properties separately.
-			else if (!typeOfValue.IsClass)
-			{
-				retVal = reader.ReadStruct(typeOfValue);
-			}
-			else
-			{
-				FieldInfo[] fields = typeOfValue.GetFields(BindingFlags.Public | BindingFlags.Instance);
-				retVal = Activator.CreateInstance(typeOfValue);
-				foreach (FieldInfo f in fields)
-				{
-					if (f.FieldType.IsClass)
-					{
-						// TODO: if field type is class, drill down, to support nesting.
-					}
-
-					f.SetValue(retVal, reader.ReadStruct(f.FieldType));
-				}
+				throw new NotImplementedException($"The specified type '{ctx.Type.FullName}' is not supported or implemented.");
 			}
 
-			if (retVal == null)
-			{
-				throw new NotImplementedException($"The specified type '{typeOfValue.FullName}' is not supported or implemented.");
-			}
-
-			return retVal;
+			return result;
 		}
 
 		void IControllerSerializer.WriteValue(BinaryWriter writer, MemberInfo memberInfo, object value)
@@ -243,54 +205,14 @@ namespace SilentHunter.Dat
 
 		protected virtual void WriteValue(BinaryWriter writer, MemberInfo memberInfo, object value)
 		{
-			var field = memberInfo as FieldInfo;
-			Type typeOfValue = field?.FieldType ?? (Type)memberInfo;
-
 			var ctx = new ControllerSerializationContext(this, memberInfo, value);
 			IControllerValueSerializer serializer = _serializers.FirstOrDefault(s => s.IsSupported(ctx));
-			if (serializer != null)
+			if (serializer == null)
 			{
-				serializer.Serialize(writer, ctx);
+				throw new NotImplementedException($"The specified type '{ctx.Type.FullName}' is not supported or implemented.");
 			}
-			else if (typeOfValue.IsArray)
-			{
-				if (typeOfValue == typeof(byte[]))
-				{
-					var b = (byte[])value;
-					writer.Write(b, 0, b.Length);
-				}
-				else
-				{
-					// Parse as a list.
-					Type elementType = typeOfValue.GetElementType();
-					var arr = (Array)value;
-					for (var i = 0; i < arr.Length; i++)
-					{
-						WriteField(writer, elementType, arr.GetValue(i));
-					}
-				}
-			}
-			else if (typeOfValue.IsGenericType)
-			{
-			}
-			// FIX: for types containing color, ReadStruct can't read the entire type. So in case a class, enumerate all class properties separately.
-			else if (!typeOfValue.IsClass)
-			{
-				writer.WriteStruct(value);
-			}
-			else
-			{
-				FieldInfo[] fields = typeOfValue.GetFields(BindingFlags.Public | BindingFlags.Instance);
-				foreach (FieldInfo f in fields)
-				{
-					if (f.FieldType.IsClass)
-					{
-						// TODO: if field type is class, drill down, to support nesting.
-					}
 
-					writer.WriteStruct(f.GetValue(value));
-				}
-			}
+			serializer.Serialize(writer, ctx);
 		}
 
 		#region Implementation of IRawController
