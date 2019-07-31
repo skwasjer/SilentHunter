@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.IO;
 using System.Reflection;
 using SilentHunter.Dat;
@@ -75,100 +74,6 @@ namespace SilentHunter.Formats
 
 			// Property must be skipped.
 			return true;
-		}
-
-		public static bool ReadString(this BinaryReader reader, ICustomAttributeProvider member, long expectedEndPosition, out string result)
-		{
-			int fixedLength = member.GetAttribute<FixedStringAttribute>()?.Length ?? -1;
-			if (reader.BaseStream.Position == expectedEndPosition || reader.BaseStream.Position == reader.BaseStream.Length)
-			{
-				result = null;
-				if (fixedLength == -1)
-				{
-					return true;
-				}
-			}
-
-			if (fixedLength > 0)
-			{
-				string s = reader.ReadString(fixedLength);
-				// Take care of possible nullchar in middle of string.
-				string[] arr = s.Split(new[]
-				{
-					'\0'
-				}, 2, StringSplitOptions.None);
-
-				result = arr.Length == 0 ? null : arr[0];
-			}
-			else
-			{
-				result = reader.ReadNullTerminatedString();
-
-				// If there are bytes left for this field, move to last byte...
-				if (reader.BaseStream.Position < expectedEndPosition)
-				{
-					reader.BaseStream.Position = expectedEndPosition;
-				}
-			}
-
-			return result != null && (expectedEndPosition == -1 || reader.BaseStream.Position == expectedEndPosition);
-		}
-
-		public static bool ReadBoolean(this BinaryReader reader, ICustomAttributeProvider member, long expectedEndPosition, out bool result)
-		{
-			long boolLen = (expectedEndPosition == -1 ? reader.BaseStream.Length : expectedEndPosition) - reader.BaseStream.Position;
-			switch (boolLen)
-			{
-				case 1:
-					result = reader.ReadByte() > 0;
-					return true;
-				case 4:
-					// Some files have int32 stored as boolean. This seems like a bug and we should resave the file properly.
-					result = reader.ReadInt32() > 0;
-					return true;
-				default:
-					result = false;
-					return false;
-			}
-		}
-
-		public static bool ReadDateTime(this BinaryReader reader, ICustomAttributeProvider member, long expectedEndPosition, out DateTime date)
-		{
-			date = DateTime.MinValue;
-
-			string sDate = reader.ReadInt32().ToString();
-			bool success = expectedEndPosition == -1 || reader.BaseStream.Position == expectedEndPosition;
-			if (!success)
-			{
-				return false;
-			}
-
-			if (DateTime.TryParseExact(sDate, DateFormat, null, DateTimeStyles.None, out date))
-			{
-				return true;
-			}
-
-			// If a parse error occurred, this most like is because the days of month are 31, for instance for april, or 30-31 for feb, or even 29 if not a leap year. Correct this by attempting to parse by lowering the days.
-			int days = int.Parse(sDate.Substring(6, 2));
-			sDate = sDate.Remove(6);
-
-			// 3 extra attempts max.
-			for (var i = 0; i < 3; i++)
-			{
-				days--;
-				if (DateTime.TryParseExact(sDate + days, DateFormat, null, DateTimeStyles.None, out date))
-				{
-					// We are successful.
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		public static object ReadValue(this BinaryReader reader, Type type)
-		{
-			return null;
 		}
 	}
 }
