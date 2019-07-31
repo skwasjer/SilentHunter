@@ -150,34 +150,26 @@ namespace SilentHunter.Dat
 		/// When implemented, serializes the controller to specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		protected override void Serialize(Stream stream, Type controllerType, object instance)
+		public override void Serialize(BinaryWriter writer, Type controllerType, object instance)
 		{
-			if (stream == null)
-			{
-				throw new ArgumentNullException(nameof(stream));
-			}
+			// We don't know the size yet, so just write 0 for now.
+			writer.Write(0);
 
-			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
-			{
-				// We don't know the size yet, so just write 0 for now.
-				writer.Write(0);
+			// Save current position of stream. At the end, we have to set the size.
+			long startPos = writer.BaseStream.Position;
 
-				// Save current position of stream. At the end, we have to set the size.
-				long startPos = stream.Position;
+			string controllerName = controllerType.Name;
+			writer.WriteNullTerminatedString(controllerName);
 
-				string controllerName = controllerType.Name;
-				writer.WriteNullTerminatedString(controllerName);
+			SerializeFields(writer, controllerType, instance);
 
-				SerializeFields(writer, controllerType, instance);
+			// After the object is written, determine and write the size.
+			long currentPos = writer.BaseStream.Position;
+			writer.BaseStream.Position = startPos - 4;
+			writer.Write((int)(currentPos - startPos));
 
-				// After the object is written, determine and write the size.
-				long currentPos = stream.Position;
-				stream.Position = startPos - 4;
-				writer.Write((int)(currentPos - startPos));
-
-				// Restore position to the end of the controller.
-				stream.Position = currentPos;
-			}
+			// Restore position to the end of the controller.
+			writer.BaseStream.Position = currentPos;
 		}
 
 		protected override void SerializeFields(BinaryWriter writer, Type typeOfValue, object instance)

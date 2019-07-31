@@ -35,7 +35,7 @@ namespace SilentHunter.Dat
 		/// When implemented, deserializes the controller from specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		public virtual void Deserialize(Stream stream, Type controllerType, object instance)
+		public void Deserialize(Stream stream, Type controllerType, object instance)
 		{
 			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
 			{
@@ -50,21 +50,21 @@ namespace SilentHunter.Dat
 			DeserializeFields(reader, controllerType, instance);
 		}
 
-		void IControllerSerializer.Serialize(Stream stream, Type controllerType, object instance)
-		{
-			Serialize(stream, controllerType, instance);
-		}
-
 		/// <summary>
 		/// When implemented, serializes the controller to specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		protected virtual void Serialize(Stream stream, Type controllerType, object instance)
+		public void Serialize(Stream stream, Type controllerType, object instance)
 		{
 			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
 			{
-				SerializeFields(writer, controllerType, instance);
+				Serialize(writer, controllerType, instance);
 			}
+		}
+
+		public virtual void Serialize(BinaryWriter writer, Type controllerType, object instance)
+		{
+			SerializeFields(writer, controllerType, instance);
 		}
 
 		protected virtual void DeserializeFields(BinaryReader reader, Type typeOfValue, object instance)
