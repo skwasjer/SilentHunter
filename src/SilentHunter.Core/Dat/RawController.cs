@@ -1,10 +1,11 @@
 using System;
 using System.IO;
 using SilentHunter.Dat.Controllers.Serialization;
+using skwas.IO;
 
 namespace SilentHunter.Dat
 {
-	public abstract class RawController : IRawController
+	public abstract class RawController : IRawController, IRawSerializable
 	{
 		public virtual Type ControllerSerializerType { get; } = typeof(RawControllerSerializer);
 

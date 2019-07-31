@@ -22,8 +22,7 @@ namespace StateMachineCtl
 	/// <summary>
 	/// StateMachineCtl controller. State machine manager for characters or objects.
 	/// </summary>
-	public class StateMachineClass
-		: IRawController
+	public class StateMachineClass : IRawController, IRawSerializable
 	{
 		// NOTE: a, b, c and d are unknown fields to me, but they always seem to be the same.
 
