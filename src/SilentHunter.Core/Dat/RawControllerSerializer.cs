@@ -52,33 +52,9 @@ namespace SilentHunter.Dat
 			}
 		}
 
-		public void Serialize(Stream stream, IRawController controller)
-		{
-			if (stream == null)
-			{
-				throw new ArgumentNullException(nameof(stream));
-			}
-
-			if (controller == null)
-			{
-				throw new ArgumentNullException(nameof(controller));
-			}
-
-			Type controllerType = controller.GetType();
-			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
-			{
-				Serialize(writer, controllerType, controller);
-			}
-		}
-
 		public virtual void Deserialize(BinaryReader reader, Type instanceType, object instance)
 		{
 			DeserializeFields(reader, instanceType, instance);
-		}
-
-		public virtual void Serialize(BinaryWriter writer, Type instanceType, object instance)
-		{
-			SerializeFields(writer, instanceType, instance);
 		}
 
 		/// <summary>
@@ -121,32 +97,6 @@ namespace SilentHunter.Dat
 			return ReadField(reader, field);
 		}
 
-		private void SerializeFields(BinaryWriter writer, Type typeOfValue, object instance)
-		{
-			if (writer == null)
-			{
-				throw new ArgumentNullException(nameof(writer));
-			}
-
-			if (instance == null)
-			{
-				throw new ArgumentNullException(nameof(instance));
-			}
-
-			FieldInfo[] fields = typeOfValue.GetFields(BindingFlags.Public | BindingFlags.Instance);
-			foreach (FieldInfo field in fields)
-			{
-				object fieldValue = field.GetValue(instance);
-				SerializeField(writer, field, fieldValue);
-			}
-		}
-
-		protected virtual void SerializeField(BinaryWriter writer, FieldInfo field, object value)
-		{
-			// Write the value.
-			WriteField(writer, field, value);
-		}
-
 		object IControllerSerializer.ReadField(BinaryReader reader, MemberInfo memberInfo)
 		{
 			return ReadField(reader, memberInfo);
@@ -173,6 +123,56 @@ namespace SilentHunter.Dat
 			}
 
 			return retVal;
+		}
+
+		public void Serialize(Stream stream, IRawController controller)
+		{
+			if (stream == null)
+			{
+				throw new ArgumentNullException(nameof(stream));
+			}
+
+			if (controller == null)
+			{
+				throw new ArgumentNullException(nameof(controller));
+			}
+
+			Type controllerType = controller.GetType();
+			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
+			{
+				Serialize(writer, controllerType, controller);
+			}
+		}
+
+		public virtual void Serialize(BinaryWriter writer, Type instanceType, object instance)
+		{
+			SerializeFields(writer, instanceType, instance);
+		}
+
+		private void SerializeFields(BinaryWriter writer, Type typeOfValue, object instance)
+		{
+			if (writer == null)
+			{
+				throw new ArgumentNullException(nameof(writer));
+			}
+
+			if (instance == null)
+			{
+				throw new ArgumentNullException(nameof(instance));
+			}
+
+			FieldInfo[] fields = typeOfValue.GetFields(BindingFlags.Public | BindingFlags.Instance);
+			foreach (FieldInfo field in fields)
+			{
+				object fieldValue = field.GetValue(instance);
+				SerializeField(writer, field, fieldValue);
+			}
+		}
+
+		protected virtual void SerializeField(BinaryWriter writer, FieldInfo field, object value)
+		{
+			// Write the value.
+			WriteField(writer, field, value);
 		}
 
 		void IControllerSerializer.WriteField(BinaryWriter writer, MemberInfo memberInfo, object instance)
