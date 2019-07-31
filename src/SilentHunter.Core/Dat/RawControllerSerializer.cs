@@ -110,15 +110,15 @@ namespace SilentHunter.Dat
 			FieldInfo[] fields = instanceType.GetFields(BindingFlags.Public | BindingFlags.Instance);
 			foreach (FieldInfo field in fields)
 			{
-				DeserializeField(reader, field, instance);
+				var fieldValue = DeserializeField(reader, field);
+				// We have our value, set it.
+				field.SetValue(instance, fieldValue);
 			}
 		}
 
-		protected virtual void DeserializeField(BinaryReader reader, FieldInfo field, object instance)
+		protected virtual object DeserializeField(BinaryReader reader, FieldInfo field)
 		{
-			object fieldValue = ReadField(reader, field);
-			// We have our value, set it.
-			field.SetValue(instance, fieldValue);
+			return ReadField(reader, field);
 		}
 
 		private void SerializeFields(BinaryWriter writer, Type typeOfValue, object instance)
@@ -136,15 +136,15 @@ namespace SilentHunter.Dat
 			FieldInfo[] fields = typeOfValue.GetFields(BindingFlags.Public | BindingFlags.Instance);
 			foreach (FieldInfo field in fields)
 			{
-				SerializeField(writer, field, instance);
+				object fieldValue = field.GetValue(instance);
+				SerializeField(writer, field, fieldValue);
 			}
 		}
 
-		protected virtual void SerializeField(BinaryWriter writer, FieldInfo field, object instance)
+		protected virtual void SerializeField(BinaryWriter writer, FieldInfo field, object value)
 		{
-			object fieldValue = field.GetValue(instance);
 			// Write the value.
-			WriteField(writer, field, fieldValue);
+			WriteField(writer, field, value);
 		}
 
 		object IControllerSerializer.ReadField(BinaryReader reader, MemberInfo memberInfo)
@@ -180,12 +180,12 @@ namespace SilentHunter.Dat
 			WriteField(writer, memberInfo, instance);
 		}
 
-		protected virtual void WriteField(BinaryWriter writer, MemberInfo memberInfo, object instance)
+		protected virtual void WriteField(BinaryWriter writer, MemberInfo memberInfo, object value)
 		{
-			var ctx = new ControllerSerializationContext(this, memberInfo, instance);
+			var ctx = new ControllerSerializationContext(this, memberInfo, value);
 			if (ctx.Type.IsControllerOrSHType())
 			{
-				SerializeFields(writer, ctx.Type, instance);
+				SerializeFields(writer, ctx.Type, value);
 			}
 			else
 			{

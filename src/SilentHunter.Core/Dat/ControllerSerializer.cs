@@ -44,24 +44,23 @@ namespace SilentHunter.Dat
 			reader.BaseStream.EnsureStreamPosition(startPos + size, controllerName);
 		}
 
-		protected override void DeserializeField(BinaryReader reader, FieldInfo field, object instance)
+		protected override object DeserializeField(BinaryReader reader, FieldInfo field)
 		{
-			object fieldValue = ReadField(reader, field);
-			// If null is returned, the field was optional and not a string, and thus should be skipped.
-			if (fieldValue == null && field.FieldType != typeof(string))
+			object fieldValue = base.DeserializeField(reader, field);
+			// Strings can have null are always optional.
+			if (fieldValue != null || field.FieldType == typeof(string))
 			{
-				// Check if the type actually supports a nullable type.
-				if (field.FieldType.IsValueType && !field.FieldType.IsNullable())
-				{
-					throw new IOException(
-						$"The property '{field.Name}' is defined as optional, but the type '{field.FieldType}' does not support null values. Use Nullable<> if the property is a value type, or a class otherwise.");
-				}
-
-				return;
+				return fieldValue;
 			}
 
-			// We have our value, set it.
-			field.SetValue(instance, fieldValue);
+			// If null is returned, check if the field is optional and if the type supports a nullable type.
+			if (field.FieldType.IsValueType && !field.FieldType.IsNullable())
+			{
+				throw new IOException(
+					$"The property '{field.Name}' is defined as optional, but the type '{field.FieldType}' does not support null values. Use Nullable<> if the property is a value type, or a class otherwise.");
+			}
+
+			return null;
 		}
 
 		/// <summary>
@@ -139,12 +138,10 @@ namespace SilentHunter.Dat
 			writer.BaseStream.Position = currentPos;
 		}
 
-		protected override void SerializeField(BinaryWriter writer, FieldInfo field, object instance)
+		protected override void SerializeField(BinaryWriter writer, FieldInfo field, object value)
 		{
-			object fieldValue = field.GetValue(instance);
-
 			// If the value is null, the property has be optional, otherwise throw error.
-			if (fieldValue == null && field.FieldType != typeof(string))
+			if (value == null && field.FieldType != typeof(string))
 			{
 				if (field.HasAttribute<OptionalAttribute>())
 				{
@@ -155,10 +152,10 @@ namespace SilentHunter.Dat
 				throw new IOException($"The field '{fieldName}' is not defined as optional.");
 			}
 
-			WriteField(writer, field, fieldValue);
+			base.SerializeField(writer, field, value);
 		}
 
-		protected override void WriteField(BinaryWriter writer, MemberInfo memberInfo, object instance)
+		protected override void WriteField(BinaryWriter writer, MemberInfo memberInfo, object value)
 		{
 			// Write size 0. We don't know actual the size yet.
 			writer.Write(0);
@@ -166,7 +163,6 @@ namespace SilentHunter.Dat
 			long startPos = writer.BaseStream.Position;
 
 			var field = memberInfo as FieldInfo;
-			//Type typeOfValue = field?.FieldType ?? (Type)memberInfo;
 
 			string name = field?.GetAttribute<ParseNameAttribute>()?.Name ?? field?.Name;
 			if (!string.IsNullOrEmpty(name))
@@ -174,7 +170,7 @@ namespace SilentHunter.Dat
 				writer.WriteNullTerminatedString(name);
 			}
 
-			base.WriteField(writer, memberInfo, instance);
+			base.WriteField(writer, memberInfo, value);
 
 			long currentPos = writer.BaseStream.Position;
 			writer.BaseStream.Position = startPos - 4;
