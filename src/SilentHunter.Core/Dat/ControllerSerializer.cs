@@ -46,11 +46,11 @@ namespace SilentHunter.Dat
 
 		protected override object DeserializeField(BinaryReader reader, FieldInfo field)
 		{
-			object fieldValue = base.DeserializeField(reader, field);
+			object value = base.DeserializeField(reader, field);
 			// Strings can have null are always optional.
-			if (fieldValue != null || field.FieldType == typeof(string))
+			if (value != null || field.FieldType == typeof(string))
 			{
-				return fieldValue;
+				return value;
 			}
 
 			// If null is returned, check if the field is optional and if the type supports a nullable type.

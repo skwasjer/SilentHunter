@@ -86,9 +86,9 @@ namespace SilentHunter.Dat
 			FieldInfo[] fields = instanceType.GetFields(BindingFlags.Public | BindingFlags.Instance);
 			foreach (FieldInfo field in fields)
 			{
-				var fieldValue = DeserializeField(reader, field);
+				var value = DeserializeField(reader, field);
 				// We have our value, set it.
-				field.SetValue(instance, fieldValue);
+				field.SetValue(instance, value);
 			}
 		}
 
@@ -164,8 +164,8 @@ namespace SilentHunter.Dat
 			FieldInfo[] fields = typeOfValue.GetFields(BindingFlags.Public | BindingFlags.Instance);
 			foreach (FieldInfo field in fields)
 			{
-				object fieldValue = field.GetValue(instance);
-				SerializeField(writer, field, fieldValue);
+				object value = field.GetValue(instance);
+				SerializeField(writer, field, value);
 			}
 		}
 
