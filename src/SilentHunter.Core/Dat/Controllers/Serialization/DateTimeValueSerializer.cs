@@ -8,13 +8,13 @@ namespace SilentHunter.Dat.Controllers.Serialization
 	{
 		private const string DateFormat = "yyyyMMdd";
 
-		public override void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext)
+		public override void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext, DateTime value)
 		{
-			string date = ((DateTime)serializationContext.Value).ToString("yyyyMMdd");
+			string date = value.ToString("yyyyMMdd");
 			writer.Write(int.Parse(date));
 		}
 
-		public override object Deserialize(BinaryReader reader, ControllerDeserializationContext deserializationContext)
+		public override DateTime Deserialize(BinaryReader reader, ControllerSerializationContext serializationContext)
 		{
 			string sDate = reader.ReadInt32().ToString();
 			if (DateTime.TryParseExact(sDate, DateFormat, null, DateTimeStyles.None, out DateTime date))
@@ -36,7 +36,7 @@ namespace SilentHunter.Dat.Controllers.Serialization
 				}
 			}
 
-			return null;
+			throw new FormatException($"The date {sDate} is in unexpected format.");
 		}
 	}
 }

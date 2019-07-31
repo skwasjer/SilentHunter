@@ -24,17 +24,18 @@ namespace SilentHunter.Dat.Controllers.Serialization
 			_controllerFieldSerializer = controllerFieldSerializer ?? throw new ArgumentNullException(nameof(controllerFieldSerializer));
 		}
 
-		public bool IsSupported(IControllerSerializationContext context)
+		public bool IsSupported(ControllerSerializationContext context)
 		{
 			return context.Type.IsClosedTypeOf(typeof(IList<>));
 		}
 
-		public void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext)
+		public void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext, object value)
 		{
-			var list = (IList)serializationContext.Value;
+			var list = (IList)value;
 
 			Type[] typeArgs = serializationContext.Type.GetGenericArguments();
 			Type elementType = typeArgs[0];
+			var innerContext = new ControllerSerializationContext(elementType);
 
 			Type countType = serializationContext.Member.GetCustomAttribute<CountTypeAttribute>()?.SerializationType;
 			if (countType != null)
@@ -46,20 +47,19 @@ namespace SilentHunter.Dat.Controllers.Serialization
 
 			foreach (object item in list)
 			{
-				var innerContext = new ControllerSerializationContext(elementType, item);
-				_controllerFieldSerializer.WriteField(writer, innerContext);
+				_controllerFieldSerializer.WriteField(writer, innerContext, item);
 			}
 		}
 
-		public object Deserialize(BinaryReader reader, ControllerDeserializationContext deserializationContext)
+		public object Deserialize(BinaryReader reader, ControllerSerializationContext serializationContext)
 		{
-			var list = (IList)Activator.CreateInstance(deserializationContext.Type);
+			var list = (IList)Activator.CreateInstance(serializationContext.Type);
 
-			Type[] typeArgs = deserializationContext.Type.GetGenericArguments();
+			Type[] typeArgs = serializationContext.Type.GetGenericArguments();
 			Type elementType = typeArgs[0];
-			var innerContext = new ControllerDeserializationContext(elementType);
+			var innerContext = new ControllerSerializationContext(elementType);
 
-			Type countType = deserializationContext.Member.GetCustomAttribute<CountTypeAttribute>()?.SerializationType;
+			Type countType = serializationContext.Member.GetCustomAttribute<CountTypeAttribute>()?.SerializationType;
 			if (countType != null)
 			{
 				// Read n times, determined by prefixed count field.

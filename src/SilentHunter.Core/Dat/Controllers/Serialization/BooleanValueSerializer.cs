@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace SilentHunter.Dat.Controllers.Serialization
 {
@@ -10,12 +11,12 @@ namespace SilentHunter.Dat.Controllers.Serialization
 	/// </remarks>
 	public class BooleanValueSerializer : ControllerValueSerializer<bool>
 	{
-		public override void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext)
+		public override void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext, bool value)
 		{
-			writer.Write((bool)serializationContext.Value);
+			writer.Write(value);
 		}
 
-		public override object Deserialize(BinaryReader reader, ControllerDeserializationContext deserializationContext)
+		public override bool Deserialize(BinaryReader reader, ControllerSerializationContext serializationContext)
 		{
 			long boolLen = reader.BaseStream.Length;
 			switch (boolLen)
@@ -25,7 +26,7 @@ namespace SilentHunter.Dat.Controllers.Serialization
 				case 4:
 					return reader.ReadInt32() > 0;
 				default:
-					return null;
+					throw new NotSupportedException();
 			}
 		}
 	}

@@ -72,10 +72,10 @@ namespace SilentHunter.Dat
 		/// <returns>Returns the object read from stream.</returns>
 		/// <exception cref="IOException">Thrown when an error occurred during parsing.</exception>
 		/// <exception cref="NotImplementedException">Thrown when a type is not implemented.</exception>
-		protected override object ReadField(BinaryReader reader, ControllerDeserializationContext deserializationContext)
+		protected override object ReadField(BinaryReader reader, ControllerSerializationContext serializationContext)
 		{
 			string name = null;
-			var field = deserializationContext.Member as FieldInfo;
+			var field = serializationContext.Member as FieldInfo;
 			if (field != null)
 			{
 				if (field.HasAttribute<OptionalAttribute>() && reader.BaseStream.Position == reader.BaseStream.Length)
@@ -106,8 +106,8 @@ namespace SilentHunter.Dat
 			{
 				using (var regionReader = new BinaryReader(regionStream, Encoding.ParseEncoding, true))
 				{
-					object retVal = base.ReadField(regionReader, deserializationContext);
-					reader.BaseStream.EnsureStreamPosition(expectedPosition, name ?? deserializationContext.Name);
+					object retVal = base.ReadField(regionReader, serializationContext);
+					reader.BaseStream.EnsureStreamPosition(expectedPosition, name ?? serializationContext.Name);
 					return retVal;
 				}
 			}
@@ -156,7 +156,7 @@ namespace SilentHunter.Dat
 			base.SerializeField(writer, field, value);
 		}
 
-		protected override void WriteField(BinaryWriter writer, ControllerSerializationContext serializationContext)
+		protected override void WriteField(BinaryWriter writer, ControllerSerializationContext serializationContext, object value)
 		{
 			// Write size 0. We don't know actual the size yet.
 			writer.Write(0);
@@ -169,7 +169,7 @@ namespace SilentHunter.Dat
 				writer.WriteNullTerminatedString(name);
 			}
 
-			base.WriteField(writer, serializationContext);
+			base.WriteField(writer, serializationContext, value);
 
 			long currentPos = writer.BaseStream.Position;
 			writer.BaseStream.Position = startPos - 4;

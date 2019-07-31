@@ -20,32 +20,32 @@ namespace SilentHunter.Dat.Controllers.Serialization
 
 		private static readonly IDictionary<Type, SHUnionPropertyCache> PropertyCache = new ConcurrentDictionary<Type, SHUnionPropertyCache>();
 
-		public bool IsSupported(IControllerSerializationContext context)
+		public bool IsSupported(ControllerSerializationContext context)
 		{
 			return context.Type.IsClosedTypeOf(typeof(SHUnion<,>));
 		}
 
-		public void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext)
+		public void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext, object value)
 		{
 			SHUnionPropertyCache propertyCache = GetCachedProperties(serializationContext.Type);
-			writer.WriteStruct(propertyCache.ValueProperty.GetValue(serializationContext.Value, null));
+			writer.WriteStruct(propertyCache.ValueProperty.GetValue(value, null));
 		}
 
-		public object Deserialize(BinaryReader reader, ControllerDeserializationContext deserializationContext)
+		public object Deserialize(BinaryReader reader, ControllerSerializationContext serializationContext)
 		{
 			long dataSize = reader.BaseStream.Length - reader.BaseStream.Position;
 
-			SHUnionPropertyCache propertyCache = GetCachedProperties(deserializationContext.Type);
+			SHUnionPropertyCache propertyCache = GetCachedProperties(serializationContext.Type);
 
-			Type[] typeArgs = deserializationContext.Type.GetGenericArguments();
+			Type[] typeArgs = serializationContext.Type.GetGenericArguments();
 			// Using size of data to determine which of the SHUnion generic type arguments to use.
 			Type valueType = typeArgs.FirstOrDefault(type => Marshal.SizeOf(type) == dataSize);
 			if (valueType == null)
 			{
-				throw new IOException($"The available stream data does not match the size one of the two union types for property '{deserializationContext.Name}'.");
+				throw new IOException($"The available stream data does not match the size one of the two union types for property '{serializationContext.Name}'.");
 			}
 
-			object union = Activator.CreateInstance(deserializationContext.Type);
+			object union = Activator.CreateInstance(serializationContext.Type);
 			propertyCache.TypeProperty.SetValue(union, valueType, null);
 			propertyCache.ValueProperty.SetValue(union, reader.ReadStruct(valueType), null);
 			return union;

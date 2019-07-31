@@ -8,28 +8,26 @@ namespace SilentHunter.Dat.Controllers.Serialization
 	{
 		private readonly BooleanValueSerializer _booleanValueSerializer = new BooleanValueSerializer();
 
-		public bool IsSupported(IControllerSerializationContext context)
+		public bool IsSupported(ControllerSerializationContext context)
 		{
 			return Nullable.GetUnderlyingType(context.Type) != null;
 		}
 
-		public void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext)
+		public void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext, object value)
 		{
-			Type underlyingType = Nullable.GetUnderlyingType(serializationContext.Type);
-			if (underlyingType == typeof(bool))
+			if (value == null)
 			{
-				_booleanValueSerializer.Serialize(writer, serializationContext);
+				// TODO: check if null we can actually write...
 			}
-			else
-			{
-				writer.WriteStruct(serializationContext.Value);
-			}
+			writer.WriteStruct(value);
 		}
 
-		public object Deserialize(BinaryReader reader, ControllerDeserializationContext deserializationContext)
+		public object Deserialize(BinaryReader reader, ControllerSerializationContext serializationContext)
 		{
-			Type underlyingType = Nullable.GetUnderlyingType(deserializationContext.Type);
-			return underlyingType == typeof(bool) ? _booleanValueSerializer.Deserialize(reader, deserializationContext) : reader.ReadStruct(underlyingType);
+			Type underlyingType = Nullable.GetUnderlyingType(serializationContext.Type);
+			return underlyingType == typeof(bool)
+				? _booleanValueSerializer.Deserialize(reader, serializationContext)
+				: reader.ReadStruct(underlyingType);
 		}
 	}
 }

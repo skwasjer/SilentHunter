@@ -4,7 +4,7 @@ namespace SilentHunter.Dat.Controllers.Serialization
 {
 	public interface IControllerFieldSerializer
 	{
-		object ReadField(BinaryReader reader, ControllerDeserializationContext deserializationContext);
-		void WriteField(BinaryWriter writer, ControllerSerializationContext serializationContext);
+		object ReadField(BinaryReader reader, ControllerSerializationContext serializationContext);
+		void WriteField(BinaryWriter writer, ControllerSerializationContext serializationContext, object value);
 	}
 }

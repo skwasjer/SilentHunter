@@ -10,12 +10,12 @@ namespace SilentHunter.Dat.Controllers.Serialization
 	/// <remarks>Alpha component is not used, but generally stored as 0.</remarks>
 	public class ColorValueSerializer : ControllerValueSerializer<Color>
 	{
-		public override void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext)
+		public override void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext, Color value)
 		{
-			writer.WriteStruct(Color.FromArgb(0, (Color)serializationContext.Value));
+			writer.WriteStruct(Color.FromArgb(0, value));
 		}
 
-		public override object Deserialize(BinaryReader reader, ControllerDeserializationContext deserializationContext)
+		public override Color Deserialize(BinaryReader reader, ControllerSerializationContext serializationContext)
 		{
 			return Color.FromArgb(byte.MaxValue, reader.ReadStruct<Color>());
 		}

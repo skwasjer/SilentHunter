@@ -8,15 +8,15 @@ namespace SilentHunter.Dat.Controllers.Serialization
 {
 	public class FixedStringValueSerializer : ControllerValueSerializer<string>
 	{
-		public override bool IsSupported(IControllerSerializationContext context)
+		public override bool IsSupported(ControllerSerializationContext context)
 		{
 			return base.IsSupported(context) && context.Member.HasAttribute<FixedStringAttribute>();
 		}
 
-		public override void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext)
+		public override void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext, string value)
 		{
 			int fixedLength = serializationContext.Member.GetCustomAttribute<FixedStringAttribute>().Length;
-			string s = (string)serializationContext.Value ?? string.Empty;
+			string s = (string)value ?? string.Empty;
 
 			if (s.Length > fixedLength)
 			{
@@ -27,12 +27,12 @@ namespace SilentHunter.Dat.Controllers.Serialization
 			writer.Write(s, fixedLength);
 		}
 
-		public override object Deserialize(BinaryReader reader, ControllerDeserializationContext deserializationContext)
+		public override string Deserialize(BinaryReader reader, ControllerSerializationContext serializationContext)
 		{
-			int fixedLength = deserializationContext.Member.GetCustomAttribute<FixedStringAttribute>().Length;
+			int fixedLength = serializationContext.Member.GetCustomAttribute<FixedStringAttribute>().Length;
 			if (reader.BaseStream.Length > fixedLength)
 			{
-				throw new InvalidOperationException($"The stream contains more data than expected for '{deserializationContext.Member.Name}', length {fixedLength}.");
+				throw new InvalidOperationException($"The stream contains more data than expected for '{serializationContext.Member.Name}', length {fixedLength}.");
 			}
 
 			string s = reader.ReadString(fixedLength);
