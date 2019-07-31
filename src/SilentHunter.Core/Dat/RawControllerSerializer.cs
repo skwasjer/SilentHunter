@@ -81,7 +81,16 @@ namespace SilentHunter.Dat
 			SerializeFields(writer, instanceType, instance);
 		}
 
-		protected virtual void DeserializeFields(BinaryReader reader, Type instanceType, object instance)
+		/// <summary>
+		/// </summary>
+		/// <param name="reader"></param>
+		/// <param name="instanceType"></param>
+		/// <param name="instance"></param>
+		/// <exception cref="ArgumentNullException">Thrown for arguments that can't be null.</exception>
+		/// <exception cref="IOException">Thrown for any IO error or parsing error.</exception>
+		/// <exception cref="NotSupportedException">Thrown when <paramref name="instanceType" /> is not supported.</exception>
+		/// <exception cref="NotImplementedException">Thrown when <see cref="Array" />s array used in the controller definitions.</exception>
+		private void DeserializeFields(BinaryReader reader, Type instanceType, object instance)
 		{
 			if (reader == null)
 			{
@@ -99,15 +108,20 @@ namespace SilentHunter.Dat
 			}
 			
 			FieldInfo[] fields = instanceType.GetFields(BindingFlags.Public | BindingFlags.Instance);
-			foreach (FieldInfo fld in fields)
+			foreach (FieldInfo field in fields)
 			{
-				object fieldValue = ReadField(reader, fld);
-				// We have our value, set it.
-				fld.SetValue(instance, fieldValue);
+				DeserializeField(reader, field, instance);
 			}
 		}
 
-		protected virtual void SerializeFields(BinaryWriter writer, Type typeOfValue, object instance)
+		protected virtual void DeserializeField(BinaryReader reader, FieldInfo field, object instance)
+		{
+			object fieldValue = ReadField(reader, field);
+			// We have our value, set it.
+			field.SetValue(instance, fieldValue);
+		}
+
+		private void SerializeFields(BinaryWriter writer, Type typeOfValue, object instance)
 		{
 			if (writer == null)
 			{
@@ -120,12 +134,17 @@ namespace SilentHunter.Dat
 			}
 
 			FieldInfo[] fields = typeOfValue.GetFields(BindingFlags.Public | BindingFlags.Instance);
-			foreach (FieldInfo fld in fields)
+			foreach (FieldInfo field in fields)
 			{
-				object fieldValue = fld.GetValue(instance);
-				// Write the value.
-				WriteField(writer, fld, fieldValue);
+				SerializeField(writer, field, instance);
 			}
+		}
+
+		protected virtual void SerializeField(BinaryWriter writer, FieldInfo field, object instance)
+		{
+			object fieldValue = field.GetValue(instance);
+			// Write the value.
+			WriteField(writer, field, fieldValue);
 		}
 
 		object IControllerSerializer.ReadField(BinaryReader reader, MemberInfo memberInfo)

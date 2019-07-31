@@ -44,52 +44,24 @@ namespace SilentHunter.Dat
 			reader.BaseStream.EnsureStreamPosition(startPos + size, controllerName);
 		}
 
-		/// <summary>
-		/// </summary>
-		/// <param name="reader"></param>
-		/// <param name="instanceType"></param>
-		/// <param name="instance"></param>
-		/// <exception cref="ArgumentNullException">Thrown for arguments that can't be null.</exception>
-		/// <exception cref="IOException">Thrown for any IO error or parsing error.</exception>
-		/// <exception cref="NotSupportedException">Thrown when <paramref name="instanceType" /> is not supported.</exception>
-		/// <exception cref="NotImplementedException">Thrown when <see cref="Array" />s array used in the controller definitions.</exception>
-		protected override void DeserializeFields(BinaryReader reader, Type instanceType, object instance)
+		protected override void DeserializeField(BinaryReader reader, FieldInfo field, object instance)
 		{
-			if (reader == null)
+			object fieldValue = ReadField(reader, field);
+			// If null is returned, the field was optional and not a string, and thus should be skipped.
+			if (fieldValue == null && field.FieldType != typeof(string))
 			{
-				throw new ArgumentNullException(nameof(reader));
-			}
-
-			if (instanceType == null)
-			{
-				throw new ArgumentNullException(nameof(instanceType));
-			}
-
-			if (instance == null)
-			{
-				throw new ArgumentNullException(nameof(instance));
-			}
-
-			FieldInfo[] fields = instanceType.GetFields(BindingFlags.Public | BindingFlags.Instance);
-			foreach (FieldInfo fld in fields)
-			{
-				object fieldValue = ReadField(reader, fld);
-				// If null is returned, the field was optional and not a string, and thus should be skipped.
-				if (fieldValue == null && fld.FieldType != typeof(string))
+				// Check if the type actually supports a nullable type.
+				if (field.FieldType.IsValueType && !field.FieldType.IsNullable())
 				{
-					// Check if the type actually supports a nullable type.
-					if (fld.FieldType.IsValueType && !fld.FieldType.IsNullable())
-					{
-						throw new IOException(
-							$"The property '{fld.Name}' is defined as optional, but the type '{fld.FieldType}' does not support null values. Use Nullable<> if the property is a value type, or a class otherwise.");
-					}
-
-					continue;
+					throw new IOException(
+						$"The property '{field.Name}' is defined as optional, but the type '{field.FieldType}' does not support null values. Use Nullable<> if the property is a value type, or a class otherwise.");
 				}
 
-				// We have our value, set it.
-				fld.SetValue(instance, fieldValue);
+				return;
 			}
+
+			// We have our value, set it.
+			field.SetValue(instance, fieldValue);
 		}
 
 		/// <summary>
@@ -156,7 +128,7 @@ namespace SilentHunter.Dat
 			string controllerName = instanceType.Name;
 			writer.WriteNullTerminatedString(controllerName);
 
-			SerializeFields(writer, instanceType, instance);
+			base.Serialize(writer, instanceType, instance);
 
 			// After the object is written, determine and write the size.
 			long currentPos = writer.BaseStream.Position;
@@ -167,47 +139,23 @@ namespace SilentHunter.Dat
 			writer.BaseStream.Position = currentPos;
 		}
 
-		protected override void SerializeFields(BinaryWriter writer, Type typeOfValue, object instance)
+		protected override void SerializeField(BinaryWriter writer, FieldInfo field, object instance)
 		{
-			if (writer == null)
-			{
-				throw new ArgumentNullException(nameof(writer));
-			}
+			object fieldValue = field.GetValue(instance);
 
-			if (typeOfValue == null)
+			// If the value is null, the property has be optional, otherwise throw error.
+			if (fieldValue == null && field.FieldType != typeof(string))
 			{
-				throw new ArgumentNullException(nameof(typeOfValue));
-			}
-
-			if (instance == null)
-			{
-				throw new ArgumentNullException(nameof(instance));
-			}
-
-			if (!typeOfValue.IsControllerOrSHType())
-			{
-				throw new NotSupportedException($"Unsupported type '{typeOfValue}'");
-			}
-
-			FieldInfo[] fields = typeOfValue.GetFields(BindingFlags.Public | BindingFlags.Instance);
-			foreach (FieldInfo fld in fields)
-			{
-				object fieldValue = fld.GetValue(instance);
-
-				// If the value is null, the property has be optional, otherwise throw error.
-				if (fieldValue == null && fld.FieldType != typeof(string))
+				if (field.HasAttribute<OptionalAttribute>())
 				{
-					if (fld.HasAttribute<OptionalAttribute>())
-					{
-						continue;
-					}
-
-					string fieldName = fld.GetAttribute<ParseNameAttribute>()?.Name ?? fld.Name;
-					throw new IOException($"The field '{fieldName}' is not defined as optional.");
+					return;
 				}
 
-				WriteField(writer, fld, fieldValue);
+				string fieldName = field.GetAttribute<ParseNameAttribute>()?.Name ?? field.Name;
+				throw new IOException($"The field '{fieldName}' is not defined as optional.");
 			}
+
+			WriteField(writer, field, fieldValue);
 		}
 
 		protected override void WriteField(BinaryWriter writer, MemberInfo memberInfo, object instance)
