@@ -92,14 +92,14 @@ namespace SilentHunter.Dat
 			}
 		}
 
-		protected virtual object DeserializeField(BinaryReader reader, FieldInfo field)
+		protected virtual object DeserializeField(BinaryReader reader, FieldInfo fieldInfo)
 		{
-			return ReadField(reader, field);
+			return ReadField(reader, fieldInfo);
 		}
 
-		object IControllerSerializer.ReadField(BinaryReader reader, MemberInfo memberInfo)
+		object IControllerSerializer.ReadField(BinaryReader reader, Type elementType)
 		{
-			return ReadField(reader, memberInfo);
+			return ReadField(reader, elementType);
 		}
 
 		protected virtual object ReadField(BinaryReader reader, MemberInfo memberInfo)
@@ -175,9 +175,9 @@ namespace SilentHunter.Dat
 			WriteField(writer, field, value);
 		}
 
-		void IControllerSerializer.WriteField(BinaryWriter writer, MemberInfo memberInfo, object instance)
+		void IControllerSerializer.WriteField(BinaryWriter writer, Type elementType, object value)
 		{
-			WriteField(writer, memberInfo, instance);
+			WriteField(writer, elementType, value);
 		}
 
 		protected virtual void WriteField(BinaryWriter writer, MemberInfo memberInfo, object value)

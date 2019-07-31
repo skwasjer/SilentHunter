@@ -44,20 +44,20 @@ namespace SilentHunter.Dat
 			reader.BaseStream.EnsureStreamPosition(startPos + size, controllerName);
 		}
 
-		protected override object DeserializeField(BinaryReader reader, FieldInfo field)
+		protected override object DeserializeField(BinaryReader reader, FieldInfo fieldInfo)
 		{
-			object value = base.DeserializeField(reader, field);
+			object value = base.DeserializeField(reader, fieldInfo);
 			// Strings can have null are always optional.
-			if (value != null || field.FieldType == typeof(string))
+			if (value != null || fieldInfo.FieldType == typeof(string))
 			{
 				return value;
 			}
 
 			// If null is returned, check if the field is optional and if the type supports a nullable type.
-			if (field.FieldType.IsValueType && !field.FieldType.IsNullable())
+			if (fieldInfo.FieldType.IsValueType && !fieldInfo.FieldType.IsNullable())
 			{
 				throw new IOException(
-					$"The property '{field.Name}' is defined as optional, but the type '{field.FieldType}' does not support null values. Use Nullable<> if the property is a value type, or a class otherwise.");
+					$"The property '{fieldInfo.Name}' is defined as optional, but the type '{fieldInfo.FieldType}' does not support null values. Use Nullable<> if the property is a value type, or a class otherwise.");
 			}
 
 			return null;
@@ -75,24 +75,33 @@ namespace SilentHunter.Dat
 		{
 			CheckArguments(reader, memberInfo);
 
+			string name = null;
 			var field = memberInfo as FieldInfo;
-			Type typeOfValue = field?.FieldType ?? (Type)memberInfo;
-
-			if ((field?.HasAttribute<OptionalAttribute>() ?? false) && reader.BaseStream.Position == reader.BaseStream.Length)
+			Type typeOfValue;
+			if (field != null)
 			{
-				// Exit because field is optional, and we are at end of stream.
-				return null;
-			}
+				typeOfValue = field.FieldType;
 
-			// The expected field or controller name to find on the stream. If null, then the name is not required and the object instead is stored as raw data, and name checking is ignored.
-			string name = field?.GetAttribute<ParseNameAttribute>()?.Name ?? field?.Name;
+				if (field.HasAttribute<OptionalAttribute>() && reader.BaseStream.Position == reader.BaseStream.Length)
+				{
+					// Exit because field is optional, and we are at end of stream.
+					return null;
+				}
+
+				// The expected field or controller name to find on the stream. If null, then the name is not required and the object instead is stored as raw data, and name checking is ignored.
+				name = field.GetAttribute<ParseNameAttribute>()?.Name ?? field.Name;
+			}
+			else
+			{
+				typeOfValue = (Type)memberInfo;
+			}
 
 			// Read the size of the data.
 			int size = reader.ReadInt32();
 			// Save current position of stream. At the end, we compare the size with the number of bytes read for validation purposes.
 			long startPos = reader.BaseStream.Position;
 
-			if (!string.IsNullOrEmpty(name) && reader.SkipMember(memberInfo, name))
+			if (field != null && !string.IsNullOrEmpty(name) && reader.SkipMember(field, name))
 			{
 				// The property must be skipped, so revert stream back to the start position.
 				reader.BaseStream.Position = startPos - 4;
@@ -162,12 +171,13 @@ namespace SilentHunter.Dat
 
 			long startPos = writer.BaseStream.Position;
 
-			var field = memberInfo as FieldInfo;
-
-			string name = field?.GetAttribute<ParseNameAttribute>()?.Name ?? field?.Name;
-			if (!string.IsNullOrEmpty(name))
+			if (memberInfo is FieldInfo fieldInfo)
 			{
-				writer.WriteNullTerminatedString(name);
+				string name = fieldInfo.GetAttribute<ParseNameAttribute>()?.Name ?? fieldInfo.Name;
+				if (!string.IsNullOrEmpty(name))
+				{
+					writer.WriteNullTerminatedString(name);
+				}
 			}
 
 			base.WriteField(writer, memberInfo, value);

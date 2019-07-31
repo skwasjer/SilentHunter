@@ -8,7 +8,7 @@ namespace SilentHunter.Dat.Controllers.Serialization
 	{
 		void Deserialize(Stream stream, IRawController controller);
 		void Serialize(Stream stream, IRawController controller);
-		object ReadField(BinaryReader reader, MemberInfo memberInfo);
-		void WriteField(BinaryWriter writer, MemberInfo memberInfo, object instance);
+		object ReadField(BinaryReader reader, Type elementType);
+		void WriteField(BinaryWriter writer, Type elementType, object value);
 	}
 }
