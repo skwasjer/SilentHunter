@@ -83,20 +83,13 @@ namespace SilentHunter.Dat
 			{
 				throw new ArgumentNullException(nameof(instance));
 			}
-
-			//if (instance is IRawController serializable && serializable != this)
-			//{
-			//	serializable.Deserialize(reader.BaseStream);
-			//}
-			//else
+			
+			FieldInfo[] fields = typeOfValue.GetFields(BindingFlags.Public | BindingFlags.Instance);
+			foreach (FieldInfo fld in fields)
 			{
-				FieldInfo[] fields = typeOfValue.GetFields(BindingFlags.Public | BindingFlags.Instance);
-				foreach (FieldInfo fld in fields)
-				{
-					object fieldValue = ReadField(reader, fld);
-					// We have our value, set it.
-					fld.SetValue(instance, fieldValue);
-				}
+				object fieldValue = ReadField(reader, fld);
+				// We have our value, set it.
+				fld.SetValue(instance, fieldValue);
 			}
 		}
 
@@ -112,19 +105,12 @@ namespace SilentHunter.Dat
 				throw new ArgumentNullException(nameof(instance));
 			}
 
-			//if (instance is IRawController serializable && serializable != this)
-			//{
-			//	serializable.Serialize(writer.BaseStream);
-			//}
-			//else
+			FieldInfo[] fields = typeOfValue.GetFields(BindingFlags.Public | BindingFlags.Instance);
+			foreach (FieldInfo fld in fields)
 			{
-				FieldInfo[] fields = typeOfValue.GetFields(BindingFlags.Public | BindingFlags.Instance);
-				foreach (FieldInfo fld in fields)
-				{
-					object fieldValue = fld.GetValue(instance);
-					// Write the value.
-					WriteField(writer, fld, fieldValue);
-				}
+				object fieldValue = fld.GetValue(instance);
+				// Write the value.
+				WriteField(writer, fld, fieldValue);
 			}
 		}
 
