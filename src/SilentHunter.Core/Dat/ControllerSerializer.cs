@@ -70,11 +70,6 @@ namespace SilentHunter.Dat
 				throw new ArgumentNullException(nameof(instance));
 			}
 
-			if (!instanceType.IsControllerOrSHType())
-			{
-				throw new NotSupportedException($"Unsupported type '{instanceType}'");
-			}
-
 			FieldInfo[] fields = instanceType.GetFields(BindingFlags.Public | BindingFlags.Instance);
 			foreach (FieldInfo fld in fields)
 			{
