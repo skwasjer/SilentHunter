@@ -24,6 +24,11 @@ namespace SilentHunter.Dat.Controllers.Serialization
 				},
 				new ControllerMapping
 				{
+					ControllerType = typeof(MeshAnimationController),
+					Serializer = new MeshAnimationControllerSerializer()
+				},
+				new ControllerMapping
+				{
 					ControllerType = typeof(Controller),
 					Serializer = new ControllerSerializer()
 				},
