@@ -21,7 +21,7 @@ namespace anim
 	/// <summary>
 	/// Key frame start parameters controller data (subtype 0x4)
 	/// </summary>
-	[Controller(0x4, false)]
+	[Controller(0x4)]
 	public class KeyFrameAnimStartParams : RawController
 	{
 		/// <summary>
@@ -43,7 +43,7 @@ namespace anim
 	/// <summary>
 	/// Key frame start parameters controller data (subtype 0x8004)
 	/// </summary>
-	[Controller(0x8004, false)]
+	[Controller(0x8004)]
 	public class KeyFrameAnimStartParams2 : KeyFrameAnimStartParams
 	{
 	}
@@ -51,8 +51,8 @@ namespace anim
 	/// <summary>
 	/// Rotation key frames controller data (subtype 0x2)
 	/// </summary>
-	[Controller(0x2, true)]
-	public class RotationKeyFrames : RawController
+	[Controller(0x2)]
+	public class RotationKeyFrames : AnimationController
 	{
 		/// <summary>
 		/// A list of key frames.
@@ -64,7 +64,7 @@ namespace anim
 	/// <summary>
 	/// Rotation key frames controller data (subtype 0x8002)
 	/// </summary>
-	[Controller(0x8002, true)]
+	[Controller(0x8002)]
 	public class RotationKeyFrames2 : RotationKeyFrames
 	{
 	}
@@ -72,8 +72,8 @@ namespace anim
 	/// <summary>
 	/// Position key frames controller data (subtype 0x1)
 	/// </summary>
-	[Controller(0x1, true)]
-	public class PositionKeyFrames : RawController
+	[Controller(0x1)]
+	public class PositionKeyFrames : AnimationController
 	{
 		/// <summary>
 		/// A list of key frames.
@@ -85,7 +85,7 @@ namespace anim
 	/// <summary>
 	/// Position key frames controller data (subtype 0x8001)
 	/// </summary>
-	[Controller(0x8001, true)]
+	[Controller(0x8001)]
 	public class PositionKeyFrames2 : PositionKeyFrames
 	{
 	}

@@ -36,15 +36,15 @@ namespace SilentHunter.Dat.Controllers
 			// In case of a normal controller (0) subtype the next Int32 contains the size of the following structure. In case of animation controllers (sub type 2/3/4/5), this Int32 indicates the subtype (same as previous chunk).
 			int controllerSize = reader.ReadInt32();
 
-			// The size read from the stream matches the available data (incl. the 4 bytes of the Int32 already read), then we have a property collection.			
-			// PROBLEM: this assumption is incorrect. In the odd unlucky case the size of a raw controller may match exactly, and it is then assumed to be non-raw.
+			// The size read from the stream matches the available data (incl. the 4 bytes of the Int32 already read), then we have a normal controller. Otherwise, we have to do some more logic to determine correct type of controller.
+			// PROBLEM: In the odd unlucky case the size of a raw controller may match exactly, and it is then assumed to be non-raw.
 			bool isRawController = controllerSize + 4 != availableData;
 
 			var profile = ControllerProfile.Unknown;
 			// Raw controller? (byte stream)
 			if (isRawController)
 			{
-				// Get sub type and count.
+				// First 4 bytes means something else.
 				var subType = (ushort)((long)controllerSize & 0xFFFF);
 				ushort unknown = (ushort)((controllerSize & 0xFFFF0000) >> 16);
 				if (string.IsNullOrEmpty(controllerName))
@@ -70,9 +70,8 @@ namespace SilentHunter.Dat.Controllers
 							// Check that the detected controller matches subtype.
 							if (controllerAttribute.SubType.HasValue && controllerAttribute.SubType.Value == subType)
 							{
-								// If the controller writes its own count field, move the position in stream back by 2 bytes.
-								// These are typically controllers that behave differently and are related to animations.
-								if (controllerAttribute.HasCountField)
+								// For animation controllers, the 2 bytes are part of the data and identify an 'ushort' count field for n number of frames.
+								if (typeof(AnimationController).IsAssignableFrom(controllerType))
 								{
 									stream.Position -= 2;
 								}

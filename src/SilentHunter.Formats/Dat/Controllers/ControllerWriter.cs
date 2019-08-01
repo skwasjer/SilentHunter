@@ -51,9 +51,9 @@ namespace SilentHunter.Dat.Controllers
 						writer.Write(controllerAttribute.SubType.Value);
 					}
 
-					if (controllerAttribute.HasCountField || !controllerAttribute.SubType.HasValue)
+					if (typeof(AnimationController).IsAssignableFrom(controllerType) || !controllerAttribute.SubType.HasValue)
 					{
-						// Skip writing the field. The count value will be written by the RawList type.					
+						// Skip writing the field. The count value will be written by the RawList type.
 					}
 					else
 					{

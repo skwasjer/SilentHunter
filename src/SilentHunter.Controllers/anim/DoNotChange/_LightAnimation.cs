@@ -18,8 +18,8 @@ namespace anim
 	/// <summary>
 	/// Light animation controller data (subtype 0x200)
 	/// </summary>
-	[Controller(0x200, true)]
-	public class LightAnimation : RawController
+	[Controller(0x200)]
+	public class LightAnimation : AnimationController
 	{
 		/// <summary>
 		/// A list of key frames.

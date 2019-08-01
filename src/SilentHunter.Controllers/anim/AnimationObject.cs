@@ -19,7 +19,7 @@ namespace anim
 	/// <summary>
 	/// AnimationObject controller.
 	/// </summary>
-	[Controller(0x0, false)]
+	[Controller(0x0)]
 	public class AnimationObject
 		: RawController
 	{
