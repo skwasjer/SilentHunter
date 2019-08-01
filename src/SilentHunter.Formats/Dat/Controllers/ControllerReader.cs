@@ -120,16 +120,8 @@ namespace SilentHunter.Dat.Controllers
 						if (_controllerAssembly.TryGetControllerType(controllerName, profile, out controllerType) && previousControllerType != controllerType)
 						{
 							RawController controller = _controllerFactory.CreateController(controllerType, false);
-							if (controller is IRawSerializable serializable)
-							{
-								serializable.Deserialize(stream);
-							}
-							else
-							{
-								IControllerSerializer cs = _controllerSerializerResolver.GetSerializer(controllerType);
-								cs.Deserialize(stream, controller);
-							}
-
+							IControllerSerializer cs = _controllerSerializerResolver.GetSerializer(controllerType);
+							cs.Deserialize(stream, controller);
 							return controller;
 						}
 

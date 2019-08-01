@@ -3,7 +3,6 @@ using System.IO;
 using System.Reflection;
 using SilentHunter.Dat.Controllers.Serialization;
 using SilentHunter.Extensions;
-using skwas.IO;
 
 namespace SilentHunter.Dat.Controllers
 {
@@ -40,7 +39,6 @@ namespace SilentHunter.Dat.Controllers
 			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
 			{
 				Type controllerType = controller.GetType();
-				var serializable = controller as IRawSerializable;
 				IControllerSerializer cs = _controllerSerializerResolver.GetSerializer(controllerType);
 
 				if (controllerType.IsRawController())
@@ -60,14 +58,7 @@ namespace SilentHunter.Dat.Controllers
 						writer.Write((ushort)0);
 					}
 
-					if (serializable != null)
-					{
-						serializable.Serialize(writer.BaseStream);
-					}
-					else
-					{
-						cs.Serialize(stream, (RawController)controller);
-					}
+					cs.Serialize(stream, (RawController)controller);
 
 					return;
 				}
@@ -83,14 +74,7 @@ namespace SilentHunter.Dat.Controllers
 
 				long startPos = stream.Position;
 
-				if (serializable != null)
-				{
-					serializable.Serialize(writer.BaseStream);
-				}
-				else
-				{
-					cs.Serialize(stream, (RawController)controller);
-				}
+				cs.Serialize(stream, (RawController)controller);
 
 				// After the controller is written, determine and write the size.
 				long currentPos = stream.Position;
