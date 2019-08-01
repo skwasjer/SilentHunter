@@ -12,6 +12,7 @@
 */
 
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using skwas.IO;
 using SilentHunter;
@@ -24,16 +25,31 @@ namespace StateMachineCtl
 	/// </summary>
 	public class StateMachineClass : RawController, IRawSerializable
 	{
-		// NOTE: a, b, c and d are unknown fields to me, but they always seem to be the same.
+		private static class Magics
+		{
+			public const int Entry = 0x6cf46e74;
+			public const int Condition = 0x596344fb;
+			public const int Action = 0x7e03767b;
+		}
 
-		private int a = 0x423B410F;
+		// NOTE: some unknown fields, but they always seem to be the same. So mark them advanced, so they don't show up in simple editor views.
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		public int Unknown0 = 0x423B410F;
+
 		/// <summary>
 		/// The name that this StateMachineClass controller can be referenced by.
 		/// </summary>
 		public string GraphName;
-		private int b = 0x73A2500A;
-		private int c = 0x24CE7F70;
-		private int d = 0x0;
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		public int Unknown1 = 0x73A2500A;
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		public int Unknown2 = 0x24CE7F70;
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		public int Unknown3 = 0x0;
 
 		/// <summary>
 		/// A list of state entries that make up the state (behavior) of a character or object.
@@ -41,12 +57,6 @@ namespace StateMachineCtl
 		public List<StateMachineEntry> StateEntries;
 
 		// Magics.
-		private static class Magics
-		{
-			public const int Entry = 0x6cf46e74;
-			public const int Condition = 0x596344fb;
-			public const int Action = 0x7e03767b;
-		}
 
 		/// <summary>
 		/// When implemented, deserializes the controller from specified <paramref name="stream"/>.
@@ -56,12 +66,12 @@ namespace StateMachineCtl
 		{
 			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
 			{
-				a = reader.ReadInt32();
+				Unknown0 = reader.ReadInt32();
 				GraphName = reader.ReadNullTerminatedString();
-				b = reader.ReadInt32();
+				Unknown1 = reader.ReadInt32();
 				var entryCount = reader.ReadInt32();
-				c = reader.ReadInt32();
-				d = reader.ReadInt32();
+				Unknown2 = reader.ReadInt32();
+				Unknown3 = reader.ReadInt32();
 
 				StateEntries = new List<StateMachineEntry>(entryCount);
 
@@ -120,12 +130,12 @@ namespace StateMachineCtl
 			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
 			{
 
-				writer.Write(a);
+				writer.Write(Unknown0);
 				writer.WriteNullTerminatedString(GraphName);
-				writer.Write(b);
+				writer.Write(Unknown1);
 				writer.Write(StateEntries.Count);
-				writer.Write(c);
-				writer.Write(d);
+				writer.Write(Unknown2);
+				writer.Write(Unknown3);
 
 				for (var i = 0; i < StateEntries.Count; i++)
 				{

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using skwas.IO;
 
@@ -16,12 +17,14 @@ namespace SilentHunter.Dat
 		/// <summary>
 		/// A list of compressed vertices. Each set of compressed vertices replaces the vertices of the source mesh for a given key frame and can used/referenced once or multiple times.
 		/// </summary>
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public List<CompressedVertices> CompressedFrames { get; } = new List<CompressedVertices>();
 
 		/// <summary>
 		/// Extra unknown data (only found on chunk related to head morphing I believe).
 		/// </summary>
-		private byte[] UnsupportedData { get; set; }
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		public byte[] Unknown0 { get; set; }
 
 		/// <summary>
 		/// When implemented, deserializes the controller from specified <paramref name="stream" />.
@@ -67,7 +70,7 @@ namespace SilentHunter.Dat
 
 				if (stream.Position != stream.Length)
 				{
-					UnsupportedData = reader.ReadBytes((int)(stream.Length - stream.Position));
+					Unknown0 = reader.ReadBytes((int)(stream.Length - stream.Position));
 				}
 			}
 		}
@@ -104,9 +107,9 @@ namespace SilentHunter.Dat
 					}
 				}
 
-				if (UnsupportedData != null && UnsupportedData.Length > 0)
+				if (Unknown0 != null && Unknown0.Length > 0)
 				{
-					writer.Write(UnsupportedData, 0, UnsupportedData.Length);
+					writer.Write(Unknown0, 0, Unknown0.Length);
 				}
 			}
 		}
