@@ -12,7 +12,8 @@
 */
 
 using SilentHunter;
-using SilentHunter.Dat;
+using SilentHunter.Controllers.Decoration;
+using SilentHunter.Controllers;
 
 namespace SHControllers
 {

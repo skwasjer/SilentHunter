@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using SilentHunter.Controllers.Decoration;
 using SilentHunter.Extensions;
 using skwas.IO;
 

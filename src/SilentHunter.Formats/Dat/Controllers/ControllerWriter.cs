@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using SilentHunter.Controllers;
+using SilentHunter.Controllers.Decoration;
 using SilentHunter.Dat.Controllers.Serialization;
 using SilentHunter.Extensions;
 

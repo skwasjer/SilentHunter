@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using SilentHunter.Controllers;
 using SilentHunter.Extensions;
 using SilentHunter.Formats;
 

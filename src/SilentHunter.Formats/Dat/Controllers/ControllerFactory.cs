@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using SilentHunter.Controllers;
 using SilentHunter.Extensions;
 
 namespace SilentHunter.Dat.Controllers

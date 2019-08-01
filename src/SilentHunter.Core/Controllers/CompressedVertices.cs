@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Controllers
 {
 	/// <summary>
 	/// Represents a list of compressed vertices.

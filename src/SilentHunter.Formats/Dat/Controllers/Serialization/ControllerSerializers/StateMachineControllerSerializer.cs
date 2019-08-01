@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using SilentHunter.Controllers;
 using skwas.IO;
 
 namespace SilentHunter.Dat.Controllers.Serialization

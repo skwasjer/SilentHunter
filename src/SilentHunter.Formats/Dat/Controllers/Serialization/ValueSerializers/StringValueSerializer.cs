@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using SilentHunter.Controllers.Decoration;
 using SilentHunter.Extensions;
 using skwas.IO;
 

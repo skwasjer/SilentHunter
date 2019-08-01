@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Controllers
 {
 	/// <summary>
 	/// An action to perform after a condition is met.

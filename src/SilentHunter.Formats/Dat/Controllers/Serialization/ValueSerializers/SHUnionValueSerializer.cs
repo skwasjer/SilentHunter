@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using SilentHunter.Controllers;
 using SilentHunter.Extensions;
 using skwas.IO;
 

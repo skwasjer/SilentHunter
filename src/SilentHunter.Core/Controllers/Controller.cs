@@ -1,4 +1,4 @@
-﻿namespace SilentHunter.Dat
+﻿namespace SilentHunter.Controllers
 {
 	/// <summary>
 	/// Represents controller data.

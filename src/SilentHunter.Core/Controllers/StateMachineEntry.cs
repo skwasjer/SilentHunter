@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Controllers
 {
 	/// <summary>
 	/// A state entry containing a list of conditions to check during each gamestate update.

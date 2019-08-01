@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Controllers.Decoration
 {
 	[AttributeUsage(AttributeTargets.Field)]
 	public class CountTypeAttribute : Attribute

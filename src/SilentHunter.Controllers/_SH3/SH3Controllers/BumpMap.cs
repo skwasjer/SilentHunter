@@ -1,7 +1,7 @@
-/* 
+﻿/* 
  * SH3Controllers.act - BumpMap
  *
- * � 2007-2016 skwas. All rights reserved.
+ * © 2007-2016 skwas. All rights reserved.
  * This code is provided as is. Change at your own risk.
  * --------------------------------------------------
  * 
@@ -10,8 +10,6 @@
  * For documentation on templates, requirements and restrictions, please refer to the documentation.
  * 
 */
-
-using SilentHunter.Dat;
 
 namespace SH3.SH3Controllers
 {

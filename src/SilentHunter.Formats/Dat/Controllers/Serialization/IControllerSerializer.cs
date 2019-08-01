@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using SilentHunter.Controllers;
 
 namespace SilentHunter.Dat.Controllers.Serialization
 {

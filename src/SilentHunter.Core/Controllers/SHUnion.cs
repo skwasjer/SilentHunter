@@ -1,6 +1,6 @@
-using System;
+﻿using System;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Controllers
 {
 	[Serializable]
 	// ReSharper disable once InconsistentNaming

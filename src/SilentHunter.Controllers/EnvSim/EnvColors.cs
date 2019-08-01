@@ -13,7 +13,8 @@
 
 using System.Collections.Generic;
 using SilentHunter;
-using SilentHunter.Dat;
+using SilentHunter.Controllers.Decoration;
+using SilentHunter.Controllers;
 
 namespace EnvSim
 {

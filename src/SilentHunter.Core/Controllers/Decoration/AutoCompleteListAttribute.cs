@@ -1,7 +1,6 @@
 ﻿using System;
 
-// ReSharper disable once CheckNamespace
-namespace SilentHunter.Dat
+namespace SilentHunter.Controllers.Decoration
 {
 	/// <summary>
 	/// Describes the filename that contains a string list, to be used for auto completion. Only supported for <see cref="string" /> fields.

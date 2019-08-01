@@ -12,7 +12,7 @@
 */
 
 using SilentHunter;
-using SilentHunter.Dat;
+using SilentHunter.Controllers;
 
 namespace CameraBehavior
 {

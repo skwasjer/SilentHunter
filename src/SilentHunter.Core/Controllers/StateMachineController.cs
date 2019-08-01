@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Controllers
 {
 	public class StateMachineController : RawController
 	{

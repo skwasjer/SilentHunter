@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using SilentHunter.Controllers.Decoration;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Controllers
 {
 	/// <summary>
 	/// A condition that is checked in a gamestate update.

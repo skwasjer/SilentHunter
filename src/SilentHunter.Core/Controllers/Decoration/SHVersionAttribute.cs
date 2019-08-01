@@ -1,6 +1,6 @@
 using System;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Controllers.Decoration
 {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Class, AllowMultiple = true)]
 	// ReSharper disable once InconsistentNaming

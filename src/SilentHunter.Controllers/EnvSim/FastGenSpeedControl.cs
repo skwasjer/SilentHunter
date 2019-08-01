@@ -1,7 +1,7 @@
-/* 
+﻿/* 
  * EnvSim.act - FastGenSpeedControl
  *
- * � 2007-2016 skwas. All rights reserved.
+ * © 2007-2016 skwas. All rights reserved.
  * This code is provided as is. Change at your own risk.
  * --------------------------------------------------
  * 
@@ -12,7 +12,8 @@
 */
 
 using SilentHunter;
-using SilentHunter.Dat;
+using SilentHunter.Controllers.Decoration;
+using SilentHunter.Controllers;
 
 namespace EnvSim
 {	

@@ -1,4 +1,4 @@
-﻿namespace SilentHunter.Dat
+﻿namespace SilentHunter.Controllers
 {
 	public abstract class RawController
 	{

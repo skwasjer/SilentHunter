@@ -14,7 +14,8 @@
 
 using System.Collections.Generic;
 using SilentHunter;
-using SilentHunter.Dat;
+using SilentHunter.Controllers;
+using SilentHunter.Controllers.Decoration;
 
 namespace anim
 {

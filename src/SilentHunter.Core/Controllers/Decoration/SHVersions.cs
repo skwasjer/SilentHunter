@@ -1,4 +1,4 @@
-namespace SilentHunter.Dat
+namespace SilentHunter.Controllers.Decoration
 {
 	// ReSharper disable once InconsistentNaming
 	public enum SHVersions

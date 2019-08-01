@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using SilentHunter.Controllers.Decoration;
 using SilentHunter.Dat;
 using SilentHunter.Extensions;
 using skwas.IO;

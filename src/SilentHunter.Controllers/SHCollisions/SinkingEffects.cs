@@ -11,7 +11,7 @@
  * 
 */
 
-using SilentHunter.Dat;
+using SilentHunter.Controllers;
 
 namespace SHCollisions
 {

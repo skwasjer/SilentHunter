@@ -1,6 +1,6 @@
 using System;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Controllers.Decoration
 {
 	/// <summary>
 	/// Indicates the name a field is to be (de)serialized with. Should be used to give a more meaningful name to a field or to fix typos.

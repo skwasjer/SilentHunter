@@ -1,8 +1,7 @@
-
-/* 
+﻿/* 
  * SHControllers.act - RadarView
  *
- * � 2007-2016 skwas. All rights reserved.
+ * © 2007-2016 skwas. All rights reserved.
  * This code is provided as is. Change at your own risk.
  * --------------------------------------------------
  * 
@@ -12,10 +11,9 @@
  * 
 */
 
-using SilentHunter.Dat;
-using System.Runtime.InteropServices;
 using System.Collections.Generic;
-using SilentHunter;
+using SilentHunter.Controllers;
+using SilentHunter.Controllers.Decoration;
 
 namespace SHControllers
 {
@@ -28,7 +26,8 @@ namespace SHControllers
 		/// <summary>
 		/// Radar mode.
 		/// </summary>
-		[SilentHunter.Dat.Optional, SHVersion(SHVersions.SH4)]
+		[Optional]
+		[SHVersion(SHVersions.SH4)]
 		public RadarMode? Mode;
 		/// <summary>
 		/// Tga file.
@@ -40,13 +39,14 @@ namespace SHControllers
 		/// </summary>
 		public int Tex_dim;
 		/// <summary>
-		/// Radar border (will not be drawn anything in this area).    
+		/// Radar border (will not be drawn anything in this area).
 		/// </summary>
 		public int Border;
 		/// <summary>
 		/// PPI Contact Time To Live in seconds (after this period of time a contact will completely fade out).
 		/// </summary>
-		[SilentHunter.Dat.Optional, SHVersion(SHVersions.SH4)]
+		[Optional]
+		[SHVersion(SHVersions.SH4)]
 		public float? PPIContactTTL;
 		/// <summary>
 		/// Range dimension (in meters).
@@ -82,6 +82,4 @@ namespace SHControllers
 		public int Min;
 		public int Step;
 	}
-
-
 }

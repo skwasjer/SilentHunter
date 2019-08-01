@@ -1,7 +1,7 @@
-/* 
+﻿/* 
  * Particles.act - Shared generator definitions.
  *
- * � 2007-2016 skwas. All rights reserved.
+ * © 2007-2016 skwas. All rights reserved.
  * This code is provided as is. Change at your own risk.
  * --------------------------------------------------
  * 
@@ -11,10 +11,10 @@
  * 
 */
 
-using SilentHunter.Dat;
-using System.Runtime.InteropServices;
+using SilentHunter.Controllers;
 using System.Collections.Generic;
 using SilentHunter;
+using SilentHunter.Controllers.Decoration;
 
 namespace Particles
 {
@@ -59,7 +59,7 @@ namespace Particles
 		/// <summary>
 		/// Near distance value (as first LOD) in meters.
 		/// </summary>
-		[SilentHunter.Dat.Optional]
+		[Optional]
 		public float? Distance;
 		/// <summary>
 		/// Particle life scale.
@@ -84,12 +84,12 @@ namespace Particles
 		/// <summary>
 		/// Global spin scale.
 		/// </summary>
-		[SilentHunter.Dat.Optional]
+		[Optional]
 		public float? SpinScale;
 		/// <summary>
 		/// Global opacity scale.
 		/// </summary>
-		[SilentHunter.Dat.Optional]
+		[Optional]
 		public float? OpacityScale;
 	}
 /*

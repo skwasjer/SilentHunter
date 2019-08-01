@@ -1,7 +1,6 @@
-using System;
+﻿using System;
 
-// ReSharper disable once CheckNamespace
-namespace SilentHunter.Dat
+namespace SilentHunter.Controllers.Decoration
 {
 	/// <summary>
 	/// Indicates that the field the attribute is applied to is a fixed length <see cref="string" />.
