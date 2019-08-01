@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SilentHunter.Core\SilentHunter.Core.csproj" />
+    <ProjectReference Include="..\skwas.IO\skwas.IO.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

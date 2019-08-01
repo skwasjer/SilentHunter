@@ -41,7 +41,6 @@ namespace SilentHunter.Dat.Controllers
 			new Dependency(Assembly.Load("System.Runtime, PublicKeyToken=b03f5f7f11d50a3a").Location),
 			new Dependency(Assembly.Load("System.Runtime.Extensions, PublicKeyToken=b03f5f7f11d50a3a").Location),
 #endif
-			new Dependency("skwas.IO.dll", true),
 			new Dependency("SilentHunter.Core.dll", true)
 		};
 
