@@ -1,5 +1,5 @@
-/* 
- * � 2007-2016 skwas. All rights reserved.
+﻿/* 
+ * © 2007-2016 skwas. All rights reserved.
  * This code is provided as is. Change at your own risk.
  * --------------------------------------------------
  * 
@@ -13,7 +13,6 @@
 */
 
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using SilentHunter;
 using SilentHunter.Dat;
 
@@ -22,7 +21,7 @@ namespace anim
 	/// <summary>
 	/// Key frame start parameters controller data (subtype 0x4)
 	/// </summary>
-	[Controller(true, 0x4, false)]
+	[Controller(0x4, false)]
 	public class KeyFrameAnimStartParams : RawController
 	{
 		/// <summary>
@@ -44,7 +43,7 @@ namespace anim
 	/// <summary>
 	/// Key frame start parameters controller data (subtype 0x8004)
 	/// </summary>
-	[Controller(true, 0x8004, false)]
+	[Controller(0x8004, false)]
 	public class KeyFrameAnimStartParams2 : KeyFrameAnimStartParams
 	{
 	}
@@ -52,19 +51,20 @@ namespace anim
 	/// <summary>
 	/// Rotation key frames controller data (subtype 0x2)
 	/// </summary>
-	[Controller(true, 0x2, true)]
+	[Controller(0x2, true)]
 	public class RotationKeyFrames : RawController
 	{
 		/// <summary>
 		/// A list of key frames.
 		/// </summary>
-		[CountType(typeof(ushort))] public List<RotationKeyFrame> Frames;
+		[CountType(typeof(ushort))]
+		public List<RotationKeyFrame> Frames;
 	}
 
 	/// <summary>
 	/// Rotation key frames controller data (subtype 0x8002)
 	/// </summary>
-	[Controller(true, 0x8002, true)]
+	[Controller(0x8002, true)]
 	public class RotationKeyFrames2 : RotationKeyFrames
 	{
 	}
@@ -72,19 +72,20 @@ namespace anim
 	/// <summary>
 	/// Position key frames controller data (subtype 0x1)
 	/// </summary>
-	[Controller(true, 0x1, true)]
+	[Controller(0x1, true)]
 	public class PositionKeyFrames : RawController
 	{
 		/// <summary>
 		/// A list of key frames.
 		/// </summary>
-		[CountType(typeof(ushort))] public List<PositionKeyFrame> Frames;
+		[CountType(typeof(ushort))]
+		public List<PositionKeyFrame> Frames;
 	}
 
 	/// <summary>
 	/// Position key frames controller data (subtype 0x8001)
 	/// </summary>
-	[Controller(true, 0x8001, true)]
+	[Controller(0x8001, true)]
 	public class PositionKeyFrames2 : PositionKeyFrames
 	{
 	}

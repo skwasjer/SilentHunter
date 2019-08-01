@@ -46,7 +46,7 @@ namespace SilentHunter.Dat.Controllers
 			{
 				// Get sub type and count.
 				var subType = (ushort)((long)controllerSize & 0xFFFF);
-				//ushort count = (ushort)(((long)propSize & 0xFFFF0000) >> 16);
+				ushort unknown = (ushort)((controllerSize & 0xFFFF0000) >> 16);
 				if (string.IsNullOrEmpty(controllerName))
 				{
 					// If no name provided, check if sub type matches that of an animation controller.

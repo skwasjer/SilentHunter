@@ -1,7 +1,7 @@
-/* 
+﻿/* 
  * anim.act - AnimationObject
  *
- * � 2007-2016 skwas. All rights reserved.
+ * © 2007-2016 skwas. All rights reserved.
  * This code is provided as is. Change at your own risk.
  * --------------------------------------------------
  * 
@@ -12,7 +12,6 @@
 */
 
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using SilentHunter.Dat;
 
 namespace anim
@@ -20,7 +19,7 @@ namespace anim
 	/// <summary>
 	/// AnimationObject controller.
 	/// </summary>
-	[Controller(true, 0x0, false)]
+	[Controller(0x0, false)]
 	public class AnimationObject
 		: RawController
 	{

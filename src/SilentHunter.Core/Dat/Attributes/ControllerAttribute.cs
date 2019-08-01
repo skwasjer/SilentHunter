@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace SilentHunter.Dat
 {
@@ -15,7 +15,7 @@ namespace SilentHunter.Dat
 		/// <param name="raw"></param>
 		/// <param name="subType"></param>
 		/// <param name="hasCountField"></param>
-		public ControllerAttribute(bool raw, ushort subType, bool hasCountField)
+		public ControllerAttribute(ushort subType, bool hasCountField)
 		{
 			SubType = subType;
 			HasCountField = hasCountField;

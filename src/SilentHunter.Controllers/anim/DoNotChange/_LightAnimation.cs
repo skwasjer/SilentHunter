@@ -11,7 +11,6 @@
 */
 
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using SilentHunter.Dat;
 
 namespace anim
@@ -19,13 +18,14 @@ namespace anim
 	/// <summary>
 	/// Light animation controller data (subtype 0x200)
 	/// </summary>
-	[Controller(true, 0x200, true)]
+	[Controller(0x200, true)]
 	public class LightAnimation : RawController
 	{
 		/// <summary>
 		/// A list of key frames.
 		/// </summary>
-		[CountType(typeof(ushort))] public List<LightKeyFrame> Frames;
+		[CountType(typeof(ushort))]
+		public List<LightKeyFrame> Frames;
 	}
 
 	public struct LightKeyFrame
