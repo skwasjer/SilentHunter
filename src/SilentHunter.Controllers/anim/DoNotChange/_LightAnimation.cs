@@ -14,30 +14,27 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using SilentHunter.Dat;
 
-
 namespace anim
 {
 	/// <summary>
 	/// Light animation controller data (subtype 0x200)
 	/// </summary>
 	[Controller(true, 0x200, true)]
-	public class LightAnimation
-		: RawController
+	public class LightAnimation : RawController
 	{
 		/// <summary>
 		/// A list of key frames.
 		/// </summary>
-		[CountType(typeof(ushort))]
-		public List<LightKeyFrame> Frames;
+		[CountType(typeof(ushort))] public List<LightKeyFrame> Frames;
 	}
 
-	[StructLayout(LayoutKind.Sequential)]
-	public class LightKeyFrame
+	public struct LightKeyFrame
 	{
 		/// <summary>
 		/// The time of the key frame.
 		/// </summary>
 		public float Time;
+
 		/// <summary>
 		/// The new attenuation of the emitted light.
 		/// </summary>

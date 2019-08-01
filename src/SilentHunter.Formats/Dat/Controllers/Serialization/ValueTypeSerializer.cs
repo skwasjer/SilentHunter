@@ -8,13 +8,13 @@ using skwas.IO;
 namespace SilentHunter.Dat.Controllers.Serialization
 {
 	/// <summary>
-	/// 
+	/// Serializer for value types.
 	/// </summary>
 	/// <remarks>
-	/// Because reference types (aka controllers, etc) can contain primitives that are not (de)serializable with ReadStruct/WriteStruct, we have to enumerate all fields separately then.
+	/// Because value types can contain primitives that are not (de)serializable with ReadStruct/WriteStruct, we have to enumerate all fields separately then.
 	///
 	/// </remarks>
-	public class DefaultObjectSerializer : IControllerValueSerializer
+	public class ValueTypeSerializer : IControllerValueSerializer
 	{
 		private static readonly ConcurrentDictionary<Type, FieldInfo[]> FieldInfoCache = new ConcurrentDictionary<Type, FieldInfo[]>();
 
@@ -25,7 +25,11 @@ namespace SilentHunter.Dat.Controllers.Serialization
 
 		public void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext, object value)
 		{
-			if (serializationContext.Type.IsClass)
+			if (serializationContext.Type.IsPrimitive)
+			{
+				writer.WriteStruct(value);
+			}
+			else
 			{
 				IEnumerable<FieldInfo> fields = GetCachedFieldInfos(serializationContext.Type);
 				foreach (FieldInfo f in fields)
@@ -38,15 +42,11 @@ namespace SilentHunter.Dat.Controllers.Serialization
 					writer.WriteStruct(f.GetValue(value));
 				}
 			}
-			else
-			{
-				writer.WriteStruct(value);
-			}
 		}
 
 		public object Deserialize(BinaryReader reader, ControllerSerializationContext serializationContext)
 		{
-			if (!serializationContext.Type.IsClass)
+			if (serializationContext.Type.IsPrimitive)
 			{
 				return reader.ReadStruct(serializationContext.Type);
 			}

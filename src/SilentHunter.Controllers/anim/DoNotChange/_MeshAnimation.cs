@@ -12,24 +12,21 @@
 
 using SilentHunter.Dat;
 
-
 namespace anim
 {
 	/// <summary>
 	/// Mesh animation controller data (subtype 0x5). Animation of vertices.
 	/// </summary>
 	[Controller(true, 0x5, true)]
-	public class MeshAnimationData
-		: BuiltInMeshAnimation
-	{		
-	}	
+	public class MeshAnimationData : BuiltInMeshAnimation
+	{
+	}
 
 	/// <summary>
 	/// Mesh animation controller data (subtype 0x8005). Animation of vertices.
 	/// </summary>
 	[Controller(true, 0x8005, true)]
-	public class MeshAnimationData2
-		: BuiltInMeshAnimation
+	public class MeshAnimationData2 : BuiltInMeshAnimation
 	{
 	}
 
@@ -37,8 +34,7 @@ namespace anim
 	/// Texture animation controller data (subtype 0x6). Animation of texture coordinates.
 	/// </summary>
 	[Controller(true, 0x6, true)]
-	public class TextureAnimationData
-		: BuiltInMeshAnimation
+	public class TextureAnimationData : BuiltInMeshAnimation
 	{
 	}
 
@@ -46,8 +42,7 @@ namespace anim
 	/// Texture animation controller data (subtype 0x8006). Animation of texture coordinates.
 	/// </summary>
 	[Controller(true, 0x8006, true)]
-	public class TextureAnimationData2
-		: BuiltInMeshAnimation
+	public class TextureAnimationData2 : BuiltInMeshAnimation
 	{
 	}
 }

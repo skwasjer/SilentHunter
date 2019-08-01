@@ -28,7 +28,7 @@ namespace anim
 		public List<AnimationSubObject> Animations;
 	}
 
-	[SHType, StructLayout(LayoutKind.Sequential)]
+	[SHType]
 	public class AnimationSubObject
 	{
 		public ulong Id;

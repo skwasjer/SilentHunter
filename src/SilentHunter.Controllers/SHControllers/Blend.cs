@@ -65,8 +65,7 @@ namespace SHControllers
 		public bool UTangent;
 	}
 
-	[StructLayout(LayoutKind.Sequential)]
-	public class LightDirection
+	public struct LightDirection
 	{
 		public float HrzAngle;
 		public float VerAngle;

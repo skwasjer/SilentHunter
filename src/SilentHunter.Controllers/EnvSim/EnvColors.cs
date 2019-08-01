@@ -143,8 +143,7 @@ namespace EnvSim
 		public float? SunSkyInfluence;
 	}
 
-	[StructLayout(LayoutKind.Sequential)]
-	public class UpDownColor
+	public struct UpDownColor
 	{
 		public Color Color;
 		public float Intensity;

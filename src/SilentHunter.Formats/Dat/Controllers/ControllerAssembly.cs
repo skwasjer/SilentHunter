@@ -113,14 +113,6 @@ namespace SilentHunter.Dat.Controllers
 				throw new NotSupportedException($"The type '{remoteType.Name}' defines one or more properties which is not supported.");
 			}
 
-			// For structs, must have SerializableAttribute.
-			if (remoteType.IsValueType && !remoteType.IsDefined(typeof(SerializableAttribute), false))
-			{
-				throw new NotSupportedException(
-					$"The type '{remoteType.Name}' is a value type, which requires a SerializableAttribute."
-				);
-			}
-
 			// Check if type is a controller.
 			if (!remoteType.IsController())
 			{

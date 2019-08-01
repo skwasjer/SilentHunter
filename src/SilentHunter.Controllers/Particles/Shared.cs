@@ -18,8 +18,7 @@ using SilentHunter;
 
 namespace Particles
 {
-	[StructLayout(LayoutKind.Sequential)]
-	public class EmissionArea
+	public struct EmissionArea
 	{
 		/// <summary>
 		/// Radius.
@@ -232,8 +231,7 @@ namespace Particles
 		public List<OverLife> OverLife;
 	}
 
-	[StructLayout(LayoutKind.Sequential)]
-	public class OverLife
+	public struct OverLife
 	{
 		/// <summary>
 		/// Life time (0..1).
@@ -252,8 +250,7 @@ namespace Particles
 		Multiply
 	}
 
-	[StructLayout(LayoutKind.Sequential)]
-	public class ParticleLife
+	public struct ParticleLife
 	{
 		/// <summary>
 		/// Particle's medium life, in seconds.
@@ -327,8 +324,7 @@ namespace Particles
 	/// 
 	/// </summary>
 	/// <remarks>Note: this type is not the same as the MinMax type declared by the SilentHunter.Core library.</remarks>
-	[StructLayout(LayoutKind.Sequential)]
-	public class MinMax
+	public struct MinMax
 	{
 		public float Min;
 		public float Max;

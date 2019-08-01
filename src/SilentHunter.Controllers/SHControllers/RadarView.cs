@@ -77,8 +77,7 @@ namespace SHControllers
 		public List<RangeMinStep> Ranges;
 	}
 
-	[StructLayout(LayoutKind.Sequential)]
-	public class RangeMinStep
+	public struct RangeMinStep
 	{
 		public int Min;
 		public int Step;

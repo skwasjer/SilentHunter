@@ -37,8 +37,7 @@ namespace SHControllers
 		public PositionRotationVectors Default;
 	}
 
-	[StructLayout(LayoutKind.Sequential)]
-	public class PositionRotationVectors
+	public struct PositionRotationVectors
 	{
 		public Vector3 Position;
 		public Vector3 Rotation;

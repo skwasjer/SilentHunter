@@ -195,8 +195,7 @@ namespace Particles
 		public float Variation;
 	}
 
-	[StructLayout(LayoutKind.Sequential)]
-	public class FastColorOverLife
+	public struct FastColorOverLife
 	{
 		/// <summary>
 		/// Life time (0..1).

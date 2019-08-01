@@ -269,8 +269,7 @@ namespace Particles
 		public float InertiaCoef;
 	}
 
-	[StructLayout(LayoutKind.Sequential)]
-	public class ColorOverLife
+	public struct ColorOverLife
 	{
 		/// <summary>
 		/// Life time (0..1).

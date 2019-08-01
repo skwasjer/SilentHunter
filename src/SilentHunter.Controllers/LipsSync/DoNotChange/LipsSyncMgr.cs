@@ -36,8 +36,7 @@ namespace LipsSync
 		public List<LipsSyncFrame> Frames;	
 	}
 
-	[StructLayout(LayoutKind.Sequential)]
-	public class LipsSyncFrame
+	public struct LipsSyncFrame
 	{
 		/// <summary>
 		/// The time of the frame.

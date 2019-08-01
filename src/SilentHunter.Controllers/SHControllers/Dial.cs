@@ -59,8 +59,7 @@ namespace SHControllers
 		public bool RelativeDrag;
 	}
 
-	[StructLayout(LayoutKind.Sequential)]
-	public class DialValues
+	public struct DialValues
 	{		
 		public float Minimum;
 		public float Maximum;
