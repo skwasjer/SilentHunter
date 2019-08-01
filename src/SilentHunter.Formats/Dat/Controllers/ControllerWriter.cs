@@ -10,10 +10,12 @@ namespace SilentHunter.Dat.Controllers
 	public class ControllerWriter : IControllerWriter
 	{
 		private readonly IControllerFactory _controllerFactory;
+		private readonly ControllerSerializerResolver _controllerSerializerResolver;
 
 		public ControllerWriter(IControllerFactory controllerFactory)
 		{
 			_controllerFactory = controllerFactory ?? throw new ArgumentNullException(nameof(controllerFactory));
+			_controllerSerializerResolver = new ControllerSerializerResolver();
 		}
 
 		/// <summary>
@@ -39,9 +41,7 @@ namespace SilentHunter.Dat.Controllers
 			{
 				Type controllerType = controller.GetType();
 				var serializable = controller as IRawSerializable;
-				IControllerSerializer cs = controller is Controller
-					? new ControllerSerializer()
-					: new RawControllerSerializer();
+				IControllerSerializer cs = _controllerSerializerResolver.GetSerializer(controllerType);
 
 				if (controllerType.IsRawController())
 				{

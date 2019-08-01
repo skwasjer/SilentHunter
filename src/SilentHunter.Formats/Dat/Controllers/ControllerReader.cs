@@ -13,11 +13,13 @@ namespace SilentHunter.Dat.Controllers
 	{
 		private readonly ControllerAssembly _controllerAssembly;
 		private readonly IControllerFactory _controllerFactory;
+		private readonly ControllerSerializerResolver _controllerSerializerResolver;
 
 		public ControllerReader(ControllerAssembly controllerAssembly, IControllerFactory controllerFactory)
 		{
 			_controllerAssembly = controllerAssembly ?? throw new ArgumentNullException(nameof(controllerAssembly));
 			_controllerFactory = controllerFactory ?? throw new ArgumentNullException(nameof(controllerFactory));
+			_controllerSerializerResolver = new ControllerSerializerResolver();
 		}
 
 		/// <summary>
@@ -124,9 +126,7 @@ namespace SilentHunter.Dat.Controllers
 							}
 							else
 							{
-								IControllerSerializer cs = controller is Controller
-									? new ControllerSerializer()
-									: new RawControllerSerializer();
+								IControllerSerializer cs = _controllerSerializerResolver.GetSerializer(controllerType);
 								cs.Deserialize(stream, controller);
 							}
 
