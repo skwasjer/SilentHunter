@@ -4,7 +4,7 @@ using skwas.IO;
 
 namespace SilentHunter.Dat
 {
-	public abstract class BuiltInMeshAnimation : IRawController, IRawSerializable
+	public abstract class BuiltInMeshAnimation : RawController, IRawSerializable
 	{
 		// NOTE: Only Frames is currently a field. S3D only uses fields currently in the property editor to distinguish if it's an editable value. The CompressedFrames property is hidden in S3D because it's a property and not a field.
 

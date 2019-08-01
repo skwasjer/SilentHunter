@@ -35,7 +35,7 @@ namespace SilentHunter.Dat.Controllers.Serialization
 			};
 		}
 
-		public void Deserialize(Stream stream, IRawController controller)
+		public void Deserialize(Stream stream, RawController controller)
 		{
 			if (stream == null)
 			{
@@ -126,7 +126,7 @@ namespace SilentHunter.Dat.Controllers.Serialization
 			return retVal;
 		}
 
-		public void Serialize(Stream stream, IRawController controller)
+		public void Serialize(Stream stream, RawController controller)
 		{
 			if (stream == null)
 			{

@@ -31,7 +31,7 @@ namespace SilentHunter.Extensions
 		/// <param name="type">The type to check.</param>
 		public static bool IsController(this Type type)
 		{
-			return typeof(IRawController).IsAssignableFrom(type); // memberInfo.HasAttribute<ControllerAttribute>();
+			return typeof(RawController).IsAssignableFrom(type); // memberInfo.HasAttribute<ControllerAttribute>();
 		}
 
 		/// <summary>
@@ -40,7 +40,7 @@ namespace SilentHunter.Extensions
 		/// <param name="type">The type to check.</param>
 		public static bool IsRawController(this Type type)
 		{
-			return typeof(IRawController).IsAssignableFrom(type) && !typeof(IController).IsAssignableFrom(type);
+			return typeof(RawController).IsAssignableFrom(type) && !typeof(Controller).IsAssignableFrom(type);
 		}
 
 		// ReSharper disable once InconsistentNaming

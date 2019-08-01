@@ -1,6 +1,6 @@
-namespace SilentHunter.Dat
+﻿namespace SilentHunter.Dat
 {
-	public abstract class RawController : IRawController
+	public abstract class RawController
 	{
 	}
 }

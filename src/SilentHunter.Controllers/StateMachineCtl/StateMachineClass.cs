@@ -1,7 +1,7 @@
-/* 
+﻿/* 
  * StateMachineCtl.act - StateMachineClass
  *
- * � 2007-2016 skwas. All rights reserved.
+ * © 2007-2016 skwas. All rights reserved.
  * This code is provided as is. Change at your own risk.
  * --------------------------------------------------
  * 
@@ -22,7 +22,7 @@ namespace StateMachineCtl
 	/// <summary>
 	/// StateMachineCtl controller. State machine manager for characters or objects.
 	/// </summary>
-	public class StateMachineClass : IRawController, IRawSerializable
+	public class StateMachineClass : RawController, IRawSerializable
 	{
 		// NOTE: a, b, c and d are unknown fields to me, but they always seem to be the same.
 

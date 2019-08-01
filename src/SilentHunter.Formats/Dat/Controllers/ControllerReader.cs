@@ -114,14 +114,14 @@ namespace SilentHunter.Dat.Controllers
 				{
 					try
 					{
-						IRawController controller = _controllerFactory.CreateController(controllerName, profile, false);
+						RawController controller = _controllerFactory.CreateController(controllerName, profile, false);
 						if (controller is IRawSerializable serializable)
 						{
 							serializable.Deserialize(stream);
 						}
 						else
 						{
-							IControllerSerializer cs = controller is IController
+							IControllerSerializer cs = controller is Controller
 								? new ControllerSerializer()
 								: new RawControllerSerializer();
 							cs.Deserialize(stream, controller);

@@ -39,7 +39,7 @@ namespace SilentHunter.Dat.Controllers
 			{
 				Type controllerType = controller.GetType();
 				var serializable = controller as IRawSerializable;
-				IControllerSerializer cs = controller is IController
+				IControllerSerializer cs = controller is Controller
 					? new ControllerSerializer()
 					: new RawControllerSerializer();
 
@@ -66,7 +66,7 @@ namespace SilentHunter.Dat.Controllers
 					}
 					else
 					{
-						cs.Serialize(stream, (IRawController)controller);
+						cs.Serialize(stream, (RawController)controller);
 					}
 
 					return;
@@ -89,7 +89,7 @@ namespace SilentHunter.Dat.Controllers
 				}
 				else
 				{
-					cs.Serialize(stream, (IRawController)controller);
+					cs.Serialize(stream, (RawController)controller);
 				}
 
 				// After the controller is written, determine and write the size.

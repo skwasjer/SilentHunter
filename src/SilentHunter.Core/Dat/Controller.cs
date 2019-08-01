@@ -1,9 +1,9 @@
-namespace SilentHunter.Dat
+﻿namespace SilentHunter.Dat
 {
 	/// <summary>
 	/// Represents controller data.
 	/// </summary>
-	public abstract class Controller : RawController, IController
+	public abstract class Controller : RawController
 	{
 	}
 }
