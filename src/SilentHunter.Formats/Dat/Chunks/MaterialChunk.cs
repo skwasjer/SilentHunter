@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -187,20 +187,17 @@ namespace SilentHunter.Dat.Chunks
 				// Read the id.
 				Id = reader.ReadUInt64();
 
-				// Material opacity.
-				Opacity = reader.ReadByte();
+				Color clr;
 
-				// Colors are flipped. So, read them inverted.
-				byte[] color;
+				// Diffuse color and opacity.
+				clr = reader.ReadStruct<Color>();
+				Diffuse = Color.FromArgb(byte.MaxValue, clr);
+				Opacity = Diffuse.A;    // Opacity is in alpha component
 
-				color = reader.ReadBytes(3);
-				Diffuse = Color.FromArgb(color[2], color[1], color[0]);
-
-				SpecularMode = (SpecularMode)reader.ReadByte();
-
-				// Again a 'flipped' color.
-				color = reader.ReadBytes(3);
-				Specular = Color.FromArgb(color[2], color[1], color[0]);
+				// Specular color and mode.
+				clr = reader.ReadStruct<Color>();
+				Specular = Color.FromArgb(byte.MaxValue, clr);
+				SpecularMode = (SpecularMode)Specular.A;    // Mode is in alpha component.
 
 				// Other material properties.
 				SpecularStrength = reader.ReadByte();

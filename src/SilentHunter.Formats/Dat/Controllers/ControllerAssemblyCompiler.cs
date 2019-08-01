@@ -6,9 +6,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Versioning;
 using System.Xml.Serialization;
-#if NETSTANDARD2_0
-using System.Drawing;
-#endif
 using SilentHunter.Dat.Controllers.Compiler;
 
 namespace SilentHunter.Dat.Controllers
@@ -38,11 +35,9 @@ namespace SilentHunter.Dat.Controllers
 		{
 #if NETFRAMEWORK
 			new Dependency("System.dll"),
-			new Dependency("System.Drawing.dll"),
 #else
 			new Dependency(Assembly.Load("netstandard, Version=2.0.0.0").Location),
 			new Dependency(typeof(object)),
-			new Dependency(typeof(Color)),
 			new Dependency(Assembly.Load("System.Runtime, PublicKeyToken=b03f5f7f11d50a3a").Location),
 			new Dependency(Assembly.Load("System.Runtime.Extensions, PublicKeyToken=b03f5f7f11d50a3a").Location),
 #endif

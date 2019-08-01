@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -32,7 +32,7 @@ namespace SilentHunter.Dat
 				new PrimitiveArrayValueSerializer(),
 				new ListValueSerializer(this),
 				new SHUnionValueSerializer(),
-				new ValueTypeSerializer()	// Should be last.
+				new ObjectSerializer()	// Should be last.
 			};
 		}
 

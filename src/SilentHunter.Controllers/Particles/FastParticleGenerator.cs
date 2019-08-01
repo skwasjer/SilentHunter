@@ -1,7 +1,7 @@
-/* 
+﻿/* 
  * Particles.act - FastParticleGenerator
  *
- * � 2007-2016 skwas. All rights reserved.
+ * © 2007-2016 skwas. All rights reserved.
  * This code is provided as is. Change at your own risk.
  * --------------------------------------------------
  * 
@@ -11,11 +11,9 @@
  * 
 */
 
-using SilentHunter.Dat;
-using System.Runtime.InteropServices;
 using System.Collections.Generic;
-using System.Drawing;
 using SilentHunter;
+using SilentHunter.Dat;
 
 namespace Particles
 {
@@ -28,12 +26,12 @@ namespace Particles
 		/// <summary>
 		/// Density modifier (game menu) is active or not.
 		/// </summary>
-		[SilentHunter.Dat.Optional]
+		[Optional]
 		public bool? IsDensityModifierActive;
 		/// <summary>
 		/// Generator's bounding sphere radius (approx), for frustum test.
 		/// </summary>
-		[SilentHunter.Dat.Optional]
+		[Optional]
 		public float? SphereRadius;
 		/// <summary>
 		/// Emission area(circular)radius and solidangle. Direction is along generator's Y axis (up).
@@ -70,7 +68,7 @@ namespace Particles
 		/// <summary>
 		/// Don't make action when system mature and not in frustum. System is considered mature after the first particle death.
 		/// </summary>
-		[SilentHunter.Dat.Optional]
+		[Optional]
 		public bool? NoActionMatureOutOfFrustum;
 		/// <summary>
 		/// Wind speed, local and global.
@@ -83,7 +81,7 @@ namespace Particles
 		/// <summary>
 		/// Global scale coefficients for far subparticles.
 		/// </summary>
-		[SilentHunter.Dat.Optional]
+		[Optional]
 		public GlobalScaleFar GlobalScaleFar;
 		/// <summary>
 		/// List with bitmap particles.
@@ -210,5 +208,4 @@ namespace Particles
 		/// </summary>
 		public float Opacity;
 	}
-
 }

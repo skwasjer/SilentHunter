@@ -8,13 +8,13 @@ using skwas.IO;
 namespace SilentHunter.Dat.Controllers.Serialization
 {
 	/// <summary>
-	/// Serializer for value types.
+	/// Serializer that reads/writes data as structs.
 	/// </summary>
 	/// <remarks>
 	/// Because value types can contain primitives that are not (de)serializable with ReadStruct/WriteStruct, we have to enumerate all fields separately then.
 	///
 	/// </remarks>
-	public class ValueTypeSerializer : IControllerValueSerializer
+	public class ObjectSerializer : IControllerValueSerializer
 	{
 		private static readonly ConcurrentDictionary<Type, FieldInfo[]> FieldInfoCache = new ConcurrentDictionary<Type, FieldInfo[]>();
 

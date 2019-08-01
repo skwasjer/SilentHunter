@@ -1,7 +1,7 @@
-/* 
+﻿/* 
  * SHControllers.act - AlertLight
  *
- * � 2007-2016 skwas. All rights reserved.
+ * © 2007-2016 skwas. All rights reserved.
  * This code is provided as is. Change at your own risk.
  * --------------------------------------------------
  * 
@@ -11,7 +11,7 @@
  * 
 */
 
-using System.Drawing;
+using SilentHunter;
 using SilentHunter.Dat;
 
 namespace SHControllers
@@ -19,8 +19,7 @@ namespace SHControllers
 	/// <summary>
 	/// AlertLight render controller.
 	/// </summary>
-	public class AlertLight
-		: Controller
+	public class AlertLight : Controller
 	{
 		/// <summary>
 		/// Light color.

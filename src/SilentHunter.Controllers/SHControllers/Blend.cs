@@ -1,7 +1,7 @@
-/* 
+﻿/* 
  * SHControllers.act - Blend
  *
- * � 2007-2016 skwas. All rights reserved.
+ * © 2007-2016 skwas. All rights reserved.
  * This code is provided as is. Change at your own risk.
  * --------------------------------------------------
  * 
@@ -11,17 +11,15 @@
  * 
 */
 
-using System.Drawing;
+using SilentHunter;
 using SilentHunter.Dat;
-using System.Runtime.InteropServices;
 
 namespace SHControllers
 {
 	/// <summary>
 	/// Blend render controller.
 	/// </summary>
-	public class Blend
-		: Controller
+	public class Blend : Controller
 	{
 		/// <summary>
 		/// Parallel light direction in global space (spherical polar coordinates, angles in degrees).
@@ -69,5 +67,5 @@ namespace SHControllers
 	{
 		public float HrzAngle;
 		public float VerAngle;
-	}         
+	}
 }

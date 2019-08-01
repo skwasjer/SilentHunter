@@ -1,7 +1,7 @@
-/* 
+﻿/* 
  * SHControllers.act - InteriorLight
  *
- * � 2007-2016 skwas. All rights reserved.
+ * © 2007-2016 skwas. All rights reserved.
  * This code is provided as is. Change at your own risk.
  * --------------------------------------------------
  * 
@@ -11,7 +11,7 @@
  * 
 */
 
-using System.Drawing;
+using SilentHunter;
 using SilentHunter.Dat;
 
 namespace SHControllers
@@ -19,13 +19,13 @@ namespace SHControllers
 	/// <summary>
 	/// InteriorLight action controller.
 	/// </summary>
-	public class InteriorLight
-		: Controller
+	public class InteriorLight : Controller
 	{
 		/// <summary>
 		/// Day light color.
 		/// </summary>
 		public Color DayLightColor;
+
 		/// <summary>
 		/// Night light color.
 		/// </summary>

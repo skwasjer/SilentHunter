@@ -1,7 +1,7 @@
-/* 
+﻿/* 
  * SHControllers.act - SearchLightEffect
  *
- * � 2007-2016 skwas. All rights reserved.
+ * © 2007-2016 skwas. All rights reserved.
  * This code is provided as is. Change at your own risk.
  * --------------------------------------------------
  * 
@@ -11,7 +11,7 @@
  * 
 */
 
-using System.Drawing;
+using SilentHunter;
 using SilentHunter.Dat;
 
 namespace SHControllers
@@ -19,8 +19,7 @@ namespace SHControllers
 	/// <summary>
 	/// SearchLightEffect render controller. Works only on water surface.
 	/// </summary>
-	public class SearchLightEffect
-		: Controller
+	public class SearchLightEffect : Controller
 	{
 		/// <summary>
 		/// Cone angle, in degrees.
@@ -35,7 +34,7 @@ namespace SHControllers
 		/// </summary>
 		public float Range;
 		/// <summary>
-		/// Light intensity = 1 / (A + B*&lt;distance&gt;)        		
+		/// Light intensity = 1 / (A + B*&lt;distance&gt;)
 		/// </summary>
 		public Atenuation Atenuation;
 		/// <summary>

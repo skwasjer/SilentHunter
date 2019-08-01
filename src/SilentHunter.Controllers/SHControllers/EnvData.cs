@@ -1,7 +1,7 @@
-/* 
+﻿/* 
  * SHControllers.act - EnvData
  *
- * � 2007-2016 skwas. All rights reserved.
+ * © 2007-2016 skwas. All rights reserved.
  * This code is provided as is. Change at your own risk.
  * --------------------------------------------------
  * 
@@ -11,7 +11,6 @@
  * 
 */
 
-using System.Drawing;
 using SilentHunter;
 using SilentHunter.Dat;
 
@@ -20,8 +19,7 @@ namespace SHControllers
 	/// <summary>
 	/// EnvData user data.
 	/// </summary>
-	public class EnvData
-		: Controller
+	public class EnvData : Controller
 	{
 		/// <summary>
 		/// Water scale (4, 0.08, 4, 1, 4).
@@ -76,7 +74,8 @@ namespace SHControllers
 		/// <summary>
 		/// Highlight Threshold (0.75).
 		/// </summary>
-		[Optional] public float? HighlightThreshold;
+		[Optional]
+		public float? HighlightThreshold;
 
 		/// <summary>
 		/// Maximum Wave Height (256).

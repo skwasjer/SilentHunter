@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.IO;
+﻿using System.IO;
 using skwas.IO;
 
 namespace SilentHunter.Dat.Controllers.Serialization

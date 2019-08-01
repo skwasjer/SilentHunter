@@ -1,7 +1,7 @@
-/* 
+﻿/* 
  * SHControllers.act - FogParameters
  *
- * � 2007-2016 skwas. All rights reserved.
+ * © 2007-2016 skwas. All rights reserved.
  * This code is provided as is. Change at your own risk.
  * --------------------------------------------------
  * 
@@ -11,7 +11,7 @@
  * 
 */
 
-using System.Drawing;
+using SilentHunter;
 using SilentHunter.Dat;
 
 namespace SHControllers
@@ -19,17 +19,18 @@ namespace SHControllers
 	/// <summary>
 	/// FogParameters user data.  Apply on submarine interior sectors to set the fog parameters.
 	/// </summary>
-	public class FogParameters
-		: Controller
+	public class FogParameters : Controller
 	{
 		/// <summary>
 		/// Near distance in meters.
 		/// </summary>
 		public float NearDistance;
+
 		/// <summary>
 		/// Far distance in meters.
 		/// </summary>
 		public float FarDistance;
+
 		/// <summary>
 		/// Fog color.
 		/// </summary>
