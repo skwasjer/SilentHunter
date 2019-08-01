@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using SilentHunter.Dat.Controllers.Serialization;
 using SilentHunter.Extensions;
 using SilentHunter.Formats;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Dat.Controllers.Serialization
 {
 	/// <summary>
 	/// Represents raw controller data serializer, which implements basic (de)serialization rules where each property is stored anonymously in a sequential order, much like C-structs in memory.

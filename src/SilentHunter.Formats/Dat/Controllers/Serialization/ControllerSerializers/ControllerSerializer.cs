@@ -1,12 +1,11 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Reflection;
-using SilentHunter.Dat.Controllers.Serialization;
 using SilentHunter.Extensions;
 using SilentHunter.Formats;
 using skwas.IO;
 
-namespace SilentHunter.Dat
+namespace SilentHunter.Dat.Controllers.Serialization
 {
 	/// <summary>
 	/// Represents raw controller data serializer, which implements (de)serialization rules where properties are stored together with its name.
