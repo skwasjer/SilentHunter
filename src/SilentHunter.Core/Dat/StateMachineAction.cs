@@ -1,3 +1,4 @@
+﻿using System.ComponentModel;
 using System.Diagnostics;
 
 namespace SilentHunter.Dat
@@ -9,14 +10,17 @@ namespace SilentHunter.Dat
 	public class StateMachineAction
 	{
 		/// <summary>
-		/// Keep internal, not for UI use.
+		/// Keep internal, not for UI use. Is recalculated during serialization.
 		/// </summary>
-		internal int ParentEntryIndex;
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public int ParentEntryIndex;
+
 		/// <summary>
-		/// Keep internal, not for UI use.
+		/// Keep internal, not for UI use. Is recalculated during serialization.
 		/// </summary>
-		internal int ParentConditionIndex;
-		
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public int ParentConditionIndex;
+
 		/// <summary>
 		/// The name or command of the action.
 		/// </summary>

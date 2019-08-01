@@ -19,6 +19,11 @@ namespace SilentHunter.Dat.Controllers.Serialization
 			{
 				new ControllerMapping
 				{
+					ControllerType = typeof(StateMachineController),
+					Serializer = new StateMachineControllerSerializer()
+				},
+				new ControllerMapping
+				{
 					ControllerType = typeof(Controller),
 					Serializer = new ControllerSerializer()
 				},

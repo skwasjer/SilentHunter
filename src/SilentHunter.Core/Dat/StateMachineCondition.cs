@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 
@@ -11,9 +11,10 @@ namespace SilentHunter.Dat
 	public class StateMachineCondition
 	{
 		/// <summary>
-		/// Keep internal, not for UI use.
+		/// Keep internal, not for UI use. Is recalculated during serialization.
 		/// </summary>
-		internal int ParentEntryIndex;
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public int ParentEntryIndex;
 		
 		/// <summary>
 		/// The condition check type to perform.

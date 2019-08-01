@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 
@@ -11,9 +11,10 @@ namespace SilentHunter.Dat
 	public class StateMachineEntry
 	{
 		/// <summary>
-		/// Keep internal, not for UI use.
+		/// Keep internal, not for UI use. Is recalculated during serialization.
 		/// </summary>
-		internal int Index;
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public int Index;
 
 		/// <summary>
 		/// The name of the state loop.
