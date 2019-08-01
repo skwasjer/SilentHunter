@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using SilentHunter.Extensions;
@@ -62,6 +62,7 @@ namespace SilentHunter.Dat.Chunks.Partial
 			{
 				Id = reader.ReadUInt64();
 
+				//https://www.subsim.com/radioroom/showthread.php?p=1177807&highlight=animmeshtype.jpg#post1177807
 				UnknownData.Add(new UnknownChunkData(
 					regionStream?.BaseStream.Position ?? stream.Position, stream.Position,
 					Unknown = reader.ReadByte(),
