@@ -13,6 +13,6 @@
 		MeshAnimationData2 = 0x8005,
 		TextureAnimationData = 6,
 		TextureAnimationData2 = 0x8006,
-		LightAnimation = 0x200
+		LightAnimation = 0x0200
 	}
 }

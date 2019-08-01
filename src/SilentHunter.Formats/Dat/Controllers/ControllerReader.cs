@@ -33,7 +33,7 @@ namespace SilentHunter.Dat.Controllers
 
 			var reader = new BinaryReader(stream, Encoding.ParseEncoding);
 
-			// In case of a normal controller (0) subtype the next Int32 contains the size of the following structure. In case of animation controllers (sub type 2/3/4/5), this Int32 indicates the subtype (same as previous chunk).
+			// In case of a normal controller (10/-1) subtype the next Int32 contains the size of the following structure. In case of animation controllers (sub type 0/1/2/4/5/6), see below.
 			int controllerSize = reader.ReadInt32();
 
 			// The size read from the stream matches the available data (incl. the 4 bytes of the Int32 already read), then we have a normal controller. Otherwise, we have to do some more logic to determine correct type of controller.
@@ -45,14 +45,14 @@ namespace SilentHunter.Dat.Controllers
 			if (isRawController)
 			{
 				// First 4 bytes means something else.
-				var subType = (ushort)((long)controllerSize & 0xFFFF);
-				ushort unknown = (ushort)((controllerSize & 0xFFFF0000) >> 16);
+				ushort animationControllerType = unchecked((ushort)(controllerSize & 0xFFFF));
+				ushort unknown = unchecked((ushort)((controllerSize & 0xFFFF0000) >> 16));
 				if (string.IsNullOrEmpty(controllerName))
 				{
 					// If no name provided, check if sub type matches that of an animation controller.
-					if (Enum.IsDefined(typeof(AnimationType), subType))
+					if (Enum.IsDefined(typeof(AnimationType), animationControllerType))
 					{
-						controllerName = ((AnimationType)subType).ToString();
+						controllerName = ((AnimationType)animationControllerType).ToString();
 					}
 				}
 
@@ -68,7 +68,7 @@ namespace SilentHunter.Dat.Controllers
 						{
 							ControllerAttribute controllerAttribute = controllerType.GetCustomAttribute<ControllerAttribute>() ?? new ControllerAttribute();
 							// Check that the detected controller matches subtype.
-							if (controllerAttribute.SubType.HasValue && controllerAttribute.SubType.Value == subType)
+							if (controllerAttribute.SubType.HasValue && controllerAttribute.SubType.Value == animationControllerType)
 							{
 								// For animation controllers, the 2 bytes are part of the data and identify an 'ushort' count field for n number of frames.
 								if (typeof(AnimationController).IsAssignableFrom(controllerType))
@@ -109,30 +109,39 @@ namespace SilentHunter.Dat.Controllers
 				long controllerStartPosition = stream.Position;
 
 				// Attempt to parse controller, starting with newest implementation.
+				Type previousControllerType = null;
+				Type controllerType = null;
 				while (true)
 				{
 					try
 					{
-						RawController controller = _controllerFactory.CreateController(controllerName, profile, false);
-						if (controller is IRawSerializable serializable)
+						if (_controllerAssembly.TryGetControllerType(controllerName, profile, out controllerType) && previousControllerType != controllerType)
 						{
-							serializable.Deserialize(stream);
-						}
-						else
-						{
-							IControllerSerializer cs = controller is Controller
-								? new ControllerSerializer()
-								: new RawControllerSerializer();
-							cs.Deserialize(stream, controller);
+							RawController controller = _controllerFactory.CreateController(controllerType, false);
+							if (controller is IRawSerializable serializable)
+							{
+								serializable.Deserialize(stream);
+							}
+							else
+							{
+								IControllerSerializer cs = controller is Controller
+									? new ControllerSerializer()
+									: new RawControllerSerializer();
+								cs.Deserialize(stream, controller);
+							}
+
+							return controller;
 						}
 
-						return controller;
+						previousControllerType = controllerType;
 					}
 					catch (Exception ex)
 					{
 						// Reset stream to beginning.
 						stream.Position = controllerStartPosition;
 						Debug.WriteLine(ex.Message);
+
+						previousControllerType = controllerType;
 					}
 
 					// If we reach the oldest version of SH, we are finished.
