@@ -1,28 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using SilentHunter.Extensions;
+using System.Linq;
 using skwas.IO;
 
 namespace SilentHunter.Dat.Chunks.Partial
 {
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <remarks>
+	/// See https://www.subsim.com/radioroom/showthread.php?p=1177807#post1177807
+	///
+	/// While I believe poster is on the right track, I believe its bitwise flags instead. However, the names may not be accurate.
+	/// </remarks>
+	[Flags]
+	public enum ModelType : byte
+	{
+		None = 0,
+		Animation = 0x2,
+		Model = 0x4
+	}
+
 	public sealed class ModelChunk : DatChunk
 	{
 		public ModelChunk()
 			: base(DatFile.Magics.Model)
 		{
+			Type = ModelType.Animation | ModelType.Model;
 			Vertices = new Vector3[0];
 			TextureCoordinates = new Vector2[0];
 			Normals = new Vector3[0];
 			VertexIndices = new ushort[0];
-			FaceMaterialIndices = new byte[0];
-
-			UnknownData.Add(new UnknownChunkData(0, 0, byte.MinValue, "Some sort of flags, with hints for how to render the model. Thinks like culling? Which channels are supported?"));
+			MaterialIndices = new byte[0];
 		}
 
-		public byte Unknown { get; set; }
-
-		private readonly List<UvMap> _textureIndices = new List<UvMap>();
+		public ModelType Type { get; set; }
 
 		public Vector3[] Vertices { get; set; }
 
@@ -32,17 +45,9 @@ namespace SilentHunter.Dat.Chunks.Partial
 
 		public ushort[] VertexIndices { get; set; }
 
-		public UvMap[] TextureIndices
-		{
-			get => _textureIndices.ToArray();
-			set
-			{
-				_textureIndices.Clear();
-				_textureIndices.AddRange(value);
-			}
-		}
+		public UvMap[] TextureIndices { get; set; }
 
-		public byte[] FaceMaterialIndices { get; set; }
+		public byte[] MaterialIndices { get; set; }
 
 		/// <summary>
 		/// Gets whether the chunk supports an id field.
@@ -55,114 +60,128 @@ namespace SilentHunter.Dat.Chunks.Partial
 		/// <param name="stream">The stream to read from.</param>
 		protected override void Deserialize(Stream stream)
 		{
-			var regionStream = stream as RegionStream;
-			UnknownData.Clear();
-
 			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
 			{
 				Id = reader.ReadUInt64();
 
-				//https://www.subsim.com/radioroom/showthread.php?p=1177807&highlight=animmeshtype.jpg#post1177807
-				UnknownData.Add(new UnknownChunkData(
-					regionStream?.BaseStream.Position ?? stream.Position,
-					stream.Position,
-					Unknown = reader.ReadByte(),
-					"Some sort of flags, with hints for how to render the model. Thinks like culling? Which channels are supported?")
-				);
+				Type = reader.ReadStruct<ModelType>();
 
-#if DEBUG
-				string debugMsg = "Model:\t" + Path.GetFileName(stream.GetBaseStreamName());
-				debugMsg += "\t" + UnknownData[0].Data;
-				//Debug.WriteLine(debugMsg);
-#endif
+				LoadMesh(reader, out Vector3[] vertices, out ushort[] vertexIndices, out ushort[] textureIndices, out byte[] materialIndices);
+				Vertices = vertices;
+				VertexIndices = vertexIndices;
+				TextureIndices = new[]
+				{
+					new UvMap
+					{
+						Channel = 1,
+						TextureIndices = textureIndices
+					}
+				};
+				MaterialIndices = materialIndices;
 
-				LoadMesh(reader);
+				TextureCoordinates = ReadTextureCoordinates(reader).ToArray();
 
 				// Loop any remaining data. First 4 bytes per segment are a descriptor.
 				while (stream.Position < stream.Length)
 				{
-					MeshDataDescriptor descr;
-					Enum.TryParse(reader.ReadString(4), true, out descr);
-					switch (descr)
+					Enum.TryParse(reader.ReadString(4), true, out MeshDataDescriptor descriptor);
+					switch (descriptor)
 					{
 						case MeshDataDescriptor.TMAP:
-							LoadUvMap(reader);
+							TextureIndices = TextureIndices.Concat(ReadUvMaps(reader, VertexIndices.Length)).ToArray();
 							break;
 
 						case MeshDataDescriptor.NORM:
-							LoadNormals(reader);
+							Normals = ReadNormals(reader, Vertices.Length).ToArray();
 							break;
 
 						default:
-							throw new IOException("Unexpected stream.");
+							throw new IOException($"Unexpected descriptor '{descriptor}'.");
 					}
 				}
 			}
 		}
 
-		private void LoadNormals(BinaryReader reader)
+		private static void LoadMesh(
+			BinaryReader reader,
+			out Vector3[] vertices,
+			out ushort[] vertexIndices,
+			out ushort[] textureIndices,
+			out byte[] materialIndices)
 		{
-			// Read a Vector3 per vertex.
-			Normals = new Vector3[Vertices.Length];
-			for (int i = 0; i < Normals.Length; i++)
+			// Read vertices.
+			int vertexCount = reader.ReadInt32();
+			vertices = new Vector3[vertexCount];
+			for (int i = 0; i < vertices.Length; i++)
 			{
-				Normals[i] = reader.ReadStruct<Vector3>();
+				vertices[i] = reader.ReadStruct<Vector3>();
+			}
+
+			// Read faces, texture indices and material index.
+			int faceCount = reader.ReadInt32();
+			int vertexIndexCount = faceCount * 3;
+			vertexIndices = new ushort[vertexIndexCount];
+			textureIndices = new ushort[vertexIndexCount];
+			materialIndices = new byte[faceCount];
+			for (int i = 0; i < vertexIndices.Length; i += 3)
+			{
+				vertexIndices[i] = reader.ReadUInt16();
+				vertexIndices[i + 1] = reader.ReadUInt16();
+				vertexIndices[i + 2] = reader.ReadUInt16();
+				textureIndices[i] = reader.ReadUInt16();
+				textureIndices[i + 1] = reader.ReadUInt16();
+				textureIndices[i + 2] = reader.ReadUInt16();
+				materialIndices[i / 3] = reader.ReadByte();
 			}
 		}
 
-		private void LoadUvMap(BinaryReader reader)
+		private static IEnumerable<Vector2> ReadTextureCoordinates(BinaryReader reader)
 		{
+			// Read texture coordinates.
+			var tc = new Vector2[reader.ReadInt32()];
+			for (int i = 0; i < tc.Length; i++)
+			{
+				tc[i] = reader.ReadStruct<Vector2>();
+			}
+
+			return tc;
+		}
+
+		private static IEnumerable<UvMap> ReadUvMaps(BinaryReader reader, int vertexCount)
+		{
+			ushort[] GetTextureIndices()
+			{
+				var textureIndices = new ushort[vertexCount];
+				for (int i = 0; i < vertexCount; i++)
+				{
+					textureIndices[i] = reader.ReadUInt16();
+				}
+
+				return textureIndices;
+			}
+
 			// Get map channel count.
 			byte mapCount = reader.ReadByte();
 			for (int i = 0; i < mapCount; i++)
 			{
-				// Get channel index.
-				byte uvChannel = reader.ReadByte();
-
-				var textureIndices = new ushort[FaceMaterialIndices.Length * 3];
-				for (int j = 0; j < textureIndices.Length; j++)
+				yield return new UvMap
 				{
-					textureIndices[j] = reader.ReadUInt16();
-				}
-
-				_textureIndices.Add(new UvMap { Channel = uvChannel, TextureIndices = textureIndices });
+					Channel = reader.ReadByte(),
+					TextureIndices = GetTextureIndices()
+				};
 			}
 		}
 
-		private void LoadMesh(BinaryReader reader)
+		private static IEnumerable<Vector3> ReadNormals(BinaryReader reader, int vertexCount)
 		{
-			// Read vertices.
-			Vertices = new Vector3[reader.ReadInt32()];
-			for (int i = 0; i < Vertices.Length; i++)
+			// Read a Vector3 per vertex.
+			var verts = new Vector3[vertexCount];
+			for (int i = 0; i < vertexCount; i++)
 			{
-				Vertices[i] = reader.ReadStruct<Vector3>();
+				verts[i] = reader.ReadStruct<Vector3>();
 			}
 
-			// Read faces, texture indices and material index.
-			int trisCount = reader.ReadInt32();
-			VertexIndices = new ushort[trisCount * 3];
-			var textureIndices = new ushort[trisCount * 3];
-			FaceMaterialIndices = new byte[trisCount];
-			for (int i = 0; i < VertexIndices.Length; i += 3)
-			{
-				VertexIndices[i] = reader.ReadUInt16();
-				VertexIndices[i + 1] = reader.ReadUInt16();
-				VertexIndices[i + 2] = reader.ReadUInt16();
-				textureIndices[i] = reader.ReadUInt16();
-				textureIndices[i + 1] = reader.ReadUInt16();
-				textureIndices[i + 2] = reader.ReadUInt16();
-				FaceMaterialIndices[i / 3] = reader.ReadByte();
-			}
-
-			_textureIndices.Clear();
-			_textureIndices.Add(new UvMap { Channel = 1, TextureIndices = textureIndices });
-
-			// Read texture coordinates.
-			TextureCoordinates = new Vector2[reader.ReadInt32()];
-			for (int i = 0; i < TextureCoordinates.Length; i++)
-			{
-				TextureCoordinates[i] = reader.ReadStruct<Vector2>();
-			}
+			return verts;
 		}
 
 		/// <summary>
@@ -175,59 +194,89 @@ namespace SilentHunter.Dat.Chunks.Partial
 			{
 				writer.Write(Id);
 
-				writer.Write(Unknown);
+				writer.WriteStruct(Type);
 
-				writer.Write(Vertices.Length);
-				foreach (Vector3 vert in Vertices)
-				{
-					writer.WriteStruct(vert);
-				}
+				WriteMesh(writer, Vertices, VertexIndices, TextureIndices[0].TextureIndices, MaterialIndices);
 
-				writer.Write(VertexIndices.Length / 3);
-				for (int i = 0; i < VertexIndices.Length; i += 3)
-				{
-					writer.Write(VertexIndices[i]);
-					writer.Write(VertexIndices[i + 1]);
-					writer.Write(VertexIndices[i + 2]);
-					writer.Write(_textureIndices[0].TextureIndices[i]);
-					writer.Write(_textureIndices[0].TextureIndices[i + 1]);
-					writer.Write(_textureIndices[0].TextureIndices[i + 2]);
-					writer.Write(FaceMaterialIndices[i / 3]);
-				}
+				WriteTextureCoordinates(writer, TextureCoordinates);
 
-				writer.Write(TextureCoordinates.Length);
-				foreach (Vector2 texV in TextureCoordinates)
-				{
-					writer.WriteStruct(texV);
-				}
+				WriteUvMaps(writer, TextureIndices);
 
-				// Write TMAP.
-				if (_textureIndices.Count > 1)
-				{
-					writer.Write(MeshDataDescriptor.TMAP.ToString(), false);
-					// Write number of channels.
-					writer.Write((byte)(_textureIndices.Count - 1));
-					// Write indices for all channels except the first (since this channel is saved with SaveMesh).
-					for (int i = 1; i < _textureIndices.Count; i++)
-					{
-						// Write map channel index.
-						writer.Write(_textureIndices[i].Channel);
-						foreach (ushort index in _textureIndices[i].TextureIndices)
-						{
-							writer.Write(index);
-						}
-					}
-				}
+				WriteNormals(writer, Normals);
+			}
+		}
 
-				// Write NORM.
-				if (Normals != null && Normals.Length > 0)
+		private static void WriteMesh(
+			BinaryWriter writer,
+			IReadOnlyCollection<Vector3> vertices,
+			IReadOnlyList<ushort> vertexIndices,
+			IReadOnlyList<ushort> textureIndices,
+			IReadOnlyList<byte> materialIndices)
+		{
+			writer.Write(vertices.Count);
+			foreach (Vector3 vector in vertices)
+			{
+				writer.WriteStruct(vector);
+			}
+
+			int faceCount = vertexIndices.Count / 3;
+			writer.Write(faceCount);
+			for (int i = 0; i < vertexIndices.Count; i += 3)
+			{
+				writer.Write(vertexIndices[i]);
+				writer.Write(vertexIndices[i + 1]);
+				writer.Write(vertexIndices[i + 2]);
+				writer.Write(textureIndices[i]);
+				writer.Write(textureIndices[i + 1]);
+				writer.Write(textureIndices[i + 2]);
+				writer.Write(materialIndices[i / 3]);
+			}
+		}
+
+		private static void WriteTextureCoordinates(BinaryWriter writer, IReadOnlyCollection<Vector2> textureCoordinates)
+		{
+			writer.Write(textureCoordinates.Count);
+			foreach (Vector2 texV in textureCoordinates)
+			{
+				writer.WriteStruct(texV);
+			}
+		}
+
+		private static void WriteUvMaps(BinaryWriter writer, IReadOnlyList<UvMap> textureIndices)
+		{
+			if (textureIndices.Count <= 1)
+			{
+				return;
+			}
+
+			writer.Write(MeshDataDescriptor.TMAP.ToString(), false);
+
+			// Write number of channels.
+			writer.Write((byte)(textureIndices.Count - 1));
+
+			// Write indices for all channels except the first (since this channel is saved with SaveMesh).
+			for (int i = 1; i < textureIndices.Count; i++)
+			{
+				// Write map channel index.
+				writer.Write(textureIndices[i].Channel);
+				foreach (ushort index in textureIndices[i].TextureIndices)
 				{
-					writer.Write(MeshDataDescriptor.NORM.ToString(), false);
-					foreach (Vector3 normal in Normals)
-					{
-						writer.WriteStruct(normal);
-					}
+					writer.Write(index);
 				}
+			}
+		}
+
+		private static void WriteNormals(BinaryWriter writer, IReadOnlyList<Vector3> normals)
+		{
+			if (normals == null || normals.Count <= 0)
+			{
+				return;
+			}
+
+			writer.Write(MeshDataDescriptor.NORM.ToString(), false);
+			foreach (Vector3 normal in normals)
+			{
+				writer.WriteStruct(normal);
 			}
 		}
 	}
