@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using SilentHunter.Dat;
 using SilentHunter.Dat.Controllers;
+using SilentHunter.Dat.Controllers.Serialization;
 using SilentHunter.Off;
 using SilentHunter.Sdl;
 using skwas.IO;
@@ -80,6 +81,7 @@ namespace SilentHunter
 			services.TryAddSingleton<IItemFactory, ItemFactory>();
 			services.TryAddSingleton<IControllerFactory, ControllerFactory>();
 
+			services.TryAddSingleton<ControllerSerializerResolver>();
 			services.TryAddTransient<IControllerReader, ControllerReader>();
 			services.TryAddTransient<IControllerWriter, ControllerWriter>();
 

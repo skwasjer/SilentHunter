@@ -13,10 +13,10 @@ namespace SilentHunter.Dat.Controllers
 		private readonly IControllerFactory _controllerFactory;
 		private readonly ControllerSerializerResolver _controllerSerializerResolver;
 
-		public ControllerWriter(IControllerFactory controllerFactory)
+		public ControllerWriter(IControllerFactory controllerFactory, ControllerSerializerResolver controllerSerializerResolver)
 		{
 			_controllerFactory = controllerFactory ?? throw new ArgumentNullException(nameof(controllerFactory));
-			_controllerSerializerResolver = new ControllerSerializerResolver();
+			_controllerSerializerResolver = controllerSerializerResolver ?? throw new ArgumentNullException(nameof(controllerSerializerResolver));
 		}
 
 		/// <summary>

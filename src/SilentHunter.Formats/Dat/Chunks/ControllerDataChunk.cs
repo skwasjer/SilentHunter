@@ -9,75 +9,112 @@ namespace SilentHunter.Dat.Chunks
 {
 	public sealed class ControllerDataChunk : DatChunk
 	{
-		private readonly ControllerAssembly _controllerAssembly;
-		private readonly IControllerFactory _controllerFactory;
+		private readonly IControllerReader _controllerReader;
+		private readonly IControllerWriter _controllerWriter;
+		private readonly object _lockObject = new object();
+		private MemoryStream _rawControllerData;
+		private long _origin, _localOrigin;
+		private object _parsedController;
 
-		public ControllerDataChunk(ControllerAssembly controllerAssembly, IControllerFactory controllerFactory)
+		public ControllerDataChunk(IControllerReader controllerReader, IControllerWriter controllerWriter)
 			: base(DatFile.Magics.ControllerData)
 		{
-			_controllerAssembly = controllerAssembly ?? throw new ArgumentNullException(nameof(controllerAssembly));
-			_controllerFactory = controllerFactory ?? throw new ArgumentNullException(nameof(controllerFactory));
+			_controllerReader = controllerReader ?? throw new ArgumentNullException(nameof(controllerReader));
+			_controllerWriter = controllerWriter ?? throw new ArgumentNullException(nameof(controllerWriter));
 		}
 
-		private long _origin, _localOrigin;
-
-		private byte[] _rawControllerData;
-		private object _controllerData;
+		protected override void Dispose(bool disposing)
+		{
+			try
+			{
+				base.Dispose(disposing);
+			}
+			finally
+			{
+				_rawControllerData?.Dispose();
+				_rawControllerData = null;
+			}
+		}
 
 		public dynamic ControllerData
 		{
 			get
 			{
-				if (_controllerData == null && _rawControllerData != null)
+				if (_parsedController != null)
 				{
-					string controllerName = GetControllerName();
-
-					using (var ms = new MemoryStream(_rawControllerData))
-					{
-						// Attempt to deserialize.
-						var reader = new ControllerReader(_controllerAssembly, _controllerFactory);
-						_controllerData = reader.Read(ms, controllerName);
-
-						// If controller data is a byte array, the controller was not deserialized. Either it's not implemented, or the data or the implementation contains a bug.
-						// To keep file integrity, we just store the data as unknown data.
-						if (_controllerData is byte[])
-						{
-							UnknownData.Add(new UnknownChunkData(_origin,
-								_localOrigin,
-								_controllerData,
-								"Failed to read controller data. Either the data contains a bug, or S3D's controller definition is missing or incorrect."));
-						}
-					}
-
-					// We no longer need raw data.
-					_rawControllerData = null;
+					return _parsedController;
 				}
 
-				return _controllerData;
+				lock (_lockObject)
+				{
+					if (_parsedController == null && _rawControllerData != null)
+					{
+						string controllerName = GetControllerName();
+
+						using (_rawControllerData)
+						{
+							// Attempt to deserialize.
+							_parsedController = _controllerReader.Read(_rawControllerData, controllerName);
+						}
+
+						_rawControllerData = null;
+					}
+				}
+
+				// If controller data is a byte array, the controller was not deserialized. Either it's not implemented, or the data or the implementation contains a bug.
+				if (_parsedController is byte[])
+				{
+					UnknownData.Add(new UnknownChunkData(_origin,
+						_localOrigin,
+						_parsedController,
+						"Failed to read controller data. Either the data contains a bug, or S3D's controller definition is missing or incorrect."));
+				}
+
+				return _parsedController;
 			}
-			set => _controllerData = value;
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentNullException();
+				}
+
+				lock (_lockObject)
+				{
+					_parsedController = value;
+					UnknownData.Clear();
+				}
+			}
 		}
 
-		public string ControllerName => _controllerData?.GetType().Name ?? string.Empty;
+		/// <summary>
+		/// Gets the controller name. Returns <see cref="string.Empty"/> if the controller has not yet been read/parsed (by accessing <see cref="ControllerData"/> property).
+		/// </summary>
+		public string ControllerName => _parsedController?.GetType().Name ?? string.Empty;
 
 		public override bool SupportsParentId => true;
 
 		protected override void Serialize(Stream stream)
 		{
-			//			var regionStream = new RegionStream(stream, -1, false);
 			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
 				writer.Write(ParentId);
 
-				writer.Write((ulong)0); // Always zero.
+				// Always zero.
+				writer.Write((ulong)0);
 
-				var controllerWriter = new ControllerWriter(_controllerFactory);
-				controllerWriter.Write(stream, ControllerData);
+				_controllerWriter.Write(stream, ControllerData);
 			}
 		}
 
 		protected override void Deserialize(Stream stream)
 		{
+			lock (_lockObject)
+			{
+				_parsedController = null;
+				UnknownData.Clear();
+			}
+
 			var regionStream = stream as RegionStream;
 
 			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
@@ -92,8 +129,8 @@ namespace SilentHunter.Dat.Chunks
 				_localOrigin = stream.Position;
 				_origin = regionStream?.BaseStream.Position ?? _localOrigin;
 
-				// Read raw controller data.
-				_rawControllerData = reader.ReadBytes((int)(stream.Length - _localOrigin));
+				// Read raw controller data (defer deserializing until property access).
+				_rawControllerData = new MemoryStream(reader.ReadBytes((int)(stream.Length - _localOrigin)));
 			}
 		}
 
