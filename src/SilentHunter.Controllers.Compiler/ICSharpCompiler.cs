@@ -1,7 +1,7 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
 
-namespace SilentHunter.Dat.Controllers.Compiler
+namespace SilentHunter.Controllers.Compiler
 {
 	public interface ICSharpCompiler
 	{

@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Text;
 
-namespace SilentHunter.Dat.Controllers.Compiler
+namespace SilentHunter.Controllers.Compiler
 {
 	public class RoslynCompiler : ICSharpCompiler
 	{

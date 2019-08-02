@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SilentHunter.Dat.Controllers.Compiler
+namespace SilentHunter.Controllers.Compiler
 {
 	public class CompilerOptions
 	{

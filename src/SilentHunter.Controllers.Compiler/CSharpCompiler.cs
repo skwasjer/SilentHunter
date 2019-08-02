@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using Microsoft.CSharp;
 
-namespace SilentHunter.Dat.Controllers.Compiler
+namespace SilentHunter.Controllers.Compiler
 {
 	public sealed class CSharpCompiler : ICSharpCompiler, IDisposable
 	{

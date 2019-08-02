@@ -6,9 +6,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Versioning;
 using System.Xml.Serialization;
-using SilentHunter.Dat.Controllers.Compiler;
 
-namespace SilentHunter.Dat.Controllers
+namespace SilentHunter.Controllers.Compiler
 {
 	public class ControllerAssemblyCompiler
 	{
@@ -75,7 +74,7 @@ namespace SilentHunter.Dat.Controllers
 			return this;
 		}
 
-		public ControllerAssembly Compile()
+		public Assembly Compile()
 		{
 			string outputPath = GetTargetDir();
 			if (!Directory.Exists(outputPath))
@@ -125,7 +124,7 @@ namespace SilentHunter.Dat.Controllers
 			Compile(newCache, _controllerPath, asmOutputFile, docFile);
 
 			// Load controller assembly also into local domain. You normally wouldn't want this, because you A) couldn't unload it and B) would create security issues. May have to look at using isolated domain.
-			return new ControllerAssembly(Assembly.LoadFile(asmOutputFile));
+			return Assembly.LoadFile(asmOutputFile);
 		}
 
 		private void CopyLocalDependencies(string baseDirectory, string outputPath)
