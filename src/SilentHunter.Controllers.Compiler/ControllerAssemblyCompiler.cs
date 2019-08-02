@@ -28,8 +28,6 @@ namespace SilentHunter.Controllers.Compiler
 			public bool IsLocal { get; }
 		}
 
-		private readonly ICSharpCompiler _compiler;
-
 		private static readonly List<Dependency> RequiredDependencies = new List<Dependency>
 		{
 #if NETFRAMEWORK
@@ -43,36 +41,41 @@ namespace SilentHunter.Controllers.Compiler
 			new Dependency("SilentHunter.Core.dll", true)
 		};
 
-		private readonly string _controllerPath;
-		private readonly string _applicationName;
-		private string _assemblyName;
+		private readonly ICSharpCompiler _compiler;
 		private ICollection<string> _dependencySearchPaths = new List<string>();
 		private Func<string, bool> _ignorePaths;
 
 		public ControllerAssemblyCompiler(ICSharpCompiler compiler, string applicationName, string controllerPath)
 		{
 			_compiler = compiler ?? throw new ArgumentNullException(nameof(compiler));
-			_applicationName = applicationName ?? throw new ArgumentNullException(nameof(applicationName));
-			_controllerPath = controllerPath ?? throw new ArgumentNullException(nameof(controllerPath));
+			ApplicationName = applicationName ?? throw new ArgumentNullException(nameof(applicationName));
+			ControllerPath = Path.GetFullPath(controllerPath ?? throw new ArgumentNullException(nameof(controllerPath)));
 		}
 
-		public ControllerAssemblyCompiler AssemblyName(string assemblyName)
-		{
-			_assemblyName = assemblyName ?? throw new ArgumentNullException(nameof(assemblyName));
-			return this;
-		}
+		/// <summary>
+		/// Gets the full controller path.
+		/// </summary>
+		public string ControllerPath { get; }
 
-		public ControllerAssemblyCompiler DependencySearchPaths(params string[] paths)
-		{
-			_dependencySearchPaths = paths ?? throw new ArgumentNullException(nameof(paths));
-			return this;
-		}
+		/// <summary>
+		/// Gets the application name. This is used to determine the output location of the compiled assembly.
+		/// </summary>
+		public string ApplicationName { get; }
 
-		public ControllerAssemblyCompiler IgnorePaths(Func<string, bool> ignorePaths)
-		{
-			_ignorePaths = ignorePaths ?? throw new ArgumentNullException(nameof(ignorePaths));
-			return this;
-		}
+		/// <summary>
+		/// Gets or sets the assembly name. If null, uses the last directory from controller path.
+		/// </summary>
+		public string Name { get; set; }
+
+		/// <summary>
+		/// Gets or sets a filter to ignore specific paths while searching for source files.
+		/// </summary>
+		public Func<string, bool> IgnorePaths { get; set; }
+
+		/// <summary>
+		/// Gets or sets dependency search paths.
+		/// </summary>
+		public IEnumerable<string> DependencySearchPaths { get; set; }
 
 		public Assembly Compile(bool force = false)
 		{
@@ -91,11 +94,11 @@ namespace SilentHunter.Controllers.Compiler
 			// Copy local dependencies.
 			CopyLocalDependencies(AppDomain.CurrentDomain.BaseDirectory, outputPath);
 
-			string asmShortName = _assemblyName ?? Path.GetFileNameWithoutExtension(_controllerPath);
+			string asmShortName = Name ?? Path.GetFileNameWithoutExtension(ControllerPath);
 			string asmOutputFile = Path.Combine(outputPath, asmShortName + ".dll");
 			string docFile = Path.Combine(outputPath, asmShortName + ".xml");
 
-			ICollection<CacheFileReference> sourceFiles = GetCSharpFiles(_controllerPath);
+			ICollection<CacheFileReference> sourceFiles = GetCSharpFiles(ControllerPath);
 			if (!sourceFiles.Any())
 			{
 				throw new InvalidOperationException("No controller source files found.");
@@ -127,7 +130,7 @@ namespace SilentHunter.Controllers.Compiler
 				SourceFiles = new HashSet<CacheFileReference>(sourceFiles)
 			};
 
-			Compile(newCache, _controllerPath, asmOutputFile, docFile);
+			Compile(newCache, ControllerPath, asmOutputFile, docFile);
 
 			// Load controller assembly also into local domain. You normally wouldn't want this, because you A) couldn't unload it and B) would create security issues. May have to look at using isolated domain.
 			return Assembly.LoadFile(asmOutputFile);
@@ -171,7 +174,7 @@ namespace SilentHunter.Controllers.Compiler
 					.Replace(".", string.Empty);
 			}
 
-			return Path.Combine(Path.GetTempPath(), _applicationName, "SilentHunter.Controllers", frameworkVersion);
+			return Path.Combine(Path.GetTempPath(), ApplicationName, "SilentHunter.Controllers", frameworkVersion);
 		}
 
 		/// <summary>
