@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace SilentHunter.Dat
 {
-	partial class DatFile
+	public partial class DatFile
 	{
 		[StructLayout(LayoutKind.Sequential)]
 		private class Header

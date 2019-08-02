@@ -1,6 +1,6 @@
-namespace SilentHunter.Dat
+﻿namespace SilentHunter.Dat
 {
-	partial class DatFile
+	public partial class DatFile
 	{
 		public enum Magics
 		{
