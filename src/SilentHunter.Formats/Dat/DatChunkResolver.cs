@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using skwas.IO;
 
 namespace SilentHunter.Dat
 {
 	public class DatChunkResolver : IChunkResolver<DatFile.Magics>
 	{
-		private static readonly ReadOnlyDictionary<DatFile.Magics, Type> ResolvedTypes = LoadTypes();
+		private static readonly Lazy<ReadOnlyDictionary<DatFile.Magics, Type>> ResolvedTypes = new Lazy<ReadOnlyDictionary<DatFile.Magics, Type>>(LoadTypes, LazyThreadSafetyMode.PublicationOnly);
 
 		private static ReadOnlyDictionary<DatFile.Magics, Type> LoadTypes()
 		{
@@ -50,7 +51,7 @@ namespace SilentHunter.Dat
 		/// <returns>The type or null if the magic is not supported/implemented.</returns>
 		public Type Resolve(DatFile.Magics magic)
 		{
-			return ResolvedTypes.ContainsKey(magic) ? ResolvedTypes[magic] : null;
+			return ResolvedTypes.Value.ContainsKey(magic) ? ResolvedTypes.Value[magic] : null;
 		}
 
 		/// <summary>

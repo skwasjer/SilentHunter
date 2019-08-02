@@ -7,7 +7,8 @@ namespace SilentHunter.Dat
 {
 	public sealed partial class DatFile : ChunkFile<DatChunk>, ISilentHunterFile
 	{
-		private readonly IServiceProvider _serviceProvider;
+		private readonly IChunkResolver<Magics> _chunkResolver;
+		private readonly IChunkActivator _chunkActivator;
 
 		/// <summary>
 		/// Every DAT-file starts with this magic.
@@ -16,10 +17,10 @@ namespace SilentHunter.Dat
 
 		private Header _header;
 
-		// TODO: injection IServerProvider is anti-pattern.
-		public DatFile(IServiceProvider serviceProvider)
+		public DatFile(IChunkResolver<Magics> chunkResolver, IChunkActivator chunkActivator)
 		{
-			_serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+			_chunkResolver = chunkResolver ?? throw new ArgumentNullException(nameof(chunkResolver));
+			_chunkActivator = chunkActivator ?? throw new ArgumentNullException(nameof(chunkActivator));
 			_header = new Header();
 
 			HasGenericFlag = true;
@@ -59,7 +60,7 @@ namespace SilentHunter.Dat
 			get => _header.FileType.HasFlag(Header.Flags.Generic);
 			set
 			{
-				_header.FileType = _header.FileType | Header.Flags.Generic;
+				_header.FileType |= Header.Flags.Generic;
 				if (!value)
 				{
 					_header.FileType ^= Header.Flags.Generic;
@@ -72,7 +73,7 @@ namespace SilentHunter.Dat
 			get => _header.FileType.HasFlag(Header.Flags.HasAnimations);
 			set
 			{
-				_header.FileType = _header.FileType | Header.Flags.HasAnimations;
+				_header.FileType |= Header.Flags.HasAnimations;
 				if (!value)
 				{
 					_header.FileType ^= Header.Flags.HasAnimations;
@@ -85,7 +86,7 @@ namespace SilentHunter.Dat
 			get => _header.FileType.HasFlag(Header.Flags.HasRenderableObjects);
 			set
 			{
-				_header.FileType = _header.FileType | Header.Flags.HasRenderableObjects;
+				_header.FileType |= Header.Flags.HasRenderableObjects;
 				if (!value)
 				{
 					_header.FileType ^= Header.Flags.HasRenderableObjects;
@@ -174,7 +175,7 @@ namespace SilentHunter.Dat
 
 		public ChunkReader<Magics, DatChunk> CreateReader(Stream stream)
 		{
-			return new ChunkReader<Magics, DatChunk>(stream, new DatChunkResolver(), new DependencyInjectionChunkActivator(_serviceProvider), true);
+			return new ChunkReader<Magics, DatChunk>(stream, _chunkResolver, _chunkActivator, true);
 		}
 
 		public ChunkWriter<Magics, DatChunk> CreateWriter(Stream stream)

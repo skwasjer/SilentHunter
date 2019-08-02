@@ -63,7 +63,7 @@ namespace SilentHunter.Controllers.Compiler
 		/// <summary>
 		/// Gets or sets the assembly name. If null, uses the last directory from controller path.
 		/// </summary>
-		public string Name { get; set; }
+		public string AssemblyName { get; set; }
 
 		/// <summary>
 		/// Gets or sets a filter to ignore specific paths while searching for source files.
@@ -92,7 +92,7 @@ namespace SilentHunter.Controllers.Compiler
 			// Copy local dependencies.
 			CopyLocalDependencies(AppDomain.CurrentDomain.BaseDirectory, outputPath);
 
-			string asmShortName = Name ?? Path.GetFileNameWithoutExtension(ControllerPath);
+			string asmShortName = AssemblyName ?? Path.GetFileNameWithoutExtension(ControllerPath);
 			string asmOutputFile = Path.Combine(outputPath, asmShortName + ".dll");
 			string docFile = Path.Combine(outputPath, asmShortName + ".xml");
 
