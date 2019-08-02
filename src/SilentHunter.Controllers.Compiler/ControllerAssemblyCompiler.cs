@@ -141,10 +141,12 @@ namespace SilentHunter.Controllers.Compiler
 					})
 					.FirstOrDefault(p => p != null);
 
-				if (dependencyFullPath != null)
+				if (dependencyFullPath == null || !File.Exists(dependencyFullPath))
 				{
-					CopyDependencyIfModified(dependencyFullPath, outputPath);
+					throw new InvalidOperationException($"Unable to compiler controllers, the dependency {Path.GetFileName(requiredDependency.Location)} is required but not found in any of the search paths.");
 				}
+
+				CopyDependencyIfModified(dependencyFullPath, outputPath);
 			}
 		}
 
