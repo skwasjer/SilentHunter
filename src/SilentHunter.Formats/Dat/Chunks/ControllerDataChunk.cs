@@ -36,7 +36,10 @@ namespace SilentHunter.Dat.Chunks
 			}
 		}
 
-		public dynamic ControllerData
+		/// <summary>
+		/// Gets or sets the controller.
+		/// </summary>
+		public object ControllerData
 		{
 			get
 			{
