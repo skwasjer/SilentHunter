@@ -11,8 +11,9 @@
  * 
 */
 
-using SilentHunter.Controllers;
 using System.Collections.Generic;
+using CameraManager;
+using SilentHunter.Controllers;
 using SilentHunter.Controllers.Decoration;
 
 namespace SHControllers
@@ -57,6 +58,6 @@ namespace SHControllers
 		/// <summary>
 		/// List of cameras. The Focusable3DObj becomes interactive only when one of these cameras is active.
 		/// </summary>
-		public List<CameraManager.Cameras> CamerasList;
+		public List<Cameras> CamerasList;
 	}
 }

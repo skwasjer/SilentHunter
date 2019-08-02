@@ -31,7 +31,7 @@ namespace SilentHunter.Off
 				CharacterSpacing = reader.ReadStruct<Point>();
 
 				Clear();
-				for (var i = 0; i < characterCount; i++)
+				for (int i = 0; i < characterCount; i++)
 				{
 					var offChar = new OffCharacter();
 					((IRawSerializable)offChar).Deserialize(stream);

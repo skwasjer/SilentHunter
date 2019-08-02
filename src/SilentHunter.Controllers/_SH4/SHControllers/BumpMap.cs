@@ -13,7 +13,6 @@
 
 using SilentHunter.Controllers;
 
-
 namespace SH4.SHControllers
 {
 	/// <summary>
@@ -22,11 +21,11 @@ namespace SH4.SHControllers
 	public class BumpMap
 		: Controller
 	{
-/*		[Optional]
-		public Nullable<Vector2> LightDirection;
-		[Optional]
-		public SHColor AmbientColor;
-		[Optional]
-		public Nullable<float> AmbientScale;*/
+		/*		[Optional]
+				public Nullable<Vector2> LightDirection;
+				[Optional]
+				public SHColor AmbientColor;
+				[Optional]
+				public Nullable<float> AmbientScale;*/
 	}
 }

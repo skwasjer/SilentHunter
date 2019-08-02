@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using skwas.IO;
 
@@ -192,12 +191,12 @@ namespace SilentHunter.Dat.Chunks
 				// Diffuse color and opacity.
 				clr = reader.ReadStruct<Color>();
 				Diffuse = Color.FromArgb(byte.MaxValue, clr);
-				Opacity = Diffuse.A;    // Opacity is in alpha component
+				Opacity = Diffuse.A; // Opacity is in alpha component
 
 				// Specular color and mode.
 				clr = reader.ReadStruct<Color>();
 				Specular = Color.FromArgb(byte.MaxValue, clr);
-				SpecularMode = (SpecularMode)Specular.A;    // Mode is in alpha component.
+				SpecularMode = (SpecularMode)Specular.A; // Mode is in alpha component.
 
 				// Other material properties.
 				SpecularStrength = reader.ReadByte();
@@ -268,22 +267,22 @@ namespace SilentHunter.Dat.Chunks
 
 				if (IsInternalResource)
 				{
-/*				if (_tgaTextureSize == -1)
-				{
-					// Get size of EmbeddedImage.
-					if (ParentFile != null)
-					{
-						int myIndex = ParentFile.Chunks.IndexOf(this);
-						if (myIndex <= ParentFile.Chunks.Count)
-						{
-							EmbeddedImage ei = ParentFile.Chunks[myIndex + 1] as EmbeddedImage;
-							if (ei != null)
-								_tgaTextureSize = ei.Buffer.Length;
-						}
-					}
-					if (_tgaTextureSize == -1)
-						_tgaTextureSize = 0;
-				}*/
+					/*				if (_tgaTextureSize == -1)
+									{
+										// Get size of EmbeddedImage.
+										if (ParentFile != null)
+										{
+											int myIndex = ParentFile.Chunks.IndexOf(this);
+											if (myIndex <= ParentFile.Chunks.Count)
+											{
+												EmbeddedImage ei = ParentFile.Chunks[myIndex + 1] as EmbeddedImage;
+												if (ei != null)
+													_tgaTextureSize = ei.Buffer.Length;
+											}
+										}
+										if (_tgaTextureSize == -1)
+											_tgaTextureSize = 0;
+									}*/
 					writer.Write(TgaTextureSize);
 					writer.Write(_creationTimeSinceEpoch);
 					if (!string.IsNullOrEmpty(Texture))

@@ -13,8 +13,8 @@
 
 using System.Collections.Generic;
 using SilentHunter;
-using SilentHunter.Controllers.Decoration;
 using SilentHunter.Controllers;
+using SilentHunter.Controllers.Decoration;
 
 namespace Particles
 {

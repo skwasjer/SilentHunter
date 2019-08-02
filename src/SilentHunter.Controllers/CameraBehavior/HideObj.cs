@@ -11,8 +11,9 @@
  * 
 */
 
-using SilentHunter.Controllers;
 using System.Collections.Generic;
+using CameraManager;
+using SilentHunter.Controllers;
 
 namespace CameraBehavior
 {
@@ -25,6 +26,6 @@ namespace CameraBehavior
 		/// <summary>
 		/// Camera will be linked by this object.
 		/// </summary>
-		public List<CameraManager.Cameras> CamerasList;
+		public List<Cameras> CamerasList;
 	}
 }

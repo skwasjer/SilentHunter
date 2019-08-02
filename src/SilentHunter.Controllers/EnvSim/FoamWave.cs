@@ -22,11 +22,9 @@ namespace EnvSim
 		: Controller
 	{
 		/// <summary>
-		/// 
 		/// </summary>
 		public float LifeTime;
 		/// <summary>
-		/// 
 		/// </summary>
 		public int BowWave;
 	}

@@ -11,8 +11,8 @@
  * 
 */
 
-using SilentHunter.Controllers;
 using System.Collections.Generic;
+using SilentHunter.Controllers;
 using SilentHunter.Controllers.Decoration;
 
 namespace EnvSim
@@ -26,12 +26,13 @@ namespace EnvSim
 		/// <summary>
 		/// Clouds altitude.
 		/// </summary>
-		[Optional, SHVersion(SHVersions.SH4)]
-		public float? Altitude;		
+		[Optional]
+		[SHVersion(SHVersions.SH4)]
+		public float? Altitude;
 		/// <summary>
 		/// Wind direction and speed.
 		/// </summary>
-		public CloudWind Wind;	
+		public CloudWind Wind;
 		/// <summary>
 		/// Texture for each weather condition.
 		/// </summary>
@@ -39,13 +40,13 @@ namespace EnvSim
 		/// <summary>
 		/// Normal map for each weather condition.
 		/// </summary>
-		[Optional, SHVersion(SHVersions.SH4)]
+		[Optional]
+		[SHVersion(SHVersions.SH4)]
 		public List<string> CloudNormalMaps;
 		/// <summary>
 		/// Scene parameters.
 		/// </summary>
 		public List<SceneParameters> SceneParameters;
-
 	}
 
 	[SHType]
@@ -54,12 +55,14 @@ namespace EnvSim
 		/// <summary>
 		/// Bumpiness (1..1000).
 		/// </summary>
-		[Optional, SHVersion(SHVersions.SH4)]
+		[Optional]
+		[SHVersion(SHVersions.SH4)]
 		public float? Bumpiness;
 		/// <summary>
-		/// Clouds edge blur factor (0..1). 
+		/// Clouds edge blur factor (0..1).
 		/// </summary>
-		[Optional, SHVersion(SHVersions.SH4)]
+		[Optional]
+		[SHVersion(SHVersions.SH4)]
 		public float? EdgeBlur;
 		/// <summary>
 		/// The clouds reflection alpha (0..1).

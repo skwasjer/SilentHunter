@@ -20,6 +20,6 @@ namespace SHControllers
 	/// </summary>
 	public class ShellCounter
 		: Controller
-	{		
+	{
 	}
 }

@@ -11,8 +11,8 @@
  * 
 */
 
-using SilentHunter.Controllers;
 using System.Collections.Generic;
+using SilentHunter.Controllers;
 using SilentHunter.Controllers.Decoration;
 
 namespace SHSim
@@ -22,7 +22,7 @@ namespace SHSim
 	/// </summary>
 	public class wpn_SubTorpedoSys
 		: Controller
-	{		
+	{
 		/// <summary>
 		/// Automatically open the tube doors before torpedo launch.
 		/// </summary>
@@ -49,7 +49,6 @@ namespace SHSim
 		public ExternalStorages External;
 	}
 
-
 	[SHType]
 	public class Tube
 	{
@@ -66,7 +65,6 @@ namespace SHSim
 		/// </summary>
 		public TorpedoType torpedo;
 	}
-
 
 	[SHType]
 	public class TorpedoRooms
@@ -119,7 +117,4 @@ namespace SHSim
 		/// </summary>
 		public float xfer_time;
 	}
-
-
-	
 }

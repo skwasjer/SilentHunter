@@ -73,7 +73,7 @@ namespace SilentHunter.Dat.Chunks
 				WeightsAndIndices.Clear();
 
 				int count = reader.ReadInt32();
-				for (var i = 0; i < count; i++)
+				for (int i = 0; i < count; i++)
 				{
 					WeightsAndIndices.Add(reader.ReadStruct<BoneInfluence>());
 				}

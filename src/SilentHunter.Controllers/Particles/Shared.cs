@@ -11,9 +11,9 @@
  * 
 */
 
-using SilentHunter.Controllers;
 using System.Collections.Generic;
 using SilentHunter;
+using SilentHunter.Controllers;
 using SilentHunter.Controllers.Decoration;
 
 namespace Particles
@@ -92,43 +92,43 @@ namespace Particles
 		[Optional]
 		public float? OpacityScale;
 	}
-/*
-	/// <summary>
-	/// Global scale coefficients for near subparticles.
-	/// </summary>
-	[SHType]
-	public class GlobalScale2
-	{
+	/*
 		/// <summary>
-		/// Near distance value (as first LOD) in meters.
+		/// Global scale coefficients for near subparticles.
 		/// </summary>
-		[Optional]
-		public Nullable<float> Distance;
-		/// <summary>
-		/// Particle life scale.
-		/// </summary>
-		public float LifeScale;
-		/// <summary>
-		/// Global density (number) scale.
-		/// </summary>
-		public float DensityScale;
-		/// <summary>
-		/// Global velocity scale.
-		/// </summary>
-		public float VelocityScale;
-		/// <summary>
-		/// Global weight scale.
-		/// </summary>
-		public float WeightScale;
-		/// <summary>
-		/// Global size scale.
-		/// </summary>
-		public float SizeScale;
-		/// <summary>
-		/// Global opacity scale.
-		/// </summary>
-		public float OpacityScale;
-	}*/
+		[SHType]
+		public class GlobalScale2
+		{
+			/// <summary>
+			/// Near distance value (as first LOD) in meters.
+			/// </summary>
+			[Optional]
+			public Nullable<float> Distance;
+			/// <summary>
+			/// Particle life scale.
+			/// </summary>
+			public float LifeScale;
+			/// <summary>
+			/// Global density (number) scale.
+			/// </summary>
+			public float DensityScale;
+			/// <summary>
+			/// Global velocity scale.
+			/// </summary>
+			public float VelocityScale;
+			/// <summary>
+			/// Global weight scale.
+			/// </summary>
+			public float WeightScale;
+			/// <summary>
+			/// Global size scale.
+			/// </summary>
+			public float SizeScale;
+			/// <summary>
+			/// Global opacity scale.
+			/// </summary>
+			public float OpacityScale;
+		}*/
 
 	/// <summary>
 	/// Global scale coefficients for far subparticles.
@@ -241,7 +241,7 @@ namespace Particles
 		/// Size scale factor.
 		/// </summary>
 		public float Scale;
-	}	
+	}
 
 	public enum BlendMode
 	{
@@ -293,7 +293,6 @@ namespace Particles
 		/// Frames per second.
 		/// </summary>
 		public float FPS;
-
 	}
 
 	public enum Run
@@ -321,7 +320,6 @@ namespace Particles
 	}
 
 	/// <summary>
-	/// 
 	/// </summary>
 	/// <remarks>Note: this type is not the same as the MinMax type declared by the SilentHunter.Core library.</remarks>
 	public struct MinMax
@@ -344,7 +342,6 @@ namespace Particles
 		WorldAligned,
 		Random
 	}
-
 
 	[SHType]
 	public class ParticleSize

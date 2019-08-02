@@ -11,9 +11,9 @@
  * 
 */
 
-using SilentHunter.Controllers;
 using System.Collections.Generic;
 using SilentHunter;
+using SilentHunter.Controllers;
 using SilentHunter.Controllers.Decoration;
 
 namespace CameraBehavior

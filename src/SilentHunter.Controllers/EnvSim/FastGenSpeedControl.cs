@@ -12,11 +12,11 @@
 */
 
 using SilentHunter;
-using SilentHunter.Controllers.Decoration;
 using SilentHunter.Controllers;
+using SilentHunter.Controllers.Decoration;
 
 namespace EnvSim
-{	
+{
 	/// <summary>
 	/// FastGenSpeedControl render controller. Interpolates the WindSpeed, Velocity, Weight, Size and Opacity of the ParticleGenerators between the min and max speed limits.
 	/// </summary>

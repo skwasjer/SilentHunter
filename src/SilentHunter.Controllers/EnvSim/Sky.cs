@@ -20,6 +20,6 @@ namespace EnvSim
 	/// </summary>
 	public class Sky
 		: Controller
-	{		
+	{
 	}
 }

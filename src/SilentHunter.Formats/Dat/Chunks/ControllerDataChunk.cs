@@ -36,7 +36,9 @@ namespace SilentHunter.Dat.Chunks
 						// To keep file integrity, we just store the data as unknown data.
 						if (_controllerData is byte[])
 						{
-							UnknownData.Add(new UnknownChunkData(_origin, _localOrigin, _controllerData,
+							UnknownData.Add(new UnknownChunkData(_origin,
+								_localOrigin,
+								_controllerData,
 								"Failed to read controller data. Either the data contains a bug, or S3D's controller definition is missing or incorrect."));
 						}
 					}

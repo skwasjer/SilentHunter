@@ -11,8 +11,8 @@
  * 
 */
 
-using SilentHunter.Controllers;
 using System.Collections.Generic;
+using SilentHunter.Controllers;
 using SilentHunter.Controllers.Decoration;
 
 namespace SHControllers
@@ -115,7 +115,6 @@ namespace SHControllers
 		public float ElevationMax;
 	}
 
-	
 	public enum SensorType
 	{
 		Visual,
@@ -125,5 +124,4 @@ namespace SHControllers
 		RadarWarning,
 		RadioDF
 	}
-
 }

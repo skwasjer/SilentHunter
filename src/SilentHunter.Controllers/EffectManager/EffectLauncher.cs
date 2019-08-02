@@ -12,9 +12,8 @@
 */
 
 using SilentHunter;
-using SilentHunter.Controllers.Decoration;
 using SilentHunter.Controllers;
-
+using SilentHunter.Controllers.Decoration;
 
 namespace EffectManager
 {
@@ -25,7 +24,7 @@ namespace EffectManager
 		: Controller
 	{
 		/// <summary>
-		/// The time to wait until launching the effect. 
+		/// The time to wait until launching the effect.
 		/// </summary>
 		public float Delay;
 		/// <summary>

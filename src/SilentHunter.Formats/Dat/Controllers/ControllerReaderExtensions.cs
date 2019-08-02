@@ -2,11 +2,10 @@
 using System.IO;
 using System.Reflection;
 using SilentHunter.Controllers.Decoration;
-using SilentHunter.Dat;
 using SilentHunter.Extensions;
 using skwas.IO;
 
-namespace SilentHunter.Formats
+namespace SilentHunter.Dat.Controllers
 {
 	internal static class ControllerReaderExtensions
 	{

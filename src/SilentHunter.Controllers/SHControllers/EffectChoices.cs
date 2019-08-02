@@ -11,22 +11,22 @@
  * 
 */
 
-using SilentHunter.Controllers.Decoration;
 using SilentHunter.Controllers;
+using SilentHunter.Controllers.Decoration;
 
 namespace SHControllers
 {
 	/// <summary>
-	/// EffectChoices controller. Replace the object with another one. Note: EffectChoices controller must be first on an object!         
+	/// EffectChoices controller. Replace the object with another one. Note: EffectChoices controller must be first on an object!
 	/// </summary>
 	public class EffectChoices
 		: Controller
-	{		
-		public WaterCondition Water;		
+	{
+		public WaterCondition Water;
 	}
 
 	/// <summary>
-	/// Water Condition 
+	/// Water Condition
 	/// </summary>
 	[SHType]
 	public class WaterCondition

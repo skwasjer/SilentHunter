@@ -59,7 +59,7 @@ namespace SHControllers
 	}
 
 	public struct DialValues
-	{		
+	{
 		public float Minimum;
 		public float Maximum;
 	}

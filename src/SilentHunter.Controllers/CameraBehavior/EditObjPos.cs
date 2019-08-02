@@ -31,5 +31,4 @@ namespace CameraBehavior
 		/// </summary>
 		public Vector3 InitialLocalPos;
 	}
-
 }

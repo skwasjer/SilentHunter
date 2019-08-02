@@ -8,7 +8,7 @@ namespace SilentHunter.Controllers
 	/// <summary>
 	/// A condition that is checked in a gamestate update.
 	/// </summary>
-	[DebuggerDisplay("ConditionIndex={ParentEntryIndex}, GotoEntry={GotoEntry}, Type={Type}, Name={Expression}, Value={Value}")]	
+	[DebuggerDisplay("ConditionIndex={ParentEntryIndex}, GotoEntry={GotoEntry}, Type={Type}, Name={Expression}, Value={Value}")]
 	public class StateMachineCondition
 	{
 		/// <summary>
@@ -16,7 +16,7 @@ namespace SilentHunter.Controllers
 		/// </summary>
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public int ParentEntryIndex;
-		
+
 		/// <summary>
 		/// The condition check type to perform.
 		/// </summary>

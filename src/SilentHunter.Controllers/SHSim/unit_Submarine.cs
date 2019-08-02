@@ -11,8 +11,8 @@
  * 
 */
 
-using SilentHunter.Controllers;
 using System.Collections.Generic;
+using SilentHunter.Controllers;
 using SilentHunter.Controllers.Decoration;
 
 namespace SHSim
@@ -24,7 +24,6 @@ namespace SHSim
 		: Controller
 	{
 		/// <summary>
-		/// 
 		/// </summary>
 		public unit_Ship unit_Ship;
 		/// <summary>
@@ -99,17 +98,20 @@ namespace SHSim
 		/// <summary>
 		/// Max dive ballast tanks flood speed [l/s].
 		/// </summary>
-		[Optional, SHVersion(SHVersions.SH4)]
+		[Optional]
+		[SHVersion(SHVersions.SH4)]
 		public float? DiveBT_flood_speed;
 		/// <summary>
 		/// Specifies whether the sub is diesel-electric or normal.
 		/// </summary>
-		[Optional, SHVersion(SHVersions.SH4)]
+		[Optional]
+		[SHVersion(SHVersions.SH4)]
 		public bool? Is_DieselElectric;
 		/// <summary>
 		/// Specifies whether the sub has hydrogen peroxide propulsion. (patch 1.5)
 		/// </summary>
-		[Optional, SHVersion(SHVersions.SH4)]
+		[Optional]
+		[SHVersion(SHVersions.SH4)]
 		public bool? HasHydrogenPeroxidProp;
 	}
 

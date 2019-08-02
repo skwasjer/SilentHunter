@@ -11,8 +11,8 @@
  * 
 */
 
-using SilentHunter.Controllers.Decoration;
 using SilentHunter.Controllers;
+using SilentHunter.Controllers.Decoration;
 
 namespace SHControllers
 {
@@ -39,7 +39,6 @@ namespace SHControllers
 		/// </summary>
 		public bool FrustumTest;
 		/// <summary>
-		/// 
 		/// </summary>
 		[Optional]
 		public float? MaxVisDistance;
@@ -53,5 +52,5 @@ namespace SHControllers
 		/// </summary>
 		[Optional]
 		public float? MaxVisDim;
-	}	
+	}
 }

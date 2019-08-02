@@ -3,7 +3,6 @@ using System.IO;
 using System.Reflection;
 using SilentHunter.Controllers.Decoration;
 using SilentHunter.Extensions;
-using SilentHunter.Formats;
 using skwas.IO;
 
 namespace SilentHunter.Dat.Controllers.Serialization

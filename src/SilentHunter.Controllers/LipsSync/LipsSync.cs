@@ -11,8 +11,8 @@
  * 
 */
 
-using SilentHunter.Controllers;
 using System.Collections.Generic;
+using SilentHunter.Controllers;
 
 namespace LipsSync
 {
@@ -23,12 +23,11 @@ namespace LipsSync
 		: Controller
 	{
 		/// <summary>
-		/// 
 		/// </summary>
-		public List<int> Phrases;	
+		public List<int> Phrases;
 		/// <summary>
 		/// List of morph set names.
 		/// </summary>
-		public List<string> MorphSetNames;	
+		public List<string> MorphSetNames;
 	}
 }

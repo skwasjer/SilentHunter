@@ -22,7 +22,6 @@ namespace SHSim
 		: Controller
 	{
 		/// <summary>
-		/// 
 		/// </summary>
 		public cmdr_AIUnit cmdr_AIUnit;
 	}

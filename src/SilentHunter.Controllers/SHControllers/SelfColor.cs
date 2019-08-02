@@ -11,8 +11,8 @@
  * 
 */
 
-using SilentHunter.Controllers;
 using System.Collections.Generic;
+using SilentHunter.Controllers;
 using SilentHunter.Controllers.Decoration;
 
 namespace SHControllers
@@ -30,7 +30,7 @@ namespace SHControllers
 		/// <summary>
 		/// List of colors.
 		/// </summary>
-		public List<ColorsList> ColorsList;		
+		public List<ColorsList> ColorsList;
 	}
 
 	public enum SelfColorVariable

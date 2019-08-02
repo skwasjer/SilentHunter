@@ -20,7 +20,7 @@ namespace SHSound
 	/// </summary>
 	public class ShipSound
 		: Controller
-	{		
+	{
 		/// <summary>
 		/// At standard RPM the sounds parameters are default.
 		/// </summary>

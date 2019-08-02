@@ -32,7 +32,6 @@ namespace CameraBehavior
 		/// <summary>
 		/// The maximum angle with Y axis.
 		/// </summary>
-		public float MaxAngle;		
+		public float MaxAngle;
 	}
-
 }

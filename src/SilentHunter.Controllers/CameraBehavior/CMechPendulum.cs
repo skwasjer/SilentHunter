@@ -26,5 +26,4 @@ namespace CameraBehavior
 		/// </summary>
 		public CElasticPendulum CElasticPendulum;
 	}
-
 }

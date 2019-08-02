@@ -11,8 +11,8 @@
  * 
 */
 
-using SilentHunter.Controllers;
 using System.Collections.Generic;
+using SilentHunter.Controllers;
 
 namespace LipsSync
 {
@@ -25,27 +25,27 @@ namespace LipsSync
 		/// <summary>
 		/// Interpolation time between expressions.
 		/// </summary>
-		public float InterpTime;	
+		public float InterpTime;
 		/// <summary>
 		/// Blink lowest time interval.
 		/// </summary>
-		public float LowTime;	
+		public float LowTime;
 		/// <summary>
 		/// Blink highest time interval.
 		/// </summary>
-		public float HighTime;	
+		public float HighTime;
 		/// <summary>
 		/// Time for eyelid to close.
 		/// </summary>
-		public float SpeedDown;	
+		public float SpeedDown;
 		/// <summary>
 		/// Time for eyelid to open.
 		/// </summary>
-		public float SpeedUp;	
+		public float SpeedUp;
 		/// <summary>
 		/// Time the eyelid is closed.
 		/// </summary>
-		public float StayDown;	
+		public float StayDown;
 		/// <summary>
 		/// List of expression names.
 		/// </summary>

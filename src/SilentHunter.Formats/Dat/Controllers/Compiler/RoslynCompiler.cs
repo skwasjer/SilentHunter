@@ -6,9 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Text;
 
 namespace SilentHunter.Dat.Controllers.Compiler
@@ -47,7 +47,6 @@ namespace SilentHunter.Dat.Controllers.Compiler
 				references,
 				new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
-			
 			string pdbPath = Path.Combine(Path.GetDirectoryName(options.OutputPath), Path.GetFileNameWithoutExtension(options.OutputPath) + ".pdb");
 			using (Stream dllStream = File.Open(options.OutputPath, FileMode.Create))
 			using (Stream pdbStream = File.Open(pdbPath, FileMode.Create))
@@ -70,13 +69,13 @@ namespace SilentHunter.Dat.Controllers.Compiler
 
 		private static void LogResults(EmitResult results)
 		{
-//			results.Output.Cast<string>().ToList().ForEach(s => Debug.WriteLine(s));
+			//			results.Output.Cast<string>().ToList().ForEach(s => Debug.WriteLine(s));
 			if (!results.Success)
 			{
 				// Display compilation errors.
 				var errorMsg = new StringBuilder();
 				errorMsg.AppendLine("Errors building assembly...");
-				foreach (var error in results.Diagnostics
+				foreach (IGrouping<Location, Diagnostic> error in results.Diagnostics
 					.Where(d => d.Severity >= DiagnosticSeverity.Warning)
 					.GroupBy(d => d.Location))
 				{

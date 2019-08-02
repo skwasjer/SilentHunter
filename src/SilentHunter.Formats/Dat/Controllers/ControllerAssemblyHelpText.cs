@@ -5,7 +5,6 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Xml;
-using SilentHunter.Extensions;
 
 namespace SilentHunter.Dat.Controllers
 {
@@ -66,6 +65,6 @@ namespace SilentHunter.Dat.Controllers
 
 		public string this[MemberInfo member] =>
 			member.GetCustomAttribute<DescriptionAttribute>()?.Description
-			?? this[$"{member.MemberType.ToString()[0]}:{member.DeclaringType.FullName}.{member.Name}"];
+		 ?? this[$"{member.MemberType.ToString()[0]}:{member.DeclaringType.FullName}.{member.Name}"];
 	}
 }

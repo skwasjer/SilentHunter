@@ -11,8 +11,8 @@
  * 
 */
 
-using SilentHunter.Controllers.Decoration;
 using SilentHunter.Controllers;
+using SilentHunter.Controllers.Decoration;
 
 namespace SHSim
 {
@@ -23,12 +23,10 @@ namespace SHSim
 		: Controller
 	{
 		/// <summary>
-		/// 
 		/// </summary>
 		[Optional]
 		public cmdr_AIShip cmdr_AIShip;
 		/// <summary>
-		/// 
 		/// </summary>
 		[Optional]
 		public cmdr_AIMerchant cmdr_AIMerchant;

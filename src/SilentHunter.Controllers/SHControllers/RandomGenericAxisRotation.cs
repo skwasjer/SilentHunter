@@ -50,7 +50,5 @@ namespace SHControllers
 		/// The local axis to rotate around.
 		/// </summary>
 		public Axis Axe;
-
 	}
-
 }

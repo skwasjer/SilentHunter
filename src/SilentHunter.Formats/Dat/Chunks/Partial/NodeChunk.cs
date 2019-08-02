@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using skwas.IO;
 
@@ -152,7 +151,8 @@ namespace SilentHunter.Dat.Chunks.Partial
 				ParentId = reader.ReadUInt64();
 				ModelId = reader.ReadUInt64();
 
-				UnknownData.Add(new UnknownChunkData(regionStream?.BaseStream.Position ?? stream.Position, stream.Position,
+				UnknownData.Add(new UnknownChunkData(regionStream?.BaseStream.Position ?? stream.Position,
+					stream.Position,
 					reader.ReadByte(),
 					"The byte just before the 'Visibility' byte. No idea what it means. Values found: 1, 2, 128, 64, possibly others."));
 
@@ -186,7 +186,7 @@ namespace SilentHunter.Dat.Chunks.Partial
 				int count = reader.ReadInt32();
 				if (count > 0) // If 0, then we are at end of chunk...
 				{
-					for (var i = 0; i < count; i++)
+					for (int i = 0; i < count; i++)
 					{
 						// Read material id...
 						Materials.Add(reader.ReadUInt64());
@@ -242,16 +242,20 @@ namespace SilentHunter.Dat.Chunks.Partial
 						int size = reader.ReadInt32();
 						if (size > 0)
 						{
-							UnknownData.Add(new UnknownChunkData(basePos, curPos, size,
+							UnknownData.Add(new UnknownChunkData(basePos,
+								curPos,
+								size,
 								"Array size specifier. Some chunks with subtype 100 seem to have this size specifier, followed by an int-array of data. The 'size' seems to match the number of vertices of a linked model, and looks to be related to animation. In most cases though, this specifier is just 0 and the final data of the chunk."));
 
 							var remainingIntData = new int[size];
-							for (var i = 0; i < size; i++)
+							for (int i = 0; i < size; i++)
 							{
 								remainingIntData[i] = reader.ReadInt32();
 							}
 
-							UnknownData.Add(new UnknownChunkData(basePos + 4, curPos + 4, remainingIntData,
+							UnknownData.Add(new UnknownChunkData(basePos + 4,
+								curPos + 4,
+								remainingIntData,
 								"Array. Some chunks with subtype 100 seem to have this array of ints.  The number of items seems to match the number of vertices of a linked model, and looks to be related to animation."));
 						}
 

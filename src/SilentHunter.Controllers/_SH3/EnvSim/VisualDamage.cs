@@ -13,7 +13,6 @@
 
 using SilentHunter.Controllers;
 
-
 namespace SH3.EnvSim
 {
 	/// <summary>

@@ -1,8 +1,8 @@
 ﻿#if DEBUG
 using System;
+using System.IO;
 using System.Reflection;
 using skwas.IO;
-using System.IO;
 
 namespace SilentHunter.Extensions
 {

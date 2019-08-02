@@ -11,8 +11,8 @@
  * 
 */
 
-using SilentHunter.Controllers.Decoration;
 using SilentHunter.Controllers;
+using SilentHunter.Controllers.Decoration;
 
 namespace SH4.EnvSim
 {
@@ -33,7 +33,7 @@ namespace SH4.EnvSim
 		/// <summary>
 		/// Fixed length.
 		/// </summary>
-		public float FixedLength;		
+		public float FixedLength;
 		/// <summary>
 		/// Front width of the wake.
 		/// </summary>
@@ -53,12 +53,10 @@ namespace SH4.EnvSim
 		[Optional]
 		public float? MinAltitude;
 		/// <summary>
-		/// 
 		/// </summary>
 		[Optional]
 		public bool? UseRootAltitude;
 		/// <summary>
-		/// 
 		/// </summary>
 		[Optional]
 		public float? MaxOpacitySpeed;

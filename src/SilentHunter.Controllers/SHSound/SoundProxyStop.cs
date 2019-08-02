@@ -26,7 +26,6 @@ namespace SHSound
 		/// </summary>
 		public string SoundIdentifier;
 		/// <summary>
-		/// 
 		/// </summary>
 		public int Category;
 	}

@@ -20,6 +20,6 @@ namespace SHSound
 	/// </summary>
 	public class AmbientSound
 		: Controller
-	{		
+	{
 	}
 }

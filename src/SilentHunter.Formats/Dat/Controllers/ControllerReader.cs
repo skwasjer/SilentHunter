@@ -33,7 +33,7 @@ namespace SilentHunter.Dat.Controllers
 		public object Read(Stream stream, string controllerName)
 		{
 			long currentPos = stream.Position;
-			var availableData = (int)(stream.Length - stream.Position);
+			int availableData = (int)(stream.Length - stream.Position);
 
 			var reader = new BinaryReader(stream, Encoding.ParseEncoding);
 

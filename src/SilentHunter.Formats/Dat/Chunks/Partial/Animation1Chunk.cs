@@ -19,11 +19,14 @@ namespace SilentHunter.Dat.Chunks.Partial
 		/// </summary>
 		public override ulong Id
 		{
-			get { return base.Id; }
+			get => base.Id;
 			set
 			{
 				if (value > uint.MaxValue)
+				{
 					throw new ArgumentOutOfRangeException("The id for this chunk is only 4 bytes in length (UInt32).");
+				}
+
 				base.Id = value;
 			}
 		}
@@ -33,11 +36,14 @@ namespace SilentHunter.Dat.Chunks.Partial
 		/// </summary>
 		public override ulong ParentId
 		{
-			get { return base.ParentId; }
+			get => base.ParentId;
 			set
 			{
 				if (value > uint.MaxValue)
+				{
 					throw new ArgumentOutOfRangeException("The parent id for this chunk is only 4 bytes in length (UInt32).");
+				}
+
 				base.ParentId = value;
 			}
 		}
@@ -66,7 +72,9 @@ namespace SilentHunter.Dat.Chunks.Partial
 
 				// The rest of the stream holds the name + terminating zero.
 				if (stream.Length > stream.Position)
+				{
 					Name = reader.ReadNullTerminatedString();
+				}
 
 				// Make sure we are at end of stream.
 				//if (stream.Length > stream.Position)
@@ -88,9 +96,13 @@ namespace SilentHunter.Dat.Chunks.Partial
 
 				// Write name + terminating zero.
 				if (!string.IsNullOrEmpty(Name))
+				{
 					writer.Write(Name, '\0');
+				}
 				else
+				{
 					writer.Write(byte.MinValue);
+				}
 			}
 		}
 

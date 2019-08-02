@@ -28,6 +28,6 @@ namespace Sound
 		/// <summary>
 		/// Playlist identifier.
 		/// </summary>
-		public string Identifier;		
+		public string Identifier;
 	}
 }

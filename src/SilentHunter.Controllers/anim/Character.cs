@@ -21,6 +21,5 @@ namespace anim
 	public class Character
 		: Controller
 	{
-
 	}
 }

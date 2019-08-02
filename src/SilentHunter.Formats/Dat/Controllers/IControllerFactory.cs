@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using SilentHunter.Controllers;
 
 namespace SilentHunter.Dat.Controllers

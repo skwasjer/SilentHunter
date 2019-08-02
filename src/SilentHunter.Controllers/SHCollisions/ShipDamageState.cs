@@ -20,6 +20,6 @@ namespace SHCollisions
 	/// </summary>
 	public class ShipDamageState
 		: Controller
-	{		
+	{
 	}
 }

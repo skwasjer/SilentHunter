@@ -16,7 +16,7 @@ using SilentHunter.Controllers;
 namespace CameraBehavior
 {
 	/// <summary>
-	/// Spring controller. 
+	/// Spring controller.
 	/// </summary>
 	public class Spring
 		: Controller

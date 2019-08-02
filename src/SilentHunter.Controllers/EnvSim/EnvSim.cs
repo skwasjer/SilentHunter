@@ -11,8 +11,8 @@
  * 
 */
 
-using SilentHunter.Controllers;
 using System.Collections.Generic;
+using SilentHunter.Controllers;
 using SilentHunter.Controllers.Decoration;
 
 namespace EnvSim
@@ -114,11 +114,9 @@ namespace EnvSim
 		/// </summary>
 		public float MaskTextureScale;
 		/// <summary>
-		/// 
 		/// </summary>
 		public float WindSpeed;
 		/// <summary>
-		/// 
 		/// </summary>
 		public float AnimationSpeed;
 	}
@@ -143,39 +141,35 @@ namespace EnvSim
 		/// </summary>
 		public float UnderwaterObjectsRelativeZMax;
 		/// <summary>
-		/// 
 		/// </summary>
 		public float CloudsRelativeZMin;
 		/// <summary>
-		/// 
 		/// </summary>
 		public float CloudsRelativeZMax;
 		/// <summary>
-		/// 
-		/// </summary>		
-		[Optional, SHVersion(SHVersions.SH3)]
+		/// </summary>
+		[Optional]
+		[SHVersion(SHVersions.SH3)]
 		public float? SkyRelativeZMin;
 		/// <summary>
-		/// 
 		/// </summary>
-		[Optional, SHVersion(SHVersions.SH3)]
+		[Optional]
+		[SHVersion(SHVersions.SH3)]
 		public float? SkyRelativeZMax;
 		/// <summary>
-		/// 
-		/// </summary>		
-		[Optional, SHVersion(SHVersions.SH4)]
+		/// </summary>
+		[Optional]
+		[SHVersion(SHVersions.SH4)]
 		public float? SkyYMin;
 		/// <summary>
-		/// 
 		/// </summary>
-		[Optional, SHVersion(SHVersions.SH4)]
+		[Optional]
+		[SHVersion(SHVersions.SH4)]
 		public float? SkyYMax;
 		/// <summary>
-		/// 
 		/// </summary>
 		public float SeaRelativeZMin;
 		/// <summary>
-		/// 
 		/// </summary>
 		public float SeaRelativeZMax;
 		/// <summary>
@@ -246,11 +240,9 @@ namespace EnvSim
 		/// </summary>
 		public float MaxUnderwaterSunLightAngle;
 		/// <summary>
-		/// 
 		/// </summary>
 		public float SunHaloStartFade;
 		/// <summary>
-		/// 
 		/// </summary>
 		public float SunHaloEndFade;
 		/// <summary>
@@ -331,7 +323,8 @@ namespace EnvSim
 		/// <summary>
 		/// Water specularity parameters.
 		/// </summary>
-		[Optional, SHVersion(SHVersions.SH4)]
+		[Optional]
+		[SHVersion(SHVersions.SH4)]
 		public WaterSpecularity WaterSpecularity;
 		/// <summary>
 		/// Fresnel reflection coefficient.

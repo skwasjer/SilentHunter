@@ -11,9 +11,9 @@
  * 
 */
 
-using SilentHunter.Controllers;
 using System.Collections.Generic;
 using SilentHunter;
+using SilentHunter.Controllers;
 
 namespace BezierWaypoint
 {
@@ -28,11 +28,9 @@ namespace BezierWaypoint
 		/// </summary>
 		public ulong Link;
 		/// <summary>
-		/// 
 		/// </summary>
 		public Vector3 Tangent;
 		/// <summary>
-		/// 
 		/// </summary>
 		public float Speed;
 		/// <summary>
@@ -53,5 +51,4 @@ namespace BezierWaypoint
 	{
 		LinInterpSpeed = 1
 	}
-
 }

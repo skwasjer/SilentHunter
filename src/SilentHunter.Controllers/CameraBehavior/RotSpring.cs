@@ -25,7 +25,7 @@ namespace CameraBehavior
 		/// <summary>
 		/// Spring.
 		/// </summary>
-		public Spring Spring;		
+		public Spring Spring;
 		/// <summary>
 		/// The point the owner's Z axe points to. Its (x, y, z) coordinates are local into the target object's system.
 		/// </summary>

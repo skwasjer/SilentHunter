@@ -34,11 +34,11 @@ namespace SilentHunter.Controllers
 			where T : struct
 		{
 			FieldInfo[] fields = typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Public);
-			for (var i = 0; i < Vertices.Count; i += fields.Length)
+			for (int i = 0; i < Vertices.Count; i += fields.Length)
 			{
 				// Box value type.
 				var inst = (object)new T();
-				for (var j = 0; j < fields.Length; j++)
+				for (int j = 0; j < fields.Length; j++)
 				{
 					float val = Scale * Vertices[i + j] + Translation;
 					fields[j].SetValue(inst, val);
@@ -70,10 +70,10 @@ namespace SilentHunter.Controllers
 			};
 
 			foreach (float floatValue in vertices
-				.SelectMany(v => fields
-					.Select(f => (float)f.GetValue(v))
+					.SelectMany(v => fields
+						.Select(f => (float)f.GetValue(v))
+					)
 				)
-			)
 			{
 				compressedMeshTransform.Vertices.Add(
 					(short)Math.Round(
@@ -84,7 +84,7 @@ namespace SilentHunter.Controllers
 
 			// Add extra zeroes, in case a fixed length of vertices is required. Animation sequences require each frame to have the same number of vertices. Note however, that adding zeroes will break the mesh animation.
 			// This is an edge case that's simply as a fix to prevent crashes, but is not an actual solution and should typically be handled externally.
-			for (var i = 0; i < (padToCount - vertices.Count) * fields.Length; i++)
+			for (int i = 0; i < (padToCount - vertices.Count) * fields.Length; i++)
 			{
 				compressedMeshTransform.Vertices.Add(0);
 			}
@@ -108,10 +108,10 @@ namespace SilentHunter.Controllers
 
 			// We need highest and lowest possible floats from all vertices.
 			foreach (float floatValue in vertices
-				.SelectMany(v => fields
-					.Select(f => (float)f.GetValue(v))
+					.SelectMany(v => fields
+						.Select(f => (float)f.GetValue(v))
+					)
 				)
-			)
 			{
 				fmax = Math.Max(floatValue, fmax);
 				fmin = Math.Min(floatValue, fmin);

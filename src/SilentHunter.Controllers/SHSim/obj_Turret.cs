@@ -11,8 +11,8 @@
  * 
 */
 
-using SilentHunter.Controllers;
 using System.Collections.Generic;
+using SilentHunter.Controllers;
 using SilentHunter.Controllers.Decoration;
 
 namespace SHSim
@@ -46,7 +46,7 @@ namespace SHSim
 		/// <summary>
 		/// Fire restrictions.
 		/// </summary>
-		public List<FireRestrictions> Fire;		
+		public List<FireRestrictions> Fire;
 	}
 
 	[SHType]
@@ -78,11 +78,9 @@ namespace SHSim
 		/// </summary>
 		public float speed;
 		/// <summary>
-		/// 
 		/// </summary>
 		public string anm_train;
 		/// <summary>
-		/// 
 		/// </summary>
 		public string anm_human;
 	}
@@ -103,11 +101,9 @@ namespace SHSim
 		/// </summary>
 		public float speed;
 		/// <summary>
-		/// 
 		/// </summary>
 		public string anm_barel;
 		/// <summary>
-		/// 
 		/// </summary>
 		public string anm_human;
 	}
@@ -116,19 +112,15 @@ namespace SHSim
 	public class FireRestrictions
 	{
 		/// <summary>
-		/// 
 		/// </summary>
 		public float trav_min;
 		/// <summary>
-		/// 
 		/// </summary>
 		public float trav_max;
 		/// <summary>
-		/// 
 		/// </summary>
 		public float elev_min;
 		/// <summary>
-		/// 
 		/// </summary>
 		public float elev_max;
 	}

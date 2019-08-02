@@ -8,10 +8,11 @@ namespace SilentHunter.Extensions
 		public static IEnumerable<T> Across<T>(T first, Func<T, T> next)
 			where T : class
 		{
-			var item = first;
+			T item = first;
 			while (item != null)
 			{
 				yield return item;
+
 				item = next(item);
 			}
 		}

@@ -11,8 +11,8 @@
  * 
 */
 
-using SilentHunter.Controllers.Decoration;
 using SilentHunter.Controllers;
+using SilentHunter.Controllers.Decoration;
 
 namespace SHSim
 {
@@ -86,7 +86,6 @@ namespace SHSim
 		[Optional]
 		public float? FR;
 	}
-
 
 	[SHType]
 	public class obj_HydroDebugInfo

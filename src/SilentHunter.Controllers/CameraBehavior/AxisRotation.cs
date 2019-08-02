@@ -43,5 +43,4 @@ namespace CameraBehavior
 		/// </summary>
 		public Axis Axe;
 	}
-
 }

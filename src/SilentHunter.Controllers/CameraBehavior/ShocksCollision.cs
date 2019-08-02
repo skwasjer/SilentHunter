@@ -24,11 +24,10 @@ namespace CameraBehavior
 		/// <summary>
 		/// A pendulum controller which works on a mechanical object.
 		/// </summary>
-		public CElasticPendulum CElasticPendulum;	
+		public CElasticPendulum CElasticPendulum;
 		/// <summary>
 		/// The coeficient to apply on the shocks.
 		/// </summary>
 		public float Coef;
 	}
-
 }

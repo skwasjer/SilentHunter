@@ -1,5 +1,3 @@
-using System.Drawing;
-
 namespace SilentHunter.Dat
 {
 	/// <summary>
@@ -44,7 +42,7 @@ namespace SilentHunter.Dat
 		/// </returns>
 		public override string ToString()
 		{
-			return Type == LightType.Omni 
+			return Type == LightType.Omni
 				? $"Light ({Type}), color={Color}, attenuation={Attenuation}, radius={Radius}"
 				: $"Light ({Type}), color={Color}, intensity={Attenuation}";
 		}

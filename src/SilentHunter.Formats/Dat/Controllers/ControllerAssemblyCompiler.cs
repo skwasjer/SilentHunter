@@ -25,8 +25,8 @@ namespace SilentHunter.Dat.Controllers
 				IsLocal = isLocal;
 			}
 
-			public string Location { get; set; }
-			public bool IsLocal { get; set; }
+			public string Location { get; }
+			public bool IsLocal { get; }
 		}
 
 		private readonly ICSharpCompiler _compiler;
@@ -90,7 +90,7 @@ namespace SilentHunter.Dat.Controllers
 			string asmOutputFile = Path.Combine(outputPath, asmShortName + ".dll");
 			string docFile = Path.Combine(outputPath, asmShortName + ".xml");
 
-			var sourceFiles = GetCSharpFiles(_controllerPath);
+			ICollection<CacheFileReference> sourceFiles = GetCSharpFiles(_controllerPath);
 			if (!sourceFiles.Any())
 			{
 				throw new InvalidOperationException("No controller source files found.");
@@ -134,10 +134,7 @@ namespace SilentHunter.Dat.Controllers
 			{
 				// Find the dependency.
 				string dependencyFullPath = _dependencySearchPaths
-					.Union(new[]
-					{
-						baseDirectory
-					})
+					.Union(new[] { baseDirectory })
 					.Select(p =>
 					{
 						string depFilename = Path.Combine(p, requiredDependency.Location);
@@ -151,7 +148,6 @@ namespace SilentHunter.Dat.Controllers
 				}
 			}
 		}
-
 
 		private string GetTargetDir()
 		{
@@ -198,7 +194,7 @@ namespace SilentHunter.Dat.Controllers
 			string cacheFile = outputFile + ".cache";
 			string outputPath = Path.GetDirectoryName(outputFile);
 
-			var mustCompile = true;
+			bool mustCompile = true;
 			var serializer = new XmlSerializer(typeof(CompilerBuildCache));
 
 			// Load the cache file.
@@ -212,8 +208,8 @@ namespace SilentHunter.Dat.Controllers
 
 				// Check if cache is out of sync and that all files exist.
 				mustCompile = !File.Exists(outputFile)
-				              || !oldCache.Equals(assemblyCache)
-				              || oldCache.SourceFiles.Any(src => !File.Exists(Path.Combine(controllerPath, src.Name)));
+				 || !oldCache.Equals(assemblyCache)
+				 || oldCache.SourceFiles.Any(src => !File.Exists(Path.Combine(controllerPath, src.Name)));
 			}
 
 			// If no changes in source files, return.

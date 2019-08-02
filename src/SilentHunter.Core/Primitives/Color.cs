@@ -67,7 +67,7 @@ namespace SilentHunter
 
 		public int ToArgb()
 		{
-			return (int)((long)A << 24 | (long)R << 16 | (long)G << 8 | B);
+			return (int)(((long)A << 24) | ((long)R << 16) | ((long)G << 8) | B);
 		}
 
 		public bool Equals(Color other)

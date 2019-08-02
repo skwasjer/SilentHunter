@@ -11,8 +11,8 @@
  * 
 */
 
-using SilentHunter.Controllers;
 using System.Collections.Generic;
+using SilentHunter.Controllers;
 
 namespace Sound
 {
@@ -74,13 +74,13 @@ namespace Sound
 
 	public enum PlayMode
 	{
-		Single, 
+		Single,
 		Sequence,
 		Shuffle
 	}
 
 	public enum Preload
-	{ 
+	{
 		NoPreload,
 		FullPreload
 	}

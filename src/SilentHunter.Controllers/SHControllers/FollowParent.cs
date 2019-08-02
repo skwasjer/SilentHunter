@@ -11,8 +11,8 @@
  * 
 */
 
-using SilentHunter.Controllers;
 using SilentHunter;
+using SilentHunter.Controllers;
 
 namespace SHControllers
 {
@@ -23,11 +23,11 @@ namespace SHControllers
 		: Controller
 	{
 		/// <summary>
-		/// Follow parent's global translation. 
+		/// Follow parent's global translation.
 		/// </summary>
 		public BoolVector3 Translation;
 		/// <summary>
-		/// Follow parent's global rotation. 
+		/// Follow parent's global rotation.
 		/// </summary>
 		public BoolVector3 Rotation;
 		/// <summary>

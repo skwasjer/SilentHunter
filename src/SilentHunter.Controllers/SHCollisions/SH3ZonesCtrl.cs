@@ -11,9 +11,9 @@
  * 
 */
 
-using SilentHunter.Controllers;
 using System.Collections.Generic;
 using SilentHunter;
+using SilentHunter.Controllers;
 using SilentHunter.Controllers.Decoration;
 
 namespace SHCollisions
@@ -68,13 +68,11 @@ namespace SHCollisions
 	public class Box
 	{
 		/// <summary>
-		/// 
 		/// </summary>
 		public Vector3 Min;
 		/// <summary>
-		/// 
 		/// </summary>
-		public Vector3 Max;		
+		public Vector3 Max;
 		/// <summary>
 		/// The type of zone.
 		/// </summary>

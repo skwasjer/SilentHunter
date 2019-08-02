@@ -11,6 +11,7 @@
  * 
 */
 
+using SHControllers;
 using SilentHunter.Controllers;
 
 namespace SHSim
@@ -24,7 +25,7 @@ namespace SHSim
 		/// <summary>
 		/// The type of the sensor.
 		/// </summary>
-		public SHControllers.SensorType Type;
+		public SensorType Type;
 		/// <summary>
 		/// The minimum range of the sensor [m].
 		/// </summary>

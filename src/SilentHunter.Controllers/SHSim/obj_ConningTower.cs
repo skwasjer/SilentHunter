@@ -20,6 +20,6 @@ namespace SHSim
 	/// </summary>
 	public class obj_ConningTower
 		: Controller
-	{		
+	{
 	}
 }

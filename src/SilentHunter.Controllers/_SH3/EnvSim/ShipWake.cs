@@ -11,10 +11,9 @@
  * 
 */
 
-using SilentHunter.Controllers;
-
 using System.Collections.Generic;
 using SilentHunter;
+using SilentHunter.Controllers;
 using SilentHunter.Controllers.Decoration;
 
 namespace SH3.EnvSim
@@ -146,8 +145,8 @@ namespace SH3.EnvSim
 		/// Initial relative position.
 		/// </summary>
 		public Vector2XZ StartPosition;
-	}	
-	
+	}
+
 	[SHType]
 	public class ShipWakeSpeed
 		: Controller
@@ -193,5 +192,5 @@ namespace SH3.EnvSim
 		/// Over this speed the foam has full opacity.
 		/// </summary>
 		public float FullOpacitySpeed;
-	}	
+	}
 }

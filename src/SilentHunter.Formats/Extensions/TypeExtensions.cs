@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using SilentHunter.Controllers;
 using SilentHunter.Controllers.Decoration;
-using SilentHunter.Dat;
 
 namespace SilentHunter.Extensions
 {
@@ -17,8 +16,9 @@ namespace SilentHunter.Extensions
 
 		private static IEnumerable<Type> TypesAssignableFrom(Type candidateType)
 		{
-			return candidateType.GetTypeInfo().ImplementedInterfaces.Concat(
-				Traverse.Across(candidateType, t => t.GetTypeInfo().BaseType));
+			return candidateType.GetTypeInfo()
+				.ImplementedInterfaces.Concat(
+					Traverse.Across(candidateType, t => t.GetTypeInfo().BaseType));
 		}
 
 		// ReSharper disable once InconsistentNaming

@@ -11,8 +11,8 @@
  * 
 */
 
-using SilentHunter.Controllers.Decoration;
 using SilentHunter.Controllers;
+using SilentHunter.Controllers.Decoration;
 
 namespace CameraBehavior
 {
@@ -32,5 +32,4 @@ namespace CameraBehavior
 		[Optional]
 		public int? InstaceOccurence;
 	}
-
 }

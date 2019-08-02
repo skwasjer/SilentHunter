@@ -11,8 +11,8 @@
  * 
 */
 
-using SilentHunter.Controllers;
 using System.Collections.Generic;
+using SilentHunter.Controllers;
 using SilentHunter.Controllers.Decoration;
 
 namespace SHSim
@@ -52,6 +52,5 @@ namespace SHSim
 		/// Visual back wing objects.
 		/// </summary>
 		public List<string> Back;
-
 	}
 }

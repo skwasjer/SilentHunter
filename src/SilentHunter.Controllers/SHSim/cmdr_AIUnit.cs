@@ -21,6 +21,5 @@ namespace SHSim
 	public class cmdr_AIUnit
 		: Controller
 	{
-
 	}
 }

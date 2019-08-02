@@ -34,7 +34,7 @@ namespace SilentHunter.Dat.Chunks.Partial
 
 		public UvMap[] TextureIndices
 		{
-			get { return _textureIndices.ToArray(); }
+			get => _textureIndices.ToArray();
 			set
 			{
 				_textureIndices.Clear();
@@ -64,14 +64,15 @@ namespace SilentHunter.Dat.Chunks.Partial
 
 				//https://www.subsim.com/radioroom/showthread.php?p=1177807&highlight=animmeshtype.jpg#post1177807
 				UnknownData.Add(new UnknownChunkData(
-					regionStream?.BaseStream.Position ?? stream.Position, stream.Position,
+					regionStream?.BaseStream.Position ?? stream.Position,
+					stream.Position,
 					Unknown = reader.ReadByte(),
 					"Some sort of flags, with hints for how to render the model. Thinks like culling? Which channels are supported?")
-					);
+				);
 
 #if DEBUG
-				var debugMsg = "Model:\t" + Path.GetFileName(stream.GetBaseStreamName());
-				debugMsg += "\t" + UnknownData[0].Data.ToString();
+				string debugMsg = "Model:\t" + Path.GetFileName(stream.GetBaseStreamName());
+				debugMsg += "\t" + UnknownData[0].Data;
 				//Debug.WriteLine(debugMsg);
 #endif
 
@@ -103,28 +104,28 @@ namespace SilentHunter.Dat.Chunks.Partial
 		{
 			// Read a Vector3 per vertex.
 			Normals = new Vector3[Vertices.Length];
-			for (var i = 0; i < Normals.Length; i++)
+			for (int i = 0; i < Normals.Length; i++)
+			{
 				Normals[i] = reader.ReadStruct<Vector3>();
+			}
 		}
 
 		private void LoadUvMap(BinaryReader reader)
 		{
 			// Get map channel count.
-			var mapCount = reader.ReadByte();
-			for (var i = 0; i < mapCount; i++)
+			byte mapCount = reader.ReadByte();
+			for (int i = 0; i < mapCount; i++)
 			{
 				// Get channel index.
-				var uvChannel = reader.ReadByte();
+				byte uvChannel = reader.ReadByte();
 
-				var textureIndices = new ushort[FaceMaterialIndices.Length*3];
-				for (var j = 0; j < textureIndices.Length; j++)
-					textureIndices[j] = reader.ReadUInt16();
-
-				_textureIndices.Add(new UvMap
+				var textureIndices = new ushort[FaceMaterialIndices.Length * 3];
+				for (int j = 0; j < textureIndices.Length; j++)
 				{
-					Channel = uvChannel,
-					TextureIndices = textureIndices
-				});
+					textureIndices[j] = reader.ReadUInt16();
+				}
+
+				_textureIndices.Add(new UvMap { Channel = uvChannel, TextureIndices = textureIndices });
 			}
 		}
 
@@ -132,15 +133,17 @@ namespace SilentHunter.Dat.Chunks.Partial
 		{
 			// Read vertices.
 			Vertices = new Vector3[reader.ReadInt32()];
-			for (var i = 0; i < Vertices.Length; i++)
+			for (int i = 0; i < Vertices.Length; i++)
+			{
 				Vertices[i] = reader.ReadStruct<Vector3>();
+			}
 
 			// Read faces, texture indices and material index.
-			var trisCount = reader.ReadInt32();
-			VertexIndices = new ushort[trisCount*3];
-			var textureIndices = new ushort[trisCount*3];
+			int trisCount = reader.ReadInt32();
+			VertexIndices = new ushort[trisCount * 3];
+			var textureIndices = new ushort[trisCount * 3];
 			FaceMaterialIndices = new byte[trisCount];
-			for (var i = 0; i < VertexIndices.Length; i += 3)
+			for (int i = 0; i < VertexIndices.Length; i += 3)
 			{
 				VertexIndices[i] = reader.ReadUInt16();
 				VertexIndices[i + 1] = reader.ReadUInt16();
@@ -148,20 +151,18 @@ namespace SilentHunter.Dat.Chunks.Partial
 				textureIndices[i] = reader.ReadUInt16();
 				textureIndices[i + 1] = reader.ReadUInt16();
 				textureIndices[i + 2] = reader.ReadUInt16();
-				FaceMaterialIndices[i/3] = reader.ReadByte();
+				FaceMaterialIndices[i / 3] = reader.ReadByte();
 			}
 
 			_textureIndices.Clear();
-			_textureIndices.Add(new UvMap
-			{
-				Channel = 1,
-				TextureIndices = textureIndices
-			});
+			_textureIndices.Add(new UvMap { Channel = 1, TextureIndices = textureIndices });
 
 			// Read texture coordinates.
 			TextureCoordinates = new Vector2[reader.ReadInt32()];
-			for (var i = 0; i < TextureCoordinates.Length; i++)
+			for (int i = 0; i < TextureCoordinates.Length; i++)
+			{
 				TextureCoordinates[i] = reader.ReadStruct<Vector2>();
+			}
 		}
 
 		/// <summary>
@@ -177,11 +178,13 @@ namespace SilentHunter.Dat.Chunks.Partial
 				writer.Write(Unknown);
 
 				writer.Write(Vertices.Length);
-				foreach (var vert in Vertices)
+				foreach (Vector3 vert in Vertices)
+				{
 					writer.WriteStruct(vert);
+				}
 
-				writer.Write(VertexIndices.Length/3);
-				for (var i = 0; i < VertexIndices.Length; i += 3)
+				writer.Write(VertexIndices.Length / 3);
+				for (int i = 0; i < VertexIndices.Length; i += 3)
 				{
 					writer.Write(VertexIndices[i]);
 					writer.Write(VertexIndices[i + 1]);
@@ -189,35 +192,41 @@ namespace SilentHunter.Dat.Chunks.Partial
 					writer.Write(_textureIndices[0].TextureIndices[i]);
 					writer.Write(_textureIndices[0].TextureIndices[i + 1]);
 					writer.Write(_textureIndices[0].TextureIndices[i + 2]);
-					writer.Write(FaceMaterialIndices[i/3]);
+					writer.Write(FaceMaterialIndices[i / 3]);
 				}
 
 				writer.Write(TextureCoordinates.Length);
-				foreach (var texV in TextureCoordinates)
+				foreach (Vector2 texV in TextureCoordinates)
+				{
 					writer.WriteStruct(texV);
+				}
 
 				// Write TMAP.
 				if (_textureIndices.Count > 1)
 				{
 					writer.Write(MeshDataDescriptor.TMAP.ToString(), false);
 					// Write number of channels.
-					writer.Write((byte) (_textureIndices.Count - 1));
+					writer.Write((byte)(_textureIndices.Count - 1));
 					// Write indices for all channels except the first (since this channel is saved with SaveMesh).
-					for (var i = 1; i < _textureIndices.Count; i++)
+					for (int i = 1; i < _textureIndices.Count; i++)
 					{
 						// Write map channel index.
 						writer.Write(_textureIndices[i].Channel);
-						foreach (var index in _textureIndices[i].TextureIndices)
+						foreach (ushort index in _textureIndices[i].TextureIndices)
+						{
 							writer.Write(index);
+						}
 					}
 				}
 
 				// Write NORM.
-				if ((Normals != null) && (Normals.Length > 0))
+				if (Normals != null && Normals.Length > 0)
 				{
 					writer.Write(MeshDataDescriptor.NORM.ToString(), false);
-					foreach (var normal in Normals)
+					foreach (Vector3 normal in Normals)
+					{
 						writer.WriteStruct(normal);
+					}
 				}
 			}
 		}

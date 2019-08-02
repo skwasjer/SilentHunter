@@ -47,7 +47,7 @@ namespace SilentHunter.Dat.Chunks
 				Parts.Clear();
 
 				int partCount = reader.ReadInt32();
-				for (var i = 0; i < partCount; i++)
+				for (int i = 0; i < partCount; i++)
 				{
 					Parts.Add(reader.ReadNullTerminatedString());
 				}

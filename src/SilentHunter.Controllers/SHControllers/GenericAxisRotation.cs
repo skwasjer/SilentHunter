@@ -39,5 +39,4 @@ namespace SHControllers
 		/// </summary>
 		public Axis Axe;
 	}
-
 }

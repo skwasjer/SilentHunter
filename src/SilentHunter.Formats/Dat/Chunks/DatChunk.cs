@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using skwas.IO;
 
 namespace SilentHunter.Dat.Chunks
@@ -235,6 +234,7 @@ namespace SilentHunter.Dat.Chunks
 				if (stream.Position < startPos + chunkSize)
 				{
 					throw new IOException("Invalid deserialization of " + ToString() + ". More unparsed data in chunk.");
+
 					//				stream.Position = startPos + chunkSize;
 				}
 

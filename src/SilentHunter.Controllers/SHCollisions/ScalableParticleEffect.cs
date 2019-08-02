@@ -11,6 +11,7 @@
  * 
 */
 
+using Particles;
 using SilentHunter.Controllers;
 
 namespace SHCollisions
@@ -24,11 +25,11 @@ namespace SHCollisions
 		/// <summary>
 		/// Emission area (circular) radius and solid angle. Direction is along generator's Y axis (up).
 		/// </summary>
-		public Particles.EmissionArea EmissionArea;
+		public EmissionArea EmissionArea;
 		/// <summary>
 		/// Global scale coefficients for all subparticles.
 		/// </summary>
-		public Particles.GlobalScale GlobalScale;
+		public GlobalScale GlobalScale;
 		/// <summary>
 		/// The new target to be moved when scale=1. It MUST be brother of generator object!
 		/// </summary>

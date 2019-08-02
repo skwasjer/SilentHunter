@@ -61,5 +61,5 @@ namespace SHSim
 		/// Above water explosion effect.
 		/// </summary>
 		public ulong above_explosion;
-	}	
+	}
 }

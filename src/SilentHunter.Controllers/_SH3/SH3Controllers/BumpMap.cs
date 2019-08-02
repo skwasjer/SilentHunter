@@ -11,13 +11,15 @@
  * 
 */
 
+using SHControllers;
+
 namespace SH3.SH3Controllers
 {
 	/// <summary>
 	/// BumpMap action controller. Texture0 must be a RGB Normal_map. Texture1 is the regular texture. Disables vertex color and dynamic lighting.
 	/// </summary>
 	public class BumpMap
-		: SHControllers.Blend
+		: Blend
 	{
 	}
 }

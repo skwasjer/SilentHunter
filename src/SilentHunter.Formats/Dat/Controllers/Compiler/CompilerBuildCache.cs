@@ -25,8 +25,8 @@ namespace SilentHunter.Dat.Controllers.Compiler
 		protected bool Equals(CompilerBuildCache other)
 		{
 			return string.Equals(Version, other.Version) && string.Equals(BuildConfiguration, other.BuildConfiguration)
-			                                             && SetEquals(Dependencies, other.Dependencies)
-			                                             && SetEquals(SourceFiles, other.SourceFiles);
+			 && SetEquals(Dependencies, other.Dependencies)
+			 && SetEquals(SourceFiles, other.SourceFiles);
 		}
 
 		private bool SetEquals(HashSet<CacheFileReference> self, HashSet<CacheFileReference> other)

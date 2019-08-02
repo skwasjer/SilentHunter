@@ -11,8 +11,8 @@
  * 
 */
 
-using SilentHunter.Controllers;
 using System.Collections.Generic;
+using SilentHunter.Controllers;
 using SilentHunter.Controllers.Decoration;
 
 namespace SHSim
@@ -24,7 +24,6 @@ namespace SHSim
 		: Controller
 	{
 		/// <summary>
-		/// 
 		/// </summary>
 		public obj_Hydro obj_Hydro;
 		/// <summary>

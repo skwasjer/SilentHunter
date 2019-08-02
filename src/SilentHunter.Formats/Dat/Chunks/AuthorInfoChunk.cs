@@ -43,7 +43,9 @@ namespace SilentHunter.Dat.Chunks
 			{
 				Unknown = reader.ReadInt64();
 				UnknownData.Add(new UnknownChunkData(regionStream?.BaseStream.Position - 8 ?? stream.Position - 8,
-					stream.Position - 8, Unknown, "No idea"));
+					stream.Position - 8,
+					Unknown,
+					"No idea"));
 
 				Author = reader.ReadNullTerminatedString();
 				if (stream.Position < stream.Length)

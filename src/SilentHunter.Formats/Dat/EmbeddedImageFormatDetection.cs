@@ -74,7 +74,7 @@ namespace SilentHunter.Dat
 	internal class EmbeddedImageFormatDetection
 	{
 		/// <summary>
-		/// Validates stream contains valid TGA data. Returns true if <paramref name="fixCommonBugs"/> and repair was successful, or false if no repair was done. Throws, if invalid TGA data or repair was not successful.
+		/// Validates stream contains valid TGA data. Returns true if <paramref name="fixCommonBugs" /> and repair was successful, or false if no repair was done. Throws, if invalid TGA data or repair was not successful.
 		/// </summary>
 		/// <param name="stream"></param>
 		/// <param name="fixCommonBugs"></param>

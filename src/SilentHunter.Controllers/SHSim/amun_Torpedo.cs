@@ -12,8 +12,8 @@
 */
 
 using System;
-using SilentHunter.Controllers;
 using System.Collections.Generic;
+using SilentHunter.Controllers;
 using SilentHunter.Controllers.Decoration;
 
 namespace SHSim
@@ -51,15 +51,17 @@ namespace SHSim
 		/// <summary>
 		/// Pistol settings.
 		/// </summary>
-		[Optional, SHVersion(SHVersions.SH4)]
+		[Optional]
+		[SHVersion(SHVersions.SH4)]
 		public List<TorpedoPistol> Pistols;
 		/// <summary>
 		/// Guidance systems.
 		/// </summary>
-		[Optional, SHVersion(SHVersions.SH4)]
-		public List<TorpedoGuidance> Guidances;		
+		[Optional]
+		[SHVersion(SHVersions.SH4)]
+		public List<TorpedoGuidance> Guidances;
 	}
-	
+
 	[SHType]
 	public class TorpedoSpeed
 	{
@@ -142,7 +144,6 @@ namespace SHSim
 		/// </summary>
 		public List<PrematureChance> PrematureChances;
 	}
-
 
 	[SHType]
 	public class DudChance

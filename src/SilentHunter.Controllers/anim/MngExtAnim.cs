@@ -11,8 +11,8 @@
  * 
 */
 
-using SilentHunter.Controllers;
 using System.Collections.Generic;
+using SilentHunter.Controllers;
 using SilentHunter.Controllers.Decoration;
 
 namespace anim
@@ -34,17 +34,20 @@ namespace anim
 		/// <summary>
 		/// Name of the animation to control.
 		/// </summary>
-		[Optional, SHVersion(SHVersions.SH3)]
+		[Optional]
+		[SHVersion(SHVersions.SH3)]
 		public string AnimName;
 		/// <summary>
 		/// Name of the animation group.
 		/// </summary>
-		[Optional, SHVersion(SHVersions.SH4)]
+		[Optional]
+		[SHVersion(SHVersions.SH4)]
 		public string AnimGroup;
 		/// <summary>
 		/// List of animation names to link to.
 		/// </summary>
-		[Optional, SHVersion(SHVersions.SH4)]
+		[Optional]
+		[SHVersion(SHVersions.SH4)]
 		public List<string> AnimList;
 	}
 }

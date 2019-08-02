@@ -20,6 +20,6 @@ namespace SHCollisions
 	/// </summary>
 	public class Debris
 		: Controller
-	{		
+	{
 	}
 }

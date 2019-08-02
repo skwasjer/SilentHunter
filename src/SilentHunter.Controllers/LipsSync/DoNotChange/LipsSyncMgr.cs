@@ -14,8 +14,8 @@
  * 
 */
 
-using SilentHunter.Controllers;
 using System.Collections.Generic;
+using SilentHunter.Controllers;
 
 namespace LipsSync
 {
@@ -32,7 +32,7 @@ namespace LipsSync
 		/// <summary>
 		/// List of lip/mouth states.
 		/// </summary>
-		public List<LipsSyncFrame> Frames;	
+		public List<LipsSyncFrame> Frames;
 	}
 
 	public struct LipsSyncFrame
@@ -57,6 +57,6 @@ namespace LipsSync
 		State5 = 5,
 		State6 = 6,
 		State7 = 7,
-		State8 = 8,
+		State8 = 8
 	}
 }

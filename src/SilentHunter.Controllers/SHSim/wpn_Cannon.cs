@@ -11,9 +11,9 @@
  * 
 */
 
-using SilentHunter.Controllers;
 using System.Collections.Generic;
 using SilentHunter;
+using SilentHunter.Controllers;
 using SilentHunter.Controllers.Decoration;
 
 namespace SHSim
@@ -104,7 +104,6 @@ namespace SHSim
 		public Vector3 position;
 	}
 
-
 	[SHType]
 	public class CannonRange
 	{
@@ -137,7 +136,6 @@ namespace SHSim
 		/// Star shells.
 		/// </summary>
 		public ShellStorage SS;
-
 	}
 
 	[SHType]

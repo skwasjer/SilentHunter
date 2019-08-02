@@ -11,9 +11,9 @@
  * 
 */
 
-using SilentHunter.Controllers;
 using System.Collections.Generic;
 using SilentHunter;
+using SilentHunter.Controllers;
 using SilentHunter.Controllers.Decoration;
 
 namespace Particles
@@ -190,5 +190,5 @@ namespace Particles
 		/// Vertical tiles.
 		/// </summary>
 		public float VTiles;
-	}	
+	}
 }

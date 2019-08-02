@@ -11,6 +11,7 @@
  * 
 */
 
+using SHSim;
 using SilentHunter.Controllers;
 
 namespace SHControllers
@@ -24,6 +25,6 @@ namespace SHControllers
 		/// <summary>
 		/// The periscope.
 		/// </summary>
-		public SHSim.ExtensibleType Periscope;		
+		public ExtensibleType Periscope;
 	}
 }

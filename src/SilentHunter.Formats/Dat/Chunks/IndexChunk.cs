@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -61,7 +61,7 @@ namespace SilentHunter.Dat.Chunks
 				Entries.Clear();
 
 				int indexItems = (int)(stream.Length - stream.Position) / Entry.Size;
-				for (var i = 0; i < indexItems; i++)
+				for (int i = 0; i < indexItems; i++)
 				{
 					Entries.Add(new Entry
 					{
