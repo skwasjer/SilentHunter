@@ -139,15 +139,6 @@ namespace SilentHunter.Dat.Chunks
 		}
 
 		/// <summary>
-		/// Serializes the chunk.
-		/// </summary>
-		/// <param name="stream">The stream to write to.</param>
-		protected override void Serialize(Stream stream)
-		{
-			base.Serialize(stream);
-		}
-		
-		/// <summary>
 		/// Deserializes the chunk, optionally including the 8 byte header, excluding the magic. To deserialize an entire chunk including magic use a ChunkReader.
 		/// </summary>
 		/// <param name="stream">The stream to read from.</param>
