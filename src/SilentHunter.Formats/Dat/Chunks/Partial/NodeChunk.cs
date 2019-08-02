@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -97,30 +97,12 @@ namespace SilentHunter.Dat.Chunks.Partial
 
 		private void UpdateTransform()
 		{
-			SharpDX.Matrix m = SharpDX.Matrix.RotationX(-_rotation.X);
+			Matrix m = SharpDX.Matrix.RotationX(-_rotation.X);
 			m *= SharpDX.Matrix.RotationY(-_rotation.Y);
 			m *= SharpDX.Matrix.RotationZ(-_rotation.Z);
 			m *= SharpDX.Matrix.Translation(new SharpDX.Vector3(_translation.X, _translation.Y, _translation.Z));
 
-			Transform = new Matrix
-			{
-				M11 = m.M11,
-				M12 = m.M12,
-				M13 = m.M13,
-				M14 = m.M14,
-				M21 = m.M21,
-				M22 = m.M22,
-				M23 = m.M23,
-				M24 = m.M24,
-				M31 = m.M31,
-				M32 = m.M32,
-				M33 = m.M33,
-				M34 = m.M34,
-				M41 = m.M41,
-				M42 = m.M42,
-				M43 = m.M43,
-				M44 = m.M44
-			};
+			Transform = m;
 		}
 
 		public Matrix Transform { get; private set; }

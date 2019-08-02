@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 
@@ -6,12 +6,12 @@ namespace SilentHunter.Dat.Chunks
 {
 	public sealed class EmbeddedImageChunk : DatChunk
 	{
+		private byte[] _buffer;
+
 		public EmbeddedImageChunk()
 			: base(DatFile.Magics.EmbeddedImage)
 		{
 		}
-
-		private byte[] _buffer;
 
 		public byte[] Buffer
 		{

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using skwas.IO;
 
@@ -115,7 +115,7 @@ namespace SilentHunter.Dat.Chunks
 						mapTypeStr = "bump";
 						break;
 					default:
-						throw new ArgumentOutOfRangeException();
+						throw new InvalidOperationException($"Unexpected map type {_mapType}.");
 				}
 
 				writer.Write(mapTypeStr.PadRight(TexmapNameLength, '\0'), false);

@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using skwas.IO;
 
-namespace SilentHunter.Dat.Chunks.Partial
+namespace SilentHunter.Dat.Chunks
 {
 	/// <summary>
 	/// 

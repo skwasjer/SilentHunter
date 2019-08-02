@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using skwas.IO;
 
@@ -24,7 +24,7 @@ namespace SilentHunter.Dat.Chunks.Partial
 			{
 				if (value > uint.MaxValue)
 				{
-					throw new ArgumentOutOfRangeException("The id for this chunk is only 4 bytes in length (UInt32).");
+					throw new ArgumentOutOfRangeException(nameof(value), "The id for this chunk is only 4 bytes in length (UInt32).");
 				}
 
 				base.Id = value;
@@ -41,7 +41,7 @@ namespace SilentHunter.Dat.Chunks.Partial
 			{
 				if (value > uint.MaxValue)
 				{
-					throw new ArgumentOutOfRangeException("The parent id for this chunk is only 4 bytes in length (UInt32).");
+					throw new ArgumentOutOfRangeException(nameof(value), "The parent id for this chunk is only 4 bytes in length (UInt32).");
 				}
 
 				base.ParentId = value;
