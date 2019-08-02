@@ -103,7 +103,7 @@ namespace SilentHunter.Dat.Controllers.Serialization
 			long dataSize = expectedPosition - reader.BaseStream.Position;
 			using (var regionStream = new RegionStream(reader.BaseStream, dataSize))
 			{
-				using (var regionReader = new BinaryReader(regionStream, Encoding.ParseEncoding, true))
+				using (var regionReader = new BinaryReader(regionStream, FileEncoding.Default, true))
 				{
 					object retVal = base.ReadField(regionReader, serializationContext);
 					reader.BaseStream.EnsureStreamPosition(expectedPosition, name ?? serializationContext.Name);

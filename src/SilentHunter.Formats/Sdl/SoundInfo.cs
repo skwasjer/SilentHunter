@@ -19,7 +19,7 @@ namespace SilentHunter.Sdl
 
 		protected virtual void OnDeserialize(Stream stream)
 		{
-			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
+			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
 			{
 				ushort size = reader.ReadUInt16();
 				uint subSize = reader.ReadUInt32();
@@ -62,7 +62,7 @@ namespace SilentHunter.Sdl
 
 		protected virtual void OnSerialize(Stream stream)
 		{
-			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
+			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
 				long currentPos = writer.BaseStream.Position;
 				writer.BaseStream.Position += 6;

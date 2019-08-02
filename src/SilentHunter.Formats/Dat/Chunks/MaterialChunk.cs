@@ -181,7 +181,7 @@ namespace SilentHunter.Dat.Chunks
 		{
 			bool isExtendedMaterial = stream.Length >= 36;
 
-			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
+			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
 			{
 				// Read the id.
 				Id = reader.ReadUInt64();
@@ -244,7 +244,7 @@ namespace SilentHunter.Dat.Chunks
 		/// <param name="stream">The stream to write to.</param>
 		protected override void Serialize(Stream stream)
 		{
-			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
+			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
 				writer.Write(Id);
 

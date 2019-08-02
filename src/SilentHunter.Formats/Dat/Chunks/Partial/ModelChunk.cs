@@ -58,7 +58,7 @@ namespace SilentHunter.Dat.Chunks.Partial
 			var regionStream = stream as RegionStream;
 			UnknownData.Clear();
 
-			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
+			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
 			{
 				Id = reader.ReadUInt64();
 
@@ -171,7 +171,7 @@ namespace SilentHunter.Dat.Chunks.Partial
 		/// <param name="stream">The stream to write to.</param>
 		protected override void Serialize(Stream stream)
 		{
-			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
+			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
 				writer.Write(Id);
 

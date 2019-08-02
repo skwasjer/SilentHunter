@@ -48,7 +48,7 @@ namespace SilentHunter.Dat.Controllers.Serialization
 			}
 
 			Type controllerType = controller.GetType();
-			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
+			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
 			{
 				Deserialize(reader, controllerType, controller);
 
@@ -139,7 +139,7 @@ namespace SilentHunter.Dat.Controllers.Serialization
 			}
 
 			Type controllerType = controller.GetType();
-			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
+			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
 				Serialize(writer, controllerType, controller);
 			}

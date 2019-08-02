@@ -188,7 +188,7 @@ namespace SilentHunter.Dat.Chunks
 		void IRawSerializable.Deserialize(Stream stream)
 		{
 			// Deserialize the chunk header. The magic is already read for this chunk.
-			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
+			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
 			{
 				// Read the subtype.
 				SubType = reader.ReadInt32();
@@ -238,7 +238,7 @@ namespace SilentHunter.Dat.Chunks
 		/// <param name="stream">The stream.</param>
 		void IRawSerializable.Serialize(Stream stream)
 		{
-			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
+			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
 				writer.Write(SubType);
 

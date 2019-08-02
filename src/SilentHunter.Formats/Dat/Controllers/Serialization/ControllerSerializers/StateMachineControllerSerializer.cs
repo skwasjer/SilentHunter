@@ -19,7 +19,7 @@ namespace SilentHunter.Dat.Controllers.Serialization
 		{
 			StateMachineController smc = EnsureControllerType(controller);
 
-			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
+			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
 			{
 				smc.Unknown0 = reader.ReadInt32();
 				smc.GraphName = reader.ReadNullTerminatedString();
@@ -46,7 +46,7 @@ namespace SilentHunter.Dat.Controllers.Serialization
 		{
 			StateMachineController smc = EnsureControllerType(controller);
 
-			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
+			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
 				writer.Write(smc.Unknown0);
 				writer.WriteNullTerminatedString(smc.GraphName);

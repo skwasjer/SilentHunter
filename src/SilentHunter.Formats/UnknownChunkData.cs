@@ -52,7 +52,7 @@ namespace SilentHunter.Dat
 			// Convert data to byte array.
 			using (var ms = new MemoryStream())
 			{
-				using (var writer = new BinaryWriter(ms, Encoding.ParseEncoding))
+				using (var writer = new BinaryWriter(ms, FileEncoding.Default))
 				{
 					writer.WriteStruct(Data);
 					return ms.ToArray();

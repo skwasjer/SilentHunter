@@ -13,7 +13,7 @@ namespace SilentHunter.Off
 
 		protected virtual void OnDeserialize(Stream stream)
 		{
-			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
+			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
 			{
 				Character = reader.ReadChar();
 				Rectangle = reader.ReadStruct<Rectangle>();
@@ -22,7 +22,7 @@ namespace SilentHunter.Off
 
 		protected virtual void OnSerialize(Stream stream)
 		{
-			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
+			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
 				writer.Write(Character);
 				writer.WriteStruct(Rectangle);

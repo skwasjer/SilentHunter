@@ -38,7 +38,7 @@ namespace SilentHunter.Dat.Controllers
 				return;
 			}
 
-			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
+			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
 				Type controllerType = controller.GetType();
 				IControllerSerializer cs = _controllerSerializerResolver.GetSerializer(controllerType);

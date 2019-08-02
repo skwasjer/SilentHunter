@@ -41,7 +41,7 @@ namespace SilentHunter.Dat.Chunks
 		/// <param name="stream">The stream to read from.</param>
 		protected override void Deserialize(Stream stream)
 		{
-			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
+			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
 			{
 				Id = reader.ReadUInt64();
 				ParentId = reader.ReadUInt64();
@@ -59,7 +59,7 @@ namespace SilentHunter.Dat.Chunks
 		/// <param name="stream">The stream to write to.</param>
 		protected override void Serialize(Stream stream)
 		{
-			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
+			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
 				writer.Write(Id);
 				writer.Write(ParentId);

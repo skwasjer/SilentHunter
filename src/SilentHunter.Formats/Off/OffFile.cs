@@ -23,7 +23,7 @@ namespace SilentHunter.Off
 		/// <param name="stream">The stream to load from.</param>
 		public void Load(Stream stream)
 		{
-			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
+			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
 			{
 				int characterCount = reader.ReadInt32();
 				CharacterSpacing = reader.ReadStruct<Point>();
@@ -50,7 +50,7 @@ namespace SilentHunter.Off
 		/// <param name="stream">The stream to write to.</param>
 		public void Save(Stream stream)
 		{
-			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
+			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
 				writer.Write(Count);
 				writer.WriteStruct(CharacterSpacing);

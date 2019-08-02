@@ -105,7 +105,7 @@ namespace SilentHunter.Dat
 			}
 
 			// Check the magic.
-			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
+			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
 			{
 				_header = reader.ReadStruct<Header>();
 				if (!_header.IsValid())
@@ -158,7 +158,7 @@ namespace SilentHunter.Dat
 				throw new ObjectDisposedException(GetType().Name);
 			}
 
-			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
+			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
 				writer.WriteStruct(_header);
 			}

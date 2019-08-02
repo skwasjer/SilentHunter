@@ -42,7 +42,7 @@ namespace SilentHunter.Dat.Chunks
 
 			var regionStream = stream as RegionStream;
 
-			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
+			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
 			{
 				Unknown = reader.ReadInt64();
 				UnknownData.Add(new UnknownChunkData(regionStream?.BaseStream.Position - 8 ?? stream.Position - 8,
@@ -77,7 +77,7 @@ namespace SilentHunter.Dat.Chunks
 
 		protected override void Serialize(Stream stream)
 		{
-			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
+			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
 				writer.WriteStruct(Unknown);
 

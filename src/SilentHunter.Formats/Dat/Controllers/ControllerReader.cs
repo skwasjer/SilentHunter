@@ -35,7 +35,7 @@ namespace SilentHunter.Dat.Controllers
 			long currentPos = stream.Position;
 			int availableData = (int)(stream.Length - stream.Position);
 
-			var reader = new BinaryReader(stream, Encoding.ParseEncoding);
+			var reader = new BinaryReader(stream, FileEncoding.Default);
 
 			// In case of a normal controller (10/-1) subtype the next Int32 contains the size of the following structure. In case of animation controllers (sub type 0/1/2/4/5/6), see below.
 			int controllerSize = reader.ReadInt32();

@@ -65,7 +65,7 @@ namespace SilentHunter.Dat.Chunks
 		protected override void Serialize(Stream stream)
 		{
 			//			var regionStream = new RegionStream(stream, -1, false);
-			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
+			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
 				writer.Write(ParentId);
 
@@ -80,7 +80,7 @@ namespace SilentHunter.Dat.Chunks
 		{
 			var regionStream = stream as RegionStream;
 
-			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
+			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
 			{
 				// Read parent id.
 				ParentId = reader.ReadUInt64();

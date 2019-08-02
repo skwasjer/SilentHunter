@@ -11,7 +11,7 @@ namespace SilentHunter.Dat.Controllers.Serialization
 		{
 			MeshAnimationController mac = EnsureControllerType(controller);
 
-			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
+			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
 			{
 				// Read n frames.
 				ushort frameCount = reader.ReadUInt16();
@@ -64,7 +64,7 @@ namespace SilentHunter.Dat.Controllers.Serialization
 				throw new InvalidOperationException($"Mesh animations can only support up to {ushort.MaxValue} frames.");
 			}
 
-			using (var writer = new BinaryWriter(stream, Encoding.ParseEncoding, true))
+			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
 				// Write frames.
 				writer.Write(unchecked((ushort)mac.Frames.Count));
