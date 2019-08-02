@@ -19,14 +19,12 @@ namespace SilentHunter
 
 		public string ToString(bool ignoreAlpha)
 		{
-			string newValue;
 			return A < 255 && !ignoreAlpha
 				? string.Format("A: {1}{0} R: {2}{0} G: {3}{0} B: {4}", CultureInfo.CurrentUICulture.TextInfo.ListSeparator, A, R, G, B)
 				: string.Format("R: {1}{0} G: {2}{0} B: {3}", CultureInfo.CurrentUICulture.TextInfo.ListSeparator, R, G, B);
-
-			return newValue;
 		}
 
+		/// <inheritdoc />
 		public override string ToString()
 		{
 			return ToString(true);
@@ -75,14 +73,18 @@ namespace SilentHunter
 			return A == other.A && R == other.R && G == other.G && B == other.B;
 		}
 
+		/// <inheritdoc />
 		public override bool Equals(object obj)
 		{
 			return obj is Color other && Equals(other);
 		}
 
+		/// <inheritdoc />
 		public override int GetHashCode()
 		{
+			// ReSharper disable NonReadonlyMemberInGetHashCode
 			return (A << 24) | (R << 16) | (G << 8) | B;
+			// ReSharper restore NonReadonlyMemberInGetHashCode
 		}
 
 		public static bool operator ==(Color left, Color right)

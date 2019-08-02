@@ -18,16 +18,10 @@ namespace SilentHunter
 
 		public static readonly Vector3 Empty;
 
-		/// <summary>
-		/// Returns the fully qualified type name of this instance.
-		/// </summary>
-		/// <returns>
-		/// A <see cref="T:System.String" /> containing a fully qualified type name.
-		/// </returns>
+		/// <inheritdoc />
 		public override string ToString()
 		{
-			string sep = CultureInfo.CurrentCulture.TextInfo.ListSeparator;
-			return $"X: {X}{sep} Y: {Y}{sep} Z: {Z}";
+			return string.Format("X: {1}{0} Y: {2}{0} Z: {3}", CultureInfo.CurrentUICulture.TextInfo.ListSeparator, X, Y, Z);
 		}
 
 		public bool Equals(Vector3 other)
@@ -35,36 +29,22 @@ namespace SilentHunter
 			return X.Equals(other.X) && Y.Equals(other.Y) && Z.Equals(other.Z);
 		}
 
-		/// <summary>
-		/// Indicates whether this instance and a specified object are equal.
-		/// </summary>
-		/// <returns>
-		/// true if <paramref name="obj" /> and this instance are the same type and represent the same value; otherwise, false.
-		/// </returns>
-		/// <param name="obj">The object to compare with the current instance. </param>
+		/// <inheritdoc />
 		public override bool Equals(object obj)
 		{
-			if (ReferenceEquals(null, obj))
-			{
-				return false;
-			}
-
-			return obj is Vector3 && Equals((Vector3)obj);
+			return obj is Vector3 vector3 && Equals(vector3);
 		}
 
-		/// <summary>
-		/// Returns the hash code for this instance.
-		/// </summary>
-		/// <returns>
-		/// A 32-bit signed integer that is the hash code for this instance.
-		/// </returns>
+		/// <inheritdoc />
 		public override int GetHashCode()
 		{
 			unchecked
 			{
+				// ReSharper disable NonReadonlyMemberInGetHashCode
 				int hashCode = X.GetHashCode();
 				hashCode = (hashCode * 397) ^ Y.GetHashCode();
 				hashCode = (hashCode * 397) ^ Z.GetHashCode();
+				// ReSharper restore NonReadonlyMemberInGetHashCode
 				return hashCode;
 			}
 		}

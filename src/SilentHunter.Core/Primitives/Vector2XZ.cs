@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 namespace SilentHunter
 {
 	[StructLayout(LayoutKind.Sequential)]
+	// ReSharper disable once InconsistentNaming
 	public struct Vector2XZ
 	{
 		public float X;
@@ -17,7 +18,7 @@ namespace SilentHunter
 		/// </returns>
 		public override string ToString()
 		{
-			return $"X: {X}{CultureInfo.CurrentCulture.TextInfo.ListSeparator} Z: {Z}";
+			return string.Format("X: {1}{0} Z: {2}", CultureInfo.CurrentUICulture.TextInfo.ListSeparator, X, Z);
 		}
 
 		public static implicit operator Vector2(Vector2XZ v)
@@ -43,35 +44,21 @@ namespace SilentHunter
 			return X.Equals(other.X) && Z.Equals(other.Z);
 		}
 
-		/// <summary>
-		/// Indicates whether this instance and a specified object are equal.
-		/// </summary>
-		/// <returns>
-		/// true if <paramref name="obj" /> and this instance are the same type and represent the same value; otherwise, false.
-		/// </returns>
-		/// <param name="obj">The object to compare with the current instance. </param>
+		/// <inheritdoc />
 		public override bool Equals(object obj)
 		{
-			if (ReferenceEquals(null, obj))
-			{
-				return false;
-			}
-
-			return obj is Vector2XZ && Equals((Vector2XZ)obj);
+			return obj is Vector2XZ vector && Equals(vector);
 		}
 
-		/// <summary>
-		/// Returns the hash code for this instance.
-		/// </summary>
-		/// <returns>
-		/// A 32-bit signed integer that is the hash code for this instance.
-		/// </returns>
+		/// <inheritdoc />
 		public override int GetHashCode()
 		{
 			unchecked
 			{
+				// ReSharper disable NonReadonlyMemberInGetHashCode
 				int hashCode = X.GetHashCode();
 				hashCode = (hashCode * 397) ^ Z.GetHashCode();
+				// ReSharper restore NonReadonlyMemberInGetHashCode
 				return hashCode;
 			}
 		}
