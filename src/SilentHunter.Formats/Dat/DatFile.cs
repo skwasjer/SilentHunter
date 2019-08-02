@@ -104,10 +104,8 @@ namespace SilentHunter.Dat
 				throw new ObjectDisposedException(GetType().Name);
 			}
 
-			var bufferedStream = new BufferedStream(stream, 1024);
-
 			// Check the magic.
-			using (var reader = new BinaryReader(bufferedStream, Encoding.ParseEncoding, true))
+			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
 			{
 				_header = reader.ReadStruct<Header>();
 				if (!_header.IsValid())
@@ -116,14 +114,14 @@ namespace SilentHunter.Dat
 				}
 			}
 
-			using (ChunkReader<Magics, DatChunk> reader = CreateReader(bufferedStream))
+			using (ChunkReader<Magics, DatChunk> reader = CreateReader(stream))
 			{
 				long chunkStart = 0;
 				try
 				{
 					while (true)
 					{
-						chunkStart = bufferedStream.Position;
+						chunkStart = stream.Position;
 						DatChunk chunk = reader.Read();
 						if (chunk == null)
 						{
@@ -144,7 +142,7 @@ namespace SilentHunter.Dat
 				}
 				catch (Exception ex) when (chunkStart != 0)
 				{
-					throw new DatFileException(Chunks.Count, chunkStart, bufferedStream.Position, ex);
+					throw new DatFileException(Chunks.Count, chunkStart, stream.Position, ex);
 				}
 			}
 		}
