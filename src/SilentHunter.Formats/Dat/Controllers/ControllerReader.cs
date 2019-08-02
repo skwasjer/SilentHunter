@@ -11,7 +11,7 @@ using skwas.IO;
 
 namespace SilentHunter.Dat.Controllers
 {
-	public class ControllerReader : IControllerReader
+	internal class ControllerReader : IControllerReader
 	{
 		private readonly ControllerAssembly _controllerAssembly;
 		private readonly IControllerFactory _controllerFactory;

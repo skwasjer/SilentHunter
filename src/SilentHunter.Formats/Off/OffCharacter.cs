@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
@@ -6,75 +7,82 @@ using skwas.IO;
 
 namespace SilentHunter.Off
 {
-	[DebuggerDisplay("{Character}, {Rectangle}")]
-	public class OffCharacter : IRawSerializable
+	/// <summary>
+	/// Represents a character definition for <see cref="OffFile"/>s.
+	/// </summary>
+	[DebuggerDisplay("{Character}, {BoundingBox}")]
+	public sealed class OffCharacter : IRawSerializable, ICloneable, IEquatable<OffCharacter>
 	{
+		/// <summary>
+		/// Gets or sets the character.
+		/// </summary>
 		public char Character { get; set; }
-		public Rectangle Rectangle { get; set; }
 
-		protected virtual Task DeserializeAsync(Stream stream)
+		/// <summary>
+		/// Gets or sets the bounding box in a 2D font image file.
+		/// </summary>
+		public Rectangle BoundingBox { get; set; }
+
+		Task IRawSerializable.DeserializeAsync(Stream stream)
 		{
 			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
 			{
 				Character = reader.ReadChar();
-				Rectangle = reader.ReadStruct<Rectangle>();
+				BoundingBox = reader.ReadStruct<Rectangle>();
 			}
 
 			return Task.CompletedTask;
 		}
 
-		protected virtual Task SerializeAsync(Stream stream)
+		Task IRawSerializable.SerializeAsync(Stream stream)
 		{
 			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
 				writer.Write(Character);
-				writer.WriteStruct(Rectangle);
+				writer.WriteStruct(BoundingBox);
 			}
 
 			return Task.CompletedTask;
 		}
 
-		protected bool Equals(OffCharacter other)
+		/// <inheritdoc />
+		public object Clone()
 		{
-			return Character == other.Character && Rectangle.Equals(other.Rectangle);
+			return new OffCharacter
+			{
+				Character = Character,
+				BoundingBox = BoundingBox
+			};
 		}
 
-		/// <summary>
-		/// Determines whether the specified object is equal to the current object.
-		/// </summary>
-		/// <returns>
-		/// true if the specified object  is equal to the current object; otherwise, false.
-		/// </returns>
-		/// <param name="obj">The object to compare with the current object. </param>
-		public override bool Equals(object obj)
+		public bool Equals(OffCharacter other)
 		{
-			if (ReferenceEquals(null, obj))
+			if (ReferenceEquals(null, other))
 			{
 				return false;
 			}
 
-			if (ReferenceEquals(this, obj))
+			if (ReferenceEquals(this, other))
 			{
 				return true;
 			}
 
-			if (obj.GetType() != GetType())
-			{
-				return false;
-			}
-
-			return Equals((OffCharacter)obj);
+			return Character == other.Character && BoundingBox.Equals(other.BoundingBox);
 		}
 
-		/// <summary>
-		/// Serves as the default hash function.
-		/// </summary>
-		/// <returns>
-		/// A hash code for the current object.
-		/// </returns>
+		/// <inheritdoc />
+		public override bool Equals(object obj)
+		{
+			return ReferenceEquals(this, obj) || obj is OffCharacter other && Equals(other);
+		}
+
+		/// <inheritdoc />
 		public override int GetHashCode()
 		{
-			return 0;
+			unchecked
+			{
+				return (Character.GetHashCode() * 397) ^ BoundingBox.GetHashCode();
+			}
 		}
 
 		public static bool operator ==(OffCharacter left, OffCharacter right)
@@ -85,24 +93,6 @@ namespace SilentHunter.Off
 		public static bool operator !=(OffCharacter left, OffCharacter right)
 		{
 			return !Equals(left, right);
-		}
-
-		/// <summary>
-		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
-		/// </summary>
-		/// <param name="stream">The stream.</param>
-		Task IRawSerializable.DeserializeAsync(Stream stream)
-		{
-			return DeserializeAsync(stream);
-		}
-
-		/// <summary>
-		/// When implemented, serializes the implemented class to specified <paramref name="stream" />.
-		/// </summary>
-		/// <param name="stream">The stream.</param>
-		Task IRawSerializable.SerializeAsync(Stream stream)
-		{
-			return SerializeAsync(stream);
 		}
 	}
 }

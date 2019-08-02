@@ -1,5 +1,8 @@
-namespace SilentHunter.Sdl
+﻿namespace SilentHunter.Sdl
 {
+	/// <summary>
+	/// Represents a sound category.
+	/// </summary>
 	public enum SoundCategory
 	{
 		Music,

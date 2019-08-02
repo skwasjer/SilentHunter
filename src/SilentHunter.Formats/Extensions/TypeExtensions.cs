@@ -7,7 +7,7 @@ using SilentHunter.Controllers.Decoration;
 
 namespace SilentHunter.Extensions
 {
-	public static class TypeExtensions
+	internal static class TypeExtensions
 	{
 		public static bool IsClosedTypeOf(this Type @this, Type openGeneric)
 		{

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -8,91 +9,88 @@ using skwas.IO;
 
 namespace SilentHunter.Off
 {
+	/// <summary>
+	/// Represents an OFF file parser (font file).
+	/// </summary>
 	public sealed class OffFile : KeyedCollection<char, OffCharacter>, ISilentHunterFile
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="OffFile" /> class.
+		/// </summary>
 		public OffFile()
 			: base(EqualityComparer<char>.Default, -1)
 		{
 		}
 
+		/// <summary>
+		/// Gets or sets the character spacing.
+		/// </summary>
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		public Point CharacterSpacing { get; set; }
 
-		/// <summary>
-		/// Loads the file from specified stream.
-		/// </summary>
-		/// <param name="stream">The stream to load from.</param>
-		public async Task LoadAsync(Stream stream)
-		{
-			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
-			{
-				int characterCount = reader.ReadInt32();
-				CharacterSpacing = reader.ReadStruct<Point>();
-
-				Clear();
-				for (int i = 0; i < characterCount; i++)
-				{
-					var offChar = new OffCharacter();
-					await ((IRawSerializable)offChar).DeserializeAsync(stream).ConfigureAwait(false);
-
-					Add(offChar);
-				}
-
-				if (reader.BaseStream.Position != reader.BaseStream.Length)
-				{
-					throw new IOException($"The stream contains unexpected data at 0x{reader.BaseStream.Position:x8}");
-				}
-			}
-		}
-
-		/// <summary>
-		/// Saves the file to specified stream.
-		/// </summary>
-		/// <param name="stream">The stream to write to.</param>
-		public async Task SaveAsync(Stream stream)
-		{
-			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
-			{
-				writer.Write(Count);
-				writer.WriteStruct(CharacterSpacing);
-
-				foreach (OffCharacter c in this)
-				{
-					await ((IRawSerializable)c).SerializeAsync(stream).ConfigureAwait(false);
-				}
-
-				writer.Flush();
-			}
-		}
-
-		/// <summary>
-		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
-		/// </summary>
-		/// <param name="stream">The stream.</param>
-		Task IRawSerializable.DeserializeAsync(Stream stream)
-		{
-			return LoadAsync(stream);
-		}
-
-		/// <summary>
-		/// When implemented, serializes the implemented class to specified <paramref name="stream" />.
-		/// </summary>
-		/// <param name="stream">The stream.</param>
-		Task IRawSerializable.SerializeAsync(Stream stream)
-		{
-			return SaveAsync(stream);
-		}
-
-		/// <summary>
-		/// When implemented in a derived class, extracts the key from the specified element.
-		/// </summary>
-		/// <returns>
-		/// The key for the specified element.
-		/// </returns>
-		/// <param name="item">The element from which to extract the key.</param>
+		/// <inheritdoc />
 		protected override char GetKeyForItem(OffCharacter item)
 		{
 			return item.Character;
+		}
+
+		/// <inheritdoc />
+		public Task LoadAsync(Stream stream)
+		{
+			if (stream == null)
+			{
+				throw new ArgumentNullException(nameof(stream));
+			}
+
+			return GlobalExceptionHandler.HandleException(async () =>
+				{
+					using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
+					{
+						int characterCount = reader.ReadInt32();
+						CharacterSpacing = reader.ReadStruct<Point>();
+
+						Clear();
+						for (int i = 0; i < characterCount; i++)
+						{
+							var character = new OffCharacter();
+							await ((IRawSerializable)character).DeserializeAsync(stream).ConfigureAwait(false);
+
+							Add(character);
+						}
+
+						if (reader.BaseStream.Position != reader.BaseStream.Length)
+						{
+							throw new IOException($"The stream contains unexpected data at 0x{reader.BaseStream.Position:x8}");
+						}
+					}
+				},
+				"Failed to load file.");
+		}
+
+		/// <inheritdoc />
+		public Task SaveAsync(Stream stream)
+		{
+			if (stream == null)
+			{
+				throw new ArgumentNullException(nameof(stream));
+			}
+
+			return GlobalExceptionHandler.HandleException(async () =>
+				{
+					using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
+					{
+						writer.Write(Count);
+						writer.WriteStruct(CharacterSpacing);
+
+						foreach (OffCharacter character in this)
+						{
+							await ((IRawSerializable)character).SerializeAsync(stream).ConfigureAwait(false);
+						}
+
+						writer.Flush();
+					}
+				},
+				"Failed to save file.");
 		}
 	}
 }

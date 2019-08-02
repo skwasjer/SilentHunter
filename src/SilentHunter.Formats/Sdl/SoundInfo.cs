@@ -6,19 +6,106 @@ using skwas.IO;
 
 namespace SilentHunter.Sdl
 {
+	/// <summary>
+	/// Represents a sound info entry for <see cref="SdlFile"/>s.
+	/// </summary>
 	[DebuggerDisplay("Name = {Name}, WaveName = {WaveName}")]
-	public class SoundInfo : IRawSerializable, ICloneable
+	public sealed class SoundInfo : IRawSerializable, ICloneable, IEquatable<SoundInfo>
 	{
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private string _name, _waveName;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="SoundInfo"/> class.
+		/// </summary>
 		public SoundInfo()
 		{
 			Volume = 90;
 			Pitch = 1;
 		}
 
-		protected virtual Task DeserializeAsync(Stream stream)
+		/// <summary>
+		/// Gets or sets the name of the wave file.
+		/// </summary>
+		public string WaveName
+		{
+			get => _waveName ?? string.Empty;
+			set => _waveName = value;
+		}
+
+		/// <summary>
+		/// Gets or sets the entry name.
+		/// </summary>
+		public string Name
+		{
+			get => _name ?? string.Empty;
+			set => _name = value;
+		}
+
+		/// <summary>
+		/// Gets or sets whether the sound is played as 3D.
+		/// </summary>
+		public bool Is3D { get; set; }
+
+		public bool Play { get; set; }
+
+		/// <summary>
+		/// Gets or sets whether the sound should be looped.
+		/// </summary>
+		public bool Loop { get; set; }
+		public bool IsFolder { get; set; }
+
+		/// <summary>
+		/// Gets or sets the playback delay.
+		/// </summary>
+		public float Delay { get; set; }
+
+		/// <summary>
+		/// Gets or sets the max radius (3D).
+		/// </summary>
+		public float MaxRadius { get; set; }
+
+		/// <summary>
+		/// Gets or sets the min radius (3D).
+		/// </summary>
+		public float MinRadius { get; set; }
+
+		/// <summary>
+		/// Gets or sets the doppler factor.
+		/// </summary>
+		public float DopplerFactor { get; set; }
+
+		/// <summary>
+		/// Gets or sets the pitch variation.
+		/// </summary>
+		public float PitchVar { get; set; }
+
+		/// <summary>
+		/// Gets or sets the pitch.
+		/// </summary>
+		public float Pitch { get; set; }
+
+		/// <summary>
+		/// Gets or sets the volume variation.
+		/// </summary>
+		public float VolumeVar { get; set; }
+
+		/// <summary>
+		/// Gets or sets the volume.
+		/// </summary>
+		public float Volume { get; set; }
+
+		/// <summary>
+		/// Gets or sets the priority (in case too many sound effects are playing).
+		/// </summary>
+		public int Priority { get; set; }
+
+		/// <summary>
+		/// Gets or set the category the sound effect belongs to.
+		/// </summary>
+		public SoundCategory Category { get; set; }
+
+		Task IRawSerializable.DeserializeAsync(Stream stream)
 		{
 			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
 			{
@@ -63,7 +150,7 @@ namespace SilentHunter.Sdl
 			return Task.CompletedTask;
 		}
 
-		protected virtual Task SerializeAsync(Stream stream)
+		Task IRawSerializable.SerializeAsync(Stream stream)
 		{
 			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
@@ -72,8 +159,8 @@ namespace SilentHunter.Sdl
 
 				writer.Write("SoundInfo", '\0');
 
-				SerializeProperty(writer, "Name", Name);
-				SerializeProperty(writer, "WaveName", WaveName);
+				SerializeProperty(writer, "Name", Name ?? string.Empty);
+				SerializeProperty(writer, "WaveName", WaveName ?? string.Empty);
 				SerializeProperty(writer, "IsFolder", IsFolder);
 				SerializeProperty(writer, "Loop", Loop);
 				SerializeProperty(writer, "Play", Play);
@@ -99,14 +186,21 @@ namespace SilentHunter.Sdl
 			return Task.CompletedTask;
 		}
 
-		protected virtual object DeserializeProperty(BinaryReader reader, string propertyName, Type propertyType)
+		/// <summary>
+		/// Deserializes a property using specified <paramref name="reader"/>.
+		/// </summary>
+		/// <param name="reader">The reader.</param>
+		/// <param name="propertyName">The name of the property.</param>
+		/// <param name="propertyType">The type of the property.</param>
+		/// <returns>The property value.</returns>
+		private static object DeserializeProperty(BinaryReader reader, string propertyName, Type propertyType)
 		{
 			uint size = reader.ReadUInt32();
 			long currentPos = reader.BaseStream.Position;
 			string name = reader.ReadString(propertyName.Length);
 			if (propertyName != name)
 			{
-				throw new IOException("The file appears invalid. Unexpected property name encountered.");
+				throw new InvalidOperationException("The file appears invalid. Unexpected property name encountered.");
 			}
 
 			// Skip past the terminating null.
@@ -119,13 +213,19 @@ namespace SilentHunter.Sdl
 
 			if (reader.BaseStream.Position != currentPos + size)
 			{
-				throw new IOException("The file appears invalid. The data type does not match.");
+				throw new InvalidOperationException("The file appears invalid. The data type does not match.");
 			}
 
 			return value;
 		}
 
-		protected virtual void SerializeProperty(BinaryWriter writer, string propertyName, object value)
+		/// <summary>
+		/// Serializes a property using specified <paramref name="writer"/>.
+		/// </summary>
+		/// <param name="writer">The writer.</param>
+		/// <param name="propertyName">The name of the property.</param>
+		/// <param name="value">The property value.</param>
+		private static void SerializeProperty(BinaryWriter writer, string propertyName, object value)
 		{
 			long currentPos = writer.BaseStream.Position;
 
@@ -152,39 +252,13 @@ namespace SilentHunter.Sdl
 			writer.BaseStream.Position = endPos;
 		}
 
-		public string WaveName
-		{
-			get => _waveName ?? string.Empty;
-			set => _waveName = value;
-		}
-
-		public string Name
-		{
-			get => _name ?? string.Empty;
-			set => _name = value;
-		}
-
-		public bool Is3D { get; set; }
-		public bool Play { get; set; }
-		public bool Loop { get; set; }
-		public bool IsFolder { get; set; }
-		public float Delay { get; set; }
-		public float MaxRadius { get; set; }
-		public float MinRadius { get; set; }
-		public float DopplerFactor { get; set; }
-		public float PitchVar { get; set; }
-		public float Pitch { get; set; }
-		public float VolumeVar { get; set; }
-		public float Volume { get; set; }
-		public int Priority { get; set; }
-		public SoundCategory Category { get; set; }
-
+		/// <inheritdoc />
 		public object Clone()
 		{
 			var clone = new SoundInfo();
 			using (var ms = new MemoryStream())
 			{
-				SerializeAsync(ms);
+				((IRawSerializable)this).SerializeAsync(ms);
 
 				ms.Position = 0;
 
@@ -194,47 +268,50 @@ namespace SilentHunter.Sdl
 			return clone;
 		}
 
-		protected bool Equals(SoundInfo other)
+		public bool Equals(SoundInfo other)
 		{
-			return string.Equals(_name, other._name) && string.Equals(_waveName, other._waveName) && IsFolder == other.IsFolder && Loop == other.Loop && Play == other.Play && Is3D == other.Is3D && Volume.Equals(other.Volume) && VolumeVar.Equals(other.VolumeVar) && Pitch.Equals(other.Pitch) && PitchVar.Equals(other.PitchVar) && DopplerFactor.Equals(other.DopplerFactor) && MinRadius.Equals(other.MinRadius) && MaxRadius.Equals(other.MaxRadius) && Delay.Equals(other.Delay) && Category == other.Category && Priority == other.Priority;
-		}
-
-		/// <summary>
-		/// Determines whether the specified object is equal to the current object.
-		/// </summary>
-		/// <returns>
-		/// true if the specified object  is equal to the current object; otherwise, false.
-		/// </returns>
-		/// <param name="obj">The object to compare with the current object. </param>
-		public override bool Equals(object obj)
-		{
-			if (ReferenceEquals(null, obj))
+			if (ReferenceEquals(null, other))
 			{
 				return false;
 			}
 
-			if (ReferenceEquals(this, obj))
+			if (ReferenceEquals(this, other))
 			{
 				return true;
 			}
 
-			if (obj.GetType() != GetType())
-			{
-				return false;
-			}
-
-			return Equals((SoundInfo)obj);
+			return string.Equals(_name, other._name) && string.Equals(_waveName, other._waveName) && Is3D == other.Is3D && Play == other.Play && Loop == other.Loop && IsFolder == other.IsFolder && Delay.Equals(other.Delay) && MaxRadius.Equals(other.MaxRadius) && MinRadius.Equals(other.MinRadius) && DopplerFactor.Equals(other.DopplerFactor) && PitchVar.Equals(other.PitchVar) && Pitch.Equals(other.Pitch) && VolumeVar.Equals(other.VolumeVar) && Volume.Equals(other.Volume) && Priority == other.Priority && Category == other.Category;
 		}
 
-		/// <summary>
-		/// Serves as the default hash function.
-		/// </summary>
-		/// <returns>
-		/// A hash code for the current object.
-		/// </returns>
+		/// <inheritdoc />
+		public override bool Equals(object obj)
+		{
+			return ReferenceEquals(this, obj) || obj is SoundInfo other && Equals(other);
+		}
+
+		/// <inheritdoc />
 		public override int GetHashCode()
 		{
-			return 0;
+			unchecked
+			{
+				int hashCode = (_name != null ? _name.GetHashCode() : 0);
+				hashCode = (hashCode * 397) ^ (_waveName != null ? _waveName.GetHashCode() : 0);
+				hashCode = (hashCode * 397) ^ Is3D.GetHashCode();
+				hashCode = (hashCode * 397) ^ Play.GetHashCode();
+				hashCode = (hashCode * 397) ^ Loop.GetHashCode();
+				hashCode = (hashCode * 397) ^ IsFolder.GetHashCode();
+				hashCode = (hashCode * 397) ^ Delay.GetHashCode();
+				hashCode = (hashCode * 397) ^ MaxRadius.GetHashCode();
+				hashCode = (hashCode * 397) ^ MinRadius.GetHashCode();
+				hashCode = (hashCode * 397) ^ DopplerFactor.GetHashCode();
+				hashCode = (hashCode * 397) ^ PitchVar.GetHashCode();
+				hashCode = (hashCode * 397) ^ Pitch.GetHashCode();
+				hashCode = (hashCode * 397) ^ VolumeVar.GetHashCode();
+				hashCode = (hashCode * 397) ^ Volume.GetHashCode();
+				hashCode = (hashCode * 397) ^ Priority;
+				hashCode = (hashCode * 397) ^ (int)Category;
+				return hashCode;
+			}
 		}
 
 		public static bool operator ==(SoundInfo left, SoundInfo right)
@@ -245,24 +322,6 @@ namespace SilentHunter.Sdl
 		public static bool operator !=(SoundInfo left, SoundInfo right)
 		{
 			return !Equals(left, right);
-		}
-
-		/// <summary>
-		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
-		/// </summary>
-		/// <param name="stream">The stream.</param>
-		Task IRawSerializable.DeserializeAsync(Stream stream)
-		{
-			return DeserializeAsync(stream);
-		}
-
-		/// <summary>
-		/// When implemented, serializes the implemented class to specified <paramref name="stream" />.
-		/// </summary>
-		/// <param name="stream">The stream.</param>
-		Task IRawSerializable.SerializeAsync(Stream stream)
-		{
-			return SerializeAsync(stream);
 		}
 	}
 }

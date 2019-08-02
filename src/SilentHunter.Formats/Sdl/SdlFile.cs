@@ -7,71 +7,72 @@ using skwas.IO;
 
 namespace SilentHunter.Sdl
 {
-	public class SdlFile : KeyedCollection<string, SoundInfo>, ISilentHunterFile
+	/// <summary>
+	/// Represents an SDL file parser.
+	/// </summary>
+	public sealed class SdlFile : KeyedCollection<string, SoundInfo>, ISilentHunterFile
 	{
 		private const string S3DAssemblyPath = "Sdl.dll";
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="SdlFile"/> class.
+		/// </summary>
 		public SdlFile()
 			: base(EqualityComparer<string>.Default, -1)
 		{
 		}
 
+		/// <inheritdoc />
 		protected override string GetKeyForItem(SoundInfo item)
 		{
 			return item.Name;
 		}
 
-		/// <summary>
-		/// Loads the file from specified stream.
-		/// </summary>
-		/// <param name="stream">The stream to load from.</param>
-		public async Task LoadAsync(Stream stream)
+		/// <inheritdoc />
+		public Task LoadAsync(Stream stream)
 		{
+			if (stream == null)
+			{
+				throw new ArgumentNullException(nameof(stream));
+			}
+
 			Clear();
 
-			while (stream.Position < stream.Length)
-			{
-				var sndInfo = new SoundInfo();
-				await ((IRawSerializable)sndInfo).DeserializeAsync(stream).ConfigureAwait(false);
-
-				// S3D adds this, so ignore.
-				if (string.Compare(sndInfo.Name, S3DAssemblyPath, StringComparison.OrdinalIgnoreCase) == 0)
+			return GlobalExceptionHandler.HandleException(async () =>
 				{
-					continue;
-				}
+					while (stream.Position < stream.Length)
+					{
+						var sndInfo = new SoundInfo();
+						await ((IRawSerializable)sndInfo).DeserializeAsync(stream).ConfigureAwait(false);
 
-				Add(sndInfo);
-			}
+						// S3D adds this, so ignore.
+						if (string.Compare(sndInfo.Name, S3DAssemblyPath, StringComparison.OrdinalIgnoreCase) == 0)
+						{
+							continue;
+						}
+
+						Add(sndInfo);
+					}
+				},
+				"Failed to load file.");
 		}
 
-		/// <summary>
-		/// Saves the file to specified stream.
-		/// </summary>
-		/// <param name="stream">The stream to write to.</param>
-		public async Task SaveAsync(Stream stream)
+		/// <inheritdoc />
+		public Task SaveAsync(Stream stream)
 		{
-			foreach (IRawSerializable sndInfo in this)
+			if (stream == null)
 			{
-				await sndInfo.SerializeAsync(stream).ConfigureAwait(false);
+				throw new ArgumentNullException(nameof(stream));
 			}
-		}
 
-		/// <summary>
-		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
-		/// </summary>
-		/// <param name="stream">The stream.</param>
-		Task IRawSerializable.DeserializeAsync(Stream stream)
-		{
-			return LoadAsync(stream);
-		}
-
-		/// <summary>
-		/// When implemented, serializes the implemented class to specified <paramref name="stream" />.
-		/// </summary>
-		/// <param name="stream">The stream.</param>
-		Task IRawSerializable.SerializeAsync(Stream stream)
-		{
-			return SaveAsync(stream);
+			return GlobalExceptionHandler.HandleException(async () =>
+				{
+					foreach (IRawSerializable sndInfo in this)
+					{
+						await sndInfo.SerializeAsync(stream).ConfigureAwait(false);
+					}
+				},
+				"Failed to save file.");
 		}
 	}
 }

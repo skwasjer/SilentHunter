@@ -5,7 +5,7 @@ using SilentHunter.Extensions;
 
 namespace SilentHunter.Dat.Controllers
 {
-	public class ControllerFactory : IControllerFactory, IItemFactory
+	internal class ControllerFactory : IControllerFactory, IItemFactory
 	{
 		private readonly ControllerAssembly _controllerAssembly;
 		private readonly IItemFactory _itemFactory;

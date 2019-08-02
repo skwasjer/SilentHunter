@@ -24,6 +24,11 @@ namespace SilentHunter.Dat.Controllers
 		/// <exception cref="ArgumentException">Thrown when the controller name is empty or cannot be found for the <paramref name="profile" />.</exception>
 		RawController CreateController(Type controllerType, bool initializeFields);
 
+		/// <summary>
+		/// Tests if the specified type is a controller type and can be created using this factory.
+		/// </summary>
+		/// <param name="controllerType">The controller type.</param>
+		/// <returns><see langword="true" /> if <paramref name="controllerType"/> is a valid type that can be created, or <see langword="false" /> otherwise.</returns>
 		bool CanCreate(Type controllerType);
 	}
 }

@@ -8,7 +8,7 @@ using SilentHunter.Extensions;
 
 namespace SilentHunter.Dat.Controllers
 {
-	public class ControllerWriter : IControllerWriter
+	internal class ControllerWriter : IControllerWriter
 	{
 		private readonly IControllerFactory _controllerFactory;
 		private readonly ControllerSerializerResolver _controllerSerializerResolver;
@@ -31,10 +31,17 @@ namespace SilentHunter.Dat.Controllers
 				throw new ArgumentNullException(nameof(controller));
 			}
 
+			// For fallback support, allow byte arrays/streams to be passed.
+			// We simply write it as is.
 			if (controller is byte[] byteBuffer)
 			{
-				// This is a raw byte controller. Simply write it.
 				stream.Write(byteBuffer, 0, byteBuffer.Length);
+				return;
+			}
+
+			if (controller is Stream inputStream)
+			{
+				inputStream.CopyTo(stream);
 				return;
 			}
 

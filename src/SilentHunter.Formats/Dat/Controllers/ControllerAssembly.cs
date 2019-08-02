@@ -4,43 +4,31 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using SilentHunter.Controllers;
 using SilentHunter.Extensions;
 
 namespace SilentHunter.Dat.Controllers
 {
+	/// <summary>
+	/// Represents a wrapper for <see cref="Assembly"/> that gets all types that inherit from <see cref="RawController"/>. Provides methods to get a specific controller type for a specific Silent Hunter game version.
+	/// </summary>
 	public class ControllerAssembly
 	{
 		private const BindingFlags ResolveBindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly | BindingFlags.Static;
 
-		public ControllerAssembly(Assembly controllerAssembly)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ControllerAssembly"/> using specified <paramref name="assembly"/>.
+		/// </summary>
+		/// <param name="assembly">The assembly containing types that inherit from <see cref="RawController"/>.</param>
+		public ControllerAssembly(Assembly assembly)
 		{
-			Assembly = controllerAssembly ?? throw new ArgumentNullException(nameof(controllerAssembly));
+			Assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
 
 			Controllers = new ReadOnlyDictionary<ControllerProfile, Dictionary<string, Type>>(
 				EnumControllers(Assembly)
 			);
 
-			LoadHelpText(controllerAssembly);
-		}
-
-		private void LoadHelpText(Assembly controllerAssembly)
-		{
-			if (!File.Exists(controllerAssembly.Location))
-			{
-				return;
-			}
-
-			string assemblyDir = Path.GetDirectoryName(controllerAssembly.Location);
-			if (assemblyDir == null || !Directory.Exists(assemblyDir))
-			{
-				return;
-			}
-
-			string docFile = Path.Combine(assemblyDir, Path.GetFileNameWithoutExtension(controllerAssembly.Location) + ".xml");
-			if (File.Exists(docFile))
-			{
-				HelpText = new ControllerAssemblyHelpText(docFile);
-			}
+			LoadHelpText(assembly);
 		}
 
 		/// <summary>
@@ -160,6 +148,26 @@ namespace SilentHunter.Dat.Controllers
 			else
 			{
 				controllerTypes[profile].Add(remoteType.Name, remoteType);
+			}
+		}
+
+		private void LoadHelpText(Assembly controllerAssembly)
+		{
+			if (!File.Exists(controllerAssembly.Location))
+			{
+				return;
+			}
+
+			string assemblyDir = Path.GetDirectoryName(controllerAssembly.Location);
+			if (assemblyDir == null || !Directory.Exists(assemblyDir))
+			{
+				return;
+			}
+
+			string docFile = Path.Combine(assemblyDir, Path.GetFileNameWithoutExtension(controllerAssembly.Location) + ".xml");
+			if (File.Exists(docFile))
+			{
+				HelpText = new ControllerAssemblyHelpText(docFile);
 			}
 		}
 	}

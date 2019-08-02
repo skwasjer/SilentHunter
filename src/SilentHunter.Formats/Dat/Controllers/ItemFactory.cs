@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using SilentHunter.Extensions;
 
 namespace SilentHunter.Dat.Controllers
 {
-	public class ItemFactory : IItemFactory
+	internal class ItemFactory : IItemFactory
 	{
 		/// <summary>
 		/// Creates an new instance of the specified <paramref name="type" />. All (child) fields that are reference types are also instantiated using the default constructor.

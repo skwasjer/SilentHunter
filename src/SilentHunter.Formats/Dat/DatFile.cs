@@ -6,6 +6,9 @@ using skwas.IO;
 
 namespace SilentHunter.Dat
 {
+	/// <summary>
+	/// Represents an DAT/SIM/ZON/DSD/CAM/ANM file parser.
+	/// </summary>
 	public sealed partial class DatFile : ChunkFile<DatChunk>, ISilentHunterFile
 	{
 		private readonly IChunkResolver<Magics> _chunkResolver;
@@ -18,6 +21,9 @@ namespace SilentHunter.Dat
 
 		private Header _header;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="DatFile"/> class using specified resolver and activator.
+		/// </summary>
 		public DatFile(IChunkResolver<Magics> chunkResolver, IChunkActivator chunkActivator)
 		{
 			_chunkResolver = chunkResolver ?? throw new ArgumentNullException(nameof(chunkResolver));
@@ -27,35 +33,18 @@ namespace SilentHunter.Dat
 			HasGenericFlag = true;
 		}
 
-		~DatFile()
-		{
-			Dispose(false);
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			try
-			{
-				if (!IsDisposed)
-				{
-					if (disposing)
-					{
-						_header = null;
-					}
-				}
-			}
-			finally
-			{
-				base.Dispose(disposing);
-			}
-		}
-
+		/// <summary>
+		/// Gets or sets the raw header flags.
+		/// </summary>
 		public uint HeaderFlags
 		{
 			get => (uint)_header.FileType;
 			set => _header.FileType = (Header.Flags)value;
 		}
 
+		/// <summary>
+		/// Gets or sets the generic header flag.
+		/// </summary>
 		public bool HasGenericFlag
 		{
 			get => _header.FileType.HasFlag(Header.Flags.Generic);
@@ -69,6 +58,9 @@ namespace SilentHunter.Dat
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the 'contains animations' flag.
+		/// </summary>
 		public bool ContainsAnimations
 		{
 			get => _header.FileType.HasFlag(Header.Flags.HasAnimations);
@@ -82,6 +74,9 @@ namespace SilentHunter.Dat
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the 'contains renderable objects' flag.
+		/// </summary>
 		public bool ContainsRenderableObjects
 		{
 			get => _header.FileType.HasFlag(Header.Flags.HasRenderableObjects);
@@ -96,81 +91,109 @@ namespace SilentHunter.Dat
 		}
 
 		/// <summary>
-		/// Loads the file from specified stream.
+		/// Loads from specified <paramref name="stream"/>.
 		/// </summary>
 		/// <param name="stream">The stream to load from.</param>
-		public override async Task LoadAsync(Stream stream)
+		/// <exception cref="IOException">Thrown when an IO error occurs.</exception>
+		/// <exception cref="SilentHunterParserException">Thrown when a parsing error occurs.</exception>
+		/// <exception cref="ArgumentNullException">Thrown when <paramref name="stream"/> is null.</exception>
+		/// <exception cref="ObjectDisposedException">Thrown when the instance is disposed.</exception>
+		public override Task LoadAsync(Stream stream)
 		{
-			if (IsDisposed)
+			if (stream == null)
 			{
-				throw new ObjectDisposedException(GetType().Name);
+				throw new ArgumentNullException(nameof(stream));
 			}
 
-			// Check the magic.
-			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
-			{
-				_header = reader.ReadStruct<Header>();
-				if (!_header.IsValid())
-				{
-					throw new ArgumentException("Unexpected header in stream.", nameof(stream));
-				}
-			}
+			ThrowIfDisposed();
 
-			using (ChunkReader<Magics, DatChunk> reader = CreateReader(stream))
-			{
-				long chunkStart = 0;
-				try
+			return GlobalExceptionHandler.HandleException(async () =>
 				{
-					while (true)
+					// Check the magic.
+					using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
 					{
-						chunkStart = stream.Position;
-						DatChunk chunk = await reader.ReadAsync().ConfigureAwait(false);
-						if (chunk == null)
+						_header = reader.ReadStruct<Header>();
+						if (!_header.IsValid())
 						{
-							// EOF.
-							break;
-						}
-
-						// S3D stores a special chunk that has no purpose anymore, so we get rid of it.
-						if (chunk.Magic == Magics.S3DSettings)
-						{
-							chunk.Dispose();
-						}
-						else
-						{
-							Chunks.Add(chunk);
+							throw new SilentHunterParserException("Unexpected header in stream.");
 						}
 					}
-				}
-				catch (Exception ex) when (chunkStart != 0)
-				{
-					throw new DatFileException(Chunks.Count, chunkStart, stream.Position, ex);
-				}
-			}
+
+					using (ChunkReader<Magics, DatChunk> reader = CreateReader(stream))
+					{
+						long chunkStart = 0;
+						try
+						{
+							while (true)
+							{
+								chunkStart = stream.Position;
+								DatChunk chunk = await reader.ReadAsync().ConfigureAwait(false);
+								if (chunk == null)
+								{
+									// EOF.
+									break;
+								}
+
+								// S3D stores a special chunk that has no purpose anymore, so we get rid of it.
+								if (chunk.Magic == Magics.S3DSettings)
+								{
+									chunk.Dispose();
+								}
+								else
+								{
+									Chunks.Add(chunk);
+								}
+							}
+						}
+						catch (Exception ex) when (chunkStart != 0)
+						{
+							throw new DatFileException(Chunks.Count, chunkStart, stream.Position, ex);
+						}
+					}
+				},
+				"Failed to load file.");
 		}
 
 		/// <summary>
-		/// Saves the file to specified stream.
+		/// Saves to specified <paramref name="stream"/>.
 		/// </summary>
 		/// <param name="stream">The stream to write to.</param>
-		public override async Task SaveAsync(Stream stream)
+		/// <exception cref="IOException">Thrown when an IO error occurs.</exception>
+		/// <exception cref="SilentHunterParserException">Thrown when a parsing error occurs.</exception>
+		/// <exception cref="ArgumentNullException">Thrown when <paramref name="stream"/> is null.</exception>
+		/// <exception cref="ObjectDisposedException">Thrown when the instance is disposed.</exception>
+		public override Task SaveAsync(Stream stream)
+		{
+			if (stream == null)
+			{
+				throw new ArgumentNullException(nameof(stream));
+			}
+
+			ThrowIfDisposed();
+
+			return GlobalExceptionHandler.HandleException(async () =>
+				{
+					using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
+					{
+						writer.WriteStruct(_header);
+					}
+
+					using (ChunkWriter<Magics, DatChunk> writer = CreateWriter(stream))
+					{
+						foreach (DatChunk chunk in Chunks)
+						{
+							await writer.WriteAsync(chunk).ConfigureAwait(false);
+						}
+					}
+				},
+				"Failed to save file.");
+		}
+
+		private void ThrowIfDisposed()
 		{
 			if (IsDisposed)
 			{
 				throw new ObjectDisposedException(GetType().Name);
-			}
-
-			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
-			{
-				writer.WriteStruct(_header);
-			}
-
-			using (ChunkWriter<Magics, DatChunk> writer = CreateWriter(stream))
-			{
-				foreach (DatChunk chunk in Chunks)
-				{
-					await writer.WriteAsync(chunk).ConfigureAwait(false);
-				}
 			}
 		}
 
@@ -182,24 +205,6 @@ namespace SilentHunter.Dat
 		public ChunkWriter<Magics, DatChunk> CreateWriter(Stream stream)
 		{
 			return new ChunkWriter<Magics, DatChunk>(stream, true);
-		}
-
-		/// <summary>
-		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
-		/// </summary>
-		/// <param name="stream">The stream.</param>
-		Task IRawSerializable.DeserializeAsync(Stream stream)
-		{
-			return LoadAsync(stream);
-		}
-
-		/// <summary>
-		/// When implemented, serializes the implemented class to specified <paramref name="stream" />.
-		/// </summary>
-		/// <param name="stream">The stream.</param>
-		Task IRawSerializable.SerializeAsync(Stream stream)
-		{
-			return SaveAsync(stream);
 		}
 	}
 }
