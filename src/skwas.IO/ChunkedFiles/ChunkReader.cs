@@ -1,7 +1,8 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace skwas.IO
 {
@@ -13,10 +14,24 @@ namespace skwas.IO
 	public class ChunkReader<TMagic, TChunk> : IDisposable
 		where TChunk : IChunk
 	{
+		private readonly IServiceProvider _serviceProvider;
 		private BinaryReader _reader;
 		private IChunkResolver _chunkResolver;
 
 		#region Implementation of IDisposable / .ctor
+
+		/// <summary>
+		/// Initializes a new instance of <see cref="ChunkReader{TMagic,TChunk}" />.
+		/// </summary>
+		/// <param name="stream">The stream to read from.</param>
+		/// <param name="chunkResolver">The resolver to use to find the type associated with the magic.</param>
+		/// <param name="serviceProvider">The service provider to use to create chunks</param>
+		/// <param name="leaveOpen">True to leave the stream open.</param>
+		public ChunkReader(Stream stream, IChunkResolver chunkResolver, IServiceProvider serviceProvider, bool leaveOpen)
+			: this(stream, chunkResolver, leaveOpen)
+		{
+			_serviceProvider = serviceProvider;
+		}
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="ChunkReader{TMagic,TChunk}" />.
@@ -137,15 +152,29 @@ namespace skwas.IO
 
 			// First check for a .ctor with single param of type TMagic.
 			TChunk newChunk;
-			ConstructorInfo constructor = chunkType.GetConstructor(BindingFlags.Public | BindingFlags.Instance, null, new[] { typeof(TMagic) }, null);
-			if (constructor != null)
+			if (_serviceProvider != null)
 			{
-				newChunk = (TChunk)Activator.CreateInstance(chunkType, magic);
+				try
+				{
+					newChunk = (TChunk)ActivatorUtilities.CreateInstance(_serviceProvider, chunkType);
+				}
+				catch (InvalidOperationException)
+				{
+					newChunk = (TChunk)ActivatorUtilities.CreateInstance(_serviceProvider, chunkType, magic);
+				}
 			}
 			else
 			{
-				// Try a parameterless constructor.
-				newChunk = (TChunk)Activator.CreateInstance(chunkType);
+				ConstructorInfo constructor = chunkType.GetConstructor(BindingFlags.Public | BindingFlags.Instance, null, new[] { typeof(TMagic) }, null);
+				if (constructor != null)
+				{
+					newChunk = (TChunk)Activator.CreateInstance(chunkType, magic);
+				}
+				else
+				{
+					// Try a parameterless constructor.
+					newChunk = (TChunk)Activator.CreateInstance(chunkType);
+				}
 			}
 
 			newChunk.Magic = magic;

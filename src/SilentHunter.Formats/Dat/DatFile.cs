@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using SilentHunter.Dat.Chunks;
 using skwas.IO;
@@ -7,6 +7,8 @@ namespace SilentHunter.Dat
 {
 	public sealed partial class DatFile : ChunkFile<DatChunk>, ISilentHunterFile
 	{
+		private readonly IServiceProvider _serviceProvider;
+
 		/// <summary>
 		/// Every DAT-file starts with this magic.
 		/// </summary>
@@ -16,12 +18,13 @@ namespace SilentHunter.Dat
 		private S3DSettingsChunk _settingsChunk;
 
 		public DatFile()
-			: this(true)
+			: this(null, true)
 		{
 		}
 
-		public DatFile(bool saveSignature = true)
+		public DatFile(IServiceProvider serviceProvider, bool saveSignature = true)
 		{
+			_serviceProvider = serviceProvider;
 			SaveSignature = saveSignature;
 			_header = new Header();
 
@@ -145,7 +148,7 @@ namespace SilentHunter.Dat
 				throw new ArgumentException("Unexpected header in stream.", nameof(stream));
 			}
 
-			using (var reader = new ChunkReader<Magics, DatChunk>(bufferedStream, new DatChunkResolver(), true))
+			using (var reader = new ChunkReader<Magics, DatChunk>(bufferedStream, new DatChunkResolver(), _serviceProvider, true))
 			{
 				long chunkStart = 0;
 				try
