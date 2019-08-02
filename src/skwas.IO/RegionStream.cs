@@ -24,18 +24,15 @@ namespace skwas.IO
 		{
 			BaseStream = stream ?? throw new ArgumentNullException(nameof(stream));
 
-			Move(stream.Position, length);
+			if (length + stream.Position > stream.Length)
+			{
+				throw new ArgumentOutOfRangeException(nameof(length));
+			}
+
+			_origin = stream.Position;
+			_count = length;
 
 			_forReading = forReading;
-			/*			_startPosition = stream.Position;
-			
-						if (_forReading)
-						{
-							if (count + _startPosition > _baseStream.Length)
-								throw new ArgumentOutOfRangeException("count");
-			
-						}
-						_count = count;*/
 		}
 
 		/// <summary>
