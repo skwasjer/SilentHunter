@@ -113,7 +113,7 @@ namespace skwas.IO
 				throw new ObjectDisposedException(GetType().Name);
 			}
 
-			using (FileStream fs = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+			using (FileStream fs = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
 			{
 				Load(fs);
 			}
