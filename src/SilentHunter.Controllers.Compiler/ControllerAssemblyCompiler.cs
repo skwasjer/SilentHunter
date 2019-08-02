@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 
 namespace SilentHunter.Controllers.Compiler
 {
-	public class ControllerAssemblyCompiler
+	public class ControllerAssemblyCompiler : IControllerAssemblyCompiler
 	{
 		private class Dependency
 		{
@@ -42,8 +42,6 @@ namespace SilentHunter.Controllers.Compiler
 		};
 
 		private readonly ICSharpCompiler _compiler;
-		private ICollection<string> _dependencySearchPaths = new List<string>();
-		private Func<string, bool> _ignorePaths;
 
 		public ControllerAssemblyCompiler(ICSharpCompiler compiler, string applicationName, string controllerPath)
 		{
@@ -141,7 +139,7 @@ namespace SilentHunter.Controllers.Compiler
 			foreach (Dependency requiredDependency in RequiredDependencies.Where(rd => rd.IsLocal))
 			{
 				// Find the dependency.
-				string dependencyFullPath = _dependencySearchPaths
+				string dependencyFullPath = (DependencySearchPaths ?? new List<string>())
 					.Union(new[] { baseDirectory })
 					.Select(p =>
 					{
@@ -187,7 +185,7 @@ namespace SilentHunter.Controllers.Compiler
 			string p = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), path));
 			return new DirectoryInfo(p)
 				.GetFiles("*.cs", SearchOption.AllDirectories)
-				.Where(f => _ignorePaths == null || !_ignorePaths(f.FullName))
+				.Where(f => IgnorePaths == null || !IgnorePaths(f.FullName))
 				.Select(f =>
 					new CacheFileReference
 					{
