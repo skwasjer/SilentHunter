@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Reflection;
 using skwas.IO;
 
 namespace SilentHunter.Sdl
 {
 	public class SdlFile : KeyedCollection<string, SoundInfo>, ISilentHunterFile
 	{
-		private static readonly string AssemblyPath = "Sdl.dll";
+		private const string S3DAssemblyPath = "Sdl.dll";
 
 		public SdlFile()
 			: base(EqualityComparer<string>.Default, -1)
@@ -19,21 +18,6 @@ namespace SilentHunter.Sdl
 		protected override string GetKeyForItem(SoundInfo item)
 		{
 			return item.Name;
-		}
-
-		/// <summary>
-		/// Generates a S3D signature.
-		/// </summary>
-		/// <returns>Returns the S3D signature.</returns>
-		private static string GetSignature()
-		{
-			Assembly asm = Assembly.GetEntryAssembly();
-			string title = asm.GetCustomAttribute<AssemblyTitleAttribute>().Title;
-			string product = asm.GetCustomAttribute<AssemblyProductAttribute>().Product;
-			string version = asm.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
-			string cw = asm.GetCustomAttribute<AssemblyCopyrightAttribute>().Copyright;
-
-			return $"Modified with {product} - {title} (version {version}). {cw}";
 		}
 
 		/// <summary>
@@ -49,7 +33,8 @@ namespace SilentHunter.Sdl
 				var sndInfo = new SoundInfo();
 				((IRawSerializable)sndInfo).Deserialize(stream);
 
-				if (string.Compare(sndInfo.Name, AssemblyPath, StringComparison.OrdinalIgnoreCase) == 0)
+				// S3D adds this, so ignore.
+				if (string.Compare(sndInfo.Name, S3DAssemblyPath, StringComparison.OrdinalIgnoreCase) == 0)
 				{
 					continue;
 				}
@@ -64,16 +49,6 @@ namespace SilentHunter.Sdl
 		/// <param name="stream">The stream to write to.</param>
 		public void Save(Stream stream)
 		{
-#if !DEBUG
-			var copyright = new SoundInfo
-			{
-				Name = AssemblyPath,
-				WaveName = GetSignature(),
-				IsFolder = true
-			};
-			((IRawSerializable)copyright).Serialize(stream);
-#endif
-
 			foreach (IRawSerializable sndInfo in this)
 			{
 				sndInfo.Serialize(stream);

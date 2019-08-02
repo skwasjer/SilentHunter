@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using SilentHunter.Extensions;
@@ -28,8 +28,6 @@ namespace SilentHunter.Dat.Chunks
 		/// </summary>
 		public string Description { get; set; }
 
-		public string LastSavedString { get; private set; }
-
 		/// <summary>
 		/// Gets a value indicating this is an original SH-file. At least, it isn't saved by this library. This is just an indicator, because when a file is modified with a hex editor, this property would still return 0.
 		/// </summary>
@@ -37,6 +35,11 @@ namespace SilentHunter.Dat.Chunks
 
 		protected override void Deserialize(Stream stream)
 		{
+#if DEBUG
+			// For debugging purposes, it is useful to know the filename.
+			Debug.WriteLine(stream.GetBaseStreamName());
+#endif
+
 			var regionStream = stream as RegionStream;
 
 			using (var reader = new BinaryReader(stream, Encoding.ParseEncoding, true))
@@ -58,20 +61,18 @@ namespace SilentHunter.Dat.Chunks
 					Author = null;
 				}
 
-				// Discard remaining data. Original files don't have more data here, but our OnSerialize implementation writes an extra line with copyright info.
-				IsOriginalFile = stream.Position == stream.Length;
-				if (IsOriginalFile)
+				if (stream.Position == stream.Length)
 				{
 					return;
 				}
 
-				LastSavedString = reader.ReadString((int)(stream.Length - stream.Position - 1))?.TrimEnd(" \0".ToCharArray());
+				// S3D adds a signature. Ignore.
+				string s3dSignature = reader.ReadString((int)(stream.Length - stream.Position - 1))?.TrimEnd(" \0".ToCharArray());
+				Debug.WriteLine(s3dSignature);
+
+				// Make sure we are EOS.
 				stream.Position = stream.Length;
 			}
-
-#if DEBUG
-			Debug.WriteLine(LastSavedString + " : " + stream.GetBaseStreamName());
-#endif
 		}
 
 		protected override void Serialize(Stream stream)
@@ -82,27 +83,7 @@ namespace SilentHunter.Dat.Chunks
 
 				writer.Write(Author, '\0');
 				writer.Write(Description, '\0');
-
-				if (((DatFile)ParentFile).SaveSignature)
-				{
-					writer.Write(LastSavedString = GetSignature(), '\0');
-				}
 			}
-		}
-
-		/// <summary>
-		/// Generates a S3D signature.
-		/// </summary>
-		/// <returns>Returns the S3D signature.</returns>
-		private static string GetSignature()
-		{
-			Assembly asm = Assembly.GetEntryAssembly();
-			string title = asm.GetCustomAttribute<AssemblyTitleAttribute>().Title;
-			string product = asm.GetCustomAttribute<AssemblyProductAttribute>().Product;
-			string version = asm.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
-			string cw = asm.GetCustomAttribute<AssemblyCopyrightAttribute>().Copyright;
-
-			return $"Modified with {product} - {title} (version {version}). {cw}";
 		}
 	}
 }

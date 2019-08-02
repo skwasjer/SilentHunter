@@ -15,17 +15,11 @@ namespace SilentHunter.Dat
 		public const uint Magic = 0x716d0da4;
 
 		private Header _header;
-		private S3DSettingsChunk _settingsChunk;
 
+		// TODO: injection IServerProvider is anti-pattern.
 		public DatFile(IServiceProvider serviceProvider)
-			: this(serviceProvider, true)
-		{
-		}
-
-		public DatFile(IServiceProvider serviceProvider, bool saveSignature = true)
 		{
 			_serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-			SaveSignature = saveSignature;
 			_header = new Header();
 
 			HasGenericFlag = true;
@@ -44,9 +38,6 @@ namespace SilentHunter.Dat
 				{
 					if (disposing)
 					{
-						_settingsChunk?.Dispose();
-						_settingsChunk = null;
-
 						_header = null;
 					}
 				}
@@ -102,24 +93,6 @@ namespace SilentHunter.Dat
 			}
 		}
 
-		public bool SaveSignature { get; }
-
-		/// <summary>
-		/// Gets a reference to the S3D settings chunk.
-		/// </summary>
-		private S3DSettingsChunk SettingsChunk
-		{
-			get
-			{
-				if (IsDisposed)
-				{
-					throw new ObjectDisposedException(GetType().Name);
-				}
-
-				return _settingsChunk ?? (_settingsChunk = new S3DSettingsChunk());
-			}
-		}
-
 		/// <summary>
 		/// Loads the file from specified stream.
 		/// </summary>
@@ -131,22 +104,19 @@ namespace SilentHunter.Dat
 				throw new ObjectDisposedException(GetType().Name);
 			}
 
-			_settingsChunk = null;
-
 			var bufferedStream = new BufferedStream(stream, 1024);
 
+			// Check the magic.
 			using (var reader = new BinaryReader(bufferedStream, Encoding.ParseEncoding, true))
-				// Check the magic.
 			{
 				_header = reader.ReadStruct<Header>();
+				if (!_header.IsValid())
+				{
+					throw new ArgumentException("Unexpected header in stream.", nameof(stream));
+				}
 			}
 
-			if (!_header.IsValid())
-			{
-				throw new ArgumentException("Unexpected header in stream.", nameof(stream));
-			}
-
-			using (var reader = CreateReader(bufferedStream))
+			using (ChunkReader<Magics, DatChunk> reader = CreateReader(bufferedStream))
 			{
 				long chunkStart = 0;
 				try
@@ -161,10 +131,10 @@ namespace SilentHunter.Dat
 							break;
 						}
 
-						// If we have a settings chunk, do not add it to collection. Instead, store a reference in a private variable. We don't want this special chunk to show up in the UI.
+						// S3D stores a special chunk that has no purpose anymore, so we get rid of it.
 						if (chunk.Magic == Magics.S3DSettings)
 						{
-							_settingsChunk = (S3DSettingsChunk)chunk;
+							chunk.Dispose();
 						}
 						else
 						{
@@ -195,15 +165,12 @@ namespace SilentHunter.Dat
 				writer.WriteStruct(_header);
 			}
 
-			using (var writer = CreateWriter(stream))
+			using (ChunkWriter<Magics, DatChunk> writer = CreateWriter(stream))
 			{
 				foreach (DatChunk chunk in Chunks)
 				{
 					writer.Write(chunk);
 				}
-
-				// Write settings.
-				writer.Write(SettingsChunk);
 			}
 		}
 
