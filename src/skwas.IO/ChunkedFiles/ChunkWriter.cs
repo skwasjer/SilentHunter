@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace skwas.IO
 {
@@ -114,7 +115,7 @@ namespace skwas.IO
 		/// Writes the specified <paramref name="chunk" /> to the stream.
 		/// </summary>
 		/// <param name="chunk">The chunk to write to stream.</param>
-		public virtual void Write(TChunk chunk)
+		public virtual Task WriteAsync(TChunk chunk)
 		{
 			if (IsDisposed)
 			{
@@ -124,7 +125,7 @@ namespace skwas.IO
 			chunk.FileOffset = BaseStream.Position;
 			WriteMagic(chunk);
 
-			((IChunk)chunk).Serialize(BaseStream);
+			return ((IChunk)chunk).SerializeAsync(BaseStream);
 		}
 	}
 }

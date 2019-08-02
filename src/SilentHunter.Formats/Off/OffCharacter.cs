@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Threading.Tasks;
 using skwas.IO;
 
 namespace SilentHunter.Off
@@ -11,22 +12,26 @@ namespace SilentHunter.Off
 		public char Character { get; set; }
 		public Rectangle Rectangle { get; set; }
 
-		protected virtual void OnDeserialize(Stream stream)
+		protected virtual Task DeserializeAsync(Stream stream)
 		{
 			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
 			{
 				Character = reader.ReadChar();
 				Rectangle = reader.ReadStruct<Rectangle>();
 			}
+
+			return Task.CompletedTask;
 		}
 
-		protected virtual void OnSerialize(Stream stream)
+		protected virtual Task SerializeAsync(Stream stream)
 		{
 			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
 				writer.Write(Character);
 				writer.WriteStruct(Rectangle);
 			}
+
+			return Task.CompletedTask;
 		}
 
 		protected bool Equals(OffCharacter other)
@@ -86,18 +91,18 @@ namespace SilentHunter.Off
 		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		void IRawSerializable.Deserialize(Stream stream)
+		Task IRawSerializable.DeserializeAsync(Stream stream)
 		{
-			OnDeserialize(stream);
+			return DeserializeAsync(stream);
 		}
 
 		/// <summary>
 		/// When implemented, serializes the implemented class to specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		void IRawSerializable.Serialize(Stream stream)
+		Task IRawSerializable.SerializeAsync(Stream stream)
 		{
-			OnSerialize(stream);
+			return SerializeAsync(stream);
 		}
 	}
 }

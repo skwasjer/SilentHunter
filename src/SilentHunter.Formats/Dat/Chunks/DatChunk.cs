@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using skwas.IO;
 
 namespace SilentHunter.Dat.Chunks
@@ -124,18 +125,20 @@ namespace SilentHunter.Dat.Chunks
 		/// Deserializes the chunk. Note that the first 12 bytes (type, subtype and chunk size) are already read by the base class. Inheritors can override the default behavior, which is nothing more then reading all data, and caching it for later (ie. for serialization).
 		/// </summary>
 		/// <param name="stream">The stream to read from.</param>
-		protected override void Deserialize(Stream stream)
+		protected override Task DeserializeAsync(Stream stream)
 		{
 			var regionStream = stream as RegionStream;
 			long origin = regionStream?.BaseStream.Position ?? stream.Position;
 			long relativeOrigin = stream.Position;
 
-			base.Deserialize(stream);
+			base.DeserializeAsync(stream);
 
 			if (Bytes != null && Bytes.Length > 0)
 			{
 				UnknownData.Add(new UnknownChunkData(origin, relativeOrigin, Bytes, "Unknown"));
 			}
+
+			return Task.CompletedTask;
 		}
 
 		/// <summary>
@@ -143,16 +146,9 @@ namespace SilentHunter.Dat.Chunks
 		/// </summary>
 		/// <param name="stream">The stream to read from.</param>
 		/// <param name="includeHeader">True to include the 8 byte header (chunk sub type and chunk size).</param>
-		public void Deserialize(Stream stream, bool includeHeader)
+		public Task DeserializeAsync(Stream stream, bool includeHeader)
 		{
-			if (includeHeader)
-			{
-				((IRawSerializable)this).Deserialize(stream);
-			}
-			else
-			{
-				Deserialize(stream);
-			}
+			return includeHeader ? ((IRawSerializable)this).DeserializeAsync(stream) : DeserializeAsync(stream);
 		}
 
 		/// <summary>
@@ -160,23 +156,16 @@ namespace SilentHunter.Dat.Chunks
 		/// </summary>
 		/// <param name="stream">The stream to write to.</param>
 		/// <param name="includeHeader">True to include the 8 byte header (chunk sub type and chunk size).</param>
-		public void Serialize(Stream stream, bool includeHeader)
+		public Task SerializeAsync(Stream stream, bool includeHeader)
 		{
-			if (includeHeader)
-			{
-				((IRawSerializable)this).Serialize(stream);
-			}
-			else
-			{
-				Serialize(stream);
-			}
+			return includeHeader ? ((IRawSerializable)this).SerializeAsync(stream) : SerializeAsync(stream);
 		}
 
 		/// <summary>
 		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		void IRawSerializable.Deserialize(Stream stream)
+		async Task IRawSerializable.DeserializeAsync(Stream stream)
 		{
 			// Deserialize the chunk header. The magic is already read for this chunk.
 			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
@@ -203,7 +192,7 @@ namespace SilentHunter.Dat.Chunks
 				// Allow inheritors to deserialize the remainder of the chunk.
 				using (var regionStream = new RegionStream(stream, chunkSize))
 				{
-					Deserialize(regionStream);
+					await DeserializeAsync(regionStream).ConfigureAwait(false);
 				}
 
 				// Verify that the inheritor read the entire chunk. If not, the inheritor does not implement it correctly, so we have to halt.
@@ -227,7 +216,7 @@ namespace SilentHunter.Dat.Chunks
 		/// When implemented, serializes the implemented class to specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		void IRawSerializable.Serialize(Stream stream)
+		async Task IRawSerializable.SerializeAsync(Stream stream)
 		{
 			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
@@ -236,7 +225,7 @@ namespace SilentHunter.Dat.Chunks
 				long origin = stream.Position;
 				writer.Write(0); // Empty placeholder for size.
 
-				Serialize(stream);
+				await SerializeAsync(stream).ConfigureAwait(false);
 
 				long currentPos = stream.Position;
 				stream.Seek(origin, SeekOrigin.Begin);
@@ -263,14 +252,14 @@ namespace SilentHunter.Dat.Chunks
 			{
 				using (var writer = new ChunkWriter<DatFile.Magics, DatChunk>(ms, true))
 				{
-					writer.Write(this);
+					writer.WriteAsync(this).GetAwaiter().GetResult();
 				}
 
 				ms.Position = 0;
 
 				using (ChunkReader<DatFile.Magics, DatChunk> reader = ((DatFile)ParentFile).CreateReader(ms))
 				{
-					return reader.Read();
+					return reader.ReadAsync().GetAwaiter().GetResult();
 				}
 			}
 		}

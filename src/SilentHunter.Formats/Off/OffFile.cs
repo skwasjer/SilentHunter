@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Threading.Tasks;
 using skwas.IO;
 
 namespace SilentHunter.Off
@@ -21,7 +22,7 @@ namespace SilentHunter.Off
 		/// Loads the file from specified stream.
 		/// </summary>
 		/// <param name="stream">The stream to load from.</param>
-		public void Load(Stream stream)
+		public async Task LoadAsync(Stream stream)
 		{
 			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
 			{
@@ -32,7 +33,7 @@ namespace SilentHunter.Off
 				for (int i = 0; i < characterCount; i++)
 				{
 					var offChar = new OffCharacter();
-					((IRawSerializable)offChar).Deserialize(stream);
+					await ((IRawSerializable)offChar).DeserializeAsync(stream).ConfigureAwait(false);
 
 					Add(offChar);
 				}
@@ -48,7 +49,7 @@ namespace SilentHunter.Off
 		/// Saves the file to specified stream.
 		/// </summary>
 		/// <param name="stream">The stream to write to.</param>
-		public void Save(Stream stream)
+		public async Task SaveAsync(Stream stream)
 		{
 			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
@@ -57,7 +58,7 @@ namespace SilentHunter.Off
 
 				foreach (OffCharacter c in this)
 				{
-					((IRawSerializable)c).Serialize(stream);
+					await ((IRawSerializable)c).SerializeAsync(stream).ConfigureAwait(false);
 				}
 
 				writer.Flush();
@@ -68,18 +69,18 @@ namespace SilentHunter.Off
 		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		void IRawSerializable.Deserialize(Stream stream)
+		Task IRawSerializable.DeserializeAsync(Stream stream)
 		{
-			Load(stream);
+			return LoadAsync(stream);
 		}
 
 		/// <summary>
 		/// When implemented, serializes the implemented class to specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		void IRawSerializable.Serialize(Stream stream)
+		Task IRawSerializable.SerializeAsync(Stream stream)
 		{
-			Save(stream);
+			return SaveAsync(stream);
 		}
 
 		/// <summary>

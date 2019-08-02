@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using SilentHunter.Dat.Chunks;
 using skwas.IO;
 
@@ -98,7 +99,7 @@ namespace SilentHunter.Dat
 		/// Loads the file from specified stream.
 		/// </summary>
 		/// <param name="stream">The stream to load from.</param>
-		public override void Load(Stream stream)
+		public override async Task LoadAsync(Stream stream)
 		{
 			if (IsDisposed)
 			{
@@ -123,7 +124,7 @@ namespace SilentHunter.Dat
 					while (true)
 					{
 						chunkStart = stream.Position;
-						DatChunk chunk = reader.Read();
+						DatChunk chunk = await reader.ReadAsync().ConfigureAwait(false);
 						if (chunk == null)
 						{
 							// EOF.
@@ -152,7 +153,7 @@ namespace SilentHunter.Dat
 		/// Saves the file to specified stream.
 		/// </summary>
 		/// <param name="stream">The stream to write to.</param>
-		public override void Save(Stream stream)
+		public override async Task SaveAsync(Stream stream)
 		{
 			if (IsDisposed)
 			{
@@ -168,7 +169,7 @@ namespace SilentHunter.Dat
 			{
 				foreach (DatChunk chunk in Chunks)
 				{
-					writer.Write(chunk);
+					await writer.WriteAsync(chunk).ConfigureAwait(false);
 				}
 			}
 		}
@@ -187,18 +188,18 @@ namespace SilentHunter.Dat
 		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		void IRawSerializable.Deserialize(Stream stream)
+		Task IRawSerializable.DeserializeAsync(Stream stream)
 		{
-			Load(stream);
+			return LoadAsync(stream);
 		}
 
 		/// <summary>
 		/// When implemented, serializes the implemented class to specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		void IRawSerializable.Serialize(Stream stream)
+		Task IRawSerializable.SerializeAsync(Stream stream)
 		{
-			Save(stream);
+			return SaveAsync(stream);
 		}
 	}
 }

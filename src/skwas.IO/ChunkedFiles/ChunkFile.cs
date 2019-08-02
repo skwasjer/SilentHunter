@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace skwas.IO
 {
@@ -106,34 +107,34 @@ namespace skwas.IO
 			}
 		}
 
-		public virtual void Load(string filename)
+		public virtual async Task LoadAsync(string filename)
 		{
 			if (IsDisposed)
 			{
 				throw new ObjectDisposedException(GetType().Name);
 			}
 
-			using (FileStream fs = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
+			using (var fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true))
 			{
-				Load(fs);
+				await LoadAsync(fs).ConfigureAwait(false);
 			}
 		}
 
-		public abstract void Load(Stream stream);
+		public abstract Task LoadAsync(Stream stream);
 
-		public virtual void Save(string filename)
+		public virtual async Task SaveAsync(string filename)
 		{
 			if (IsDisposed)
 			{
 				throw new ObjectDisposedException(GetType().Name);
 			}
 
-			using (FileStream fs = File.Open(filename, FileMode.Create, FileAccess.Write, FileShare.None))
+			using (var fs = new FileStream(filename, FileMode.Create, FileAccess.Write, FileShare.None, 4096, true))
 			{
-				Save(fs);
+				await SaveAsync(fs).ConfigureAwait(false);
 			}
 		}
 
-		public abstract void Save(Stream stream);
+		public abstract Task SaveAsync(Stream stream);
 	}
 }

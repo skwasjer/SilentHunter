@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using skwas.IO;
 
 namespace SilentHunter.Sdl
@@ -17,7 +18,7 @@ namespace SilentHunter.Sdl
 			Pitch = 1;
 		}
 
-		protected virtual void OnDeserialize(Stream stream)
+		protected virtual Task DeserializeAsync(Stream stream)
 		{
 			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
 			{
@@ -58,9 +59,11 @@ namespace SilentHunter.Sdl
 					throw new IOException("The file appears invalid. Unexpected size specifier encountered.");
 				}
 			}
+
+			return Task.CompletedTask;
 		}
 
-		protected virtual void OnSerialize(Stream stream)
+		protected virtual Task SerializeAsync(Stream stream)
 		{
 			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
@@ -92,6 +95,8 @@ namespace SilentHunter.Sdl
 				writer.Write((uint)(endPos - currentPos - 6));
 				writer.BaseStream.Position = endPos;
 			}
+
+			return Task.CompletedTask;
 		}
 
 		protected virtual object DeserializeProperty(BinaryReader reader, string propertyName, Type propertyType)
@@ -179,11 +184,11 @@ namespace SilentHunter.Sdl
 			var clone = new SoundInfo();
 			using (var ms = new MemoryStream())
 			{
-				OnSerialize(ms);
+				SerializeAsync(ms);
 
 				ms.Position = 0;
 
-				((IRawSerializable)clone).Deserialize(ms);
+				((IRawSerializable)clone).DeserializeAsync(ms).GetAwaiter().GetResult();
 			}
 
 			return clone;
@@ -246,18 +251,18 @@ namespace SilentHunter.Sdl
 		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		void IRawSerializable.Deserialize(Stream stream)
+		Task IRawSerializable.DeserializeAsync(Stream stream)
 		{
-			OnDeserialize(stream);
+			return DeserializeAsync(stream);
 		}
 
 		/// <summary>
 		/// When implemented, serializes the implemented class to specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		void IRawSerializable.Serialize(Stream stream)
+		Task IRawSerializable.SerializeAsync(Stream stream)
 		{
-			OnSerialize(stream);
+			return SerializeAsync(stream);
 		}
 	}
 }

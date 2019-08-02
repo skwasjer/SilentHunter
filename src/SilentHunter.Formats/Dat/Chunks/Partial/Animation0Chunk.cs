@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace SilentHunter.Dat.Chunks.Partial
 {
@@ -59,7 +60,7 @@ namespace SilentHunter.Dat.Chunks.Partial
 		/// Deserializes the chunk.
 		/// </summary>
 		/// <param name="stream">The stream to read from.</param>
-		protected override void Deserialize(Stream stream)
+		protected override Task DeserializeAsync(Stream stream)
 		{
 			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
 			{
@@ -67,14 +68,14 @@ namespace SilentHunter.Dat.Chunks.Partial
 				ParentId = reader.ReadUInt32(); // Read an id as an uint.
 			}
 
-			base.Deserialize(stream);
+			return base.DeserializeAsync(stream);
 		}
 
 		/// <summary>
 		/// Serializes the chunk.
 		/// </summary>
 		/// <param name="stream">The stream to write to.</param>
-		protected override void Serialize(Stream stream)
+		protected override Task SerializeAsync(Stream stream)
 		{
 			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
@@ -82,7 +83,7 @@ namespace SilentHunter.Dat.Chunks.Partial
 				writer.Write((uint)ParentId);
 			}
 
-			base.Serialize(stream);
+			return base.SerializeAsync(stream);
 		}
 	}
 #endif

@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Numerics;
+using System.Threading.Tasks;
 using skwas.IO;
 
 namespace SilentHunter.Dat.Chunks.Partial
@@ -50,7 +51,7 @@ namespace SilentHunter.Dat.Chunks.Partial
 		/// Deserializes the chunk.
 		/// </summary>
 		/// <param name="stream">The stream to read from.</param>
-		protected override void Deserialize(Stream stream)
+		protected override Task DeserializeAsync(Stream stream)
 		{
 			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
 			{
@@ -58,19 +59,23 @@ namespace SilentHunter.Dat.Chunks.Partial
 				_worldRotation = reader.ReadStruct<Vector3>();
 				UpdateMatrix();
 			}
+
+			return Task.CompletedTask;
 		}
 
 		/// <summary>
 		/// Serializes the chunk.
 		/// </summary>
 		/// <param name="stream">The stream to write to.</param>
-		protected override void Serialize(Stream stream)
+		protected override Task SerializeAsync(Stream stream)
 		{
 			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
 				writer.WriteStruct(_worldTranslation);
 				writer.WriteStruct(_worldRotation);
 			}
+
+			return Task.CompletedTask;
 		}
 	}
 #endif

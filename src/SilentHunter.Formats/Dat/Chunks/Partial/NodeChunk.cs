@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Numerics;
+using System.Threading.Tasks;
 using skwas.IO;
 
 namespace SilentHunter.Dat.Chunks.Partial
@@ -122,7 +123,7 @@ namespace SilentHunter.Dat.Chunks.Partial
 		/// Deserializes the chunk.
 		/// </summary>
 		/// <param name="stream">The stream to read from.</param>
-		protected override void Deserialize(Stream stream)
+		protected override Task DeserializeAsync(Stream stream)
 		{
 			var regionStream = stream as RegionStream;
 
@@ -251,13 +252,15 @@ namespace SilentHunter.Dat.Chunks.Partial
 						break;
 				}
 			}
+
+			return Task.CompletedTask;
 		}
 
 		/// <summary>
 		/// Serializes the chunk.
 		/// </summary>
 		/// <param name="stream">The stream to write to.</param>
-		protected override void Serialize(Stream stream)
+		protected override Task SerializeAsync(Stream stream)
 		{
 			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
@@ -324,6 +327,8 @@ namespace SilentHunter.Dat.Chunks.Partial
 						break;
 				}
 			}
+
+			return Task.CompletedTask;
 		}
 	}
 }

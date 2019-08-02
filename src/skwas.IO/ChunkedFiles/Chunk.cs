@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace skwas.IO
 {
@@ -24,18 +25,18 @@ namespace skwas.IO
 		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		void IRawSerializable.Deserialize(Stream stream)
+		Task IRawSerializable.DeserializeAsync(Stream stream)
 		{
-			Deserialize(stream);
+			return DeserializeAsync(stream);
 		}
 
 		/// <summary>
 		/// When implemented, serializes the implemented class to specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		void IRawSerializable.Serialize(Stream stream)
+		Task IRawSerializable.SerializeAsync(Stream stream)
 		{
-			Serialize(stream);
+			return SerializeAsync(stream);
 		}
 
 		/// <summary>
@@ -97,30 +98,25 @@ namespace skwas.IO
 		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		protected virtual void Deserialize(Stream stream)
+		protected virtual Task DeserializeAsync(Stream stream)
 		{
-			using (var reader = new BinaryReader(stream, Encoding.Default, true))
-			{
-				_size = stream.Length - stream.Position;
-				Bytes = reader.ReadBytes((int)_size);
-			}
+			_size = stream.Length - stream.Position;
+			var buffer = new byte[_size];
+			return stream.ReadAsync(buffer, 0, (int)_size);
 		}
 
 		/// <summary>
 		/// When implemented, serializes the implemented class to specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		protected virtual void Serialize(Stream stream)
+		protected virtual Task SerializeAsync(Stream stream)
 		{
 			if (Bytes == null || Bytes.Length == 0)
 			{
-				return;
+				return Task.CompletedTask;
 			}
 
-			using (var writer = new BinaryWriter(stream, Encoding.Default, true))
-			{
-				writer.Write(Bytes);
-			}
+			return stream.WriteAsync(Bytes, 0, Bytes.Length);
 		}
 	}
 }

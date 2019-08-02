@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace skwas.IO
 {
@@ -102,7 +103,7 @@ namespace skwas.IO
 		/// Reads the next chunk from the stream or returns null if no more chunks are available.
 		/// </summary>
 		/// <returns></returns>
-		public virtual TChunk Read()
+		public virtual async Task<TChunk> ReadAsync()
 		{
 			if (IsDisposed)
 			{
@@ -131,7 +132,7 @@ namespace skwas.IO
 
 			newChunk.Magic = magic;
 			newChunk.FileOffset = offset;
-			((IChunk<TMagic>)newChunk).Deserialize(BaseStream);
+			await ((IChunk<TMagic>)newChunk).DeserializeAsync(BaseStream).ConfigureAwait(false);
 			return newChunk;
 		}
 	}

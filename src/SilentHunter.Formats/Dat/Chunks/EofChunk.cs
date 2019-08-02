@@ -1,5 +1,6 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace SilentHunter.Dat.Chunks
 {
@@ -10,15 +11,17 @@ namespace SilentHunter.Dat.Chunks
 		{
 		}
 
-		protected override void Deserialize(Stream stream)
+		protected override Task DeserializeAsync(Stream stream)
 		{
 			// Verify that there are no bytes in this chunk.
 			Debug.Assert(stream.Length == 0, "Eof: Expected an empty stream.");
+			return Task.CompletedTask;
 		}
 
-		protected override void Serialize(Stream stream)
+		protected override Task SerializeAsync(Stream stream)
 		{
 			// Override and ignore base implementation.
+			return Task.CompletedTask;
 		}
 	}
 }

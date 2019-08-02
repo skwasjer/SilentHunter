@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Threading.Tasks;
 using skwas.IO;
 
 namespace SilentHunter.Sdl
@@ -24,14 +25,14 @@ namespace SilentHunter.Sdl
 		/// Loads the file from specified stream.
 		/// </summary>
 		/// <param name="stream">The stream to load from.</param>
-		public void Load(Stream stream)
+		public async Task LoadAsync(Stream stream)
 		{
 			Clear();
 
 			while (stream.Position < stream.Length)
 			{
 				var sndInfo = new SoundInfo();
-				((IRawSerializable)sndInfo).Deserialize(stream);
+				await ((IRawSerializable)sndInfo).DeserializeAsync(stream).ConfigureAwait(false);
 
 				// S3D adds this, so ignore.
 				if (string.Compare(sndInfo.Name, S3DAssemblyPath, StringComparison.OrdinalIgnoreCase) == 0)
@@ -47,11 +48,11 @@ namespace SilentHunter.Sdl
 		/// Saves the file to specified stream.
 		/// </summary>
 		/// <param name="stream">The stream to write to.</param>
-		public void Save(Stream stream)
+		public async Task SaveAsync(Stream stream)
 		{
 			foreach (IRawSerializable sndInfo in this)
 			{
-				sndInfo.Serialize(stream);
+				await sndInfo.SerializeAsync(stream).ConfigureAwait(false);
 			}
 		}
 
@@ -59,18 +60,18 @@ namespace SilentHunter.Sdl
 		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		void IRawSerializable.Deserialize(Stream stream)
+		Task IRawSerializable.DeserializeAsync(Stream stream)
 		{
-			Load(stream);
+			return LoadAsync(stream);
 		}
 
 		/// <summary>
 		/// When implemented, serializes the implemented class to specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		void IRawSerializable.Serialize(Stream stream)
+		Task IRawSerializable.SerializeAsync(Stream stream)
 		{
-			Save(stream);
+			return SaveAsync(stream);
 		}
 	}
 }

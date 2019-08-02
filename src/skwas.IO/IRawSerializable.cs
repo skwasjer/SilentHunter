@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 
 namespace skwas.IO
 {
@@ -11,12 +12,12 @@ namespace skwas.IO
 		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		void Deserialize(Stream stream);
+		Task DeserializeAsync(Stream stream);
 
 		/// <summary>
 		/// When implemented, serializes the implemented class to specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		void Serialize(Stream stream);
+		Task SerializeAsync(Stream stream);
 	}
 }

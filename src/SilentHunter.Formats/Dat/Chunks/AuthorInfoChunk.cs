@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 using SilentHunter.Extensions;
 using skwas.IO;
 
@@ -33,7 +34,7 @@ namespace SilentHunter.Dat.Chunks
 		/// </summary>
 		public bool IsOriginalFile { get; private set; }
 
-		protected override void Deserialize(Stream stream)
+		protected override Task DeserializeAsync(Stream stream)
 		{
 #if DEBUG
 			// For debugging purposes, it is useful to know the filename.
@@ -63,7 +64,7 @@ namespace SilentHunter.Dat.Chunks
 
 				if (stream.Position == stream.Length)
 				{
-					return;
+					return Task.CompletedTask;
 				}
 
 				// S3D adds a signature. Ignore.
@@ -72,10 +73,12 @@ namespace SilentHunter.Dat.Chunks
 
 				// Make sure we are EOS.
 				stream.Position = stream.Length;
+
+				return Task.CompletedTask;
 			}
 		}
 
-		protected override void Serialize(Stream stream)
+		protected override Task SerializeAsync(Stream stream)
 		{
 			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
@@ -84,6 +87,8 @@ namespace SilentHunter.Dat.Chunks
 				writer.Write(Author, '\0');
 				writer.Write(Description, '\0');
 			}
+
+			return Task.CompletedTask;
 		}
 	}
 }

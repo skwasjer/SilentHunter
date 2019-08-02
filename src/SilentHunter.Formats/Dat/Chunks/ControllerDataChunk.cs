@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using SilentHunter.Dat.Controllers;
 using skwas.IO;
 
@@ -97,7 +98,7 @@ namespace SilentHunter.Dat.Chunks
 
 		public override bool SupportsParentId => true;
 
-		protected override void Serialize(Stream stream)
+		protected override Task SerializeAsync(Stream stream)
 		{
 			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
@@ -108,9 +109,11 @@ namespace SilentHunter.Dat.Chunks
 
 				_controllerWriter.Write(stream, ControllerData);
 			}
+
+			return Task.CompletedTask;
 		}
 
-		protected override void Deserialize(Stream stream)
+		protected override Task DeserializeAsync(Stream stream)
 		{
 			lock (_lockObject)
 			{
@@ -135,6 +138,8 @@ namespace SilentHunter.Dat.Chunks
 				// Read raw controller data (defer deserializing until property access).
 				_rawControllerData = new MemoryStream(reader.ReadBytes((int)(stream.Length - _localOrigin)));
 			}
+
+			return Task.CompletedTask;
 		}
 
 		/// <summary>

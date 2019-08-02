@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace SilentHunter.Dat.Chunks
 {
@@ -43,12 +44,12 @@ namespace SilentHunter.Dat.Chunks
 		/// Deserializes the chunk.
 		/// </summary>
 		/// <param name="stream">The stream to read from.</param>
-		protected override void Deserialize(Stream stream)
+		protected override async Task DeserializeAsync(Stream stream)
 		{
 			// Create a temporary stream so we can fix potential format problems (some TGA's have bugs).
 			using (var ms = new MemoryStream((int)stream.Length))
 			{
-				stream.CopyTo(ms);
+				await stream.CopyToAsync(ms).ConfigureAwait(false);
 				// Restore stream position.
 				ms.Position = 0;
 
@@ -63,14 +64,9 @@ namespace SilentHunter.Dat.Chunks
 		/// Serializes the chunk.
 		/// </summary>
 		/// <param name="stream">The stream to write to.</param>
-		protected override void Serialize(Stream stream)
+		protected override Task SerializeAsync(Stream stream)
 		{
-			if (_buffer == null)
-			{
-				return;
-			}
-
-			stream.Write(_buffer, 0, _buffer.Length);
+			return _buffer == null ? Task.CompletedTask : stream.WriteAsync(_buffer, 0, _buffer.Length);
 		}
 
 		/// <summary>

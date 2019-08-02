@@ -1,5 +1,6 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using SilentHunter.Extensions;
 
 namespace SilentHunter.Dat.Chunks
@@ -14,12 +15,12 @@ namespace SilentHunter.Dat.Chunks
 		{
 		}
 
-		protected override void Deserialize(Stream stream)
+		protected override Task DeserializeAsync(Stream stream)
 		{
-			base.Deserialize(stream);
 #if DEBUG
 			Debug.WriteLine("Contains S3DSettings : " + stream.GetBaseStreamName());
 #endif
+			return base.DeserializeAsync(stream);
 		}
 	}
 }

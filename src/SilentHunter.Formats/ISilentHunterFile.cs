@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 using skwas.IO;
 
 namespace SilentHunter
@@ -12,12 +13,12 @@ namespace SilentHunter
 		/// Loads the file from specified stream.
 		/// </summary>
 		/// <param name="stream">The stream to load from.</param>
-		void Load(Stream stream);
+		Task LoadAsync(Stream stream);
 
 		/// <summary>
 		/// Saves the file to specified stream.
 		/// </summary>
 		/// <param name="stream">The stream to write to.</param>
-		void Save(Stream stream);
+		Task SaveAsync(Stream stream);
 	}
 }

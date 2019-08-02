@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace SilentHunter.Dat.Chunks
 {
@@ -54,7 +55,7 @@ namespace SilentHunter.Dat.Chunks
 		/// Deserializes the chunk.
 		/// </summary>
 		/// <param name="stream">The stream to read from.</param>
-		protected override void Deserialize(Stream stream)
+		protected override Task DeserializeAsync(Stream stream)
 		{
 			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
 			{
@@ -76,13 +77,15 @@ namespace SilentHunter.Dat.Chunks
 			{
 				stream.Position = stream.Length;
 			}
+
+			return Task.CompletedTask;
 		}
 
 		/// <summary>
 		/// Serializes the chunk.
 		/// </summary>
 		/// <param name="stream">The stream to write to.</param>
-		protected override void Serialize(Stream stream)
+		protected override Task SerializeAsync(Stream stream)
 		{
 			Rebuild();
 
@@ -94,6 +97,8 @@ namespace SilentHunter.Dat.Chunks
 					writer.Write(entry.FileOffset);
 				});
 			}
+
+			return Task.CompletedTask;
 		}
 
 		/// <summary>
