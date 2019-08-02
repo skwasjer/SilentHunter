@@ -179,11 +179,6 @@ namespace SilentHunter.Dat
 			}
 		}
 
-		internal ChunkReader<Magics, DatChunk> CreateReader(Stream stream)
-		{
-			return new ChunkReader<Magics, DatChunk>(stream, new DatChunkResolver(), new DependencyInjectionChunkActivator(_serviceProvider), true);
-		}
-
 		/// <summary>
 		/// Saves the file to specified stream.
 		/// </summary>
@@ -200,7 +195,7 @@ namespace SilentHunter.Dat
 				writer.WriteStruct(_header);
 			}
 
-			using (var writer = new ChunkWriter<Magics, DatChunk>(stream, true))
+			using (var writer = CreateWriter(stream))
 			{
 				foreach (DatChunk chunk in Chunks)
 				{
@@ -211,7 +206,17 @@ namespace SilentHunter.Dat
 				writer.Write(SettingsChunk);
 			}
 		}
-		
+
+		public ChunkReader<Magics, DatChunk> CreateReader(Stream stream)
+		{
+			return new ChunkReader<Magics, DatChunk>(stream, new DatChunkResolver(), new DependencyInjectionChunkActivator(_serviceProvider), true);
+		}
+
+		public ChunkWriter<Magics, DatChunk> CreateWriter(Stream stream)
+		{
+			return new ChunkWriter<Magics, DatChunk>(stream, true);
+		}
+
 		/// <summary>
 		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
 		/// </summary>
