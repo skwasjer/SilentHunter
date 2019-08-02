@@ -44,11 +44,10 @@ namespace SilentHunter.Sdl
 		{
 			Clear();
 
-			var bs = new BufferedStream(stream, 1024);
-			while (bs.Position < bs.Length)
+			while (stream.Position < stream.Length)
 			{
 				var sndInfo = new SoundInfo();
-				((IRawSerializable)sndInfo).Deserialize(bs);
+				((IRawSerializable)sndInfo).Deserialize(stream);
 
 				if (string.Compare(sndInfo.Name, AssemblyPath, StringComparison.OrdinalIgnoreCase) == 0)
 				{
