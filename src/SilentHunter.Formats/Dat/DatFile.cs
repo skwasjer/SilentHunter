@@ -17,14 +17,14 @@ namespace SilentHunter.Dat
 		private Header _header;
 		private S3DSettingsChunk _settingsChunk;
 
-		public DatFile()
-			: this(null, true)
+		public DatFile(IServiceProvider serviceProvider)
+			: this(serviceProvider, true)
 		{
 		}
 
 		public DatFile(IServiceProvider serviceProvider, bool saveSignature = true)
 		{
-			_serviceProvider = serviceProvider;
+			_serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 			SaveSignature = saveSignature;
 			_header = new Header();
 
@@ -148,7 +148,7 @@ namespace SilentHunter.Dat
 				throw new ArgumentException("Unexpected header in stream.", nameof(stream));
 			}
 
-			using (var reader = new ChunkReader<Magics, DatChunk>(bufferedStream, new DatChunkResolver(), _serviceProvider, true))
+			using (var reader = CreateReader(bufferedStream))
 			{
 				long chunkStart = 0;
 				try
@@ -179,6 +179,11 @@ namespace SilentHunter.Dat
 					throw new DatFileException(Chunks.Count, chunkStart, bufferedStream.Position, ex);
 				}
 			}
+		}
+
+		internal ChunkReader<Magics, DatChunk> CreateReader(Stream stream)
+		{
+			return new ChunkReader<Magics, DatChunk>(stream, new DatChunkResolver(), new DependencyInjectionChunkActivator(_serviceProvider), true);
 		}
 
 		/// <summary>

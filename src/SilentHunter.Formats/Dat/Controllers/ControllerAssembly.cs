@@ -43,8 +43,6 @@ namespace SilentHunter.Dat.Controllers
 			}
 		}
 
-		public static ControllerAssembly Current { get; set; }
-
 		/// <summary>
 		/// Gets the assembly.
 		/// </summary>

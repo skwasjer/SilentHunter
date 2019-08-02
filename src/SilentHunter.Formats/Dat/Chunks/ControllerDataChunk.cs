@@ -1,3 +1,4 @@
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -8,9 +9,14 @@ namespace SilentHunter.Dat.Chunks
 {
 	public sealed class ControllerDataChunk : DatChunk
 	{
-		public ControllerDataChunk()
+		private readonly ControllerAssembly _controllerAssembly;
+		private readonly IControllerFactory _controllerFactory;
+
+		public ControllerDataChunk(ControllerAssembly controllerAssembly, IControllerFactory controllerFactory)
 			: base(DatFile.Magics.ControllerData)
 		{
+			_controllerAssembly = controllerAssembly ?? throw new ArgumentNullException(nameof(controllerAssembly));
+			_controllerFactory = controllerFactory ?? throw new ArgumentNullException(nameof(controllerFactory));
 		}
 
 		private long _origin, _localOrigin;
@@ -29,7 +35,7 @@ namespace SilentHunter.Dat.Chunks
 					using (var ms = new MemoryStream(_rawControllerData))
 					{
 						// Attempt to deserialize.
-						var reader = new ControllerReader(ControllerAssembly.Current, new ControllerFactory(ControllerAssembly.Current));
+						var reader = new ControllerReader(_controllerAssembly, _controllerFactory);
 						_controllerData = reader.Read(ms, controllerName);
 
 						// If controller data is a byte array, the controller was not deserialized. Either it's not implemented, or the data or the implementation contains a bug.
@@ -65,7 +71,7 @@ namespace SilentHunter.Dat.Chunks
 
 				writer.Write((ulong)0); // Always zero.
 
-				var controllerWriter = new ControllerWriter(new ControllerFactory(ControllerAssembly.Current));
+				var controllerWriter = new ControllerWriter(_controllerFactory);
 				controllerWriter.Write(stream, ControllerData);
 			}
 		}

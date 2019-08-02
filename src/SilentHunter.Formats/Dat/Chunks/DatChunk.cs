@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using skwas.IO;
@@ -295,7 +295,7 @@ namespace SilentHunter.Dat.Chunks
 
 				ms.Position = 0;
 
-				using (var reader = new ChunkReader<DatFile.Magics, DatChunk>(ms, new DatChunkResolver(), false))
+				using (ChunkReader<DatFile.Magics, DatChunk> reader = ((DatFile)ParentFile).CreateReader(ms))
 				{
 					return reader.Read();
 				}
