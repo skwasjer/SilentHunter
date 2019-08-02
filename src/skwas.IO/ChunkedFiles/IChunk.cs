@@ -1,4 +1,4 @@
-namespace skwas.IO
+﻿namespace skwas.IO
 {
 	/// <summary>
 	/// Represents a file chunk, which is identified via a magic.

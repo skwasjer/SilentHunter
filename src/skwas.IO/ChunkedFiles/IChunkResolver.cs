@@ -29,5 +29,4 @@ namespace skwas.IO
 		/// <returns>The type or null if the magic is not supported/implemented.</returns>
 		Type Resolve(TMagic magic);
 	}
-
 }

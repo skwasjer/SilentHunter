@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -7,16 +7,10 @@ using System.Linq;
 
 namespace skwas.IO
 {
-	public abstract class ChunkFile<TChunk> 
-		: IChunkFile
+	public abstract class ChunkFile<TChunk> : IChunkFile
 		where TChunk : class, IChunk
 	{
-		private bool _disposed;
 		private ObservableCollection<TChunk> _chunks;
-
-		protected ChunkFile()
-		{
-		}
 
 		~ChunkFile()
 		{
@@ -25,7 +19,11 @@ namespace skwas.IO
 
 		protected virtual void Dispose(bool disposing)
 		{
-			if (_disposed) return;
+			if (IsDisposed)
+			{
+				return;
+			}
+
 			if (disposing)
 			{
 				// Dispose managed.
@@ -33,13 +31,15 @@ namespace skwas.IO
 				{
 					_chunks.CollectionChanged -= _chunks_CollectionChanged;
 
-					foreach (var chunk in Chunks.Where(c => c is IDisposable))
+					foreach (TChunk chunk in Chunks.Where(c => c is IDisposable))
+					{
 						((IDisposable)chunk).Dispose();
+					}
 				}
 			}
 			// Dispose unmanaged.
 
-			_disposed = true;
+			IsDisposed = true;
 		}
 
 		/// <summary>
@@ -53,13 +53,11 @@ namespace skwas.IO
 
 		protected bool IsDisposed
 		{
-			get { return _disposed; }
+			get;
+			private set;
 		}
 
-		IList IChunkFile.Chunks
-		{
-			get { return Chunks; }
-		}
+		IList IChunkFile.Chunks => Chunks;
 
 		/// <summary>
 		/// Gets a collection of all chunks in the ChunkFile.
@@ -68,12 +66,17 @@ namespace skwas.IO
 		{
 			get
 			{
-				if (_disposed) throw new ObjectDisposedException(GetType().Name);
+				if (IsDisposed)
+				{
+					throw new ObjectDisposedException(GetType().Name);
+				}
+
 				if (_chunks == null)
 				{
 					_chunks = new ObservableCollection<TChunk>();
 					_chunks.CollectionChanged += _chunks_CollectionChanged;
 				}
+
 				return _chunks;
 			}
 		}
@@ -86,18 +89,30 @@ namespace skwas.IO
 					break;
 
 				case NotifyCollectionChangedAction.Remove:
-					foreach (IChunk c in e.OldItems) 
+					foreach (IChunk c in e.OldItems)
+					{
 						c.ParentFile = null;
+					}
+
 					break;
 				case NotifyCollectionChangedAction.Add:
 					foreach (IChunk c in e.NewItems)
+					{
 						c.ParentFile = this;
+					}
+
 					break;
 				case NotifyCollectionChangedAction.Replace:
 					foreach (IChunk c in e.OldItems)
+					{
 						c.ParentFile = null;
+					}
+
 					foreach (IChunk c in e.NewItems)
+					{
 						c.ParentFile = this;
+					}
+
 					break;
 				case NotifyCollectionChangedAction.Move:
 					break;
@@ -106,24 +121,32 @@ namespace skwas.IO
 			}
 		}
 
-
 		public virtual void Load(string filename)
 		{
-			if (_disposed) throw new ObjectDisposedException(GetType().Name);
+			if (IsDisposed)
+			{
+				throw new ObjectDisposedException(GetType().Name);
+			}
 
-			using (var fs = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+			using (FileStream fs = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+			{
 				Load(fs);
+			}
 		}
 
 		public abstract void Load(Stream stream);
 
 		public virtual void Save(string filename)
 		{
-			if (_disposed)
+			if (IsDisposed)
+			{
 				throw new ObjectDisposedException(GetType().Name);
+			}
 
-			using (var fs = File.Open(filename, FileMode.Create, FileAccess.Write, FileShare.None))
+			using (FileStream fs = File.Open(filename, FileMode.Create, FileAccess.Write, FileShare.None))
+			{
 				Save(fs);
+			}
 		}
 
 		public abstract void Save(Stream stream);

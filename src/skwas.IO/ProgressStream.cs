@@ -39,7 +39,7 @@ namespace skwas.IO
 		: Stream, IProgress<ProgressStream.Progress>
 	{
 		/// <summary>
-		/// Represents progress info for the <see cref="ProgressStream"/> class.
+		/// Represents progress info for the <see cref="ProgressStream" /> class.
 		/// </summary>
 		public struct Progress
 		{
@@ -92,62 +92,54 @@ namespace skwas.IO
 		private CancellationTokenSource _cancellationTokenSource;
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="ProgressStream"/> and reports progress via an <see cref="Action{Progress}"/>.
+		/// Initializes a new instance of <see cref="ProgressStream" /> and reports progress via an <see cref="Action{Progress}" />.
 		/// </summary>
 		/// <param name="stream">The stream to monitor progress on.</param>
 		/// <param name="progress">The progress callback which receives periodic updates on the stream position.</param>
 		public ProgressStream(Stream stream, Action<Progress> progress)
 			: this(stream)
 		{
-			if (progress == null)
-				throw new ArgumentNullException(nameof(progress));
-
-			_onProgressCallback = progress;
+			_onProgressCallback = progress ?? throw new ArgumentNullException(nameof(progress));
 			_progressInstance = this;
 		}
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="ProgressStream"/> and reports progress via <see cref="IProgress{Progress}"/>.
+		/// Initializes a new instance of <see cref="ProgressStream" /> and reports progress via <see cref="IProgress{Progress}" />.
 		/// </summary>
 		/// <param name="stream">The stream to monitor progress on.</param>
-		/// <param name="progress">The instance that implements <see cref="IProgress{T}"/> which receives periodic updates on the stream position.</param>
+		/// <param name="progress">The instance that implements <see cref="IProgress{T}" /> which receives periodic updates on the stream position.</param>
 		public ProgressStream(Stream stream, IProgress<Progress> progress)
 			: this(stream)
 		{
-			if (progress == null)
-				throw new ArgumentNullException(nameof(progress));
-
-			_progressInstance = progress;
+			_progressInstance = progress ?? throw new ArgumentNullException(nameof(progress));
 		}
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="ProgressStream"/>.
+		/// Initializes a new instance of <see cref="ProgressStream" />.
 		/// </summary>
 		/// <param name="stream">The stream to monitor progress on.</param>
 		private ProgressStream(Stream stream)
 		{
-			if (stream == null)
-				throw new ArgumentNullException(nameof(stream));
-
-			_baseStream = stream;
+			_baseStream = stream ?? throw new ArgumentNullException(nameof(stream));
 
 			// Spawn a task that monitors the stream every 10ms.
 			_cancellationTokenSource = new CancellationTokenSource();
 			_monitor = Task.Run(async () =>
-			{
-				while (!_cancellationTokenSource.IsCancellationRequested)
 				{
-					NotifyProgress();
-					await Task.Delay(Delay);
-				}
+					while (!_cancellationTokenSource.IsCancellationRequested)
+					{
+						NotifyProgress();
+						await Task.Delay(Delay);
+					}
 
-				// Perform a last notification.
-				NotifyProgress();
-			}, _cancellationTokenSource.Token);
+					// Perform a last notification.
+					NotifyProgress();
+				},
+				_cancellationTokenSource.Token);
 		}
 
 		/// <summary>
-		/// Releases the unmanaged resources used by the <see cref="T:System.IO.Stream"/> and optionally releases the managed resources.
+		/// Releases the unmanaged resources used by the <see cref="T:System.IO.Stream" /> and optionally releases the managed resources.
 		/// </summary>
 		/// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
 		[SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_cancellationTokenSource")]
@@ -187,12 +179,11 @@ namespace skwas.IO
 		/// </summary>
 		private void NotifyProgress()
 		{
-			var pos = Position;
-			var length = Length;
+			long pos = Position;
+			long length = Length;
 
 			// _progressInstance can be null as the class is spooling up or disposing.
-			_progressInstance?.Report(new Progress
-			(
+			_progressInstance?.Report(new Progress(
 				length > 0 ? (float)((decimal)pos / length) * 100 : 0,
 				pos,
 				length
@@ -359,8 +350,8 @@ namespace skwas.IO
 		/// <exception cref="T:System.ObjectDisposedException">Methods were called after the stream was closed. </exception>
 		public override long Position
 		{
-			get { return _baseStream.Position; }
-			set { _baseStream.Position = value; }
+			get => _baseStream.Position;
+			set => _baseStream.Position = value;
 		}
 	}
 }

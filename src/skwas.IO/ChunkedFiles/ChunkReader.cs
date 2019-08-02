@@ -118,7 +118,7 @@ namespace skwas.IO
 			// Read magic.
 			TMagic magic = ReadMagic();
 
-			// If not a valuetype, check if the magic is null. This indicates that the stream is empty, and thus we have to exit.
+			// If not a value type, check if the magic is null. This indicates that the stream is empty, and thus we have to exit.
 			if (!typeof(TMagic).IsValueType && magic == null)
 			{
 				return default;
@@ -127,7 +127,7 @@ namespace skwas.IO
 			Type chunkType = _chunkResolver.Resolve(magic) ?? typeof(TChunk);
 
 			// First check for a .ctor with single param of type TMagic.
-			TChunk newChunk = (TChunk)_chunkActivator.Create(chunkType, magic);
+			var newChunk = (TChunk)_chunkActivator.Create(chunkType, magic);
 
 			newChunk.Magic = magic;
 			newChunk.FileOffset = offset;

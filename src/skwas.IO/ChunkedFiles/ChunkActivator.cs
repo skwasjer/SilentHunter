@@ -5,10 +5,6 @@ namespace skwas.IO
 {
 	public class ChunkActivator : IChunkActivator
 	{
-		public ChunkActivator()
-		{
-		}
-
 		public IChunk Create(Type chunkType, object magic)
 		{
 			if (chunkType == null)
@@ -22,7 +18,8 @@ namespace skwas.IO
 			}
 
 			ConstructorInfo constructor = chunkType.GetConstructor(
-				BindingFlags.Public | BindingFlags.Instance, null,
+				BindingFlags.Public | BindingFlags.Instance,
+				null,
 				new[] { magic.GetType() },
 				null
 			);
@@ -30,11 +27,9 @@ namespace skwas.IO
 			{
 				return (IChunk)Activator.CreateInstance(chunkType, magic);
 			}
-			else
-			{
-				// Try a parameterless constructor.
-				return (IChunk)Activator.CreateInstance(chunkType);
-			}
+
+			// Try a parameterless constructor.
+			return (IChunk)Activator.CreateInstance(chunkType);
 		}
 	}
 }
