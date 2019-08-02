@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
-using System.Linq;
 
 namespace skwas.IO
 {
@@ -11,6 +10,12 @@ namespace skwas.IO
 		where TChunk : class, IChunk
 	{
 		private ObservableCollection<TChunk> _chunks;
+
+		protected ChunkFile()
+		{
+			_chunks = new ObservableCollection<TChunk>();
+			_chunks.CollectionChanged += _chunks_CollectionChanged;
+		}
 
 		~ChunkFile()
 		{
@@ -30,12 +35,9 @@ namespace skwas.IO
 				if (_chunks != null)
 				{
 					_chunks.CollectionChanged -= _chunks_CollectionChanged;
-
-					foreach (TChunk chunk in Chunks.Where(c => c is IDisposable))
-					{
-						((IDisposable)chunk).Dispose();
-					}
 				}
+
+				_chunks = null;
 			}
 			// Dispose unmanaged.
 
@@ -62,24 +64,7 @@ namespace skwas.IO
 		/// <summary>
 		/// Gets a collection of all chunks in the ChunkFile.
 		/// </summary>
-		public virtual Collection<TChunk> Chunks
-		{
-			get
-			{
-				if (IsDisposed)
-				{
-					throw new ObjectDisposedException(GetType().Name);
-				}
-
-				if (_chunks == null)
-				{
-					_chunks = new ObservableCollection<TChunk>();
-					_chunks.CollectionChanged += _chunks_CollectionChanged;
-				}
-
-				return _chunks;
-			}
-		}
+		public virtual Collection<TChunk> Chunks => _chunks;
 
 		private void _chunks_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
