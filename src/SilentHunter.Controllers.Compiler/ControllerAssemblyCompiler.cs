@@ -74,11 +74,17 @@ namespace SilentHunter.Controllers.Compiler
 			return this;
 		}
 
-		public Assembly Compile()
+		public Assembly Compile(bool force = false)
 		{
 			string outputPath = GetTargetDir();
 			if (!Directory.Exists(outputPath))
 			{
+				Directory.CreateDirectory(outputPath);
+			}
+			else if (force)
+			{
+				// Clean out existing artifacts, which forces a new build.
+				CleanArtifacts();
 				Directory.CreateDirectory(outputPath);
 			}
 
