@@ -170,6 +170,7 @@ namespace SilentHunter.Dat.Controllers.Serialization
 
 			base.WriteField(writer, serializationContext, value);
 
+			// Rewind and store size.
 			long currentPos = writer.BaseStream.Position;
 			writer.BaseStream.Position = startPos - 4;
 			writer.Write((int)(currentPos - startPos));
