@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Reflection;
 using System.Runtime.Versioning;
 using System.Xml.Serialization;
@@ -38,6 +39,7 @@ namespace SilentHunter.Controllers.Compiler
 			new Dependency(Assembly.Load("System.Runtime, PublicKeyToken=b03f5f7f11d50a3a").Location),
 			new Dependency(Assembly.Load("System.Runtime.Extensions, PublicKeyToken=b03f5f7f11d50a3a").Location),
 #endif
+			new Dependency(typeof(Vector2)),
 			new Dependency("SilentHunter.Core.dll", true)
 		};
 
@@ -118,10 +120,12 @@ namespace SilentHunter.Controllers.Compiler
 						.Select(rd =>
 						{
 							string path = rd.IsLocal ? Path.Combine(outputPath, rd.Location) : rd.Location;
+							bool includeDetails = rd.IsLocal && File.Exists(path);
 							return new CacheFileReference
 							{
 								Name = rd.Location,
-								LastModified = rd.IsLocal && File.Exists(path) ? (DateTime?)File.GetLastWriteTimeUtc(path) : null
+								LastModified = includeDetails ? (DateTime?)File.GetLastWriteTimeUtc(path) : null,
+								Length = includeDetails ? (long?)new FileInfo(path).Length : null,
 							};
 						})
 				),
@@ -191,7 +195,8 @@ namespace SilentHunter.Controllers.Compiler
 					{
 						// Save relative name.
 						Name = f.FullName.Substring(p.Length + 1),
-						LastModified = f.LastWriteTimeUtc
+						LastModified = f.LastWriteTimeUtc,
+						Length = f.Length
 					}
 				)
 				.ToList();

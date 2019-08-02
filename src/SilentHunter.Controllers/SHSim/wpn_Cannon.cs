@@ -12,7 +12,7 @@
 */
 
 using System.Collections.Generic;
-using SilentHunter;
+using System.Numerics;
 using SilentHunter.Controllers;
 using SilentHunter.Controllers.Decoration;
 

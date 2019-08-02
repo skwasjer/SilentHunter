@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Numerics;
 using skwas.IO;
 
 namespace SilentHunter.Dat.Chunks.Partial
@@ -8,7 +9,7 @@ namespace SilentHunter.Dat.Chunks.Partial
 	{
 		private Vector3 _worldTranslation, _worldRotation;
 
-		public Matrix Matrix { get; private set; }
+		public Matrix4x4 Transform { get; private set; }
 
 		public Vector3 Rotation
 		{
@@ -37,12 +38,12 @@ namespace SilentHunter.Dat.Chunks.Partial
 
 		private void UpdateMatrix()
 		{
-			SharpDX.Matrix m = SharpDX.Matrix.RotationX(-_worldRotation.X);
-			m *= SharpDX.Matrix.RotationY(-_worldRotation.Y);
-			m *= SharpDX.Matrix.RotationZ(-_worldRotation.Z);
-			m *= SharpDX.Matrix.Translation(new SharpDX.Vector3(_worldTranslation.X, _worldTranslation.Y, _worldTranslation.Z));
+			Matrix4x4 m = Matrix4x4.CreateRotationX(-_worldRotation.X);
+			m *= Matrix4x4.CreateRotationY(-_worldRotation.Y);
+			m *= Matrix4x4.CreateRotationZ(-_worldRotation.Z);
+			m *= Matrix4x4.CreateTranslation(_worldTranslation);
 
-			Matrix = m;
+			Transform = m;
 		}
 
 		/// <summary>

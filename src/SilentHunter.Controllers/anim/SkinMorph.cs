@@ -11,7 +11,7 @@
  * 
 */
 
-using SilentHunter;
+using System.Numerics;
 using SilentHunter.Controllers;
 
 namespace anim

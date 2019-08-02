@@ -5,12 +5,13 @@ using System.Xml.Serialization;
 
 namespace SilentHunter.Controllers.Compiler
 {
-	public class CacheFileReference
-		: IXmlSerializable
+	public class CacheFileReference : IXmlSerializable, IEquatable<CacheFileReference>
 	{
 		public string Name { get; set; }
 
 		public DateTime? LastModified { get; set; }
+
+		public long? Length { get; set; }
 
 		XmlSchema IXmlSerializable.GetSchema()
 		{
@@ -28,6 +29,14 @@ namespace SilentHunter.Controllers.Compiler
 				LastModified = XmlConvert.ToDateTime(reader.Value, XmlDateTimeSerializationMode.Utc);
 			}
 
+			if (reader.MoveToAttribute("len"))
+			{
+				if (long.TryParse(reader.Value, out long length))
+				{
+					Length = length;
+				}
+			}
+
 			reader.Read();
 		}
 
@@ -40,20 +49,35 @@ namespace SilentHunter.Controllers.Compiler
 					XmlConvert.ToString(LastModified.Value, XmlDateTimeSerializationMode.Utc)
 				);
 			}
+
+			if (Length.HasValue)
+			{
+				writer.WriteAttributeString("len",
+					Length.Value.ToString()
+				);
+			}
 		}
 
-		protected bool Equals(CacheFileReference other)
+		public override string ToString()
 		{
-			return string.Equals(Name, other.Name) && LastModified.Equals(other.LastModified);
+			return Name;
 		}
 
-		/// <summary>
-		/// Determines whether the specified object is equal to the current object.
-		/// </summary>
-		/// <returns>
-		/// true if the specified object  is equal to the current object; otherwise, false.
-		/// </returns>
-		/// <param name="obj">The object to compare with the current object. </param>
+		public bool Equals(CacheFileReference other)
+		{
+			if (ReferenceEquals(null, other))
+			{
+				return false;
+			}
+
+			if (ReferenceEquals(this, other))
+			{
+				return true;
+			}
+
+			return string.Equals(Name, other.Name) && LastModified.Equals(other.LastModified) && Length == other.Length;
+		}
+
 		public override bool Equals(object obj)
 		{
 			if (ReferenceEquals(null, obj))
@@ -74,17 +98,14 @@ namespace SilentHunter.Controllers.Compiler
 			return Equals((CacheFileReference)obj);
 		}
 
-		/// <summary>
-		/// Serves as the default hash function.
-		/// </summary>
-		/// <returns>
-		/// A hash code for the current object.
-		/// </returns>
 		public override int GetHashCode()
 		{
 			unchecked
 			{
-				return ((Name != null ? Name.GetHashCode() : 0) * 397) ^ LastModified.GetHashCode();
+				int hashCode = (Name != null ? Name.GetHashCode() : 0);
+				hashCode = (hashCode * 397) ^ LastModified.GetHashCode();
+				hashCode = (hashCode * 397) ^ Length.GetHashCode();
+				return hashCode;
 			}
 		}
 
@@ -96,11 +117,6 @@ namespace SilentHunter.Controllers.Compiler
 		public static bool operator !=(CacheFileReference left, CacheFileReference right)
 		{
 			return !Equals(left, right);
-		}
-
-		public override string ToString()
-		{
-			return Name;
 		}
 	}
 }

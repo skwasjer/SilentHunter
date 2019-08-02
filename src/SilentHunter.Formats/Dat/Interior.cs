@@ -1,3 +1,4 @@
+﻿using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace SilentHunter.Dat

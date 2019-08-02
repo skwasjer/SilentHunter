@@ -11,6 +11,7 @@
  * 
 */
 
+using System.Numerics;
 using SilentHunter;
 using SilentHunter.Controllers;
 

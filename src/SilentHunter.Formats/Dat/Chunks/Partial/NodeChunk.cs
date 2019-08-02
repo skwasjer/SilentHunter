@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Numerics;
 using skwas.IO;
 
 namespace SilentHunter.Dat.Chunks.Partial
@@ -13,7 +14,7 @@ namespace SilentHunter.Dat.Chunks.Partial
 		{
 			Visible = true;
 			UnknownData.Add(new UnknownChunkData(0, 0, byte.MinValue, "The byte just before the 'Visibility' byte. No idea what it means. Values found: 1, 2, 128, 64, possibly others."));
-			Transform = Matrix.Identity;
+			Transform = Matrix4x4.Identity;
 		}
 
 		private Vector3 _translation, _rotation;
@@ -97,15 +98,15 @@ namespace SilentHunter.Dat.Chunks.Partial
 
 		private void UpdateTransform()
 		{
-			Matrix m = SharpDX.Matrix.RotationX(-_rotation.X);
-			m *= SharpDX.Matrix.RotationY(-_rotation.Y);
-			m *= SharpDX.Matrix.RotationZ(-_rotation.Z);
-			m *= SharpDX.Matrix.Translation(new SharpDX.Vector3(_translation.X, _translation.Y, _translation.Z));
+			Matrix4x4 m = Matrix4x4.CreateRotationX(-_rotation.X);
+			m *= Matrix4x4.CreateRotationY(-_rotation.Y);
+			m *= Matrix4x4.CreateRotationZ(-_rotation.Z);
+			m *= Matrix4x4.CreateTranslation(_translation);
 
 			Transform = m;
 		}
 
-		public Matrix Transform { get; private set; }
+		public Matrix4x4 Transform { get; private set; }
 
 		/// <summary>
 		/// Gets whether the chunk supports an id field.

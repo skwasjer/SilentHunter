@@ -1,4 +1,5 @@
-using System.IO;
+﻿using System.IO;
+using System.Numerics;
 using skwas.IO;
 
 namespace SilentHunter.Dat.Chunks

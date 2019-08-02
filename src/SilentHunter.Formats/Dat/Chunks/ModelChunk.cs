@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using skwas.IO;
 
 namespace SilentHunter.Dat.Chunks
