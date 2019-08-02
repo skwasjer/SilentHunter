@@ -15,8 +15,6 @@ namespace SilentHunter.Dat.Chunks
 		private ulong _id, _parentId;
 		private long _size;
 
-		#region .ctor/cleanup
-
 		/// <summary>
 		/// Initializes a new instance of <see cref="DatChunk" /> using specified <paramref name="magic" />.
 		/// </summary>
@@ -63,8 +61,6 @@ namespace SilentHunter.Dat.Chunks
 		}
 
 		protected bool IsDisposed { get; private set; }
-
-		#endregion
 
 		/// <summary>
 		/// Gets or sets the chunk subtype.
@@ -124,8 +120,6 @@ namespace SilentHunter.Dat.Chunks
 
 		public List<UnknownChunkData> UnknownData => _unknownData ?? (_unknownData = new List<UnknownChunkData>());
 
-		#region Overrides of Chunk<Magics>
-
 		/// <summary>
 		/// Deserializes the chunk. Note that the first 12 bytes (type, subtype and chunk size) are already read by the base class. Inheritors can override the default behavior, which is nothing more then reading all data, and caching it for later (ie. for serialization).
 		/// </summary>
@@ -152,9 +146,7 @@ namespace SilentHunter.Dat.Chunks
 		{
 			base.Serialize(stream);
 		}
-
-		#endregion
-
+		
 		/// <summary>
 		/// Deserializes the chunk, optionally including the 8 byte header, excluding the magic. To deserialize an entire chunk including magic use a ChunkReader.
 		/// </summary>
@@ -188,8 +180,6 @@ namespace SilentHunter.Dat.Chunks
 				Serialize(stream);
 			}
 		}
-
-		#region Implementation of IRawSerializable
 
 		/// <summary>
 		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
@@ -265,10 +255,6 @@ namespace SilentHunter.Dat.Chunks
 			}
 		}
 
-		#endregion
-
-		#region Overrides of Object
-
 		/// <summary>
 		/// Returns a string that represents the current object.
 		/// </summary>
@@ -279,10 +265,6 @@ namespace SilentHunter.Dat.Chunks
 		{
 			return Enum.IsDefined(typeof(DatFile.Magics), Magic) ? Magic.ToString() : GetType().Name;
 		}
-
-		#endregion
-
-		#region Implementation of ICloneable
 
 		public virtual object Clone()
 		{
@@ -301,7 +283,5 @@ namespace SilentHunter.Dat.Chunks
 				}
 			}
 		}
-
-		#endregion
 	}
 }

@@ -30,8 +30,6 @@ namespace SilentHunter
 			return $"X: {X}{sep} Y: {Y}{sep} Z: {Z}";
 		}
 
-		#region Equality members
-
 		public bool Equals(Vector3 other)
 		{
 			return X.Equals(other.X) && Y.Equals(other.Y) && Z.Equals(other.Z);
@@ -80,8 +78,6 @@ namespace SilentHunter
 		{
 			return !left.Equals(right);
 		}
-
-		#endregion
 
 		public static implicit operator SharpDX.Vector3(Vector3 vector)
 		{

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
 
@@ -14,8 +14,6 @@ namespace skwas.IO
 	{
 		private bool _disposed;
 		private BinaryWriter _writer;
-
-		#region Implementation of IDisposable / .ctor
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="ChunkWriter{TMagic,TChunk}"/>.
@@ -69,8 +67,6 @@ namespace skwas.IO
 		/// Gets whether the object is disposed.
 		/// </summary>
 		protected bool IsDisposed => _disposed;
-
-		#endregion
 
 		/// <summary>
 		/// Gets the underlying stream.

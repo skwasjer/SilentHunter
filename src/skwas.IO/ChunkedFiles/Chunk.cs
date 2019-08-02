@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using System.Text;
 
 namespace skwas.IO
@@ -22,8 +22,6 @@ namespace skwas.IO
 			Magic = magic;
 		}
 
-		#region Implementation of IRawSerializable
-
 		/// <summary>
 		/// When implemented, deserializes the implemented class from specified <paramref name="stream"/>.
 		/// </summary>
@@ -41,11 +39,7 @@ namespace skwas.IO
 		{
 			Serialize(stream);
 		}
-
-		#endregion
-
-		#region Implementation of IChunk
-
+		
 		/// <summary>
 		/// Gets or sets the magic.
 		/// </summary>
@@ -81,10 +75,6 @@ namespace skwas.IO
 		/// </summary>
 		public IChunkFile ParentFile { get; set; }
 
-		#endregion
-
-		#region Overrides of Object
-
 		/// <summary>
 		/// Returns a string that represents the current object.
 		/// </summary>
@@ -95,10 +85,7 @@ namespace skwas.IO
 		{
 			return string.Format("{0}: magic={1}, size={2}", GetType().Name, Magic, Size);
 		}
-
-		#endregion
-
-
+		
 		/// <summary>
 		/// Gets array of raw chunk bytes. This array is only filled if inheritors did not fully implement deserialization.
 		/// </summary>

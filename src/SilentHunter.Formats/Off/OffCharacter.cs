@@ -29,8 +29,6 @@ namespace SilentHunter.Off
 			}
 		}
 
-		#region Equality members
-
 		protected bool Equals(OffCharacter other)
 		{
 			return Character == other.Character && Rectangle.Equals(other.Rectangle);
@@ -84,10 +82,6 @@ namespace SilentHunter.Off
 			return !Equals(left, right);
 		}
 
-		#endregion
-
-		#region Implementation of IRawSerializable
-
 		/// <summary>
 		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
 		/// </summary>
@@ -105,7 +99,5 @@ namespace SilentHunter.Off
 		{
 			OnSerialize(stream);
 		}
-
-		#endregion
 	}
 }

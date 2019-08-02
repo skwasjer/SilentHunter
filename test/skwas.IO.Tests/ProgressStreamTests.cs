@@ -15,8 +15,6 @@ namespace skwas.IO.Tests
 			public int CallbackCount;
 			public float LastPercentage;
 
-			#region Implementation of IProgress<in Progress>
-
 			/// <summary>
 			/// Reports a progress update.
 			/// </summary>
@@ -27,8 +25,6 @@ namespace skwas.IO.Tests
 				LastPercentage = value.Percentage;
 				Debug.WriteLine(LastPercentage);
 			}
-
-			#endregion
 		}
 
 		private static byte[] CreateStreamMock(out Mock<Stream> mockStream)

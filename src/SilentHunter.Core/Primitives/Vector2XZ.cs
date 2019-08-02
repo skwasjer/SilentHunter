@@ -38,8 +38,6 @@ namespace SilentHunter
 			};
 		}
 
-		#region Equality members
-
 		public bool Equals(Vector2XZ other)
 		{
 			return X.Equals(other.X) && Z.Equals(other.Z);
@@ -87,7 +85,5 @@ namespace SilentHunter
 		{
 			return !left.Equals(right);
 		}
-
-		#endregion
 	}
 }

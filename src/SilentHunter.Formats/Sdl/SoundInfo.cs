@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using skwas.IO;
@@ -147,8 +147,6 @@ namespace SilentHunter.Sdl
 			writer.BaseStream.Position = endPos;
 		}
 
-		#region Properties
-
 		public string WaveName
 		{
 			get => _waveName ?? string.Empty;
@@ -176,10 +174,6 @@ namespace SilentHunter.Sdl
 		public int Priority { get; set; }
 		public SoundCategory Category { get; set; }
 
-		#endregion
-
-		#region Implementation of ICloneable
-
 		public object Clone()
 		{
 			var clone = new SoundInfo();
@@ -194,10 +188,6 @@ namespace SilentHunter.Sdl
 
 			return clone;
 		}
-
-		#endregion
-
-		#region Equality members
 
 		protected bool Equals(SoundInfo other)
 		{
@@ -252,10 +242,6 @@ namespace SilentHunter.Sdl
 			return !Equals(left, right);
 		}
 
-		#endregion
-
-		#region Implementation of IRawSerializable
-
 		/// <summary>
 		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
 		/// </summary>
@@ -273,7 +259,5 @@ namespace SilentHunter.Sdl
 		{
 			OnSerialize(stream);
 		}
-
-		#endregion
 	}
 }

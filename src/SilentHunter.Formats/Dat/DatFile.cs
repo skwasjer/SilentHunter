@@ -120,8 +120,6 @@ namespace SilentHunter.Dat
 			}
 		}
 
-		#region Implementation of ISilentHunterFile
-
 		/// <summary>
 		/// Loads the file from specified stream.
 		/// </summary>
@@ -213,11 +211,7 @@ namespace SilentHunter.Dat
 				writer.Write(SettingsChunk);
 			}
 		}
-
-		#endregion
-
-		#region Implementation of IRawSerializable
-
+		
 		/// <summary>
 		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
 		/// </summary>
@@ -235,7 +229,5 @@ namespace SilentHunter.Dat
 		{
 			Save(stream);
 		}
-
-		#endregion
 	}
 }

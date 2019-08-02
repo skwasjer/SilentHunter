@@ -20,8 +20,6 @@ namespace SilentHunter.Controllers.Compiler
 		[XmlArrayItem("file")]
 		public HashSet<CacheFileReference> SourceFiles { get; set; }
 
-		#region Equality members
-
 		protected bool Equals(CompilerBuildCache other)
 		{
 			return string.Equals(Version, other.Version) && string.Equals(BuildConfiguration, other.BuildConfiguration)
@@ -98,7 +96,5 @@ namespace SilentHunter.Controllers.Compiler
 		{
 			return !Equals(left, right);
 		}
-
-		#endregion
 	}
 }

@@ -17,8 +17,6 @@ namespace SilentHunter.Off
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		public Point CharacterSpacing { get; set; }
 
-		#region Implementation of ISilentHunterFile
-
 		/// <summary>
 		/// Loads the file from specified stream.
 		/// </summary>
@@ -66,10 +64,6 @@ namespace SilentHunter.Off
 			}
 		}
 
-		#endregion
-
-		#region Implementation of IRawSerializable
-
 		/// <summary>
 		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
 		/// </summary>
@@ -88,10 +82,6 @@ namespace SilentHunter.Off
 			Save(stream);
 		}
 
-		#endregion
-
-		#region Overrides of KeyedCollection<char,OffCharacter>
-
 		/// <summary>
 		/// When implemented in a derived class, extracts the key from the specified element.
 		/// </summary>
@@ -103,7 +93,5 @@ namespace SilentHunter.Off
 		{
 			return item.Character;
 		}
-
-		#endregion
 	}
 }

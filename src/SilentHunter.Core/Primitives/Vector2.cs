@@ -28,8 +28,6 @@ namespace SilentHunter
 			return $"X: {X}{CultureInfo.CurrentCulture.TextInfo.ListSeparator} Y: {Y}";
 		}
 
-		#region Equality members
-
 		public bool Equals(Vector2 other)
 		{
 			return X.Equals(other.X) && Y.Equals(other.Y);
@@ -77,8 +75,6 @@ namespace SilentHunter
 		{
 			return !left.Equals(right);
 		}
-
-		#endregion
 
 		public static implicit operator SharpDX.Vector2(Vector2 vector)
 		{

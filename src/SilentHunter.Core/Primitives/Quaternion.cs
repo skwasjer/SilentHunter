@@ -37,8 +37,6 @@ namespace SilentHunter
 			return $"X: {X}{sep} Y: {Y}{sep} Z: {Z}{sep} W: {W}";
 		}
 
-		#region Equality members
-
 		public bool Equals(Quaternion other)
 		{
 			return X.Equals(other.X) && Y.Equals(other.Y) && Z.Equals(other.Z) && W.Equals(other.W);
@@ -88,8 +86,6 @@ namespace SilentHunter
 		{
 			return !left.Equals(right);
 		}
-
-		#endregion
 
 		public static implicit operator SharpDX.Quaternion(Quaternion quad)
 		{

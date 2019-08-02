@@ -16,8 +16,6 @@ namespace skwas.IO
 		private readonly IChunkResolver _chunkResolver;
 		private BinaryReader _reader;
 
-		#region Implementation of IDisposable / .ctor
-
 		/// <summary>
 		/// Initializes a new instance of <see cref="ChunkReader{TMagic,TChunk}" />.
 		/// </summary>
@@ -80,8 +78,6 @@ namespace skwas.IO
 		/// Gets whether the object is disposed.
 		/// </summary>
 		protected bool IsDisposed { get; private set; }
-
-		#endregion
 
 		/// <summary>
 		/// Gets the underlying stream.

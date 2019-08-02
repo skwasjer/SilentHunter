@@ -16,8 +16,6 @@ namespace SilentHunter.Controllers.Compiler
 		private readonly CompilerParameters _compilerParams;
 		private bool _disposed;
 
-		#region .ctor/cleanup
-
 		public CSharpCompiler()
 		{
 			_codeProvider = (CSharpCodeProvider)CodeDomProvider.CreateProvider("CSharp");
@@ -58,8 +56,6 @@ namespace SilentHunter.Controllers.Compiler
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
-
-		#endregion
 
 		/// <summary>
 		/// Compiles the specified <paramref name="fileNames" /> and <see name="DocFile" /> into an <see cref="Assembly" />.

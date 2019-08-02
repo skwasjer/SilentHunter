@@ -38,8 +38,6 @@ namespace skwas.IO
 	public sealed class ProgressStream
 		: Stream, IProgress<ProgressStream.Progress>
 	{
-		#region Progress class
-
 		/// <summary>
 		/// Represents progress info for the <see cref="ProgressStream"/> class.
 		/// </summary>
@@ -65,10 +63,6 @@ namespace skwas.IO
 			/// </summary>
 			public long Length { get; }
 		}
-
-		#endregion
-
-		#region Private fields
 
 		private const int Delay = 10;
 
@@ -96,10 +90,6 @@ namespace skwas.IO
 		private Task _monitor;
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private CancellationTokenSource _cancellationTokenSource;
-
-		#endregion
-
-		#region .ctor/cleanup
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="ProgressStream"/> and reports progress via an <see cref="Action{Progress}"/>.
@@ -182,10 +172,6 @@ namespace skwas.IO
 			}
 		}
 
-		#endregion
-
-		#region Implementation of IProgress<in Progress>
-
 		/// <summary>
 		/// Reports a progress update.
 		/// </summary>
@@ -212,10 +198,6 @@ namespace skwas.IO
 				length
 			));
 		}
-
-		#endregion
-
-		#region Overrides of Stream
 
 		/// <summary>
 		/// When overridden in a derived class, clears all buffers for this stream and causes any buffered data to be written to
@@ -380,7 +362,5 @@ namespace skwas.IO
 			get { return _baseStream.Position; }
 			set { _baseStream.Position = value; }
 		}
-
-		#endregion
 	}
 }

@@ -43,8 +43,6 @@ namespace SilentHunter.Dat
 			return new ReadOnlyDictionary<DatFile.Magics, Type>(types);
 		}
 
-		#region Implementation of IChunkResolver
-
 		/// <summary>
 		/// Resolves the type that is associated with the specified magic.
 		/// </summary>
@@ -64,7 +62,5 @@ namespace SilentHunter.Dat
 		{
 			return Resolve((DatFile.Magics)magic);
 		}
-
-		#endregion
 	}
 }

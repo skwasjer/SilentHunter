@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -35,8 +35,6 @@ namespace SilentHunter.Sdl
 
 			return $"Modified with {product} - {title} (version {version}). {cw}";
 		}
-
-		#region Implementation of ISilentHunterFile
 
 		/// <summary>
 		/// Loads the file from specified stream.
@@ -83,10 +81,6 @@ namespace SilentHunter.Sdl
 			}
 		}
 
-		#endregion
-
-		#region Implementation of IRawSerializable
-
 		/// <summary>
 		/// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
 		/// </summary>
@@ -104,7 +98,5 @@ namespace SilentHunter.Sdl
 		{
 			Save(stream);
 		}
-
-		#endregion
 	}
 }

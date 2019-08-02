@@ -37,8 +37,6 @@ namespace SilentHunter
 				M44 = 1f
 			};
 
-		#region Equality members
-
 		public bool Equals(Matrix other)
 		{
 			return M11.Equals(other.M11) && M12.Equals(other.M12) && M13.Equals(other.M13) && M14.Equals(other.M14) && M21.Equals(other.M21) && M22.Equals(other.M22) && M23.Equals(other.M23) && M24.Equals(other.M24) && M31.Equals(other.M31) && M32.Equals(other.M32) && M33.Equals(other.M33) && M34.Equals(other.M34) && M41.Equals(other.M41) && M42.Equals(other.M42) && M43.Equals(other.M43) && M44.Equals(other.M44);
@@ -100,8 +98,6 @@ namespace SilentHunter
 		{
 			return !left.Equals(right);
 		}
-
-		#endregion
 
 		public static implicit operator SharpDX.Matrix(Matrix matrix)
 		{

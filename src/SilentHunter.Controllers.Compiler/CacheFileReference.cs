@@ -12,8 +12,6 @@ namespace SilentHunter.Controllers.Compiler
 
 		public DateTime? LastModified { get; set; }
 
-		#region Implementation of IXmlSerializable
-
 		XmlSchema IXmlSerializable.GetSchema()
 		{
 			return null;
@@ -43,10 +41,6 @@ namespace SilentHunter.Controllers.Compiler
 				);
 			}
 		}
-
-		#endregion
-
-		#region Equality members
 
 		protected bool Equals(CacheFileReference other)
 		{
@@ -103,8 +97,6 @@ namespace SilentHunter.Controllers.Compiler
 		{
 			return !Equals(left, right);
 		}
-
-		#endregion
 
 		public override string ToString()
 		{
