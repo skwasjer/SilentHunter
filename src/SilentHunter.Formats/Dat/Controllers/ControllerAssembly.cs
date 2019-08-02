@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -20,8 +20,27 @@ namespace SilentHunter.Dat.Controllers
 				EnumControllers(Assembly)
 			);
 
-			string docFile = Path.Combine(Path.GetDirectoryName(controllerAssembly.Location), Path.GetFileNameWithoutExtension(controllerAssembly.Location) + ".xml");
-			HelpText = new ControllerAssemblyHelpText(docFile);
+			LoadHelpText(controllerAssembly);
+		}
+
+		private void LoadHelpText(Assembly controllerAssembly)
+		{
+			if (!File.Exists(controllerAssembly.Location))
+			{
+				return;
+			}
+
+			string assemblyDir = Path.GetDirectoryName(controllerAssembly.Location);
+			if (assemblyDir == null || !Directory.Exists(assemblyDir))
+			{
+				return;
+			}
+
+			string docFile = Path.Combine(assemblyDir, Path.GetFileNameWithoutExtension(controllerAssembly.Location) + ".xml");
+			if (File.Exists(docFile))
+			{
+				HelpText = new ControllerAssemblyHelpText(docFile);
+			}
 		}
 
 		public static ControllerAssembly Current { get; set; }
@@ -39,7 +58,7 @@ namespace SilentHunter.Dat.Controllers
 		/// <summary>
 		/// Gets the help text (documentation) helper.
 		/// </summary>
-		public ControllerAssemblyHelpText HelpText { get; }
+		public ControllerAssemblyHelpText HelpText { get; private set; }
 
 		/// <summary>
 		/// Gets a controller type by <paramref name="controllerName" /> and <paramref name="profile" />.
