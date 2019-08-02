@@ -2,6 +2,7 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using SilentHunter.Controllers;
 using SilentHunter.Dat;
 using SilentHunter.Dat.Controllers;
 using SilentHunter.Dat.Controllers.Serialization;
@@ -81,10 +82,11 @@ namespace SilentHunter
 			services.TryAddSingleton<IItemFactory, ItemFactory>();
 			services.TryAddSingleton<IControllerFactory, ControllerFactory>();
 
-			services.TryAddSingleton<ControllerSerializerResolver>();
+			services.AddControllerSerializers();
 			services.TryAddTransient<IControllerReader, ControllerReader>();
 			services.TryAddTransient<IControllerWriter, ControllerWriter>();
 
+			// Dat
 			services.TryAddTransient<IChunkResolver<DatFile.Magics>, DatChunkResolver>();
 			services.TryAddTransient<IChunkActivator, DependencyInjectionChunkActivator>();
 
@@ -93,6 +95,36 @@ namespace SilentHunter
 			services.TryAddTransient<SdlFile>();
 
 			return services;
+		}
+
+		private static void AddControllerSerializers(this IServiceCollection services)
+		{
+			services.TryAddSingleton<ControllerSerializerResolver>();
+			// Note: order is important. First controller type to match, that serializer will be used. Thus, start with the most specific serializers.
+			services
+				.AddSingleton(s => new ControllerSerializerResolver.Mapping
+				{
+					ControllerType = typeof(StateMachineController),
+					ImplementationFactory = () => ActivatorUtilities.CreateInstance<StateMachineControllerSerializer>(s)
+				});
+			services
+				.AddSingleton(s => new ControllerSerializerResolver.Mapping
+				{
+					ControllerType = typeof(MeshAnimationController),
+					ImplementationFactory = () => ActivatorUtilities.CreateInstance<MeshAnimationControllerSerializer>(s)
+				});
+			services
+				.AddSingleton(s => new ControllerSerializerResolver.Mapping
+				{
+					ControllerType = typeof(Controller),
+					ImplementationFactory = () => ActivatorUtilities.CreateInstance<ControllerSerializer>(s)
+				});
+			services
+				.AddSingleton(s => new ControllerSerializerResolver.Mapping
+				{
+					ControllerType = typeof(RawController),
+					ImplementationFactory = () => ActivatorUtilities.CreateInstance<RawControllerSerializer>(s)
+				});
 		}
 	}
 }

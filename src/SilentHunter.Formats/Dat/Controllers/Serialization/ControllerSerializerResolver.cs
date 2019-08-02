@@ -1,57 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
-using SilentHunter.Controllers;
+using System.Linq;
 
 namespace SilentHunter.Dat.Controllers.Serialization
 {
-	public class ControllerSerializerResolver
+	internal sealed class ControllerSerializerResolver
 	{
-		private readonly List<ControllerMapping> _serializerMappings;
-
-		private class ControllerMapping
+		public sealed class Mapping
 		{
 			public Type ControllerType { get; set; }
-			public IControllerSerializer Serializer { get; set; }
+			public Func<IControllerSerializer> ImplementationFactory { get; set; }
 		}
 
-		public ControllerSerializerResolver()
+		private readonly List<Mapping> _serializerMappings;
+
+		public ControllerSerializerResolver(IEnumerable<Mapping> mappings)
 		{
-			_serializerMappings = new List<ControllerMapping>
+			if (mappings == null)
 			{
-				new ControllerMapping
-				{
-					ControllerType = typeof(StateMachineController),
-					Serializer = new StateMachineControllerSerializer()
-				},
-				new ControllerMapping
-				{
-					ControllerType = typeof(MeshAnimationController),
-					Serializer = new MeshAnimationControllerSerializer()
-				},
-				new ControllerMapping
-				{
-					ControllerType = typeof(Controller),
-					Serializer = new ControllerSerializer()
-				},
-				new ControllerMapping
-				{
-					ControllerType = typeof(RawController),
-					Serializer = new RawControllerSerializer()
-				}
-			};
+				throw new ArgumentNullException(nameof(mappings));
+			}
+
+			_serializerMappings = mappings.ToList();
 		}
 
 		public IControllerSerializer GetSerializer(Type controllerType)
 		{
-			foreach (ControllerMapping mapping in _serializerMappings)
+			if (controllerType == null)
+			{
+				throw new ArgumentNullException(nameof(controllerType));
+			}
+
+			foreach (Mapping mapping in _serializerMappings)
 			{
 				if (mapping.ControllerType.IsAssignableFrom(controllerType))
 				{
-					return mapping.Serializer;
+					return mapping.ImplementationFactory();
 				}
 			}
 
-			return null;
+			throw new InvalidOperationException($"No serializer registered for controller type {controllerType.Name}.");
 		}
 	}
 }

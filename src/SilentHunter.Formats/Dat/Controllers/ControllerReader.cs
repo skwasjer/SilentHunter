@@ -17,11 +17,11 @@ namespace SilentHunter.Dat.Controllers
 		private readonly IControllerFactory _controllerFactory;
 		private readonly ControllerSerializerResolver _controllerSerializerResolver;
 
-		public ControllerReader(ControllerAssembly controllerAssembly, IControllerFactory controllerFactory)
+		public ControllerReader(ControllerAssembly controllerAssembly, IControllerFactory controllerFactory, ControllerSerializerResolver controllerSerializerResolver)
 		{
 			_controllerAssembly = controllerAssembly ?? throw new ArgumentNullException(nameof(controllerAssembly));
 			_controllerFactory = controllerFactory ?? throw new ArgumentNullException(nameof(controllerFactory));
-			_controllerSerializerResolver = new ControllerSerializerResolver();
+			_controllerSerializerResolver = controllerSerializerResolver ?? throw new ArgumentNullException(nameof(controllerSerializerResolver));
 		}
 
 		/// <summary>
