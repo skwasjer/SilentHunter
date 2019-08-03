@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
-using skwas.IO;
+using SilentHunter.FileFormats.IO;
 
 namespace SilentHunter.FileFormats.ChunkedFiles
 {

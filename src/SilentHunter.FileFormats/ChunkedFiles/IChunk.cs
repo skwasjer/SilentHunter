@@ -1,12 +1,11 @@
-﻿using skwas.IO;
+﻿using SilentHunter.FileFormats.IO;
 
 namespace SilentHunter.FileFormats.ChunkedFiles
 {
 	/// <summary>
 	/// Represents a file chunk, which is identified via a magic.
 	/// </summary>
-	public interface IChunk
-		: IRawSerializable
+	public interface IChunk : IRawSerializable
 	{
 		/// <summary>
 		/// Gets or sets the magic.

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 
-namespace skwas.IO
+namespace SilentHunter.FileFormats.IO
 {
 	/// <summary>
 	/// Describes a type that can be (de)serialized directly from a <see cref="Stream" />.
