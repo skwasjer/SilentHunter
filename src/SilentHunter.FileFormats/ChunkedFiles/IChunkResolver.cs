@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace skwas.IO
+namespace SilentHunter.FileFormats.ChunkedFiles
 {
 	/// <summary>
 	/// Resolves a chunk type by a magic.

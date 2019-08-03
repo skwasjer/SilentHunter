@@ -2,12 +2,12 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using SilentHunter.Controllers;
+using SilentHunter.FileFormats.ChunkedFiles;
 using SilentHunter.FileFormats.Dat;
 using SilentHunter.FileFormats.Dat.Controllers;
 using SilentHunter.FileFormats.Dat.Controllers.Serialization;
 using SilentHunter.FileFormats.Off;
 using SilentHunter.FileFormats.Sdl;
-using skwas.IO;
 
 namespace SilentHunter.FileFormats.DependencyInjection
 {

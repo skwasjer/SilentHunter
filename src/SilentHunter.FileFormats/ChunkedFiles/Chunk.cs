@@ -1,8 +1,8 @@
 ﻿using System.IO;
-using System.Text;
 using System.Threading.Tasks;
+using skwas.IO;
 
-namespace skwas.IO
+namespace SilentHunter.FileFormats.ChunkedFiles
 {
 	/// <summary>
 	/// Represents a file chunk, which is identified via a strongly typed magic.

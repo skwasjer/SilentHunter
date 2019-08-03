@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 
-namespace skwas.IO
+namespace SilentHunter.FileFormats.ChunkedFiles
 {
 	public interface IChunkFile : IDisposable
 	{

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace skwas.IO
+namespace SilentHunter.FileFormats.ChunkedFiles
 {
 	public class ChunkActivator : IChunkActivator
 	{

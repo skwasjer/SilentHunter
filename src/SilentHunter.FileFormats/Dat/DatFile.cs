@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using SilentHunter.FileFormats.ChunkedFiles;
 using SilentHunter.FileFormats.Dat.Chunks;
 using skwas.IO;
 

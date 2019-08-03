@@ -2,8 +2,9 @@
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using skwas.IO;
 
-namespace skwas.IO
+namespace SilentHunter.FileFormats.ChunkedFiles
 {
 	/// <summary>
 	/// Represents a writer with which <see cref="IChunk" />'s can be written to a stream.

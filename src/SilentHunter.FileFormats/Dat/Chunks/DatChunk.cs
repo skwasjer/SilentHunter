@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using SilentHunter.FileFormats.ChunkedFiles;
 using skwas.IO;
 
 namespace SilentHunter.FileFormats.Dat.Chunks

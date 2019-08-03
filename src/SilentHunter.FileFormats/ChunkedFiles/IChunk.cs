@@ -1,4 +1,6 @@
-﻿namespace skwas.IO
+﻿using skwas.IO;
+
+namespace SilentHunter.FileFormats.ChunkedFiles
 {
 	/// <summary>
 	/// Represents a file chunk, which is identified via a magic.
