@@ -31,7 +31,7 @@ namespace SilentHunter.Dat.Controllers.Serialization
 				new PrimitiveArrayValueSerializer(),
 				new ListValueSerializer(this),
 				new SHUnionValueSerializer(),
-				new ObjectSerializer()	// Should be last.
+				new ValueTypeSerializer()	// Should be last.
 			};
 		}
 
