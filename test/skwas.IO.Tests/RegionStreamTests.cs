@@ -3,16 +3,13 @@ using System.IO;
 using FluentAssertions;
 using Xunit;
 
-namespace skwas.IO.Tests
+namespace skwas.IO
 {
 	public class RegionStreamTests
 	{
 		private static Stream GetTestStream(long seekToPosition = 0)
 		{
-			var ms = new MemoryStream(File.ReadAllBytes(typeof (RegionStreamTests).Assembly.Location))
-			{
-				Position = seekToPosition
-			};
+			var ms = new MemoryStream(File.ReadAllBytes(typeof(RegionStreamTests).Assembly.Location)) { Position = seekToPosition };
 			return ms;
 		}
 
@@ -46,8 +43,8 @@ namespace skwas.IO.Tests
 		[Fact]
 		public void stream_can_seek_from_begin()
 		{
-			var testStream = GetTestStream();
-			var origin = testStream.Position = testStream.Length/2;
+			Stream testStream = GetTestStream();
+			long origin = testStream.Position = testStream.Length / 2;
 
 			Action action;
 
@@ -79,8 +76,8 @@ namespace skwas.IO.Tests
 		[Fact]
 		public void stream_can_seek_from_current()
 		{
-			var testStream = GetTestStream();
-			var origin = testStream.Position = testStream.Length / 2;
+			Stream testStream = GetTestStream();
+			long origin = testStream.Position = testStream.Length / 2;
 
 			Action action;
 
@@ -116,8 +113,8 @@ namespace skwas.IO.Tests
 		[Fact]
 		public void stream_can_seek_from_end()
 		{
-			var testStream = GetTestStream();
-			var origin = testStream.Position = testStream.Length / 2;
+			Stream testStream = GetTestStream();
+			long origin = testStream.Position = testStream.Length / 2;
 
 			Action action;
 

@@ -5,7 +5,7 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-namespace skwas.IO.Tests
+namespace skwas.IO
 {
 	public class ProgressStreamTests
 	{
@@ -30,8 +30,8 @@ namespace skwas.IO.Tests
 		private static byte[] CreateStreamMock(out Mock<Stream> mockStream)
 		{
 			var buffer = new byte[4096];
-			var streamSize = 100000000;
-			var pos = 0;
+			int streamSize = 100000000;
+			int pos = 0;
 			mockStream = new Mock<Stream>();
 			mockStream.Setup(s => s.Length).Returns(() => streamSize).Verifiable();
 			mockStream.Setup(s => s.Position).Returns(() => pos).Verifiable();
@@ -50,8 +50,8 @@ namespace skwas.IO.Tests
 		[Fact]
 		public void reports_progress_via_action()
 		{
-			var callbackCount = 0;
-			var lastPercentage = 0f;
+			int callbackCount = 0;
+			float lastPercentage = 0f;
 
 			Action<ProgressStream.Progress> callback = progress =>
 			{
@@ -61,7 +61,7 @@ namespace skwas.IO.Tests
 			};
 
 			Mock<Stream> mockStream;
-			var buffer = CreateStreamMock(out mockStream);
+			byte[] buffer = CreateStreamMock(out mockStream);
 
 			using (var progressStream = new ProgressStream(mockStream.Object, callback))
 			{
@@ -70,8 +70,11 @@ namespace skwas.IO.Tests
 
 				while (true)
 				{
-					var bytesRead = progressStream.Read(buffer, 0, buffer.Length);
-					if (bytesRead <= 0) break;
+					int bytesRead = progressStream.Read(buffer, 0, buffer.Length);
+					if (bytesRead <= 0)
+					{
+						break;
+					}
 				}
 			}
 
@@ -87,7 +90,7 @@ namespace skwas.IO.Tests
 			var callback = new ProgressReporter();
 
 			Mock<Stream> mockStream;
-			var buffer = CreateStreamMock(out mockStream);
+			byte[] buffer = CreateStreamMock(out mockStream);
 
 			using (var progressStream = new ProgressStream(mockStream.Object, callback))
 			{
@@ -96,8 +99,11 @@ namespace skwas.IO.Tests
 
 				while (true)
 				{
-					var bytesRead = progressStream.Read(buffer, 0, buffer.Length);
-					if (bytesRead <= 0) break;
+					int bytesRead = progressStream.Read(buffer, 0, buffer.Length);
+					if (bytesRead <= 0)
+					{
+						break;
+					}
 				}
 			}
 
@@ -114,7 +120,7 @@ namespace skwas.IO.Tests
 
 			var mockStream = new Mock<Stream>();
 
-			using (var progressStream = new ProgressStream(mockStream.Object, delegate {  }))
+			using (var progressStream = new ProgressStream(mockStream.Object, delegate { }))
 			{
 				progressStream.Flush();
 				progressStream.Seek(0, SeekOrigin.Begin);
