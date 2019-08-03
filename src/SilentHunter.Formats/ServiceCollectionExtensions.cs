@@ -79,6 +79,27 @@ namespace SilentHunter
 			var c = new SilentHunterParsersConfigurer(services);
 			configurer(c);
 
+			services.AddDatFile();
+			services.AddOffFile();
+			services.AddSdlFile();
+
+			return services;
+		}
+
+		private static IServiceCollection AddSdlFile(this IServiceCollection services)
+		{
+			services.TryAddTransient<SdlFile>();
+			return services;
+		}
+
+		private static IServiceCollection AddOffFile(this IServiceCollection services)
+		{
+			services.TryAddTransient<OffFile>();
+			return services;
+		}
+
+		private static IServiceCollection AddDatFile(this IServiceCollection services)
+		{
 			services.TryAddSingleton<IItemFactory, ItemFactory>();
 			services.TryAddSingleton<IControllerFactory, ControllerFactory>();
 
@@ -86,45 +107,35 @@ namespace SilentHunter
 			services.TryAddTransient<IControllerReader, ControllerReader>();
 			services.TryAddTransient<IControllerWriter, ControllerWriter>();
 
-			// Dat
-			services.TryAddTransient<IChunkResolver<DatFile.Magics>, DatChunkResolver>();
-			services.TryAddTransient<IChunkActivator, DependencyInjectionChunkActivator>();
+			services.TryAddSingleton<IChunkResolver<DatFile.Magics>, DatChunkResolver>();
+			services.TryAddScoped<IChunkActivator, DependencyInjectionChunkActivator>();
 
 			services.TryAddTransient<DatFile>();
-			services.TryAddTransient<OffFile>();
-			services.TryAddTransient<SdlFile>();
-
 			return services;
 		}
 
 		private static void AddControllerSerializers(this IServiceCollection services)
 		{
-			services.TryAddSingleton<ControllerSerializerResolver>();
+			void AddMapping<TController, TSerializer>()
+				where TController : RawController
+				where TSerializer : class, IControllerSerializer
+			{
+				services.AddTransient<TSerializer>();
+				services.AddTransient<IControllerSerializer, TSerializer>();
+				services.AddTransient(s => new ControllerSerializerResolver.Mapping
+				{
+					ControllerType = typeof(TController),
+					ImplementationFactory = s.GetRequiredService<TSerializer>
+				});
+			}
+
+			services.AddScoped<ControllerSerializerResolver>();
+
 			// Note: order is important. First controller type to match, that serializer will be used. Thus, start with the most specific serializers.
-			services
-				.AddSingleton(s => new ControllerSerializerResolver.Mapping
-				{
-					ControllerType = typeof(StateMachineController),
-					ImplementationFactory = () => ActivatorUtilities.CreateInstance<StateMachineControllerSerializer>(s)
-				});
-			services
-				.AddSingleton(s => new ControllerSerializerResolver.Mapping
-				{
-					ControllerType = typeof(MeshAnimationController),
-					ImplementationFactory = () => ActivatorUtilities.CreateInstance<MeshAnimationControllerSerializer>(s)
-				});
-			services
-				.AddSingleton(s => new ControllerSerializerResolver.Mapping
-				{
-					ControllerType = typeof(Controller),
-					ImplementationFactory = () => ActivatorUtilities.CreateInstance<ControllerSerializer>(s)
-				});
-			services
-				.AddSingleton(s => new ControllerSerializerResolver.Mapping
-				{
-					ControllerType = typeof(RawController),
-					ImplementationFactory = () => ActivatorUtilities.CreateInstance<RawControllerSerializer>(s)
-				});
+			AddMapping<StateMachineController, StateMachineControllerSerializer>();
+			AddMapping<MeshAnimationController, MeshAnimationControllerSerializer>();
+			AddMapping<Controller, ControllerSerializer>();
+			AddMapping<RawController, RawControllerSerializer>();
 		}
 	}
 }

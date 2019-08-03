@@ -1,15 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace SilentHunter.Dat.Controllers.Serialization
 {
 	internal sealed class ControllerSerializerResolver
 	{
+		[DebuggerDisplay("{ControllerType.Name,nq}, HasInstance = {_instance != null,nq}")]
 		public sealed class Mapping
 		{
+			private IControllerSerializer _instance;
+			private Func<IControllerSerializer> _implementationFactory;
+
 			public Type ControllerType { get; set; }
-			public Func<IControllerSerializer> ImplementationFactory { get; set; }
+			public Func<IControllerSerializer> ImplementationFactory
+			{
+				set => _implementationFactory = value;
+			}
+
+			public IControllerSerializer GetOrCreate()
+			{
+				return _instance ?? (_instance = _implementationFactory());
+			}
 		}
 
 		private readonly List<Mapping> _serializerMappings;
@@ -31,12 +44,10 @@ namespace SilentHunter.Dat.Controllers.Serialization
 				throw new ArgumentNullException(nameof(controllerType));
 			}
 
-			foreach (Mapping mapping in _serializerMappings)
+			Mapping mapping = _serializerMappings.FirstOrDefault(m => m.ControllerType.IsAssignableFrom(controllerType));
+			if (mapping != null)
 			{
-				if (mapping.ControllerType.IsAssignableFrom(controllerType))
-				{
-					return mapping.ImplementationFactory();
-				}
+				return mapping.GetOrCreate();
 			}
 
 			throw new InvalidOperationException($"No serializer registered for controller type {controllerType.Name}.");
