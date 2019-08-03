@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 
-namespace skwas.IO
+namespace SilentHunter.FileFormats.Extensions
 {
 	/// <summary>
 	/// Extensions for <see cref="BinaryReader" />.
 	/// </summary>
-	public static class BinaryReaderExtensions
+	internal static class BinaryReaderExtensions
 	{
-		private static readonly Type ColorType = typeof(Color);
+		private static readonly Type ColorType = typeof(System.Drawing.Color);
 
 		/// <summary>
 		/// Reads a structure/class of <typeparamref name="T" /> from the current stream and advances the current position of the stream by the size of the structure in bytes.
@@ -48,7 +47,7 @@ namespace skwas.IO
 			if (targetType == ColorType)
 				// The color struct cannot be deserialized using interop.
 			{
-				return Color.FromArgb(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
+				return System.Drawing.Color.FromArgb(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
 			}
 
 			// If the type is enum, we have to deserialize using underlying type.

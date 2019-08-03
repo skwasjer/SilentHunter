@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using SilentHunter.Controllers;
-using skwas.IO;
+using SilentHunter.FileFormats.Extensions;
 
 namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 {

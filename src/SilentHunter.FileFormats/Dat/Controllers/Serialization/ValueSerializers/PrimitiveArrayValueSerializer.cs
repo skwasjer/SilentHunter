@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using skwas.IO;
+using SilentHunter.FileFormats.Extensions;
 
 namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 {

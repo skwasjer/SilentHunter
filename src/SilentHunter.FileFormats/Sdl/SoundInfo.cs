@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using SilentHunter.FileFormats.Extensions;
 using skwas.IO;
 
 namespace SilentHunter.FileFormats.Sdl

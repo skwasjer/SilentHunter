@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using skwas.IO;
+using SilentHunter.FileFormats.Extensions;
 
 namespace SilentHunter.FileFormats.ChunkedFiles
 {

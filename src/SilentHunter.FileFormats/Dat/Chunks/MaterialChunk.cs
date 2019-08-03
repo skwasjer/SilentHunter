@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-using skwas.IO;
+using SilentHunter.FileFormats.Extensions;
 
 // http://www.jalix.org/ressources/graphics/3DS/_unofficials/3ds-info.txt
 

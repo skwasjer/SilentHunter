@@ -7,7 +7,6 @@ using SilentHunter.Controllers;
 using SilentHunter.Controllers.Decoration;
 using SilentHunter.FileFormats.Dat.Controllers.Serialization;
 using SilentHunter.FileFormats.Extensions;
-using skwas.IO;
 
 namespace SilentHunter.FileFormats.Dat.Controllers
 {

@@ -3,7 +3,7 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using FluentAssertions.Primitives;
 
-namespace skwas.IO.FluentAssertions
+namespace SilentHunter.FileFormats.FluentAssertions
 {
 	internal class StreamAssertions : ReferenceTypeAssertions<Stream, StreamAssertions>
 	{

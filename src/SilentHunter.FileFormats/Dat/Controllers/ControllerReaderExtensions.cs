@@ -3,7 +3,6 @@ using System.IO;
 using System.Reflection;
 using SilentHunter.Controllers.Decoration;
 using SilentHunter.FileFormats.Extensions;
-using skwas.IO;
 
 namespace SilentHunter.FileFormats.Dat.Controllers
 {

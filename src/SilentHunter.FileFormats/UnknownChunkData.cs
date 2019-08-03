@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using SilentHunter.FileFormats.Dat.Chunks;
-using skwas.IO;
+using SilentHunter.FileFormats.Extensions;
 
 namespace SilentHunter.FileFormats
 {

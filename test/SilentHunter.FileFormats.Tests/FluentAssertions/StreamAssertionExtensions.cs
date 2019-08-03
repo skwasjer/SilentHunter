@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace skwas.IO.FluentAssertions
+namespace SilentHunter.FileFormats.FluentAssertions
 {
 	internal static class StreamAssertionExtensions
 	{

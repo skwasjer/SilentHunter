@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Numerics;
 using System.Threading.Tasks;
-using skwas.IO;
+using SilentHunter.FileFormats.Extensions;
 
 namespace SilentHunter.FileFormats.Dat.Chunks
 {

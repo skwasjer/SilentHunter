@@ -7,7 +7,6 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using SilentHunter.Controllers;
 using SilentHunter.FileFormats.Extensions;
-using skwas.IO;
 
 namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 {

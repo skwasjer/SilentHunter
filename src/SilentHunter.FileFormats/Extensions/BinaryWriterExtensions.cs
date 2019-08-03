@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 
-namespace skwas.IO
+namespace SilentHunter.FileFormats.Extensions
 {
 	/// <summary>
 	/// Extensions for <see cref="BinaryWriter" />.
 	/// </summary>
-	public static class BinaryWriterExtensions
+	internal static class BinaryWriterExtensions
 	{
 		/// <summary>
 		/// Writes a string to the underlying stream. The string is terminated using a '\0' character.
@@ -128,9 +127,9 @@ namespace skwas.IO
 				return;
 			}
 
-			if (type == typeof(Color))
+			if (type == typeof(System.Drawing.Color))
 			{
-				var clr = (Color)value;
+				var clr = (System.Drawing.Color)value;
 				writer.Write(clr.A);
 				writer.Write(clr.R);
 				writer.Write(clr.G);

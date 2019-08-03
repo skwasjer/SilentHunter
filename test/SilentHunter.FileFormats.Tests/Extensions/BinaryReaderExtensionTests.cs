@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using FluentAssertions;
-using skwas.IO.FluentAssertions;
+using SilentHunter.FileFormats.FluentAssertions;
 using Xunit;
 
-namespace skwas.IO
+namespace SilentHunter.FileFormats.Extensions
 {
 	public class BinaryReaderExtensionTests
 	{
@@ -19,11 +18,11 @@ namespace skwas.IO
 		[Fact]
 		public void it_will_read_color()
 		{
-			Color expected = Color.FromArgb(0x33, 0x66, 0x99, 0xcc);
+			System.Drawing.Color expected = System.Drawing.Color.FromArgb(0x33, 0x66, 0x99, 0xcc);
 			using (var reader = new BinaryReader(new MemoryStream(new[] { expected.A, expected.R, expected.G, expected.B })))
 			{
-				var color = reader.ReadStruct<Color>();
-				color.Should().BeOfType<Color>().And.Be(expected);
+				var color = reader.ReadStruct<System.Drawing.Color>();
+				color.Should().BeOfType<System.Drawing.Color>().And.Be(expected);
 				reader.BaseStream.Should().BeEof();
 			}
 		}

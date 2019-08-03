@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
+using SilentHunter.FileFormats.Extensions;
 using skwas.IO;
 
 namespace SilentHunter.FileFormats.Off
