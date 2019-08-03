@@ -56,7 +56,7 @@ namespace SilentHunter.Dat.Controllers.Serialization
 			// If null is returned, check if the field is optional and if the type supports a nullable type.
 			if (fieldInfo.FieldType.IsValueType && !fieldInfo.FieldType.IsNullable())
 			{
-				throw new IOException(
+				throw new SilentHunterParserException(
 					$"The property '{fieldInfo.Name}' is defined as optional, but the type '{fieldInfo.FieldType}' does not support null values. Use Nullable<> if the property is a value type, or a class otherwise.");
 			}
 
@@ -149,7 +149,7 @@ namespace SilentHunter.Dat.Controllers.Serialization
 				}
 
 				string fieldName = field.GetCustomAttribute<ParseNameAttribute>()?.Name ?? field.Name;
-				throw new IOException($"The field '{fieldName}' is not defined as optional.");
+				throw new SilentHunterParserException($"The field '{fieldName}' is not defined as optional.");
 			}
 
 			base.SerializeField(writer, field, value);

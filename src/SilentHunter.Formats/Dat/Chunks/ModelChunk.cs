@@ -98,7 +98,7 @@ namespace SilentHunter.Dat.Chunks
 							break;
 
 						default:
-							throw new IOException($"Unexpected descriptor '{descriptor}'.");
+							throw new SilentHunterParserException($"Unexpected descriptor '{descriptor}'.");
 					}
 				}
 			}

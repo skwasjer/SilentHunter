@@ -179,14 +179,14 @@ namespace SilentHunter.Dat.Chunks
 				if (_size < 0)
 				{
 					stream.Position -= 4;
-					throw new IOException($"Invalid chunk size ({_size} bytes). Can't be negative.");
+					throw new SilentHunterParserException($"Invalid chunk size ({_size} bytes). Can't be negative.");
 				}
 
 				long startPos = stream.Position;
 				if (startPos + chunkSize > stream.Length)
 				{
 					stream.Position -= 4;
-					throw new IOException($"Invalid chunk size ({_size} bytes). The stream has {stream.Length - stream.Position} bytes left.");
+					throw new SilentHunterParserException($"Invalid chunk size ({_size} bytes). The stream has {stream.Length - stream.Position} bytes left.");
 				}
 
 				// Allow inheritors to deserialize the remainder of the chunk.
@@ -203,12 +203,12 @@ namespace SilentHunter.Dat.Chunks
 
 				if (stream.Position < startPos + chunkSize)
 				{
-					throw new IOException("Invalid deserialization of " + ToString() + ". More unparsed data in chunk.");
+					throw new SilentHunterParserException("Invalid deserialization of " + ToString() + ". More unparsed data in chunk.");
 
 					//				stream.Position = startPos + chunkSize;
 				}
 
-				throw new IOException("Invalid deserialization of " + ToString() + ". Too much data was read while deserializing. This may indicate an invalid size specifier somewhere.");
+				throw new SilentHunterParserException("Invalid deserialization of " + ToString() + ". Too much data was read while deserializing. This may indicate an invalid size specifier somewhere.");
 			}
 		}
 

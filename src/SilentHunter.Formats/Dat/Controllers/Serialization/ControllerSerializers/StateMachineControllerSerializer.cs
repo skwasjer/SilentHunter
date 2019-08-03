@@ -34,7 +34,7 @@ namespace SilentHunter.Dat.Controllers.Serialization
 				{
 					if (reader.ReadInt32() != Magics.Entry)
 					{
-						throw new IOException("Unexpected data encountered.");
+						throw new SilentHunterParserException("Unexpected data encountered.");
 					}
 
 					smc.StateEntries.Add(ReadEntry(stream, reader));

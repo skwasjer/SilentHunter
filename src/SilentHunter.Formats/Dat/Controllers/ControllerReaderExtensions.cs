@@ -27,12 +27,12 @@ namespace SilentHunter.Dat.Controllers
 
 			if (stream.Position > expectedPosition)
 			{
-				throw new IOException($"Too much data is read from stream for property '{fieldName}'.");
+				throw new SilentHunterParserException($"Too much data is read from stream for property '{fieldName}'.");
 			}
 
 			// Forward stream to end.
 			stream.Position = expectedPosition;
-			throw new IOException($"Not all data is read from stream for property '{fieldName}'.");
+			throw new SilentHunterParserException($"Not all data is read from stream for property '{fieldName}'.");
 		}
 
 		/// <summary>
@@ -64,12 +64,12 @@ namespace SilentHunter.Dat.Controllers
 			// If memberInfo is type, then a controller name was expected.
 			if (member is Type)
 			{
-				throw new ArgumentException($"Expected controller name '{name}', but read '{nameOnStream}' from the stream.", nameof(name));
+				throw new SilentHunterParserException($"Expected controller name '{name}', but read '{nameOnStream}' from the stream.");
 			}
 
 			if (!member.HasAttribute<OptionalAttribute>())
 			{
-				throw new ArgumentException($"The reflected name '{name}' does not match the name '{nameOnStream}' read from the stream.", nameof(name));
+				throw new SilentHunterParserException($"The reflected name '{name}' does not match the name '{nameOnStream}' read from the stream.");
 			}
 
 			// Property must be skipped.

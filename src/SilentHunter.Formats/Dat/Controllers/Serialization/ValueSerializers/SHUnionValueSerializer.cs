@@ -43,7 +43,7 @@ namespace SilentHunter.Dat.Controllers.Serialization
 			Type valueType = typeArgs.FirstOrDefault(type => Marshal.SizeOf(type) == dataSize);
 			if (valueType == null)
 			{
-				throw new IOException($"The available stream data does not match the size one of the two union types for property '{serializationContext.Name}'.");
+				throw new SilentHunterParserException($"The available stream data does not match the size one of the two union types for property '{serializationContext.Name}'.");
 			}
 
 			object union = Activator.CreateInstance(serializationContext.Type);

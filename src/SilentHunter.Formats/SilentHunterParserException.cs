@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.Serialization;
 
 namespace SilentHunter
@@ -6,7 +7,7 @@ namespace SilentHunter
 	/// <summary>
 	/// Represents an exception thrown during parsing.
 	/// </summary>
-	public class SilentHunterParserException : Exception
+	public class SilentHunterParserException : IOException
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SilentHunterParserException"/> using specified <paramref name="message"/>.
@@ -31,7 +32,7 @@ namespace SilentHunter
 		/// <param name="info">The <see cref="SerializationInfo" /> that holds the serialized object data about the exception being thrown.</param>
 		/// <param name="context">The <see cref="StreamingContext" /> that contains contextual information about the source or destination.</param>
 		/// <exception cref="ArgumentNullException">The <paramref name="info">info</paramref> parameter is null.</exception>
-		/// <exception cref="SerializationException">The class name is null or <see cref="P:System.Exception.HResult"></see> is zero (0).</exception>
+		/// <exception cref="SerializationException">The class name is null or <see cref="Exception.HResult"></see> is zero (0).</exception>
 		protected SilentHunterParserException(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
 		}

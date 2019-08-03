@@ -113,7 +113,7 @@ namespace SilentHunter.Sdl
 				uint subSize = reader.ReadUInt32();
 				if (size != subSize + 4)
 				{
-					throw new IOException("The file appears invalid. Unexpected size specifier encountered.");
+					throw new SilentHunterParserException("The file appears invalid. Unexpected size specifier encountered.");
 				}
 
 				long currentPos = reader.BaseStream.Position;
@@ -143,7 +143,7 @@ namespace SilentHunter.Sdl
 
 				if (reader.BaseStream.Position != currentPos + subSize)
 				{
-					throw new IOException("The file appears invalid. Unexpected size specifier encountered.");
+					throw new SilentHunterParserException("The file appears invalid. Unexpected size specifier encountered.");
 				}
 			}
 

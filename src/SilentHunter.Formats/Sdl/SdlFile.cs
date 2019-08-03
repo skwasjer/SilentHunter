@@ -28,8 +28,13 @@ namespace SilentHunter.Sdl
 			return item.Name;
 		}
 
-		/// <inheritdoc />
-		public Task LoadAsync(Stream stream)
+		/// <summary>
+		/// Loads from specified <paramref name="stream"/>.
+		/// </summary>
+		/// <param name="stream">The stream to load from.</param>
+		/// <exception cref="SdlFileException">Thrown when a parsing error occurs.</exception>
+		/// <exception cref="ArgumentNullException">Thrown when <paramref name="stream"/> is null.</exception>
+		public async Task LoadAsync(Stream stream)
 		{
 			if (stream == null)
 			{
@@ -38,41 +43,58 @@ namespace SilentHunter.Sdl
 
 			Clear();
 
-			return GlobalExceptionHandler.HandleException(async () =>
+			long itemStartPosition = 0;
+			try
+			{
+				while (stream.Position < stream.Length)
 				{
-					while (stream.Position < stream.Length)
+					itemStartPosition = stream.Position;
+					var sndInfo = new SoundInfo();
+					await ((IRawSerializable)sndInfo).DeserializeAsync(stream).ConfigureAwait(false);
+
+					// S3D adds this, so ignore.
+					if (string.Compare(sndInfo.Name, S3DAssemblyPath, StringComparison.OrdinalIgnoreCase) == 0)
 					{
-						var sndInfo = new SoundInfo();
-						await ((IRawSerializable)sndInfo).DeserializeAsync(stream).ConfigureAwait(false);
-
-						// S3D adds this, so ignore.
-						if (string.Compare(sndInfo.Name, S3DAssemblyPath, StringComparison.OrdinalIgnoreCase) == 0)
-						{
-							continue;
-						}
-
-						Add(sndInfo);
+						continue;
 					}
-				},
-				"Failed to load file.");
+
+					Add(sndInfo);
+				}
+			}
+			catch (Exception ex)
+			{
+				throw new SdlFileException(Count, itemStartPosition, "The file could not be read due to a parser error.", ex);
+			}
 		}
 
-		/// <inheritdoc />
-		public Task SaveAsync(Stream stream)
+		/// <summary>
+		/// Saves to specified <paramref name="stream"/>.
+		/// </summary>
+		/// <param name="stream">The stream to write to.</param>
+		/// <exception cref="SdlFileException">Thrown when a parsing error occurs.</exception>
+		/// <exception cref="ArgumentNullException">Thrown when <paramref name="stream"/> is null.</exception>
+		public async Task SaveAsync(Stream stream)
 		{
 			if (stream == null)
 			{
 				throw new ArgumentNullException(nameof(stream));
 			}
 
-			return GlobalExceptionHandler.HandleException(async () =>
+			long itemStartPosition = 0;
+			int itemIndex = -1;
+			try
+			{
+				foreach (IRawSerializable sndInfo in this)
 				{
-					foreach (IRawSerializable sndInfo in this)
-					{
-						await sndInfo.SerializeAsync(stream).ConfigureAwait(false);
-					}
-				},
-				"Failed to save file.");
+					itemStartPosition = stream.Position;
+					itemIndex++;
+					await sndInfo.SerializeAsync(stream).ConfigureAwait(false);
+				}
+			}
+			catch (Exception ex)
+			{
+				throw new SdlFileException(itemIndex, itemStartPosition, "The file could not be read due to a parser error.", ex);
+			}
 		}
 	}
 }

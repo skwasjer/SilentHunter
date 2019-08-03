@@ -34,63 +34,85 @@ namespace SilentHunter.Off
 			return item.Character;
 		}
 
-		/// <inheritdoc />
-		public Task LoadAsync(Stream stream)
+		/// <summary>
+		/// Loads from specified <paramref name="stream"/>.
+		/// </summary>
+		/// <param name="stream">The stream to load from.</param>
+		/// <exception cref="OffFileException">Thrown when a parsing error occurs.</exception>
+		/// <exception cref="ArgumentNullException">Thrown when <paramref name="stream"/> is null.</exception>
+		public async Task LoadAsync(Stream stream)
 		{
 			if (stream == null)
 			{
 				throw new ArgumentNullException(nameof(stream));
 			}
 
-			return GlobalExceptionHandler.HandleException(async () =>
+			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
+			{
+				long itemStartPosition = 0;
+				try
 				{
-					using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
+					int characterCount = reader.ReadInt32();
+					CharacterSpacing = reader.ReadStruct<Point>();
+
+					Clear();
+					for (int i = 0; i < characterCount; i++)
 					{
-						int characterCount = reader.ReadInt32();
-						CharacterSpacing = reader.ReadStruct<Point>();
+						itemStartPosition = stream.Position;
+						var character = new OffCharacter();
+						await ((IRawSerializable)character).DeserializeAsync(stream).ConfigureAwait(false);
 
-						Clear();
-						for (int i = 0; i < characterCount; i++)
-						{
-							var character = new OffCharacter();
-							await ((IRawSerializable)character).DeserializeAsync(stream).ConfigureAwait(false);
-
-							Add(character);
-						}
-
-						if (reader.BaseStream.Position != reader.BaseStream.Length)
-						{
-							throw new IOException($"The stream contains unexpected data at 0x{reader.BaseStream.Position:x8}");
-						}
+						Add(character);
 					}
-				},
-				"Failed to load file.");
+
+					if (reader.BaseStream.Position != reader.BaseStream.Length)
+					{
+						throw new SilentHunterParserException($"The stream contains unexpected data at 0x{reader.BaseStream.Position:x8}");
+					}
+				}
+				catch (Exception ex)
+				{
+					throw new OffFileException(Count, itemStartPosition, "The file could not be read due to a parser error.", ex);
+				}
+			}
 		}
 
-		/// <inheritdoc />
-		public Task SaveAsync(Stream stream)
+		/// <summary>
+		/// Saves to specified <paramref name="stream"/>.
+		/// </summary>
+		/// <param name="stream">The stream to write to.</param>
+		/// <exception cref="OffFileException">Thrown when a parsing error occurs.</exception>
+		/// <exception cref="ArgumentNullException">Thrown when <paramref name="stream"/> is null.</exception>
+		public async Task SaveAsync(Stream stream)
 		{
 			if (stream == null)
 			{
 				throw new ArgumentNullException(nameof(stream));
 			}
 
-			return GlobalExceptionHandler.HandleException(async () =>
+			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
+			{
+				long itemStartPosition = 0;
+				int itemIndex = -1;
+				try
 				{
-					using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
+					writer.Write(Count);
+					writer.WriteStruct(CharacterSpacing);
+
+					foreach (OffCharacter character in this)
 					{
-						writer.Write(Count);
-						writer.WriteStruct(CharacterSpacing);
-
-						foreach (OffCharacter character in this)
-						{
-							await ((IRawSerializable)character).SerializeAsync(stream).ConfigureAwait(false);
-						}
-
-						writer.Flush();
+						itemStartPosition = stream.Position;
+						itemIndex++;
+						await ((IRawSerializable)character).SerializeAsync(stream).ConfigureAwait(false);
 					}
-				},
-				"Failed to save file.");
+
+					writer.Flush();
+				}
+				catch (Exception ex)
+				{
+					throw new OffFileException(itemIndex, itemStartPosition, "The file could not be written due to a parser error.", ex);
+				}
+			}
 		}
 	}
 }
