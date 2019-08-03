@@ -11,6 +11,7 @@ namespace skwas.IO
 	/// <typeparam name="TMagic">The type of the magic.</typeparam>
 	/// <typeparam name="TChunk">The type of the chunk.</typeparam>
 	public class ChunkReader<TMagic, TChunk> : IDisposable
+		where TMagic : struct
 		where TChunk : IChunk
 	{
 		private readonly IChunkActivator _chunkActivator;
@@ -118,12 +119,6 @@ namespace skwas.IO
 			long offset = BaseStream.Position;
 			// Read magic.
 			TMagic magic = ReadMagic();
-
-			// If not a value type, check if the magic is null. This indicates that the stream is empty, and thus we have to exit.
-			if (!typeof(TMagic).IsValueType && magic == null)
-			{
-				return default;
-			}
 
 			Type chunkType = _chunkResolver.Resolve(magic) ?? typeof(TChunk);
 

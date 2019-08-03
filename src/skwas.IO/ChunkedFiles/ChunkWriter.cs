@@ -11,6 +11,7 @@ namespace skwas.IO
 	/// <typeparam name="TMagic">The type of the magic.</typeparam>
 	/// <typeparam name="TChunk">The type of the chunk.</typeparam>
 	public class ChunkWriter<TMagic, TChunk> : IDisposable
+		where TMagic : struct
 		where TChunk : IChunk
 	{
 		private BinaryWriter _writer;
@@ -98,20 +99,6 @@ namespace skwas.IO
 		}
 
 		/// <summary>
-		/// Writes the chunk magic to the stream.
-		/// </summary>
-		/// <param name="chunk">The chunk to write the magic of.</param>
-		public virtual void WriteMagic(TChunk chunk)
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException(GetType().Name);
-			}
-
-			_writer.WriteStruct(chunk.Magic);
-		}
-
-		/// <summary>
 		/// Writes the specified <paramref name="chunk" /> to the stream.
 		/// </summary>
 		/// <param name="chunk">The chunk to write to stream.</param>
@@ -123,7 +110,7 @@ namespace skwas.IO
 			}
 
 			chunk.FileOffset = BaseStream.Position;
-			WriteMagic(chunk);
+			WriteMagic((TMagic)chunk.Magic);
 
 			return ((IChunk)chunk).SerializeAsync(BaseStream);
 		}
