@@ -7,7 +7,7 @@ namespace SilentHunter.Controllers.Compiler
 		/// <summary>
 		/// Gets the full controller path.
 		/// </summary>
-		string ControllerPath { get; }
+		string ControllerDir { get; }
 
 		/// <summary>
 		/// Gets the application name. This is used to determine the output location of the compiled assembly.

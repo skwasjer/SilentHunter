@@ -6,7 +6,6 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
-using System.Runtime.Versioning;
 using System.Xml.Serialization;
 
 namespace SilentHunter.Controllers.Compiler
@@ -47,23 +46,23 @@ namespace SilentHunter.Controllers.Compiler
 		private readonly IFileSystem _fileSystem;
 		private readonly ICSharpCompiler _compiler;
 
-		public ControllerAssemblyCompiler(ICSharpCompiler compiler, string applicationName, string controllerPath)
-			: this(new FileSystem(), compiler, applicationName, controllerPath)
+		public ControllerAssemblyCompiler(ICSharpCompiler compiler, string applicationName, string controllerDir)
+			: this(new FileSystem(), compiler, applicationName, controllerDir)
 		{
 		}
 
-		public ControllerAssemblyCompiler(IFileSystem fileSystem, ICSharpCompiler compiler, string applicationName, string controllerPath)
+		public ControllerAssemblyCompiler(IFileSystem fileSystem, ICSharpCompiler compiler, string applicationName, string controllerDir)
 		{
 			_fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
 			_compiler = compiler ?? throw new ArgumentNullException(nameof(compiler));
 			ApplicationName = applicationName ?? throw new ArgumentNullException(nameof(applicationName));
-			ControllerPath = _fileSystem.Path.GetFullPath(controllerPath ?? throw new ArgumentNullException(nameof(controllerPath)));
+			ControllerDir = _fileSystem.Path.GetFullPath(controllerDir ?? throw new ArgumentNullException(nameof(controllerDir)));
 		}
 
 		/// <summary>
 		/// Gets the full controller path.
 		/// </summary>
-		public string ControllerPath { get; }
+		public string ControllerDir { get; }
 
 		/// <summary>
 		/// Gets the application name. This is used to determine the output location of the compiled assembly.
@@ -78,41 +77,51 @@ namespace SilentHunter.Controllers.Compiler
 		/// <summary>
 		/// Gets or sets a filter to ignore specific paths while searching for source files.
 		/// </summary>
-		public Func<string, bool> IgnorePaths { get; set; }
+		public Func<string, bool> IgnoreDirs { get; set; }
 
 		/// <summary>
 		/// Gets or sets dependency search paths.
 		/// </summary>
-		public IEnumerable<string> DependencySearchPaths { get; set; }
+		public IEnumerable<string> DependencySearchDirs { get; set; }
 
 		public Assembly Compile(bool force = false)
 		{
-			string outputPath = GetTargetDir();
-			if (!_fileSystem.Directory.Exists(outputPath))
+			string outputDir = GetTargetDir();
+			if (!_fileSystem.Directory.Exists(outputDir))
 			{
-				_fileSystem.Directory.CreateDirectory(outputPath);
+				_fileSystem.Directory.CreateDirectory(outputDir);
 			}
 			else if (force)
 			{
 				// Clean out existing artifacts, which forces a new build.
 				CleanArtifacts();
-				_fileSystem.Directory.CreateDirectory(outputPath);
+				_fileSystem.Directory.CreateDirectory(outputDir);
 			}
 
 			// Copy local dependencies.
-			CopyLocalDependencies(AppDomain.CurrentDomain.BaseDirectory, outputPath);
+			CopyLocalDependencies(AppDomain.CurrentDomain.BaseDirectory, outputDir);
 
-			string asmShortName = AssemblyName ?? _fileSystem.Path.GetFileNameWithoutExtension(ControllerPath);
-			string asmOutputFile = _fileSystem.Path.Combine(outputPath, asmShortName + ".dll");
-			string docFile = _fileSystem.Path.Combine(outputPath, asmShortName + ".xml");
+			string asmShortName = AssemblyName ?? _fileSystem.Path.GetFileNameWithoutExtension(ControllerDir);
+			string asmOutputFile = _fileSystem.Path.Combine(outputDir, asmShortName + ".dll");
+			string docFile = _fileSystem.Path.Combine(outputDir, asmShortName + ".xml");
 
-			ICollection<CacheFileReference> sourceFiles = GetCSharpFiles(ControllerPath);
+			ICollection<CacheFileReference> sourceFiles = GetCSharpFiles(ControllerDir);
 			if (!sourceFiles.Any())
 			{
 				throw new InvalidOperationException("No controller source files found.");
 			}
 
-			// Generate cache file for the specified controller path, which is used to determine if
+			CompilerBuildCache newCache = PrepareBuildCache(sourceFiles, outputDir);
+
+			Compile(newCache, asmOutputFile, docFile);
+
+			// Load controller assembly also into local domain. You normally wouldn't want this, because you A) couldn't unload it and B) would create security issues. May have to look at using isolated domain.
+			return Assembly.LoadFile(asmOutputFile);
+		}
+
+		private CompilerBuildCache PrepareBuildCache(IEnumerable<CacheFileReference> sourceFiles, string outputDir)
+		{
+			// Generate cache file for the specified controller dir, which is used to determine if
 			// we have to rebuild the controller assembly. If one of the files has changed since last build
 			// or a file is missing/added, the assembly will be rebuilt.
 			var newCache = new CompilerBuildCache
@@ -127,7 +136,7 @@ namespace SilentHunter.Controllers.Compiler
 					RequiredDependencies
 						.Select(rd =>
 						{
-							string path = rd.IsLocal ? _fileSystem.Path.Combine(outputPath, rd.Location) : rd.Location;
+							string path = rd.IsLocal ? _fileSystem.Path.Combine(outputDir, rd.Location) : rd.Location;
 							bool includeDetails = rd.IsLocal && _fileSystem.File.Exists(path);
 							return new CacheFileReference
 							{
@@ -139,20 +148,16 @@ namespace SilentHunter.Controllers.Compiler
 				),
 				SourceFiles = new HashSet<CacheFileReference>(sourceFiles)
 			};
-
-			Compile(newCache, ControllerPath, asmOutputFile, docFile);
-
-			// Load controller assembly also into local domain. You normally wouldn't want this, because you A) couldn't unload it and B) would create security issues. May have to look at using isolated domain.
-			return Assembly.LoadFile(asmOutputFile);
+			return newCache;
 		}
 
-		private void CopyLocalDependencies(string baseDirectory, string outputPath)
+		private void CopyLocalDependencies(string baseDirectory, string outputDir)
 		{
 			foreach (Dependency requiredDependency in RequiredDependencies.Where(rd => rd.IsLocal))
 			{
 				// Find the dependency.
-				string dependencyFullPath = (DependencySearchPaths ?? new List<string>())
-					.Union(new[] { baseDirectory })
+				string dependencyFullPath = (DependencySearchDirs ?? new List<string>())
+					.Union(new[] { baseDirectory }) // Always include base dir
 					.Select(p =>
 					{
 						string depFilename = _fileSystem.Path.Combine(p, requiredDependency.Location);
@@ -165,76 +170,36 @@ namespace SilentHunter.Controllers.Compiler
 					throw new InvalidOperationException($"Unable to compiler controllers, the dependency {_fileSystem.Path.GetFileName(requiredDependency.Location)} is required but not found in any of the search paths.");
 				}
 
-				CopyDependencyIfModified(dependencyFullPath, outputPath);
+				CopyDependencyIfModified(dependencyFullPath, outputDir);
 			}
 		}
 
 		private string GetTargetDir()
 		{
-			string frameworkVersion = Assembly.GetExecutingAssembly()
-				.GetCustomAttribute<TargetFrameworkAttribute>()
-				.FrameworkName.ToLowerInvariant()
-				.Replace(",version=v", string.Empty)
-				.TrimStart('.');
-
-			if (frameworkVersion.StartsWith("netframework"))
-			{
-				frameworkVersion = frameworkVersion
-					.Replace("netframework", "net")
-					.Replace(".", string.Empty);
-			}
-
-			return _fileSystem.Path.Combine(_fileSystem.Path.GetTempPath(), ApplicationName, "SilentHunter.Controllers", frameworkVersion);
+			return _fileSystem.Path.Combine(
+				_fileSystem.Path.GetTempPath(),
+				ApplicationName,
+				"SilentHunter.Controllers",
+				EnvironmentUtilities.GetCurrentTargetFramework()
+			);
 		}
 
 		/// <summary>
 		/// Gets *.cs files in specified folder and sorts them where Silent Hunter specific versions come first.
 		/// </summary>
-		/// <param name="path">The path where the controllers are located.</param>
+		/// <param name="sourceFileDir">The path where the controllers are located.</param>
 		/// <returns>A list of controller files.</returns>
-		private ICollection<CacheFileReference> GetCSharpFiles(string path)
+		private ICollection<CacheFileReference> GetCSharpFiles(string sourceFileDir)
 		{
-			string p = _fileSystem.Path.GetFullPath(_fileSystem.Path.Combine(_fileSystem.Directory.GetCurrentDirectory(), path));
-			return _fileSystem.DirectoryInfo.FromDirectoryName(p)
-				.GetFiles("*.cs", SearchOption.AllDirectories)
-				.Where(f => IgnorePaths == null || !IgnorePaths(f.FullName))
-				.Select(f =>
-					new CacheFileReference
-					{
-						// Save relative name.
-						Name = f.FullName.Substring(p.Length + 1),
-						LastModified = f.LastWriteTimeUtc,
-						Length = f.Length
-					}
-				)
+			return new CacheFileReferenceEnumerator(_fileSystem, sourceFileDir)
+				.Where(f => IgnoreDirs == null || !IgnoreDirs(f.Name))
 				.ToList();
 		}
 
-		private void Compile(CompilerBuildCache assemblyCache, string controllerPath, string outputFile, string docFile)
+		private void Compile(CompilerBuildCache assemblyCache, string outputFile, string docFile)
 		{
-			string cacheFile = outputFile + ".cache";
-			string outputPath = _fileSystem.Path.GetDirectoryName(outputFile);
-
-			bool mustCompile = true;
-			var serializer = new XmlSerializer(typeof(CompilerBuildCache));
-
-			// Load the cache file.
-			if (_fileSystem.File.Exists(cacheFile))
-			{
-				CompilerBuildCache oldCache;
-				using (Stream fs = _fileSystem.File.OpenRead(cacheFile))
-				{
-					oldCache = (CompilerBuildCache)serializer.Deserialize(fs);
-				}
-
-				// Check if cache is out of sync and that all files exist.
-				mustCompile = !_fileSystem.File.Exists(outputFile)
-				 || !oldCache.Equals(assemblyCache)
-				 || oldCache.SourceFiles.Any(src => !_fileSystem.File.Exists(_fileSystem.Path.Combine(controllerPath, src.Name)));
-			}
-
 			// If no changes in source files, return.
-			if (!mustCompile)
+			if (!GetIfMustRecompile(assemblyCache, outputFile))
 			{
 				return;
 			}
@@ -242,25 +207,60 @@ namespace SilentHunter.Controllers.Compiler
 			// NOTE: Ensure LoaderLock Managed Debugging Assistant in Exception settings is disabled, to allow VS to run dynamic compilation within IDE.
 
 			// Compile the source files, etc.
+			string outputDir = _fileSystem.Path.GetDirectoryName(outputFile);
 			var compilerOptions = new CompilerOptions
 			{
-				OutputPath = outputFile,
+				OutputDir = outputFile,
 				DocFile = docFile,
 				ReferencedAssemblies = assemblyCache.Dependencies.Select(d =>
 					{
-						string localFilePath = _fileSystem.Path.Combine(outputPath, d.Name);
+						string localFilePath = _fileSystem.Path.Combine(outputDir, d.Name);
 						return _fileSystem.File.Exists(localFilePath) ? localFilePath : d.Name;
 					})
 					.ToArray()
 			};
 
-			_compiler.CompileCode(assemblyCache.SourceFiles.Select(cs => _fileSystem.Path.Combine(controllerPath, cs.Name)).ToArray(), compilerOptions);
+			_compiler.CompileCode(assemblyCache.SourceFiles.Select(cs => _fileSystem.Path.Combine(ControllerDir, cs.Name)).ToArray(), compilerOptions);
 
+			SaveBuildCache(assemblyCache, outputFile);
+		}
+
+		private void SaveBuildCache(CompilerBuildCache assemblyCache, string outputFile)
+		{
 			// Save the cache file.
+			var serializer = new XmlSerializer(typeof(CompilerBuildCache));
+			string cacheFile = GetBuildCacheFileName(outputFile);
 			using (Stream fs = _fileSystem.File.Open(cacheFile, FileMode.Create, FileAccess.Write, FileShare.Read))
 			{
 				serializer.Serialize(fs, assemblyCache);
 			}
+		}
+
+		private bool GetIfMustRecompile(CompilerBuildCache assemblyCache, string outputFile)
+		{
+			string cacheFile = GetBuildCacheFileName(outputFile);
+			if (!_fileSystem.File.Exists(cacheFile))
+			{
+				return true;
+			}
+
+			CompilerBuildCache oldCache;
+			// Load the cache file.
+			using (Stream fs = _fileSystem.File.OpenRead(cacheFile))
+			{
+				var serializer = new XmlSerializer(typeof(CompilerBuildCache));
+				oldCache = (CompilerBuildCache)serializer.Deserialize(fs);
+			}
+
+			// Check if cache is not out of sync and that all files exist.
+			return !_fileSystem.File.Exists(outputFile)
+			 || !oldCache.Equals(assemblyCache)
+			 || oldCache.SourceFiles.Any(src => !_fileSystem.File.Exists(_fileSystem.Path.Combine(ControllerDir, src.Name)));
+		}
+
+		private static string GetBuildCacheFileName(string outputFile)
+		{
+			return outputFile + ".cache";
 		}
 
 		private void CopyDependencyIfModified(string sourceFile, string destDirectory)
@@ -270,8 +270,14 @@ namespace SilentHunter.Controllers.Compiler
 				throw new ArgumentNullException(nameof(sourceFile));
 			}
 
+			if (destDirectory == null)
+			{
+				throw new ArgumentNullException(nameof(destDirectory));
+			}
+
 			string destPath = _fileSystem.Path.Combine(destDirectory, _fileSystem.Path.GetFileName(sourceFile));
-			if (!_fileSystem.File.Exists(destPath) || _fileSystem.File.GetLastWriteTimeUtc(destPath) != _fileSystem.File.GetLastWriteTimeUtc(sourceFile))
+			if (!_fileSystem.File.Exists(destPath)
+				|| _fileSystem.File.GetLastWriteTimeUtc(destPath) != _fileSystem.File.GetLastWriteTimeUtc(sourceFile))
 			{
 				_fileSystem.File.Copy(sourceFile, destPath, true);
 			}

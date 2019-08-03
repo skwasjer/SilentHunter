@@ -50,13 +50,13 @@ namespace SilentHunter.Controllers.Compiler
 			List<PortableExecutableReference> references = options.ReferencedAssemblies?.Select(ra => MetadataReference.CreateFromFile(ra)).ToList() ?? new List<PortableExecutableReference>();
 
 			CSharpCompilation compilation = CSharpCompilation.Create(
-				_fileSystem.Path.GetFileNameWithoutExtension(options.OutputPath),
+				_fileSystem.Path.GetFileNameWithoutExtension(options.OutputDir),
 				fileNames.Select(fn => CSharpSyntaxTree.ParseText(SourceText.From(_fileSystem.File.ReadAllText(fn), System.Text.Encoding.UTF8), _parseOptions).WithFilePath(fn)),
 				references,
 				new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
-			string pdbPath = _fileSystem.Path.Combine(_fileSystem.Path.GetDirectoryName(options.OutputPath), _fileSystem.Path.GetFileNameWithoutExtension(options.OutputPath) + ".pdb");
-			using (Stream dllStream = _fileSystem.File.Open(options.OutputPath, FileMode.Create))
+			string pdbPath = _fileSystem.Path.Combine(_fileSystem.Path.GetDirectoryName(options.OutputDir), _fileSystem.Path.GetFileNameWithoutExtension(options.OutputDir) + ".pdb");
+			using (Stream dllStream = _fileSystem.File.Open(options.OutputDir, FileMode.Create))
 			using (Stream pdbStream = _fileSystem.File.Open(pdbPath, FileMode.Create))
 			using (Stream docStream = string.IsNullOrEmpty(options.DocFile) ? Stream.Null : _fileSystem.File.Open(options.DocFile, FileMode.Create))
 			{
@@ -64,10 +64,10 @@ namespace SilentHunter.Controllers.Compiler
 				LogResults(emitResult);
 
 				// Display a successful compilation message.
-				Debug.WriteLine("Code built into assembly '{0}' successfully.", options.OutputPath);
+				Debug.WriteLine("Code built into assembly '{0}' successfully.", options.OutputDir);
 			}
 
-			return loadAssembly ? Assembly.Load(options.OutputPath) : null;
+			return loadAssembly ? Assembly.Load(options.OutputDir) : null;
 		}
 
 		public Assembly CompileCode(string code, CompilerOptions options)

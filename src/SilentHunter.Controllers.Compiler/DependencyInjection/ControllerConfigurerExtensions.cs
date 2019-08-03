@@ -20,8 +20,8 @@ namespace SilentHunter.Controllers.Compiler.DependencyInjection
 				var assemblyCompiler = new ControllerAssemblyCompiler(s.GetRequiredService<ICSharpCompiler>(), appName, controllerPath)
 				{
 					AssemblyName = assemblyName,
-					IgnorePaths = ignorePaths,
-					DependencySearchPaths = dependencySearchPaths
+					IgnoreDirs = ignorePaths,
+					DependencySearchDirs = dependencySearchPaths
 				};
 				return new ControllerAssembly(assemblyCompiler.Compile());
 			});

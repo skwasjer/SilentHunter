@@ -7,7 +7,7 @@ namespace SilentHunter.Controllers.Compiler
 		/// <summary>
 		/// Gets or sets the path of the output assembly.
 		/// </summary>
-		public string OutputPath { get; set; }
+		public string OutputDir { get; set; }
 
 		/// <summary>
 		/// Gets or sets the path of the XML documentation file.
