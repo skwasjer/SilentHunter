@@ -1,9 +1,8 @@
-﻿
+﻿#if DEBUG
+using System;
 using System.IO;
 using System.Reflection;
-using skwas.IO;
-#if DEBUG
-using System;
+using SilentHunter.FileFormats.IO;
 
 namespace SilentHunter.FileFormats.Extensions
 {

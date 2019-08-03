@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace skwas.IO
+namespace SilentHunter.FileFormats.IO
 {
 	/// <summary>
 	/// Wraps a stream into a specific isolated region.

@@ -3,7 +3,7 @@ using System.IO;
 using FluentAssertions;
 using Xunit;
 
-namespace skwas.IO
+namespace SilentHunter.FileFormats.IO
 {
 	public class RegionStreamTests
 	{

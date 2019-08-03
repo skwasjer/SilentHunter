@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using SilentHunter.FileFormats.Dat.Controllers;
-using skwas.IO;
+using SilentHunter.FileFormats.IO;
 
 namespace SilentHunter.FileFormats.Dat.Chunks
 {
