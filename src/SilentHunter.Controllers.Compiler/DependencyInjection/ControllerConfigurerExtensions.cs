@@ -9,15 +9,15 @@ namespace SilentHunter.Controllers.Compiler.DependencyInjection
 {
 	public static class ControllerConfigurerExtensions
 	{
-		public static SilentHunterParsersConfigurer CompileFrom(this ControllerConfigurer controllerConfigurer, string controllerPath, string assemblyName = null, Func<string, bool> ignorePaths = null, params string[] dependencySearchPaths)
+		public static SilentHunterParsersConfigurer CompileFrom(this ControllerConfigurer controllerConfigurer, string controllerPath, string assemblyName = null, string applicationName = null, Func<string, bool> ignorePaths = null, params string[] dependencySearchPaths)
 		{
 			AddCSharpCompiler(controllerConfigurer);
 
 			return controllerConfigurer.FromAssembly(s =>
 			{
 				Assembly entryAssembly = Assembly.GetEntryAssembly();
-				string applicationName = entryAssembly?.GetName().Name ?? "SilentHunter.Controllers";
-				var assemblyCompiler = new ControllerAssemblyCompiler(s.GetRequiredService<ICSharpCompiler>(), applicationName, controllerPath)
+				string appName = applicationName ?? entryAssembly?.GetName().Name ?? "SilentHunter.Controllers";
+				var assemblyCompiler = new ControllerAssemblyCompiler(s.GetRequiredService<ICSharpCompiler>(), appName, controllerPath)
 				{
 					AssemblyName = assemblyName,
 					IgnorePaths = ignorePaths,
