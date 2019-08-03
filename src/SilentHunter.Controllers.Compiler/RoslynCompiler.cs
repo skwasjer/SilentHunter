@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -15,10 +16,17 @@ namespace SilentHunter.Controllers.Compiler
 {
 	public class RoslynCompiler : ICSharpCompiler
 	{
+		private readonly IFileSystem _fileSystem;
 		private readonly CSharpParseOptions _parseOptions;
 
 		public RoslynCompiler()
+			: this(new FileSystem())
 		{
+		}
+
+		public RoslynCompiler(IFileSystem fileSystem)
+		{
+			_fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
 			_parseOptions = new CSharpParseOptions(LanguageVersion.CSharp8, DocumentationMode.Diagnose);
 		}
 
@@ -42,15 +50,15 @@ namespace SilentHunter.Controllers.Compiler
 			List<PortableExecutableReference> references = options.ReferencedAssemblies?.Select(ra => MetadataReference.CreateFromFile(ra)).ToList() ?? new List<PortableExecutableReference>();
 
 			CSharpCompilation compilation = CSharpCompilation.Create(
-				Path.GetFileNameWithoutExtension(options.OutputPath),
-				fileNames.Select(fn => CSharpSyntaxTree.ParseText(SourceText.From(File.ReadAllText(fn), System.Text.Encoding.UTF8), _parseOptions).WithFilePath(fn)),
+				_fileSystem.Path.GetFileNameWithoutExtension(options.OutputPath),
+				fileNames.Select(fn => CSharpSyntaxTree.ParseText(SourceText.From(_fileSystem.File.ReadAllText(fn), System.Text.Encoding.UTF8), _parseOptions).WithFilePath(fn)),
 				references,
 				new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
-			string pdbPath = Path.Combine(Path.GetDirectoryName(options.OutputPath), Path.GetFileNameWithoutExtension(options.OutputPath) + ".pdb");
-			using (Stream dllStream = File.Open(options.OutputPath, FileMode.Create))
-			using (Stream pdbStream = File.Open(pdbPath, FileMode.Create))
-			using (Stream docStream = string.IsNullOrEmpty(options.DocFile) ? Stream.Null : File.Open(options.DocFile, FileMode.Create))
+			string pdbPath = _fileSystem.Path.Combine(_fileSystem.Path.GetDirectoryName(options.OutputPath), _fileSystem.Path.GetFileNameWithoutExtension(options.OutputPath) + ".pdb");
+			using (Stream dllStream = _fileSystem.File.Open(options.OutputPath, FileMode.Create))
+			using (Stream pdbStream = _fileSystem.File.Open(pdbPath, FileMode.Create))
+			using (Stream docStream = string.IsNullOrEmpty(options.DocFile) ? Stream.Null : _fileSystem.File.Open(options.DocFile, FileMode.Create))
 			{
 				EmitResult emitResult = compilation.Emit(dllStream, pdbStream, docStream);
 				LogResults(emitResult);

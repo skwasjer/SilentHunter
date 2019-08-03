@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
@@ -43,13 +44,20 @@ namespace SilentHunter.Controllers.Compiler
 			new Dependency("SilentHunter.Core.dll", true)
 		};
 
+		private readonly IFileSystem _fileSystem;
 		private readonly ICSharpCompiler _compiler;
 
 		public ControllerAssemblyCompiler(ICSharpCompiler compiler, string applicationName, string controllerPath)
+			: this(new FileSystem(), compiler, applicationName, controllerPath)
 		{
+		}
+
+		public ControllerAssemblyCompiler(IFileSystem fileSystem, ICSharpCompiler compiler, string applicationName, string controllerPath)
+		{
+			_fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
 			_compiler = compiler ?? throw new ArgumentNullException(nameof(compiler));
 			ApplicationName = applicationName ?? throw new ArgumentNullException(nameof(applicationName));
-			ControllerPath = Path.GetFullPath(controllerPath ?? throw new ArgumentNullException(nameof(controllerPath)));
+			ControllerPath = _fileSystem.Path.GetFullPath(controllerPath ?? throw new ArgumentNullException(nameof(controllerPath)));
 		}
 
 		/// <summary>
@@ -80,23 +88,23 @@ namespace SilentHunter.Controllers.Compiler
 		public Assembly Compile(bool force = false)
 		{
 			string outputPath = GetTargetDir();
-			if (!Directory.Exists(outputPath))
+			if (!_fileSystem.Directory.Exists(outputPath))
 			{
-				Directory.CreateDirectory(outputPath);
+				_fileSystem.Directory.CreateDirectory(outputPath);
 			}
 			else if (force)
 			{
 				// Clean out existing artifacts, which forces a new build.
 				CleanArtifacts();
-				Directory.CreateDirectory(outputPath);
+				_fileSystem.Directory.CreateDirectory(outputPath);
 			}
 
 			// Copy local dependencies.
 			CopyLocalDependencies(AppDomain.CurrentDomain.BaseDirectory, outputPath);
 
-			string asmShortName = AssemblyName ?? Path.GetFileNameWithoutExtension(ControllerPath);
-			string asmOutputFile = Path.Combine(outputPath, asmShortName + ".dll");
-			string docFile = Path.Combine(outputPath, asmShortName + ".xml");
+			string asmShortName = AssemblyName ?? _fileSystem.Path.GetFileNameWithoutExtension(ControllerPath);
+			string asmOutputFile = _fileSystem.Path.Combine(outputPath, asmShortName + ".dll");
+			string docFile = _fileSystem.Path.Combine(outputPath, asmShortName + ".xml");
 
 			ICollection<CacheFileReference> sourceFiles = GetCSharpFiles(ControllerPath);
 			if (!sourceFiles.Any())
@@ -119,13 +127,13 @@ namespace SilentHunter.Controllers.Compiler
 					RequiredDependencies
 						.Select(rd =>
 						{
-							string path = rd.IsLocal ? Path.Combine(outputPath, rd.Location) : rd.Location;
-							bool includeDetails = rd.IsLocal && File.Exists(path);
+							string path = rd.IsLocal ? _fileSystem.Path.Combine(outputPath, rd.Location) : rd.Location;
+							bool includeDetails = rd.IsLocal && _fileSystem.File.Exists(path);
 							return new CacheFileReference
 							{
 								Name = rd.Location,
-								LastModified = includeDetails ? (DateTime?)File.GetLastWriteTimeUtc(path) : null,
-								Length = includeDetails ? (long?)new FileInfo(path).Length : null,
+								LastModified = includeDetails ? (DateTime?)_fileSystem.File.GetLastWriteTimeUtc(path) : null,
+								Length = includeDetails ? (long?)_fileSystem.FileInfo.FromFileName(path).Length : null,
 							};
 						})
 				),
@@ -147,14 +155,14 @@ namespace SilentHunter.Controllers.Compiler
 					.Union(new[] { baseDirectory })
 					.Select(p =>
 					{
-						string depFilename = Path.Combine(p, requiredDependency.Location);
-						return File.Exists(depFilename) ? depFilename : null;
+						string depFilename = _fileSystem.Path.Combine(p, requiredDependency.Location);
+						return _fileSystem.File.Exists(depFilename) ? depFilename : null;
 					})
 					.FirstOrDefault(p => p != null);
 
-				if (dependencyFullPath == null || !File.Exists(dependencyFullPath))
+				if (dependencyFullPath == null || !_fileSystem.File.Exists(dependencyFullPath))
 				{
-					throw new InvalidOperationException($"Unable to compiler controllers, the dependency {Path.GetFileName(requiredDependency.Location)} is required but not found in any of the search paths.");
+					throw new InvalidOperationException($"Unable to compiler controllers, the dependency {_fileSystem.Path.GetFileName(requiredDependency.Location)} is required but not found in any of the search paths.");
 				}
 
 				CopyDependencyIfModified(dependencyFullPath, outputPath);
@@ -176,7 +184,7 @@ namespace SilentHunter.Controllers.Compiler
 					.Replace(".", string.Empty);
 			}
 
-			return Path.Combine(Path.GetTempPath(), ApplicationName, "SilentHunter.Controllers", frameworkVersion);
+			return _fileSystem.Path.Combine(_fileSystem.Path.GetTempPath(), ApplicationName, "SilentHunter.Controllers", frameworkVersion);
 		}
 
 		/// <summary>
@@ -186,8 +194,8 @@ namespace SilentHunter.Controllers.Compiler
 		/// <returns>A list of controller files.</returns>
 		private ICollection<CacheFileReference> GetCSharpFiles(string path)
 		{
-			string p = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), path));
-			return new DirectoryInfo(p)
+			string p = _fileSystem.Path.GetFullPath(_fileSystem.Path.Combine(_fileSystem.Directory.GetCurrentDirectory(), path));
+			return _fileSystem.DirectoryInfo.FromDirectoryName(p)
 				.GetFiles("*.cs", SearchOption.AllDirectories)
 				.Where(f => IgnorePaths == null || !IgnorePaths(f.FullName))
 				.Select(f =>
@@ -205,24 +213,24 @@ namespace SilentHunter.Controllers.Compiler
 		private void Compile(CompilerBuildCache assemblyCache, string controllerPath, string outputFile, string docFile)
 		{
 			string cacheFile = outputFile + ".cache";
-			string outputPath = Path.GetDirectoryName(outputFile);
+			string outputPath = _fileSystem.Path.GetDirectoryName(outputFile);
 
 			bool mustCompile = true;
 			var serializer = new XmlSerializer(typeof(CompilerBuildCache));
 
 			// Load the cache file.
-			if (File.Exists(cacheFile))
+			if (_fileSystem.File.Exists(cacheFile))
 			{
 				CompilerBuildCache oldCache;
-				using (FileStream fs = File.OpenRead(cacheFile))
+				using (Stream fs = _fileSystem.File.OpenRead(cacheFile))
 				{
 					oldCache = (CompilerBuildCache)serializer.Deserialize(fs);
 				}
 
 				// Check if cache is out of sync and that all files exist.
-				mustCompile = !File.Exists(outputFile)
+				mustCompile = !_fileSystem.File.Exists(outputFile)
 				 || !oldCache.Equals(assemblyCache)
-				 || oldCache.SourceFiles.Any(src => !File.Exists(Path.Combine(controllerPath, src.Name)));
+				 || oldCache.SourceFiles.Any(src => !_fileSystem.File.Exists(_fileSystem.Path.Combine(controllerPath, src.Name)));
 			}
 
 			// If no changes in source files, return.
@@ -240,32 +248,32 @@ namespace SilentHunter.Controllers.Compiler
 				DocFile = docFile,
 				ReferencedAssemblies = assemblyCache.Dependencies.Select(d =>
 					{
-						string localFilePath = Path.Combine(outputPath, d.Name);
-						return File.Exists(localFilePath) ? localFilePath : d.Name;
+						string localFilePath = _fileSystem.Path.Combine(outputPath, d.Name);
+						return _fileSystem.File.Exists(localFilePath) ? localFilePath : d.Name;
 					})
 					.ToArray()
 			};
 
-			_compiler.CompileCode(assemblyCache.SourceFiles.Select(cs => Path.Combine(controllerPath, cs.Name)).ToArray(), compilerOptions);
+			_compiler.CompileCode(assemblyCache.SourceFiles.Select(cs => _fileSystem.Path.Combine(controllerPath, cs.Name)).ToArray(), compilerOptions);
 
 			// Save the cache file.
-			using (FileStream fs = File.Open(cacheFile, FileMode.Create, FileAccess.Write, FileShare.Read))
+			using (Stream fs = _fileSystem.File.Open(cacheFile, FileMode.Create, FileAccess.Write, FileShare.Read))
 			{
 				serializer.Serialize(fs, assemblyCache);
 			}
 		}
 
-		private static void CopyDependencyIfModified(string sourceFile, string destDirectory)
+		private void CopyDependencyIfModified(string sourceFile, string destDirectory)
 		{
 			if (sourceFile == null)
 			{
 				throw new ArgumentNullException(nameof(sourceFile));
 			}
 
-			string destPath = Path.Combine(destDirectory, Path.GetFileName(sourceFile));
-			if (!File.Exists(destPath) || File.GetLastWriteTimeUtc(destPath) != File.GetLastWriteTimeUtc(sourceFile))
+			string destPath = _fileSystem.Path.Combine(destDirectory, _fileSystem.Path.GetFileName(sourceFile));
+			if (!_fileSystem.File.Exists(destPath) || _fileSystem.File.GetLastWriteTimeUtc(destPath) != _fileSystem.File.GetLastWriteTimeUtc(sourceFile))
 			{
-				File.Copy(sourceFile, destPath, true);
+				_fileSystem.File.Copy(sourceFile, destPath, true);
 			}
 		}
 
@@ -278,9 +286,9 @@ namespace SilentHunter.Controllers.Compiler
 		public void CleanArtifacts()
 		{
 			string dir = GetTargetDir();
-			if (Directory.Exists(dir))
+			if (_fileSystem.Directory.Exists(dir))
 			{
-				Directory.Delete(dir, true);
+				_fileSystem.Directory.Delete(dir, true);
 			}
 		}
 	}
