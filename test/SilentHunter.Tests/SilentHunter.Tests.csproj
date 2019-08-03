@@ -23,7 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\SilentHunter.Controllers.Compiler\SilentHunter.Controllers.Compiler.csproj" />
     <ProjectReference Include="..\..\src\SilentHunter.Core\SilentHunter.Core.csproj" />
-    <ProjectReference Include="..\..\src\SilentHunter.Formats\SilentHunter.Formats.csproj" />
+    <ProjectReference Include="..\..\src\SilentHunter.FileFormats\SilentHunter.FileFormats.csproj" />
   </ItemGroup>
 
 </Project>

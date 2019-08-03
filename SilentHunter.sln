@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SilentHunter.Core", "src\SilentHunter.Core\SilentHunter.Core.csproj", "{C03CC0F3-AAD9-4C0D-BE69-6D5413604C7F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SilentHunter.Formats", "src\SilentHunter.Formats\SilentHunter.Formats.csproj", "{43331BD7-D4F4-4169-A94D-2200B874BD62}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SilentHunter.FileFormats", "src\SilentHunter.FileFormats\SilentHunter.FileFormats.csproj", "{43331BD7-D4F4-4169-A94D-2200B874BD62}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SilentHunter.Controllers", "src\SilentHunter.Controllers\SilentHunter.Controllers.csproj", "{F86F5194-47E6-45D0-A04F-C72BDD6D9CF7}"
 EndProject
