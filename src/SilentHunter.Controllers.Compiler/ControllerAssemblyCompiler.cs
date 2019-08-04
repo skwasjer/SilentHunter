@@ -210,7 +210,7 @@ namespace SilentHunter.Controllers.Compiler
 			string outputDir = _fileSystem.Path.GetDirectoryName(outputFile);
 			var compilerOptions = new CompilerOptions
 			{
-				OutputDir = outputFile,
+				OutputFile = outputFile,
 				DocFile = docFile,
 				ReferencedAssemblies = assemblyCache.Dependencies.Select(d =>
 					{

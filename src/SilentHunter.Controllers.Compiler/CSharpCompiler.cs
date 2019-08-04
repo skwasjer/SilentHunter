@@ -86,7 +86,7 @@ namespace SilentHunter.Controllers.Compiler
 				throw new ArgumentOutOfRangeException(nameof(fileNames), "Expected at least one filename.");
 			}
 
-			_compilerParams.OutputAssembly = options.OutputDir;
+			_compilerParams.OutputAssembly = options.OutputFile;
 
 			_compilerParams.ReferencedAssemblies.Clear();
 			if (options.ReferencedAssemblies != null)
@@ -105,7 +105,7 @@ namespace SilentHunter.Controllers.Compiler
 			LogResults(results);
 
 			// Display a successful compilation message.
-			Debug.WriteLine("Code built into assembly '{0}' successfully.", options.OutputDir);
+			Debug.WriteLine("Code built into assembly '{0}' successfully.", options.OutputFile);
 			return loadAssembly ? results.CompiledAssembly : null;
 		}
 
@@ -137,7 +137,7 @@ namespace SilentHunter.Controllers.Compiler
 				throw new ArgumentOutOfRangeException(nameof(code), "Insufficient data.");
 			}
 
-			_compilerParams.OutputAssembly = options.OutputDir;
+			_compilerParams.OutputAssembly = options.OutputFile;
 			_compilerParams.CompilerOptions = RequiredCompilerOptions;
 
 			CompilerResults results = _codeProvider.CompileAssemblyFromSource(_compilerParams, code);
