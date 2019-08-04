@@ -3,9 +3,9 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using FluentAssertions.Primitives;
 
-namespace SilentHunter.FileFormats.FluentAssertions
+namespace SilentHunter.Testing.FluentAssertions
 {
-	internal class StreamAssertions : ReferenceTypeAssertions<Stream, StreamAssertions>
+	public class StreamAssertions : ReferenceTypeAssertions<Stream, StreamAssertions>
 	{
 		public StreamAssertions(Stream stream)
 		{

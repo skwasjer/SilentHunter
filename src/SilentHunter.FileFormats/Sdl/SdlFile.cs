@@ -41,6 +41,11 @@ namespace SilentHunter.FileFormats.Sdl
 				throw new ArgumentNullException(nameof(stream));
 			}
 
+			if (!stream.CanRead)
+			{
+				throw new ArgumentException("The stream does not support reading.", nameof(stream));
+			}
+
 			Clear();
 
 			long itemStartPosition = 0;
@@ -78,6 +83,11 @@ namespace SilentHunter.FileFormats.Sdl
 			if (stream == null)
 			{
 				throw new ArgumentNullException(nameof(stream));
+			}
+
+			if (!stream.CanWrite)
+			{
+				throw new ArgumentException("The stream does not support writing.", nameof(stream));
 			}
 
 			long itemStartPosition = 0;

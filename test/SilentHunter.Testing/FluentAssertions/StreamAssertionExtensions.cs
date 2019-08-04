@@ -1,8 +1,8 @@
 ﻿using System.IO;
 
-namespace SilentHunter.FileFormats.FluentAssertions
+namespace SilentHunter.Testing.FluentAssertions
 {
-	internal static class StreamAssertionExtensions
+	public static class StreamAssertionExtensions
 	{
 		public static StreamAssertions Should(this Stream stream)
 		{

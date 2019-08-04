@@ -8,6 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Sdl\SdlWithOneItem.sdl" />
+    <None Remove="Sdl\SdlWithS3DHeader.sdl" />
+    <None Remove="Sdl\SdlWithTwoItems.sdl" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Sdl\SdlWithOneItem.sdl" />
+    <EmbeddedResource Include="Sdl\SdlWithS3DHeader.sdl" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.7.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
     <PackageReference Include="Moq" Version="4.12.0" />
@@ -21,6 +32,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\SilentHunter.FileFormats\SilentHunter.FileFormats.csproj" />
+    <ProjectReference Include="..\SilentHunter.Testing\SilentHunter.Testing.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Sdl\SdlWithTwoItems.sdl" />
   </ItemGroup>
 
 </Project>

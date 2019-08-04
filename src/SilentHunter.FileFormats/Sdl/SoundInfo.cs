@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 using SilentHunter.FileFormats.Extensions;
 using SilentHunter.FileFormats.IO;
@@ -11,8 +14,12 @@ namespace SilentHunter.FileFormats.Sdl
 	/// Represents a sound info entry for <see cref="SdlFile"/>s.
 	/// </summary>
 	[DebuggerDisplay("Name = {Name}, WaveName = {WaveName}")]
+	[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 	public sealed class SoundInfo : IRawSerializable, ICloneable, IEquatable<SoundInfo>
 	{
+		private static readonly IReadOnlyCollection<PropertyInfo> PropertyInfoCache = typeof(SoundInfo)
+			.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private string _name, _waveName;
 
@@ -26,15 +33,6 @@ namespace SilentHunter.FileFormats.Sdl
 		}
 
 		/// <summary>
-		/// Gets or sets the name of the wave file.
-		/// </summary>
-		public string WaveName
-		{
-			get => _waveName ?? string.Empty;
-			set => _waveName = value;
-		}
-
-		/// <summary>
 		/// Gets or sets the entry name.
 		/// </summary>
 		public string Name
@@ -44,52 +42,25 @@ namespace SilentHunter.FileFormats.Sdl
 		}
 
 		/// <summary>
-		/// Gets or sets whether the sound is played as 3D.
+		/// Gets or sets the name of the wave file.
 		/// </summary>
-		public bool Is3D { get; set; }
+		public string WaveName
+		{
+			get => _waveName ?? string.Empty;
+			set => _waveName = value;
+		}
 
-		public bool Play { get; set; }
+		public bool IsFolder { get; set; }
 
 		/// <summary>
 		/// Gets or sets whether the sound should be looped.
 		/// </summary>
 		public bool Loop { get; set; }
-		public bool IsFolder { get; set; }
 
 		/// <summary>
-		/// Gets or sets the playback delay.
+		/// Gets or sets whether the sound auto plays.
 		/// </summary>
-		public float Delay { get; set; }
-
-		/// <summary>
-		/// Gets or sets the max radius (3D).
-		/// </summary>
-		public float MaxRadius { get; set; }
-
-		/// <summary>
-		/// Gets or sets the min radius (3D).
-		/// </summary>
-		public float MinRadius { get; set; }
-
-		/// <summary>
-		/// Gets or sets the doppler factor.
-		/// </summary>
-		public float DopplerFactor { get; set; }
-
-		/// <summary>
-		/// Gets or sets the pitch variation.
-		/// </summary>
-		public float PitchVar { get; set; }
-
-		/// <summary>
-		/// Gets or sets the pitch.
-		/// </summary>
-		public float Pitch { get; set; }
-
-		/// <summary>
-		/// Gets or sets the volume variation.
-		/// </summary>
-		public float VolumeVar { get; set; }
+		public bool Play { get; set; }
 
 		/// <summary>
 		/// Gets or sets the volume.
@@ -97,14 +68,54 @@ namespace SilentHunter.FileFormats.Sdl
 		public float Volume { get; set; }
 
 		/// <summary>
-		/// Gets or sets the priority (in case too many sound effects are playing).
+		/// Gets or sets the volume variation.
 		/// </summary>
-		public int Priority { get; set; }
+		public float VolumeVar { get; set; }
+
+		/// <summary>
+		/// Gets or sets the pitch.
+		/// </summary>
+		public float Pitch { get; set; }
+
+		/// <summary>
+		/// Gets or sets the pitch variation.
+		/// </summary>
+		public float PitchVar { get; set; }
+
+		/// <summary>
+		/// Gets or sets whether the sound is played as 3D.
+		/// </summary>
+		public bool Is3D { get; set; }
+
+		/// <summary>
+		/// Gets or sets the doppler factor.
+		/// </summary>
+		public float DopplerFactor { get; set; }
+
+		/// <summary>
+		/// Gets or sets the min radius (3D).
+		/// </summary>
+		public float MinRadius { get; set; }
+
+		/// <summary>
+		/// Gets or sets the max radius (3D).
+		/// </summary>
+		public float MaxRadius { get; set; }
 
 		/// <summary>
 		/// Gets or set the category the sound effect belongs to.
 		/// </summary>
 		public SoundCategory Category { get; set; }
+
+		/// <summary>
+		/// Gets or sets the priority (in case too many sound effects are playing).
+		/// </summary>
+		public int Priority { get; set; }
+
+		/// <summary>
+		/// Gets or sets the playback delay.
+		/// </summary>
+		public float Delay { get; set; }
 
 		Task IRawSerializable.DeserializeAsync(Stream stream)
 		{
@@ -119,32 +130,20 @@ namespace SilentHunter.FileFormats.Sdl
 
 				long currentPos = reader.BaseStream.Position;
 
-				string controllerName = reader.ReadNullTerminatedString();
-				if (controllerName != "SoundInfo")
+				string soundInfoHeader = reader.ReadNullTerminatedString();
+				if (soundInfoHeader != nameof(SoundInfo))
 				{
-					throw new NotImplementedException();
+					throw new SilentHunterParserException("The file appears invalid. Unexpected item header encountered.");
 				}
 
-				Name = (string)DeserializeProperty(reader, "Name", typeof(string));
-				WaveName = (string)DeserializeProperty(reader, "WaveName", typeof(string));
-				IsFolder = (bool)DeserializeProperty(reader, "IsFolder", typeof(bool));
-				Loop = (bool)DeserializeProperty(reader, "Loop", typeof(bool));
-				Play = (bool)DeserializeProperty(reader, "Play", typeof(bool));
-				Volume = (float)DeserializeProperty(reader, "Volume", typeof(float));
-				VolumeVar = (float)DeserializeProperty(reader, "VolumeVar", typeof(float));
-				Pitch = (float)DeserializeProperty(reader, "Pitch", typeof(float));
-				PitchVar = (float)DeserializeProperty(reader, "PitchVar", typeof(float));
-				Is3D = (bool)DeserializeProperty(reader, "Is3D", typeof(bool));
-				DopplerFactor = (float)DeserializeProperty(reader, "DopplerFactor", typeof(float));
-				MinRadius = (float)DeserializeProperty(reader, "MinRadius", typeof(float));
-				MaxRadius = (float)DeserializeProperty(reader, "MaxRadius", typeof(float));
-				Category = (SoundCategory)DeserializeProperty(reader, "Category", typeof(SoundCategory));
-				Priority = (int)DeserializeProperty(reader, "Priority", typeof(int));
-				Delay = (float)DeserializeProperty(reader, "Delay", typeof(float));
+				foreach (PropertyInfo propertyInfo in PropertyInfoCache)
+				{
+					propertyInfo.SetValue(this, DeserializeProperty(reader, propertyInfo.Name, propertyInfo.PropertyType));
+				}
 
 				if (reader.BaseStream.Position != currentPos + subSize)
 				{
-					throw new SilentHunterParserException("The file appears invalid. Unexpected size specifier encountered.");
+					throw new SilentHunterParserException("The file appears invalid. Unexpected item length.");
 				}
 			}
 
@@ -158,24 +157,12 @@ namespace SilentHunter.FileFormats.Sdl
 				long currentPos = writer.BaseStream.Position;
 				writer.BaseStream.Position += 6;
 
-				writer.Write("SoundInfo", '\0');
+				writer.Write(nameof(SoundInfo), '\0');
 
-				SerializeProperty(writer, "Name", Name ?? string.Empty);
-				SerializeProperty(writer, "WaveName", WaveName ?? string.Empty);
-				SerializeProperty(writer, "IsFolder", IsFolder);
-				SerializeProperty(writer, "Loop", Loop);
-				SerializeProperty(writer, "Play", Play);
-				SerializeProperty(writer, "Volume", Volume);
-				SerializeProperty(writer, "VolumeVar", VolumeVar);
-				SerializeProperty(writer, "Pitch", Pitch);
-				SerializeProperty(writer, "PitchVar", PitchVar);
-				SerializeProperty(writer, "Is3D", Is3D);
-				SerializeProperty(writer, "DopplerFactor", DopplerFactor);
-				SerializeProperty(writer, "MinRadius", MinRadius);
-				SerializeProperty(writer, "MaxRadius", MaxRadius);
-				SerializeProperty(writer, "Category", Category);
-				SerializeProperty(writer, "Priority", Priority);
-				SerializeProperty(writer, "Delay", Delay);
+				foreach (PropertyInfo propertyInfo in PropertyInfoCache)
+				{
+					SerializeProperty(writer, propertyInfo.Name, propertyInfo.GetValue(this));
+				}
 
 				long endPos = writer.BaseStream.Position;
 				writer.BaseStream.Position = currentPos;
@@ -187,13 +174,6 @@ namespace SilentHunter.FileFormats.Sdl
 			return Task.CompletedTask;
 		}
 
-		/// <summary>
-		/// Deserializes a property using specified <paramref name="reader"/>.
-		/// </summary>
-		/// <param name="reader">The reader.</param>
-		/// <param name="propertyName">The name of the property.</param>
-		/// <param name="propertyType">The type of the property.</param>
-		/// <returns>The property value.</returns>
 		private static object DeserializeProperty(BinaryReader reader, string propertyName, Type propertyType)
 		{
 			uint size = reader.ReadUInt32();
@@ -201,11 +181,11 @@ namespace SilentHunter.FileFormats.Sdl
 			string name = reader.ReadString(propertyName.Length);
 			if (propertyName != name)
 			{
-				throw new InvalidOperationException("The file appears invalid. Unexpected property name encountered.");
+				throw new SilentHunterParserException($"The file appears invalid. Expected property '{propertyName}' but encountered '{name}'.");
 			}
 
 			// Skip past the terminating null.
-			reader.BaseStream.Position++;
+			reader.ReadByte();
 
 			// Read value.
 			object value = propertyType == typeof(string)
@@ -214,7 +194,7 @@ namespace SilentHunter.FileFormats.Sdl
 
 			if (reader.BaseStream.Position != currentPos + size)
 			{
-				throw new InvalidOperationException("The file appears invalid. The data type does not match.");
+				throw new SilentHunterParserException("The file appears invalid. Unexpected property length.");
 			}
 
 			return value;
@@ -256,17 +236,25 @@ namespace SilentHunter.FileFormats.Sdl
 		/// <inheritdoc />
 		public object Clone()
 		{
-			var clone = new SoundInfo();
-			using (var ms = new MemoryStream())
+			return new SoundInfo
 			{
-				((IRawSerializable)this).SerializeAsync(ms);
-
-				ms.Position = 0;
-
-				((IRawSerializable)clone).DeserializeAsync(ms).GetAwaiter().GetResult();
-			}
-
-			return clone;
+				Name = Name,
+				WaveName = WaveName,
+				IsFolder = IsFolder,
+				Loop = Loop,
+				Play = Play,
+				Volume = Volume,
+				VolumeVar = VolumeVar,
+				Pitch = Pitch,
+				PitchVar = PitchVar,
+				Is3D = Is3D,
+				DopplerFactor = DopplerFactor,
+				MinRadius = MinRadius,
+				MaxRadius = MaxRadius,
+				Category = Category,
+				Priority = Priority,
+				Delay = Delay
+			};
 		}
 
 		public bool Equals(SoundInfo other)
@@ -295,6 +283,7 @@ namespace SilentHunter.FileFormats.Sdl
 		{
 			unchecked
 			{
+				// ReSharper disable NonReadonlyMemberInGetHashCode
 				int hashCode = (_name != null ? _name.GetHashCode() : 0);
 				hashCode = (hashCode * 397) ^ (_waveName != null ? _waveName.GetHashCode() : 0);
 				hashCode = (hashCode * 397) ^ Is3D.GetHashCode();
@@ -311,6 +300,7 @@ namespace SilentHunter.FileFormats.Sdl
 				hashCode = (hashCode * 397) ^ Volume.GetHashCode();
 				hashCode = (hashCode * 397) ^ Priority;
 				hashCode = (hashCode * 397) ^ (int)Category;
+				// ReSharper restore NonReadonlyMemberInGetHashCode
 				return hashCode;
 			}
 		}

@@ -3,7 +3,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using FluentAssertions;
-using SilentHunter.FileFormats.FluentAssertions;
+using SilentHunter.Testing.FluentAssertions;
 using Xunit;
 
 namespace SilentHunter.FileFormats.Extensions
