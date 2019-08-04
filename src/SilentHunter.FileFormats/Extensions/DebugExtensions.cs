@@ -1,11 +1,13 @@
 ﻿#if DEBUG
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using SilentHunter.FileFormats.IO;
 
 namespace SilentHunter.FileFormats.Extensions
 {
+	[ExcludeFromCodeCoverage]
 	internal static class DebugExtensions
 	{
 		internal static string GetBaseStreamName(this Stream s)
