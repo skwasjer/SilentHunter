@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 
 namespace SilentHunter.Controllers.Decoration
 {
 	/// <summary>
-	/// Indicates the name a field is to be (de)serialized with. Should be used to give a more meaningful name to a field or to fix typos.
+	/// Indicates the name a field is to be (de)serialized with. Can be used when field name conflicts reserved C# keyword, or to fix typos in template versus underlying controller data (obviously, the data in binary file cannot change).
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Field)]
 	public sealed class ParseNameAttribute : Attribute
