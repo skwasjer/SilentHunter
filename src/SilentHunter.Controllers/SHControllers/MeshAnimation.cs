@@ -19,7 +19,7 @@ namespace SHControllers
 	/// MeshAnimation controller.
 	/// </summary>
 	public class MeshAnimation
-		: Controller
+		: BehaviorController
 	{
 	}
 }

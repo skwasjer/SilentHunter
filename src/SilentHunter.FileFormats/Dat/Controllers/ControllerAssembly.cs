@@ -10,7 +10,7 @@ using SilentHunter.FileFormats.Extensions;
 namespace SilentHunter.FileFormats.Dat.Controllers
 {
 	/// <summary>
-	/// Represents a wrapper for <see cref="Assembly"/> that gets all types that inherit from <see cref="RawController"/>. Provides methods to get a specific controller type for a specific Silent Hunter game version.
+	/// Represents a wrapper for <see cref="Assembly"/> that gets all types that inherit from <see cref="Controller"/>. Provides methods to get a specific controller type for a specific Silent Hunter game version.
 	/// </summary>
 	public class ControllerAssembly
 	{
@@ -19,7 +19,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ControllerAssembly"/> using specified <paramref name="assembly"/>.
 		/// </summary>
-		/// <param name="assembly">The assembly containing types that inherit from <see cref="RawController"/>.</param>
+		/// <param name="assembly">The assembly containing types that inherit from <see cref="Controller"/>.</param>
 		public ControllerAssembly(Assembly assembly)
 		{
 			Assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));

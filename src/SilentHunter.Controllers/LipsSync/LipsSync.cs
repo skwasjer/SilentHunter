@@ -20,7 +20,7 @@ namespace LipsSync
 	/// LipsSync controller.
 	/// </summary>
 	public class LipsSync
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// </summary>

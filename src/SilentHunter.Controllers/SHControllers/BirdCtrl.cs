@@ -19,7 +19,7 @@ namespace SHControllers
 	/// Bird flock manager controller.
 	/// </summary>
 	public class BirdCtrl
-		: Controller
+		: BehaviorController
 	{
 	}
 }

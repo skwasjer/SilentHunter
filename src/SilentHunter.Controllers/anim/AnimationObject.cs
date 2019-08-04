@@ -22,7 +22,7 @@ namespace anim
 	/// </summary>
 	[Controller(0x0)]
 	public class AnimationObject
-		: RawController
+		: Controller
 	{
 		public string AnimName;
 		public List<AnimationSubObject> Animations;

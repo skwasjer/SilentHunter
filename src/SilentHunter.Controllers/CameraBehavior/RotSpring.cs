@@ -20,7 +20,7 @@ namespace CameraBehavior
 	/// RotSpring controller. Keeps the owner's Z axe pointing to the target point.
 	/// </summary>
 	public class RotSpring
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Spring.

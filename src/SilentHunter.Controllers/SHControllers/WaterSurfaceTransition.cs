@@ -19,7 +19,7 @@ namespace SHControllers
 	/// WaterSurfaceTransition action controller.
 	/// </summary>
 	public class WaterSurfaceTransition
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// True if the controller starts all particle generators when the object enter in the water (depth becomes negative) or false if they start when exiting the water.

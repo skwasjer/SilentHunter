@@ -20,7 +20,7 @@ namespace CameraBehavior
 	/// EditObjPosCfg controller.
 	/// </summary>
 	public class EditObjPosCfg
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The EditObjPos parameters.

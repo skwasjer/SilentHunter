@@ -19,7 +19,7 @@ namespace CameraBehavior
 	/// CameraEffects controller. Water effects on the camera.
 	/// </summary>
 	public class CameraEffects
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The duration of water drops effect [sec].

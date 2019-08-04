@@ -19,7 +19,7 @@ namespace SHControllers
 	/// FloatingObject action controller.
 	/// </summary>
 	public class FloatingObject
-		: Controller
+		: BehaviorController
 	{
 	}
 }

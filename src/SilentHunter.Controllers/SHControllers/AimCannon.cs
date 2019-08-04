@@ -19,7 +19,7 @@ namespace SHControllers
 	/// Aim cannon controller.
 	/// </summary>
 	public class AimCannon
-		: Controller
+		: BehaviorController
 	{
 	}
 }

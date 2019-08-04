@@ -19,7 +19,7 @@ namespace SHControllers
 	/// <summary>
 	/// Blend render controller.
 	/// </summary>
-	public class Blend : Controller
+	public class Blend : BehaviorController
 	{
 		/// <summary>
 		/// Parallel light direction in global space (spherical polar coordinates, angles in degrees).

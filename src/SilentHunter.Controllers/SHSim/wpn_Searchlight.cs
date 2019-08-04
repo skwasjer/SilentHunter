@@ -19,7 +19,7 @@ namespace SHSim
 	/// wpn_Searchlight controller.
 	/// </summary>
 	public class wpn_Searchlight
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Turret settings.

@@ -20,7 +20,7 @@ namespace CameraBehavior
 	/// AxisRotationCfg action controller.
 	/// </summary>
 	public class AxisRotationCfg
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The AxisRotation parameters.

@@ -19,7 +19,7 @@ namespace SHSim
 	/// unit_Survivor controller.
 	/// </summary>
 	public class unit_Survivor
-		: Controller
+		: BehaviorController
 	{
 	}
 }

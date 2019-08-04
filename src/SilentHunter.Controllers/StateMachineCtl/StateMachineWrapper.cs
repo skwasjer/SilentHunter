@@ -19,7 +19,7 @@ namespace StateMachineCtl
 	/// StateMachineWrapper controller. State machine manager for characters or objects.
 	/// </summary>
 	public class StateMachineWrapper
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Name of the graph used by the state machine.

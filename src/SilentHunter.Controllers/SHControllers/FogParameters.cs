@@ -19,7 +19,7 @@ namespace SHControllers
 	/// <summary>
 	/// FogParameters user data.  Apply on submarine interior sectors to set the fog parameters.
 	/// </summary>
-	public class FogParameters : Controller
+	public class FogParameters : BehaviorController
 	{
 		/// <summary>
 		/// Near distance in meters.

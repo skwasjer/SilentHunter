@@ -19,7 +19,7 @@ namespace SHSim
 	/// amun_Bomb controller.
 	/// </summary>
 	public class amun_Bomb
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// General bomb settings.

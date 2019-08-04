@@ -19,7 +19,7 @@ namespace SHControllers
 	/// Flag action controller.
 	/// </summary>
 	public class Flag
-		: Controller
+		: BehaviorController
 	{
 	}
 }

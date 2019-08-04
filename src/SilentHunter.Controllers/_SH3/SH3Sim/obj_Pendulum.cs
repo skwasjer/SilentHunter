@@ -19,7 +19,7 @@ namespace SH3.SH3Sim
 	/// obj_Pendulum controller.
 	/// </summary>
 	public class obj_Pendulum
-		: Controller
+		: BehaviorController
 	{
 	}
 }

@@ -19,7 +19,7 @@ namespace SHCollisions
 	/// Debris controller.
 	/// </summary>
 	public class Debris
-		: Controller
+		: BehaviorController
 	{
 	}
 }

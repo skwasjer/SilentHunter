@@ -21,7 +21,7 @@ namespace EffectManager
 	/// InteriorEffectsManager action controller.
 	/// </summary>
 	public class InteriorEffectsManager
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Objects in this category.

@@ -19,7 +19,7 @@ namespace SHControllers
 	/// Environment. Scale the object to make its bounding sphere to fit the camera max rendering distance (e.g. Sky sphere).
 	/// </summary>
 	public class Environment
-		: Controller
+		: BehaviorController
 	{
 	}
 }

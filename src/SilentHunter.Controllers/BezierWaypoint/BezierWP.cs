@@ -21,7 +21,7 @@ namespace BezierWaypoint
 	/// BezierWP controller.
 	/// </summary>
 	public class BezierWP
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// object->BezierWP. The next waypoint.

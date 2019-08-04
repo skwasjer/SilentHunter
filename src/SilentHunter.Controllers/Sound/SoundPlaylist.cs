@@ -20,7 +20,7 @@ namespace Sound
 	/// Playlist render controller.
 	/// </summary>
 	public class SoundPlaylist
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Playlist name (also used to find properties in the library).

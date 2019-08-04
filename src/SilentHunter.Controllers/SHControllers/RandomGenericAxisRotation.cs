@@ -20,7 +20,7 @@ namespace SHControllers
 	/// RandomGenericAxisRotation action controller.
 	/// </summary>
 	public class RandomGenericAxisRotation
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The minimum angular speed [deg/s].

@@ -20,7 +20,7 @@ namespace SHControllers
 	/// UnifiedRenderControler. Render controller for illumination, caustics, decals etc.
 	/// </summary>
 	public class UnifiedRenderControler
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Enable bump map and caustics if distance less than this value (SH metrics 1 = 10 meters).

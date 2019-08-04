@@ -20,7 +20,7 @@ namespace anim
 	/// SkinMorph controller.
 	/// </summary>
 	public class SkinMorph
-		: RawController
+		: Controller
 	{
 		/// <summary>
 		/// The translation part of the bone matrix.

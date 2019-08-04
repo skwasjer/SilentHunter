@@ -21,7 +21,7 @@ namespace SHSim
 	/// amun_FaTorpedo controller.
 	/// </summary>
 	public class amun_FaTorpedo
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// General torpedo settings.

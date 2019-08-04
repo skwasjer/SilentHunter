@@ -20,7 +20,7 @@ namespace SH4.EnvSim
 	/// ShipWake render controller.
 	/// </summary>
 	public class ShipWake
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Start offset from the dummy position.

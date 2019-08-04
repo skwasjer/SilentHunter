@@ -19,7 +19,7 @@ namespace SHControllers
 	/// VisibleUnderWater action controller. Place it before other render controllers to stop them above water.
 	/// </summary>
 	public class VisibleUnderWater
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// True for visible only under water and false for visible only above water.

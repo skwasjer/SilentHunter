@@ -23,7 +23,7 @@ namespace anim
 	/// Key frame start parameters controller data (subtype 0x4)
 	/// </summary>
 	[Controller(0x4)]
-	public class KeyFrameAnimStartParams : RawController
+	public class KeyFrameAnimStartParams : Controller
 	{
 		/// <summary>
 		/// The origin of position and rotation point. The origin does not move with the parent object during animation. Can be used to move an object to/away from a point, and/or spin an object around a point.

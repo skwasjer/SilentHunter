@@ -21,7 +21,7 @@ namespace SHControllers
 	/// <summary>
 	/// EnvData user data.
 	/// </summary>
-	public class EnvData : Controller
+	public class EnvData : BehaviorController
 	{
 		/// <summary>
 		/// Water scale (4, 0.08, 4, 1, 4).

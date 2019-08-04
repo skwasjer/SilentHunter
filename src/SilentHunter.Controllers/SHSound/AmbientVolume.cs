@@ -21,7 +21,7 @@ namespace SHSound
 	/// AmbientVolume controller.
 	/// </summary>
 	public class AmbientVolume
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Water level (object).

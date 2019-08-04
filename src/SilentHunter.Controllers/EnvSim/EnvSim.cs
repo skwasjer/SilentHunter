@@ -21,7 +21,7 @@ namespace EnvSim
 	/// EnvSim render controller.
 	/// </summary>
 	public class EnvSim
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Debug settings.

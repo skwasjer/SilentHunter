@@ -135,7 +135,7 @@ namespace Particles
 	/// </summary>
 	[SHType]
 	public class GlobalScaleFar
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Far distance value (as first LOD) in meters.

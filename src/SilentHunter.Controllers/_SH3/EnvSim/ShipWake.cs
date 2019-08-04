@@ -23,7 +23,7 @@ namespace SH3.EnvSim
 	/// ShipWake render controller.
 	/// </summary>
 	public class ShipWake
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// If true the moving direction is the dummy Z axis, otherwise the moving direction is computed.
@@ -126,7 +126,7 @@ namespace SH3.EnvSim
 
 	[SHType]
 	public class ShipWakeStartParams
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The left vertex (viewed form above) params.
@@ -140,7 +140,7 @@ namespace SH3.EnvSim
 
 	[SHType]
 	public class VertexStartPosition
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Initial relative position.
@@ -150,7 +150,7 @@ namespace SH3.EnvSim
 
 	[SHType]
 	public class ShipWakeSpeed
-		: Controller
+		: BehaviorController
 	{
 		public float ShipSpeed;
 		public Vector2 Layer1TextureSpeed;
@@ -161,7 +161,7 @@ namespace SH3.EnvSim
 
 	[SHType]
 	public class ShipWakeHeight
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// If the object Y is under this minimum height the wake is not generated.
@@ -183,7 +183,7 @@ namespace SH3.EnvSim
 
 	[SHType]
 	public class ShipWakeTransparency
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Under this speed the foam is not visible (opacity is 0).

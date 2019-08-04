@@ -19,7 +19,7 @@ namespace SHControllers
 	/// ShellCounter action controller.
 	/// </summary>
 	public class ShellCounter
-		: Controller
+		: BehaviorController
 	{
 	}
 }

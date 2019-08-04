@@ -19,7 +19,7 @@ namespace SHSim
 	/// cmdr_AICostalDefense controller. Costal defense unit AI commander.
 	/// </summary>
 	public class cmdr_AICostalDefense
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// </summary>

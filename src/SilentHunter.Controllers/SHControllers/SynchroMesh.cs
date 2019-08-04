@@ -19,7 +19,7 @@ namespace SHControllers
 	/// SynchroMesh controller. All clones uses the same drawlist and the same animation.
 	/// </summary>
 	public class SynchroMesh
-		: Controller
+		: BehaviorController
 	{
 	}
 }

@@ -19,7 +19,7 @@ namespace SHControllers
 	/// UnderWaterFloatingObject action controller.
 	/// </summary>
 	public class UnderWaterFloatingObject
-		: Controller
+		: BehaviorController
 	{
 	}
 }

@@ -19,7 +19,7 @@ namespace SHSound
 	/// SubmarineSound render controller.
 	/// </summary>
 	public class SubmarineSound
-		: Controller
+		: BehaviorController
 	{
 	}
 }

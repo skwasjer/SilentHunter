@@ -20,7 +20,7 @@ namespace SHSim
 	/// amun_Shell controller.
 	/// </summary>
 	public class amun_Shell
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Shell's trace effect.

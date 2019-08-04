@@ -19,7 +19,7 @@ namespace SHControllers
 	/// AldisLamp render controller.
 	/// </summary>
 	public class AldisLamp
-		: Controller
+		: BehaviorController
 	{
 	}
 }

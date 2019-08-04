@@ -19,7 +19,7 @@ namespace EnvSim
 	/// Float controller. Keeps the Y-axis up and Y on the water surface.
 	/// </summary>
 	public class Float
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The object floats at this height above water.

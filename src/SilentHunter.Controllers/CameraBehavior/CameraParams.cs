@@ -20,7 +20,7 @@ namespace CameraBehavior
 	/// CameraParams action controller.
 	/// </summary>
 	public class CameraParams
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The angular angle [deg].

@@ -19,7 +19,7 @@ namespace SHControllers
 	/// InteriorIllumination render controller.
 	/// </summary>
 	public class InteriorIllumination
-		: Controller
+		: BehaviorController
 	{
 	}
 }

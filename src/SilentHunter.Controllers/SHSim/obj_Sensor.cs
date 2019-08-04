@@ -20,7 +20,7 @@ namespace SHSim
 	/// obj_Sensor controller.
 	/// </summary>
 	public class obj_Sensor
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The type of the sensor.

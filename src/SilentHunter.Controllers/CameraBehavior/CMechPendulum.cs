@@ -19,7 +19,7 @@ namespace CameraBehavior
 	/// CMechPendulum render controller. A pendulum controller which works on a mechanical object.
 	/// </summary>
 	public class CMechPendulum
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The CElasticPendulum controller.

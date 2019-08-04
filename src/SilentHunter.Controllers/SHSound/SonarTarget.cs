@@ -19,7 +19,7 @@ namespace SHSound
 	/// SonarTarget controller.
 	/// </summary>
 	public class SonarTarget
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Identifier of the sound to use in sonar mode.

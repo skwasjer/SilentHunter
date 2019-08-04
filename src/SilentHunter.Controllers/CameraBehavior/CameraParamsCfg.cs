@@ -20,7 +20,7 @@ namespace CameraBehavior
 	/// CameraParamsCfg action controller.
 	/// </summary>
 	public class CameraParamsCfg
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The CameraParams parameters.

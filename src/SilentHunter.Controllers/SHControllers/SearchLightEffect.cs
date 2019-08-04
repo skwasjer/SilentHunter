@@ -20,7 +20,7 @@ namespace SHControllers
 	/// <summary>
 	/// SearchLightEffect render controller. Works only on water surface.
 	/// </summary>
-	public class SearchLightEffect : Controller
+	public class SearchLightEffect : BehaviorController
 	{
 		/// <summary>
 		/// Cone angle, in degrees.

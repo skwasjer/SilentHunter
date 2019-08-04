@@ -19,7 +19,7 @@ namespace anim
 	/// Character controller.
 	/// </summary>
 	public class Character
-		: Controller
+		: BehaviorController
 	{
 	}
 }

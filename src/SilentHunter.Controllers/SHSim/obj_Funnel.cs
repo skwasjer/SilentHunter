@@ -19,7 +19,7 @@ namespace SHSim
 	/// obj_Funnel controller.
 	/// </summary>
 	public class obj_Funnel
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// object->ScalableParticleEffect. The funnel's smoke effect.

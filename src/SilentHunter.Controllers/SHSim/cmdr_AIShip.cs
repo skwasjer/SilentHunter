@@ -19,7 +19,7 @@ namespace SHSim
 	/// cmdr_AIShip controller. Ship unit AI commander.
 	/// </summary>
 	public class cmdr_AIShip
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// </summary>

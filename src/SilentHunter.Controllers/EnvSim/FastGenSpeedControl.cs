@@ -21,7 +21,7 @@ namespace EnvSim
 	/// FastGenSpeedControl render controller. Interpolates the WindSpeed, Velocity, Weight, Size and Opacity of the ParticleGenerators between the min and max speed limits.
 	/// </summary>
 	public class FastGenSpeedControl
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Min speed to start interpolate.

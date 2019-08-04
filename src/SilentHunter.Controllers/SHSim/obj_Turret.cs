@@ -21,7 +21,7 @@ namespace SHSim
 	/// obj_Turret controller.
 	/// </summary>
 	public class obj_Turret
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Debug display settings.

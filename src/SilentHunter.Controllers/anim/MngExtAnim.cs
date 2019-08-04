@@ -21,7 +21,7 @@ namespace anim
 	/// MngExtAnim controller.
 	/// </summary>
 	public class MngExtAnim
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Minimum value to map to zero time of ctl.

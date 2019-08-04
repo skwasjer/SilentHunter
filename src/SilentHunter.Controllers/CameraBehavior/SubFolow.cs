@@ -19,7 +19,7 @@ namespace CameraBehavior
 	/// SubFolow controller. Follow the submarin accordingly with parameters.
 	/// </summary>
 	public class SubFolow
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The height above water [0.1m].

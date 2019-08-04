@@ -21,7 +21,7 @@ namespace CameraBehavior
 	/// HideObj controller. Hide this object (with its subhierarchy) if the active camera is in the cameras list.
 	/// </summary>
 	public class HideObj
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Camera will be linked by this object.

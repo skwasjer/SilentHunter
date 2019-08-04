@@ -21,7 +21,7 @@ namespace EnvSim
 	/// <summary>
 	/// EnvColors user data.
 	/// </summary>
-	public class EnvColors : Controller
+	public class EnvColors : BehaviorController
 	{
 		/// <summary>
 		/// List of different weather types (0=ClearSky, 1=Overcast, 2=Rain).

@@ -20,7 +20,7 @@ namespace SHCollisions
 	/// StaticObject controller. Mark this object to be static inside scene.
 	/// </summary>
 	public class StaticObject
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The length of the square cell [m].

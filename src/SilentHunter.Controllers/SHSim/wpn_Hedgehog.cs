@@ -20,7 +20,7 @@ namespace SHSim
 	/// wpn_Hedgehog render controller.
 	/// </summary>
 	public class wpn_Hedgehog
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The hedgehog's ammo storage.

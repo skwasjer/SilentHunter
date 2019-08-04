@@ -20,7 +20,7 @@ namespace SHControllers
 	/// Label action controller.
 	/// </summary>
 	public class Label
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Object's name/label.

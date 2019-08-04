@@ -22,7 +22,7 @@ namespace SHControllers
 	/// Focusable3DObj user data.
 	/// </summary>
 	public class Focusable3DObj
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Focusable object tooltip.

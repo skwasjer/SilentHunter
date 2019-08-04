@@ -19,7 +19,7 @@ namespace SHControllers
 	/// FadeObject controller. Fade out an object in specified time.
 	/// </summary>
 	public class FadeObject
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Time to fade.

@@ -19,7 +19,7 @@ namespace EventCamera
 	/// EventProps controller.
 	/// </summary>
 	public class EventProps
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Event managed by these waypoints.

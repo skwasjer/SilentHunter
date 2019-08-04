@@ -20,7 +20,7 @@ namespace SHSim
 	/// obj_Hydro controller. Controls an object that can float.
 	/// </summary>
 	public class obj_Hydro
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Debug display settings.

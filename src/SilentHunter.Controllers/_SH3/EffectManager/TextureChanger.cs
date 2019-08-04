@@ -19,7 +19,7 @@ namespace SH3.EffectManager
 	/// TextureChanger controller. Changes texture properties on object materials.
 	/// </summary>
 	public class TextureChanger
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The texture channel to apply on.

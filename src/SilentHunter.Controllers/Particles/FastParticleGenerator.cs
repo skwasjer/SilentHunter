@@ -22,7 +22,7 @@ namespace Particles
 	/// FastParticleGenerator render controller.
 	/// </summary>
 	public class FastParticleGenerator
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Density modifier (game menu) is active or not.

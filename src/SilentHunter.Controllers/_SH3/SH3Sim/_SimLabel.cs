@@ -19,7 +19,7 @@ namespace SH3.SH3Sim
 	/// _SimLabel user data.
 	/// </summary>
 	public class _SimLabel
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Label

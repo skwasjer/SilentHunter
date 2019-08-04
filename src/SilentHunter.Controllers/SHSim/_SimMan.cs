@@ -19,7 +19,7 @@ namespace SHSim
 	/// _SimMan controller.
 	/// </summary>
 	public class _SimMan
-		: Controller
+		: BehaviorController
 	{
 	}
 }

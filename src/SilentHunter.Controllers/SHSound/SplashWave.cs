@@ -19,7 +19,7 @@ namespace SHSound
 	/// SplashWave action controller.
 	/// </summary>
 	public class SplashWave
-		: Controller
+		: BehaviorController
 	{
 	}
 }

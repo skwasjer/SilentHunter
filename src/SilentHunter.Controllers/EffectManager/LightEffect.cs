@@ -21,7 +21,7 @@ namespace EffectManager
 	/// LightEffect controller.
 	/// </summary>
 	public class LightEffect
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Objects in this category.

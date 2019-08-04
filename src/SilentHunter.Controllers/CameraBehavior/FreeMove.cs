@@ -19,7 +19,7 @@ namespace CameraBehavior
 	/// FreeMove controller.
 	/// </summary>
 	public class FreeMove
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The speed of movement [m/s].

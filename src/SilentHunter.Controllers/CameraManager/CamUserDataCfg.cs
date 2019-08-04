@@ -20,7 +20,7 @@ namespace CameraManager
 	/// CamUserDataCfg controller.
 	/// </summary>
 	public class CamUserDataCfg
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The CamUserData parameters.

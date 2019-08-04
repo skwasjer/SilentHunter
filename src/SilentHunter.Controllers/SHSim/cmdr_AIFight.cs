@@ -19,7 +19,7 @@ namespace SHSim
 	/// cmdr_AIFight controller.
 	/// </summary>
 	public class cmdr_AIFight
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// </summary>

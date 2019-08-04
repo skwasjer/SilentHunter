@@ -22,7 +22,7 @@ namespace CameraBehavior
 	/// CameraPositioner controller. CameraPositioner allows one to specify the position of a virtual camera when activated.
 	/// </summary>
 	public class CameraPositioner
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// List of objects belonging to virtual cameras to get pos from.

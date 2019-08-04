@@ -19,7 +19,7 @@ namespace SH3.SH3Controllers
 	/// SensorStation action controller.
 	/// </summary>
 	public class SensorStation
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The sensor type.

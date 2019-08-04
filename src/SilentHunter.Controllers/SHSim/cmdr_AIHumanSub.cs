@@ -20,7 +20,7 @@ namespace SHSim
 	/// cmdr_AIHumanSub controller.
 	/// </summary>
 	public class cmdr_AIHumanSub
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// </summary>

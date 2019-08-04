@@ -19,7 +19,7 @@ namespace SHSim
 	/// unit_CostalDefense controller.
 	/// </summary>
 	public class unit_CostalDefense
-		: Controller
+		: BehaviorController
 	{
 	}
 }

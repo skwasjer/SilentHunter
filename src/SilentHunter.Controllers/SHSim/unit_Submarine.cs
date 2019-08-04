@@ -21,7 +21,7 @@ namespace SHSim
 	/// unit_Submarine controller.
 	/// </summary>
 	public class unit_Submarine
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// </summary>
@@ -72,7 +72,7 @@ namespace SHSim
 
 	[SHType]
 	public class SubPropulsion
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Max submerged speed [kt].
@@ -135,7 +135,7 @@ namespace SHSim
 
 	[SHType]
 	public class SubRange
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Maximum range in miles.

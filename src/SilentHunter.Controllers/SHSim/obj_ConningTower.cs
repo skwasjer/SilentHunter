@@ -19,7 +19,7 @@ namespace SHSim
 	/// obj_ConningTower controller.
 	/// </summary>
 	public class obj_ConningTower
-		: Controller
+		: BehaviorController
 	{
 	}
 }

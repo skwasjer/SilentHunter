@@ -19,7 +19,7 @@ namespace SHSim
 	/// amun_AcousticTorpedo controller.
 	/// </summary>
 	public class amun_AcousticTorpedo
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// General torpedo settings.

@@ -19,7 +19,7 @@ namespace SHSim
 	/// obj_Snorkel controller.
 	/// </summary>
 	public class obj_Snorkel
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// General extensible object settings.

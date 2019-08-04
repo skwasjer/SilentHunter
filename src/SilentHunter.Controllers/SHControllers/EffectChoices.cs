@@ -20,7 +20,7 @@ namespace SHControllers
 	/// EffectChoices controller. Replace the object with another one. Note: EffectChoices controller must be first on an object!
 	/// </summary>
 	public class EffectChoices
-		: Controller
+		: BehaviorController
 	{
 		public WaterCondition Water;
 	}

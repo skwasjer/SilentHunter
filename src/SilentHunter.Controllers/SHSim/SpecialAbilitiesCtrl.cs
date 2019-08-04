@@ -19,7 +19,7 @@ namespace SHSim
 	/// SpecialAbilitiesCtrl controller.
 	/// </summary>
 	public class SpecialAbilitiesCtrl
-		: Controller
+		: BehaviorController
 	{
 	}
 }

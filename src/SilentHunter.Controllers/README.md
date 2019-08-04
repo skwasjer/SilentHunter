@@ -6,7 +6,7 @@
 There are several base controller types:
 
 - `Controller`
-- `RawController` *TODO: this should be renamed*
+- `BehaviorController`
 - `AnimationController`
 - `MeshAnimationController`
 - `StateMachineController`

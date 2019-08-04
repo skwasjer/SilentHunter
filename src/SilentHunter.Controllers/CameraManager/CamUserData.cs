@@ -20,7 +20,7 @@ namespace CameraManager
 	/// CamUserData controller.
 	/// </summary>
 	public class CamUserData
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Camera will be linked by this object.

@@ -20,7 +20,7 @@ namespace SHControllers
 	/// MinRenderDim action controller.
 	/// </summary>
 	public class MinRenderDim
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Minimum render dimension(bsphere diameter), in pixels.

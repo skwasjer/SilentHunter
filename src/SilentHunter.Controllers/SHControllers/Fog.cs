@@ -19,7 +19,7 @@ namespace SHControllers
 	/// Fog render controller.
 	/// </summary>
 	public class Fog
-		: Controller
+		: BehaviorController
 	{
 	}
 }

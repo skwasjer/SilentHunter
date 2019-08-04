@@ -19,7 +19,7 @@ namespace SHSound
 	/// SoundProxyStop controller.
 	/// </summary>
 	public class SoundProxyStop
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Identifier of the sound to use in sonar mode.

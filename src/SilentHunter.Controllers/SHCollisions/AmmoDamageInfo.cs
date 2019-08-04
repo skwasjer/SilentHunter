@@ -19,7 +19,7 @@ namespace SHCollisions
 	/// AmmoDamageInfo user data.
 	/// </summary>
 	public class AmmoDamageInfo
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The minimum hit points this ammunition is worth.

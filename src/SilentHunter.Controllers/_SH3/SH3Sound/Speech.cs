@@ -19,7 +19,7 @@ namespace SH3.SH3Sound
 	/// Speech action controller.
 	/// </summary>
 	public class Speech
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Folder used as a base for voices.

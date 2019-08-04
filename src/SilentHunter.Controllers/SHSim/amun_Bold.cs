@@ -19,7 +19,7 @@ namespace SHSim
 	/// amun_Bold controller.
 	/// </summary>
 	public class amun_Bold
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Bold's bubbles effect.

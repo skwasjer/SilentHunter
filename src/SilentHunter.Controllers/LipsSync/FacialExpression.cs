@@ -20,7 +20,7 @@ namespace LipsSync
 	/// FacialExpression controller.
 	/// </summary>
 	public class FacialExpression
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Interpolation time between expressions.

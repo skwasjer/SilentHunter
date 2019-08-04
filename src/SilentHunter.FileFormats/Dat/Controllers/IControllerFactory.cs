@@ -13,7 +13,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers
 		/// <param name="initializeFields">True to initialize fields.</param>
 		/// <returns>Returns the newly created controller. All (child) fields that are reference types are also pre-instantiated.</returns>
 		/// <exception cref="ArgumentException">Thrown when the controller name is empty or cannot be found for the <paramref name="profile" />.</exception>
-		RawController CreateController(string controllerName, ControllerProfile profile, bool initializeFields);
+		Controller CreateController(string controllerName, ControllerProfile profile, bool initializeFields);
 
 		/// <summary>
 		/// Creates the controller for specified <paramref name="controllerType" />.
@@ -22,7 +22,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers
 		/// <param name="initializeFields">True to initialize fields.</param>
 		/// <returns>Returns the newly created controller. All (child) fields that are reference types are also instantiated using the default constructor.</returns>
 		/// <exception cref="ArgumentException">Thrown when the controller name is empty or cannot be found for the <paramref name="profile" />.</exception>
-		RawController CreateController(Type controllerType, bool initializeFields);
+		Controller CreateController(Type controllerType, bool initializeFields);
 
 		/// <summary>
 		/// Tests if the specified type is a controller type and can be created using this factory.

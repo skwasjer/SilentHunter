@@ -19,7 +19,7 @@ namespace SHControllers
 	/// RayTracedHalo action controller.
 	/// </summary>
 	public class RayTracedHalo
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Is Halo(true) or Obstacle (false).

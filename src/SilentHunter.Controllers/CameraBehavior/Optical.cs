@@ -20,7 +20,7 @@ namespace CameraBehavior
 	/// Optical controller.
 	/// </summary>
 	public class Optical
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Minimum zoom value.

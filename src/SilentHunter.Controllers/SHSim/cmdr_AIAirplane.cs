@@ -19,7 +19,7 @@ namespace SHSim
 	/// cmdr_AIAirplane controller. Airplane unit AI commander.
 	/// </summary>
 	public class cmdr_AIAirplane
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// </summary>

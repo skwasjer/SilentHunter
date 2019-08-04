@@ -19,7 +19,7 @@ namespace SHSound
 	/// AirplaneSound controller.
 	/// </summary>
 	public class AirplaneSound
-		: Controller
+		: BehaviorController
 	{
 	}
 }

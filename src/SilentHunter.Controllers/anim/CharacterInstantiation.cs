@@ -19,7 +19,7 @@ namespace anim
 	/// CharacterInstantiation controller. Instantiate a character.
 	/// </summary>
 	public class CharacterInstantiation
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Name of the character optionally followed by an animation list. E.g.: Character:anim1,anim2,anim3.

@@ -19,7 +19,7 @@ namespace SHSim
 	/// obj_Extensible controller.
 	/// </summary>
 	public class obj_Extensible
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The extensible's type.

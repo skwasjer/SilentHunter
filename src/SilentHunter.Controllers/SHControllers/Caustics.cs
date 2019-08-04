@@ -19,7 +19,7 @@ namespace SHControllers
 	/// Caustics render controller.
 	/// </summary>
 	public class Caustics
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Scale on local X-axis.

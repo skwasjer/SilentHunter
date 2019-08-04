@@ -19,7 +19,7 @@ namespace EventCamera
 	/// EventLaunchDepthCharge controller.
 	/// </summary>
 	public class EventLaunchDepthCharge
-		: Controller
+		: BehaviorController
 	{
 	}
 }

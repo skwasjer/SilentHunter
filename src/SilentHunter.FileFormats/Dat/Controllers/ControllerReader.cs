@@ -40,12 +40,12 @@ namespace SilentHunter.FileFormats.Dat.Controllers
 			int controllerSize = reader.ReadInt32();
 
 			// The size read from the stream matches the available data (incl. the 4 bytes of the Int32 already read), then we have a normal controller. Otherwise, we have to do some more logic to determine correct type of controller.
-			// PROBLEM: In the odd unlucky case the size of a raw controller may match exactly, and it is then assumed to be non-raw.
-			bool isRawController = controllerSize + 4 != availableData;
+			// PROBLEM: In the odd unlucky case the size of a controller may match exactly, and it is then assumed to be a behavior controller.
+			bool isBaseController = controllerSize + 4 != availableData;
 
 			var profile = ControllerProfile.Unknown;
-			// Raw controller? (byte stream)
-			if (isRawController)
+			// Base or animation controller? (byte stream)
+			if (isBaseController)
 			{
 				// First 4 bytes means something else.
 				ushort animationControllerType = unchecked((ushort)(controllerSize & 0xFFFF));
@@ -66,7 +66,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers
 
 					if (profile != ControllerProfile.Unknown && _controllerAssembly.TryGetControllerType(controllerName, profile, out Type controllerType))
 					{
-						// Check if the controller is indeed a raw controller. If it isn't, the size descriptor may have contained an invalid size for controller data. We just attempt normal deserialization then.
+						// Check if the controller is indeed a base/animation controller. If it isn't, the size descriptor may have contained an invalid size for controller data. We just attempt normal deserialization then.
 						if (controllerType.IsRawController())
 						{
 							ControllerAttribute controllerAttribute = controllerType.GetCustomAttribute<ControllerAttribute>() ?? new ControllerAttribute();
@@ -88,7 +88,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers
 					} // exits
 				} // exits
 			}
-			else // Non-raw controller, including names and size specifiers.
+			else // Behavior controller, including names and size specifiers.
 			{
 				// Check if the stream contains a controller name.
 				string readControllerName = PeekName(reader);
@@ -120,7 +120,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers
 					{
 						if (_controllerAssembly.TryGetControllerType(controllerName, profile, out controllerType) && previousControllerType != controllerType)
 						{
-							RawController controller = _controllerFactory.CreateController(controllerType, false);
+							Controller controller = _controllerFactory.CreateController(controllerType, false);
 							IControllerSerializer cs = _controllerSerializerResolver.GetSerializer(controllerType);
 							cs.Deserialize(stream, controller);
 							return controller;

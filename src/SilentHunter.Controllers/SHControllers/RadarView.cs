@@ -21,7 +21,7 @@ namespace SHControllers
 	/// RadarView render controller.
 	/// </summary>
 	public class RadarView
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Radar mode.

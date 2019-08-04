@@ -19,7 +19,7 @@ namespace SH4.SHControllers
 	/// BumpMap action controller. Texture0 must be a RGB Normal_map. Texture1 is the regular texture. Disables vertex color and dynamic lighting.
 	/// </summary>
 	public class BumpMap
-		: Controller
+		: BehaviorController
 	{
 		/*		[Optional]
 				public Nullable<Vector2> LightDirection;

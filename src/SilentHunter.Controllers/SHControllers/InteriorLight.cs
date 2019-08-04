@@ -19,7 +19,7 @@ namespace SHControllers
 	/// <summary>
 	/// InteriorLight action controller.
 	/// </summary>
-	public class InteriorLight : Controller
+	public class InteriorLight : BehaviorController
 	{
 		/// <summary>
 		/// Day light color.

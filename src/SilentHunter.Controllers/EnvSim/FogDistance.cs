@@ -19,7 +19,7 @@ namespace EnvSim
 	/// FogDistance controller.
 	/// </summary>
 	public class FogDistance
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Minimum distance to start fog.

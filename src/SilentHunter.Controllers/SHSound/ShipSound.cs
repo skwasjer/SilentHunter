@@ -19,7 +19,7 @@ namespace SHSound
 	/// ShipSound controller. Manages all sounds on a ship.
 	/// </summary>
 	public class ShipSound
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// At standard RPM the sounds parameters are default.

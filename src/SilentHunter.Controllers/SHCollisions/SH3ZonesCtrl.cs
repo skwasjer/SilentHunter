@@ -22,7 +22,7 @@ namespace SHCollisions
 	/// SH3ZonesCtrl controller.
 	/// </summary>
 	public class SH3ZonesCtrl
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Spherical zones list.

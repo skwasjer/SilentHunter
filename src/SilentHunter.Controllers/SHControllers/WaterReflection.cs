@@ -20,7 +20,7 @@ namespace SHControllers
 	/// WaterReflection render controller.
 	/// </summary>
 	public class WaterReflection
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Water clipping height (under -20 for no clipping).

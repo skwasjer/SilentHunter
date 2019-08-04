@@ -21,7 +21,7 @@ namespace SHSim
 	/// unit_Ship controller.
 	/// </summary>
 	public class unit_Ship
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// </summary>

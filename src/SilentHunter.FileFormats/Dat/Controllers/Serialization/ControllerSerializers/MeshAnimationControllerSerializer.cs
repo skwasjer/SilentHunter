@@ -7,7 +7,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 {
 	public class MeshAnimationControllerSerializer : IControllerSerializer
 	{
-		public void Deserialize(Stream stream, RawController controller)
+		public void Deserialize(Stream stream, Controller controller)
 		{
 			MeshAnimationController mac = EnsureControllerType(controller);
 
@@ -55,7 +55,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			}
 		}
 
-		public void Serialize(Stream stream, RawController controller)
+		public void Serialize(Stream stream, Controller controller)
 		{
 			MeshAnimationController mac = EnsureControllerType(controller);
 
@@ -97,7 +97,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			}
 		}
 
-		private static MeshAnimationController EnsureControllerType(RawController controller)
+		private static MeshAnimationController EnsureControllerType(Controller controller)
 		{
 			if (controller is MeshAnimationController meshAnimationController)
 			{

@@ -13,7 +13,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		private readonly IControllerReader _controllerReader;
 		private readonly IControllerWriter _controllerWriter;
 		private readonly object _lockObject = new object();
-		private MemoryStream _rawControllerData;
+		private MemoryStream _unparsedControllerStream;
 		private long _origin, _localOrigin;
 		private object _parsedController;
 
@@ -32,8 +32,8 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 			}
 			finally
 			{
-				_rawControllerData?.Dispose();
-				_rawControllerData = null;
+				_unparsedControllerStream?.Dispose();
+				_unparsedControllerStream = null;
 			}
 		}
 
@@ -51,17 +51,17 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 
 				lock (_lockObject)
 				{
-					if (_parsedController == null && _rawControllerData != null)
+					if (_parsedController == null && _unparsedControllerStream != null)
 					{
 						string controllerName = GetControllerName();
 
-						using (_rawControllerData)
+						using (_unparsedControllerStream)
 						{
 							// Attempt to deserialize.
-							_parsedController = _controllerReader.Read(_rawControllerData, controllerName);
+							_parsedController = _controllerReader.Read(_unparsedControllerStream, controllerName);
 						}
 
-						_rawControllerData = null;
+						_unparsedControllerStream = null;
 					}
 				}
 
@@ -135,8 +135,8 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 				_localOrigin = stream.Position;
 				_origin = regionStream?.BaseStream.Position ?? _localOrigin;
 
-				// Read raw controller data (defer deserializing until property access).
-				_rawControllerData = new MemoryStream(reader.ReadBytes((int)(stream.Length - _localOrigin)));
+				// Read the raw unparsed controller data (we defer deserializing until property access).
+				_unparsedControllerStream = new MemoryStream(reader.ReadBytes((int)(stream.Length - _localOrigin)));
 			}
 
 			return Task.CompletedTask;

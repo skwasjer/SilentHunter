@@ -21,7 +21,7 @@ namespace SHSim
 	/// unit_Airplane controller.
 	/// </summary>
 	public class unit_Airplane
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// unit_Ship parameters.

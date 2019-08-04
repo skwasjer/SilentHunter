@@ -20,7 +20,7 @@ namespace SHControllers
 	/// PeriscopeCtrl action controller.
 	/// </summary>
 	public class PeriscopeCtrl
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The periscope.

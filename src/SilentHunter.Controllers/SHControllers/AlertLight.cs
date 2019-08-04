@@ -19,7 +19,7 @@ namespace SHControllers
 	/// <summary>
 	/// AlertLight render controller.
 	/// </summary>
-	public class AlertLight : Controller
+	public class AlertLight : BehaviorController
 	{
 		/// <summary>
 		/// Light color.

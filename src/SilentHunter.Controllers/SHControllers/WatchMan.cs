@@ -19,7 +19,7 @@ namespace SHControllers
 	/// WatchMan controller.
 	/// </summary>
 	public class WatchMan
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Left limit.

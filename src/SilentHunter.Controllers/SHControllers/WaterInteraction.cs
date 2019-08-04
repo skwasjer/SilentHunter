@@ -19,7 +19,7 @@ namespace SHControllers
 	/// WaterInteraction action controller.
 	/// </summary>
 	public class WaterInteraction
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Stop all particle generators when the object enters the water (Y becomes negative).

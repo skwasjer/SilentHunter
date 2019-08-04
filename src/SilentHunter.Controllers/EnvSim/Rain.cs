@@ -20,7 +20,7 @@ namespace EnvSim
 	/// <summary>
 	/// Rain render controller.
 	/// </summary>
-	public class Rain : Controller
+	public class Rain : BehaviorController
 	{
 		/// <summary>
 		/// Random wind parameters.

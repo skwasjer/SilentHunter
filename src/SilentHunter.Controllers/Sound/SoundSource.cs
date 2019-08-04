@@ -19,7 +19,7 @@ namespace Sound
 	/// SoundSource controller.
 	/// </summary>
 	public class SoundSource
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Playlist name (also used to find properties in the library).

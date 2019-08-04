@@ -19,7 +19,7 @@ namespace SH3.SH3Collisions
 	/// ObjectRemains controller. The visual effects when destroying the object.
 	/// </summary>
 	public class ObjectRemains
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The name of the object to remain instead.

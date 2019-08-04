@@ -19,7 +19,7 @@ namespace EventCamera
 	/// EventLaunchTorpedo controller.
 	/// </summary>
 	public class EventLaunchTorpedo
-		: Controller
+		: BehaviorController
 	{
 	}
 }

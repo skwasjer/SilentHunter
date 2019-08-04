@@ -19,7 +19,7 @@ namespace SHSim
 	/// cmdr_AIMerchant controller.
 	/// </summary>
 	public class cmdr_AIMerchant
-		: Controller
+		: BehaviorController
 	{
 	}
 }

@@ -19,7 +19,7 @@ namespace SHControllers
 	/// CityLightsR render controller.
 	/// </summary>
 	public class CityLightsR
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Light intensity for maximum city lights (0..1).

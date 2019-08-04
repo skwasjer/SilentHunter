@@ -19,7 +19,7 @@ namespace CameraBehavior
 	/// RestrictedRotation action controller.
 	/// </summary>
 	public class RestrictedRotation
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The azimuth parameters.

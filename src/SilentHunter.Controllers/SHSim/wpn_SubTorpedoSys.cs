@@ -21,7 +21,7 @@ namespace SHSim
 	/// wpn_SubTorpedoSys render controller.
 	/// </summary>
 	public class wpn_SubTorpedoSys
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Automatically open the tube doors before torpedo launch.

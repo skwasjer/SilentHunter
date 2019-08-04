@@ -19,7 +19,7 @@ namespace CameraBehavior
 	/// SphericalMove controller. Free move inside two spheres.
 	/// </summary>
 	public class SphericalMove
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The height above water [0.1m].

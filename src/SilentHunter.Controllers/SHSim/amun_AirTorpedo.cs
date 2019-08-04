@@ -19,7 +19,7 @@ namespace SHSim
 	/// amun_AirTorpedo controller.
 	/// </summary>
 	public class amun_AirTorpedo
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// General torpedo settings.

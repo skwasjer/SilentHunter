@@ -19,7 +19,7 @@ namespace SHSound
 	/// SonarSound controller.
 	/// </summary>
 	public class SonarSound
-		: Controller
+		: BehaviorController
 	{
 	}
 }

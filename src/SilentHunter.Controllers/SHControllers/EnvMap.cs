@@ -19,7 +19,7 @@ namespace SHControllers
 	/// EnvMap render controller.
 	/// </summary>
 	public class EnvMap
-		: Controller
+		: BehaviorController
 	{
 	}
 }

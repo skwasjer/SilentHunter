@@ -20,7 +20,7 @@ namespace SHControllers
 	/// ShellUserDataCfg controller.
 	/// </summary>
 	public class ShellUserDataCfg
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// ShellUserData parameters.

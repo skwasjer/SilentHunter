@@ -20,7 +20,7 @@ namespace CameraBehavior
 	/// HideObjCfg controller.
 	/// </summary>
 	public class HideObjCfg
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The HideObj parameters.

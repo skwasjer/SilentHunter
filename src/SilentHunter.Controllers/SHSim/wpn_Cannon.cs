@@ -22,7 +22,7 @@ namespace SHSim
 	/// wpn_Cannon render controller.
 	/// </summary>
 	public class wpn_Cannon
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Turret settings.

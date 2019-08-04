@@ -20,7 +20,7 @@ namespace SHControllers
 	/// UnitMark controller.
 	/// </summary>
 	public class UnitMark
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Tga file.

@@ -22,7 +22,7 @@ namespace SHSim
 	/// amun_Torpedo controller.
 	/// </summary>
 	public class amun_Torpedo
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The torpedo's type.

@@ -19,7 +19,7 @@ namespace EnvSim
 	/// FoamWave render controller.
 	/// </summary>
 	public class FoamWave
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// </summary>

@@ -19,7 +19,7 @@ namespace CameraBehavior
 	/// ShocksCollision controller. Apply shocks on object when collision occured.
 	/// </summary>
 	public class ShocksCollision
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// A pendulum controller which works on a mechanical object.

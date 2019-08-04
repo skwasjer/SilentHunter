@@ -21,7 +21,7 @@ namespace SHControllers
 	/// FollowParent action controller.
 	/// </summary>
 	public class FollowParent
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Follow parent's global translation.

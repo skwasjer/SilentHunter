@@ -20,7 +20,7 @@ namespace EnvSim
 	/// Flash action controller.
 	/// </summary>
 	public class Flash
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Debug mode.

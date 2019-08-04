@@ -21,7 +21,7 @@ namespace SHControllers
 	/// SensorData render controller.
 	/// </summary>
 	public class SensorData
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Sensor type.

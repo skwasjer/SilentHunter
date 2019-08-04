@@ -19,7 +19,7 @@ namespace SHControllers
 	/// ConfigureBumpMap user data.
 	/// </summary>
 	public class ConfigureBumpMap
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Bump map parameters for body.

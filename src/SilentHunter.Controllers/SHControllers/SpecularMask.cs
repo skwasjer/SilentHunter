@@ -19,7 +19,7 @@ namespace SHControllers
 	/// SpecularMask action controller. Use pixel shader to mask specular when alpha &lt; 1.
 	/// </summary>
 	public class SpecularMask
-		: Controller
+		: BehaviorController
 	{
 	}
 }

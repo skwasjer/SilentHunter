@@ -10,7 +10,7 @@ namespace SilentHunter.Controllers.Decoration
 		}
 
 		/// <summary>
-		/// Indicates a normal controller, or a raw controller. In case of a raw controller, the subType and countField indicate what the first 4 bytes are composed off. In case of a normal controller, the extra fields are not used.
+		/// Decorator for animation controllers, indicating the subType.
 		/// </summary>
 		/// <param name="subType"></param>
 		public ControllerAttribute(ushort subType)

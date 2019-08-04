@@ -19,7 +19,7 @@ namespace SHSim
 	/// wpn_BoldsLauncher render controller.
 	/// </summary>
 	public class wpn_BoldsLauncher
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The number of available bolds.

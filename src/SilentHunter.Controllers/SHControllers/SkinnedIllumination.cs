@@ -19,7 +19,7 @@ namespace SHControllers
 	/// SkinnedIllumination controller.
 	/// </summary>
 	public class SkinnedIllumination
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Enable or disable bump map rendering.

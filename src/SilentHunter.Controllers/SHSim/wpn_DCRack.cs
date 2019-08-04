@@ -21,7 +21,7 @@ namespace SHSim
 	/// wpn_DCRack render controller.
 	/// </summary>
 	public class wpn_DCRack
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Visual barrel object.

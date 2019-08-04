@@ -19,7 +19,7 @@ namespace SH3.EnvSim
 	/// VisualDamage render controller.
 	/// </summary>
 	public class VisualDamage
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The minimum number of hit points that generate a damage decal.

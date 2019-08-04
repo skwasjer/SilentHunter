@@ -19,7 +19,7 @@ namespace SHControllers
 	/// MipMapBias render controller.
 	/// </summary>
 	public class MipMapBias
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Mipmap bias.

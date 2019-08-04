@@ -19,7 +19,7 @@ namespace SHCollisions
 	/// Explossive controller. A static object exploding when hit.
 	/// </summary>
 	public class Explossive
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The damage info of this exploding object.

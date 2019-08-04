@@ -19,7 +19,7 @@ namespace SHSim
 	/// cmdr_AIUnit controller.
 	/// </summary>
 	public class cmdr_AIUnit
-		: Controller
+		: BehaviorController
 	{
 	}
 }

@@ -19,7 +19,7 @@ namespace SHCollisions
 	/// TerrainCollider controller. Collide the object with terrain using a sphere model.
 	/// </summary>
 	public class TerrainCollider
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The radius of sphere modelling the object [0.1m].

@@ -19,7 +19,7 @@ namespace CameraBehavior
 	/// Spring controller.
 	/// </summary>
 	public class Spring
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The spring's elasticity factor (>= 0).

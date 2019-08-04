@@ -19,7 +19,7 @@ namespace SHControllers
 	/// GenHeightControl render controller. Starts/Stops the ParticleGenerators depending on the height.
 	/// </summary>
 	public class GenHeightControl
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Under this limit, the particles generator is stopped.

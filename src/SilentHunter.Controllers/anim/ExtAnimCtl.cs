@@ -19,7 +19,7 @@ namespace anim
 	/// ExtAnimCtl controller.
 	/// </summary>
 	public class ExtAnimCtl
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Minimum value to map to zero time of ctl.

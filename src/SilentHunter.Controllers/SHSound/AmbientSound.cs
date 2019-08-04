@@ -19,7 +19,7 @@ namespace SHSound
 	/// AmbientSound controller.
 	/// </summary>
 	public class AmbientSound
-		: Controller
+		: BehaviorController
 	{
 	}
 }

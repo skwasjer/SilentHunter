@@ -21,7 +21,7 @@ namespace EffectManager
 	/// LightLauncher action controller.
 	/// </summary>
 	public class EffectLauncher
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The time to wait until launching the effect.

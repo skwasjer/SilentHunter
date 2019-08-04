@@ -23,7 +23,7 @@ namespace LipsSync
 	/// LipsSyncMng controller. Controls the lip synchronization of the NPC's.
 	/// </summary>
 	public class LipsSyncMng
-		: RawController
+		: Controller
 	{
 		/// <summary>
 		/// The speech sound associated with this lipsync.

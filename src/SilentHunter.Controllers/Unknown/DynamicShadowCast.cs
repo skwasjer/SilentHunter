@@ -19,7 +19,7 @@ namespace Unknown
 	/// DynamicShadowCast controller. WARNING: I haven't found the definition of this controller in any .act file. I therefor don't know for sure if it is implemented right.
 	/// </summary>
 	public class DynamicShadowCast
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Unknown property.

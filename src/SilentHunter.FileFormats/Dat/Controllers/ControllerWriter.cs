@@ -60,14 +60,14 @@ namespace SilentHunter.FileFormats.Dat.Controllers
 
 					if (typeof(AnimationController).IsAssignableFrom(controllerType) || !controllerAttribute.SubType.HasValue)
 					{
-						// Skip writing the field. The count value will be written by the RawList type.
+						// Skip writing the count field, the serializer will take care of it.
 					}
 					else
 					{
 						writer.Write((ushort)0);
 					}
 
-					cs.Serialize(stream, (RawController)controller);
+					cs.Serialize(stream, (Controller)controller);
 
 					return;
 				}
@@ -83,7 +83,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers
 
 				long startPos = stream.Position;
 
-				cs.Serialize(stream, (RawController)controller);
+				cs.Serialize(stream, (Controller)controller);
 
 				// After the controller is written, determine and write the size.
 				long currentPos = stream.Position;

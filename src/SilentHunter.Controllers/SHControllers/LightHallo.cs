@@ -19,7 +19,7 @@ namespace SHControllers
 	/// LightHallo render controller.
 	/// </summary>
 	public class LightHallo
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Size.

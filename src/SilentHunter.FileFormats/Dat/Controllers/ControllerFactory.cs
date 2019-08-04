@@ -36,7 +36,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers
 		/// <param name="initializeFields">True to initialize fields.</param>
 		/// <returns>Returns the newly created controller. All (child) fields that are reference types are also pre-instantiated.</returns>
 		/// <exception cref="ArgumentException">Thrown when the controller name is empty or cannot be found for the <paramref name="profile" />.</exception>
-		public RawController CreateController(string controllerName, ControllerProfile profile, bool initializeFields)
+		public Controller CreateController(string controllerName, ControllerProfile profile, bool initializeFields)
 		{
 			if (string.IsNullOrEmpty(controllerName))
 			{
@@ -58,7 +58,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers
 		/// <param name="initializeFields">True to initialize fields.</param>
 		/// <returns>Returns the newly created controller. All (child) fields that are reference types are also instantiated using the default constructor.</returns>
 		/// <exception cref="ArgumentException">Thrown when the controller name is empty or cannot be found for the <paramref name="profile" />.</exception>
-		public RawController CreateController(Type controllerType, bool initializeFields)
+		public Controller CreateController(Type controllerType, bool initializeFields)
 		{
 			if (controllerType == null)
 			{
@@ -68,8 +68,8 @@ namespace SilentHunter.FileFormats.Dat.Controllers
 			if (CanCreate(controllerType) && _controllerAssembly.Controllers.Any(profile => profile.Value.Any(ctrl => ctrl.Value == controllerType)))
 			{
 				return initializeFields
-					? (RawController)CreateNewItem(controllerType)
-					: (RawController)Activator.CreateInstance(controllerType);
+					? (Controller)CreateNewItem(controllerType)
+					: (Controller)Activator.CreateInstance(controllerType);
 			}
 
 			throw new ArgumentException("Unknown controller type.");

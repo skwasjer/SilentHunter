@@ -20,7 +20,7 @@ namespace SHSim
 	/// wpn_KGun render controller.
 	/// </summary>
 	public class wpn_KGun
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Visual barrel object.

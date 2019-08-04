@@ -20,7 +20,7 @@ namespace EnvSim
 	/// GeometryShipWake render controller.
 	/// </summary>
 	public class GeometryShipWake
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Length of the wake.

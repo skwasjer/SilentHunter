@@ -19,7 +19,7 @@ namespace EnvSim
 	/// Sky controller.
 	/// </summary>
 	public class Sky
-		: Controller
+		: BehaviorController
 	{
 	}
 }

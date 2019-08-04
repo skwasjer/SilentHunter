@@ -20,7 +20,7 @@ namespace CameraBehavior
 	/// EditObjPos controller.
 	/// </summary>
 	public class EditObjPos
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Set initial local position with coordinates specified in InitialLocalPos.

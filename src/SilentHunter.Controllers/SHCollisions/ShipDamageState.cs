@@ -19,7 +19,7 @@ namespace SHCollisions
 	/// ShipDamageState controller.
 	/// </summary>
 	public class ShipDamageState
-		: Controller
+		: BehaviorController
 	{
 	}
 }

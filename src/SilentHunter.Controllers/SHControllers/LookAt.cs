@@ -19,7 +19,7 @@ namespace SHControllers
 	/// LookAt render controller.
 	/// </summary>
 	public class LookAt
-		: Controller
+		: BehaviorController
 	{
 	}
 }

@@ -20,7 +20,7 @@ namespace SHCollisions
 	/// ScalableParticleEffect user data.
 	/// </summary>
 	public class ScalableParticleEffect
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Emission area (circular) radius and solid angle. Direction is along generator's Y axis (up).

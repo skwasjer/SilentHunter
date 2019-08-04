@@ -19,7 +19,7 @@ namespace SHControllers
 	/// ShellUserData controller.
 	/// </summary>
 	public class ShellUserData
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// ShellManager will be linked by this object.

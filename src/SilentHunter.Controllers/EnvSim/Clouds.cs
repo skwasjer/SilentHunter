@@ -21,7 +21,7 @@ namespace EnvSim
 	/// Clouds render controller.
 	/// </summary>
 	public class Clouds
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Clouds altitude.

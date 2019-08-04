@@ -19,7 +19,7 @@ namespace EnvSim
 	/// FastGenHeightControl render controller. Starts/Stops the ParticleGenerators depending on the height.
 	/// </summary>
 	public class FastGenHeightControl
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Under this limit, the particles generator is stopped.

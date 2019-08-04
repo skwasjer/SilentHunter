@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace SilentHunter.Controllers
 {
-	public class StateMachineController : RawController
+	public class StateMachineController : Controller
 	{
 		private static class Magics
 		{

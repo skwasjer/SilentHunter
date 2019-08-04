@@ -19,7 +19,7 @@ namespace SHSim
 	/// amun_DepthCharge controller.
 	/// </summary>
 	public class amun_DepthCharge
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The under water falling speed [m/s].

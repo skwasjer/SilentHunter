@@ -56,7 +56,7 @@ namespace SilentHunter.FileFormats.DependencyInjection
 		private static void AddControllerSerializers(this IServiceCollection services)
 		{
 			void AddMapping<TController, TSerializer>()
-				where TController : RawController
+				where TController : Controller
 				where TSerializer : class, IControllerSerializer
 			{
 				services.AddTransient<TSerializer>();
@@ -73,8 +73,8 @@ namespace SilentHunter.FileFormats.DependencyInjection
 			// Note: order is important. First controller type to match, that serializer will be used. Thus, start with the most specific serializers.
 			AddMapping<StateMachineController, StateMachineControllerSerializer>();
 			AddMapping<MeshAnimationController, MeshAnimationControllerSerializer>();
+			AddMapping<BehaviorController, BehaviorControllerSerializer>();
 			AddMapping<Controller, ControllerSerializer>();
-			AddMapping<RawController, RawControllerSerializer>();
 		}
 	}
 }

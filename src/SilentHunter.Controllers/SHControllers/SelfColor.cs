@@ -21,7 +21,7 @@ namespace SHControllers
 	/// SelfColor render controller.
 	/// </summary>
 	public class SelfColor
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Variable.

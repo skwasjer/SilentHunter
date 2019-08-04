@@ -19,7 +19,7 @@ namespace LipsSync
 	/// EyeBall controller.
 	/// </summary>
 	public class EyeBall
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Up limit eyeball angle.

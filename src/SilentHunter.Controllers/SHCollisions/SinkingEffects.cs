@@ -19,7 +19,7 @@ namespace SHCollisions
 	/// SinkingEffects controller. The visual effects when sinking object.
 	/// </summary>
 	public class SinkingEffects
-		: Controller
+		: BehaviorController
 	{
 	}
 }

@@ -19,7 +19,7 @@ namespace SHControllers
 	/// MoveCannon controller.
 	/// </summary>
 	public class MoveCannon
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Look at horizon when zoomed.

@@ -19,7 +19,7 @@ namespace SHControllers
 	/// UrbanismData controller.
 	/// </summary>
 	public class UrbanismData
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Minimum value of the urbanism prcentage at which the object is included [0-100].

@@ -19,7 +19,7 @@ namespace SHCollisions
 	/// ColisionableObject controller.
 	/// </summary>
 	public class ColisionableObject
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The armor level in cm [0..100].

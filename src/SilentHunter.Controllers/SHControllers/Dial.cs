@@ -20,7 +20,7 @@ namespace SHControllers
 	/// Dial action controller.
 	/// </summary>
 	public class Dial
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The type of the dial.

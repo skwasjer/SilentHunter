@@ -22,7 +22,7 @@ namespace Particles
 	/// TrailParticleGenerator render controller.
 	/// </summary>
 	public class TrailParticleGenerator
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// Emission area(circular)radius and solidangle. Direction is along generator's Y axis (up).

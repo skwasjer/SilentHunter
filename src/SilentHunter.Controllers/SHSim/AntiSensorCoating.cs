@@ -19,7 +19,7 @@ namespace SHSim
 	/// AntiSensorCoating controller.
 	/// </summary>
 	public class AntiSensorCoating
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The radar signal reduction (percent)

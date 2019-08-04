@@ -1,6 +1,6 @@
 ﻿namespace SilentHunter.Controllers
 {
-	public abstract class AnimationController : RawController
+	public abstract class AnimationController : Controller
 	{
 	}
 }

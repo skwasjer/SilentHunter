@@ -20,7 +20,7 @@ namespace CameraBehavior
 	/// AxisRotation action controller.
 	/// </summary>
 	public class AxisRotation
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The angular speed [deg/s].

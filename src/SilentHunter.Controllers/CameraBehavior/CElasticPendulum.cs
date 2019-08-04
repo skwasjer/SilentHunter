@@ -19,7 +19,7 @@ namespace CameraBehavior
 	/// CElasticPendulum render controller.
 	/// </summary>
 	public class CElasticPendulum
-		: Controller
+		: BehaviorController
 	{
 		/// <summary>
 		/// The k/mass constant.

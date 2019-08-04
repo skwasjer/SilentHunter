@@ -15,7 +15,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			public const int Action = 0x7e03767b;
 		}
 
-		public void Deserialize(Stream stream, RawController controller)
+		public void Deserialize(Stream stream, Controller controller)
 		{
 			StateMachineController smc = EnsureControllerType(controller);
 
@@ -42,7 +42,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			}
 		}
 
-		public void Serialize(Stream stream, RawController controller)
+		public void Serialize(Stream stream, Controller controller)
 		{
 			StateMachineController smc = EnsureControllerType(controller);
 
@@ -159,7 +159,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			writer.WriteNullTerminatedString(action.Value);
 		}
 
-		private static StateMachineController EnsureControllerType(RawController controller)
+		private static StateMachineController EnsureControllerType(Controller controller)
 		{
 			if (controller is StateMachineController stateMachineController)
 			{
