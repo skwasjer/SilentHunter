@@ -13,13 +13,5 @@ namespace SilentHunter.Controllers.Compiler
 		/// <param name="loadAssembly"></param>
 		/// <returns></returns>
 		Assembly CompileCode(ICollection<string> fileNames, CompilerOptions options, bool loadAssembly = false);
-
-		/// <summary>
-		/// Compiles code into an <see cref="Assembly" />.
-		/// </summary>
-		/// <param name="code"></param>
-		/// <param name="options"></param>
-		/// <returns></returns>
-		Assembly CompileCode(string code, CompilerOptions options);
 	}
 }

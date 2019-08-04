@@ -18,5 +18,10 @@ namespace SilentHunter.Controllers.Compiler
 		/// Gets or sets the assembly dependencies.
 		/// </summary>
 		public ICollection<string> ReferencedAssemblies { get; set; }
+
+		/// <summary>
+		/// Gets or sets a list of compiler errors to ignore (f.ex. CS0042).
+		/// </summary>
+		public ICollection<string> IgnoreCompilerErrors { get; set; }
 	}
 }

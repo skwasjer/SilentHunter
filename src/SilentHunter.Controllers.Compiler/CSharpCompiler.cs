@@ -1,7 +1,9 @@
-﻿using System;
+﻿#if NETFRAMEWORK
+using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -11,14 +13,27 @@ namespace SilentHunter.Controllers.Compiler
 {
 	public sealed class CSharpCompiler : ICSharpCompiler, IDisposable
 	{
-		private const string RequiredCompilerOptions = "/target:library";
-		private CSharpCodeProvider _codeProvider;
+		private const string RequiredCompilerOptions = "/target:library /optimize";
+		private readonly IFileSystem _fileSystem;
 		private readonly CompilerParameters _compilerParams;
+		private CodeDomProvider _codeProvider;
 		private bool _disposed;
 
 		public CSharpCompiler()
+			: this(new FileSystem())
 		{
-			_codeProvider = (CSharpCodeProvider)CodeDomProvider.CreateProvider("CSharp");
+		}
+
+		// ReSharper disable once MemberCanBePrivate.Global - justification: used by unit test
+		internal CSharpCompiler(IFileSystem fileSystem)
+			: this(fileSystem, (CSharpCodeProvider)CodeDomProvider.CreateProvider("CSharp"))
+		{
+		}
+
+		private CSharpCompiler(IFileSystem fileSystem, CodeDomProvider codeDomProvider)
+		{
+			_fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
+			_codeProvider = codeDomProvider ?? throw new ArgumentNullException(nameof(codeDomProvider));
 			_compilerParams = new CompilerParameters
 			{
 				GenerateExecutable = false,
@@ -86,6 +101,12 @@ namespace SilentHunter.Controllers.Compiler
 				throw new ArgumentOutOfRangeException(nameof(fileNames), "Expected at least one filename.");
 			}
 
+			string outputDir = _fileSystem.Path.GetDirectoryName(options.OutputFile);
+			if (!_fileSystem.Directory.Exists(outputDir))
+			{
+				_fileSystem.Directory.CreateDirectory(outputDir);
+			}
+
 			_compilerParams.OutputAssembly = options.OutputFile;
 
 			_compilerParams.ReferencedAssemblies.Clear();
@@ -100,56 +121,16 @@ namespace SilentHunter.Controllers.Compiler
 				_compilerParams.CompilerOptions += $" /doc:\"{options.DocFile}\"";
 			}
 
-			CompilerResults results = _codeProvider.CompileAssemblyFromFile(_compilerParams, fileNames.ToArray());
+			CompilerResults results = _codeProvider.CompileAssemblyFromSource(_compilerParams, fileNames.Select(fn => _fileSystem.File.ReadAllText(fn)).ToArray());
 
-			LogResults(results);
+			LogResults(options, results);
 
 			// Display a successful compilation message.
 			Debug.WriteLine("Code built into assembly '{0}' successfully.", options.OutputFile);
-			return loadAssembly ? results.CompiledAssembly : null;
+			return loadAssembly ? Assembly.Load(_fileSystem.File.ReadAllBytes(options.OutputFile)) : null;
 		}
 
-		/// <summary>
-		/// Compiles code into an <see cref="Assembly" />.
-		/// </summary>
-		/// <param name="code"></param>
-		/// <param name="options"></param>
-		/// <returns></returns>
-		public Assembly CompileCode(string code, CompilerOptions options)
-		{
-			if (_disposed)
-			{
-				throw new ObjectDisposedException(GetType().Name);
-			}
-
-			if (code == null)
-			{
-				throw new ArgumentNullException(nameof(code));
-			}
-
-			if (options == null)
-			{
-				throw new ArgumentNullException(nameof(options));
-			}
-
-			if (code.Length == 0)
-			{
-				throw new ArgumentOutOfRangeException(nameof(code), "Insufficient data.");
-			}
-
-			_compilerParams.OutputAssembly = options.OutputFile;
-			_compilerParams.CompilerOptions = RequiredCompilerOptions;
-
-			CompilerResults results = _codeProvider.CompileAssemblyFromSource(_compilerParams, code);
-
-			LogResults(results);
-
-			// Display a successful compilation message.
-			Debug.WriteLine("Code built into memory assembly '{0}' successfully.", results.CompiledAssembly.ToString());
-			return results.CompiledAssembly;
-		}
-
-		private static void LogResults(CompilerResults results)
+		private static void LogResults(CompilerOptions options, CompilerResults results)
 		{
 			results.Output.Cast<string>().ToList().ForEach(s => Debug.WriteLine(s));
 
@@ -158,15 +139,28 @@ namespace SilentHunter.Controllers.Compiler
 				// Display compilation errors.
 				var errorMsg = new StringBuilder();
 				errorMsg.AppendLine("Errors building assembly...");
-				foreach (CompilerError error in results.Errors.Cast<CompilerError>().Where(ce => !ce.IsWarning))
+
+				List<CompilerError> filteredErrors = results.Errors
+					.Cast<CompilerError>()
+					.Where(ce => !ce.IsWarning)
+					.Where(ce => options.IgnoreCompilerErrors == null || !options.IgnoreCompilerErrors.Contains(ce.ErrorNumber))
+					.ToList();
+
+				if (filteredErrors.Count == 0)
+				{
+					return;
+				}
+
+				foreach (CompilerError error in filteredErrors)
 				{
 					errorMsg.AppendFormat("  - {0}", error);
 					errorMsg.AppendLine();
 				}
 
 				Debug.Write(errorMsg.ToString());
-				throw new Exception(errorMsg.ToString());
+				throw new CompileException(errorMsg.ToString());
 			}
 		}
 	}
 }
+#endif

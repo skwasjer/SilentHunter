@@ -24,6 +24,7 @@ namespace SilentHunter.Controllers.Compiler
 		{
 		}
 
+		// ReSharper disable once MemberCanBePrivate.Global - justification: used by unit test
 		internal RoslynCompiler(IFileSystem fileSystem)
 		{
 			_fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
@@ -67,7 +68,7 @@ namespace SilentHunter.Controllers.Compiler
 			using (Stream docStream = string.IsNullOrEmpty(options.DocFile) ? Stream.Null : _fileSystem.File.Open(options.DocFile, FileMode.Create))
 			{
 				EmitResult emitResult = compilation.Emit(dllStream, pdbStream, docStream);
-				LogResults(emitResult);
+				LogResults(options, emitResult);
 
 				// Display a successful compilation message.
 				Debug.WriteLine("Code built into assembly '{0}' successfully.", options.OutputFile);
@@ -76,12 +77,7 @@ namespace SilentHunter.Controllers.Compiler
 			return loadAssembly ? Assembly.Load(_fileSystem.File.ReadAllBytes(options.OutputFile)) : null;
 		}
 
-		public Assembly CompileCode(string code, CompilerOptions options)
-		{
-			throw new NotImplementedException();
-		}
-
-		private static void LogResults(EmitResult results)
+		private static void LogResults(CompilerOptions options, EmitResult results)
 		{
 			//			results.Output.Cast<string>().ToList().ForEach(s => Debug.WriteLine(s));
 			if (!results.Success)
@@ -89,16 +85,24 @@ namespace SilentHunter.Controllers.Compiler
 				// Display compilation errors.
 				var errorMsg = new StringBuilder();
 				errorMsg.AppendLine("Errors building assembly...");
+				int errorCount = 0;
 				foreach (IGrouping<Location, Diagnostic> error in results.Diagnostics
 					.Where(d => d.Severity >= DiagnosticSeverity.Warning)
+					.Where(d => options.IgnoreCompilerErrors == null || !options.IgnoreCompilerErrors.Contains(d.Id))
 					.GroupBy(d => d.Location))
 				{
-					//errorMsg.AppendLine(error.Key.ToString());
 					foreach (Diagnostic diagnostic in error)
 					{
 						errorMsg.AppendFormat("  - {0}", diagnostic);
 						errorMsg.AppendLine();
 					}
+
+					errorCount++;
+				}
+
+				if (errorCount == 0)
+				{
+					return;
 				}
 
 				Debug.Write(errorMsg.ToString());
