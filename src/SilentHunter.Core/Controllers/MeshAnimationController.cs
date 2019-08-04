@@ -16,12 +16,12 @@ namespace SilentHunter.Controllers
 		/// A list of compressed vertices. Each set of compressed vertices replaces the vertices of the source mesh for a given key frame and can used/referenced once or multiple times.
 		/// </summary>
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public List<CompressedVertices> CompressedFrames { get; set; } = new List<CompressedVertices>();
+		public List<CompressedVectors> CompressedFrames;
 
 		/// <summary>
 		/// Extra unknown data (only found on chunk related to head morphing I believe).
 		/// </summary>
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public byte[] Unknown0 { get; set; }
+		public byte[] Unknown0;
 	}
 }

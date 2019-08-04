@@ -30,19 +30,19 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 				int compressedFrameCount = reader.ReadInt32();
 				int vertexCount = reader.ReadInt32();
 
-				mac.CompressedFrames = new List<CompressedVertices>(compressedFrameCount);
+				mac.CompressedFrames = new List<CompressedVectors>(compressedFrameCount);
 				for (int frameIndex = 0; frameIndex < compressedFrameCount; frameIndex++)
 				{
-					var cv = new CompressedVertices
+					var cv = new CompressedVectors
 					{
 						Scale = reader.ReadSingle(),
 						Translation = reader.ReadSingle(),
-						Vertices = new List<short>(vertexCount)
+						Vectors = new List<short>(vertexCount)
 					};
 
 					for (int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++)
 					{
-						cv.Vertices.Add(reader.ReadInt16());
+						cv.Vectors.Add(reader.ReadInt16());
 					}
 
 					mac.CompressedFrames.Add(cv);
@@ -78,13 +78,13 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 				writer.Write(mac.CompressedFrames.Count);
 
 				// Each frame should be same size, so if we have a frame, use vertex count of first.
-				writer.Write(mac.CompressedFrames.Count > 0 ? mac.CompressedFrames[0].Vertices.Count : 0);
-				foreach (CompressedVertices cv in mac.CompressedFrames)
+				writer.Write(mac.CompressedFrames.Count > 0 ? mac.CompressedFrames[0].Vectors.Count : 0);
+				foreach (CompressedVectors cv in mac.CompressedFrames)
 				{
 					writer.Write(cv.Scale);
 					writer.Write(cv.Translation);
 
-					foreach (short vertexIndex in cv.Vertices)
+					foreach (short vertexIndex in cv.Vectors)
 					{
 						writer.Write(vertexIndex);
 					}

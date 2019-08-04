@@ -1,46 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Reflection;
 
 namespace SilentHunter.Controllers
 {
-	/// <summary>
-	/// Represents a list of compressed vertices.
-	/// </summary>
-	public class CompressedVertices
+	public static class VectorCompression
 	{
 		/// <summary>
-		/// The scale factor.
-		/// </summary>
-		public float Scale;
-
-		/// <summary>
-		/// The translation factor.
-		/// </summary>
-		public float Translation;
-
-		/// <summary>
-		/// The list of compressed vertices.
-		/// </summary>
-		public List<short> Vertices;
-
-		/// <summary>
-		/// Decompresses the compressed vertices into an enumerable of <typeparamref name="T" />.
+		/// Decompresses the compressed vectors into an enumerable of <typeparamref name="T" />.
 		/// </summary>
 		/// <typeparam name="T">A class/structure of <see cref="float" /> fields, like <see cref="Vector2" /> or <see cref="Vector3" />.</typeparam>
 		/// <returns>An enumerable of <typeparamref name="T" />.</returns>
-		public IEnumerable<T> Decompress<T>()
+		public static IEnumerable<T> Decompress<T>(this CompressedVectors compressedVectors)
 			where T : struct
 		{
+			CheckIfSupportedVectorType(typeof(T));
+
 			FieldInfo[] fields = typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Public);
-			for (int i = 0; i < Vertices.Count; i += fields.Length)
+			for (int i = 0; i < compressedVectors.Vectors.Count; i += fields.Length)
 			{
 				// Box value type.
 				var inst = (object)new T();
 				for (int j = 0; j < fields.Length; j++)
 				{
-					float val = Scale * Vertices[i + j] + Translation;
+					float val = compressedVectors.Scale * compressedVectors.Vectors[i + j] + compressedVectors.Translation;
 					fields[j].SetValue(inst, val);
 				}
 
@@ -48,66 +33,81 @@ namespace SilentHunter.Controllers
 			}
 		}
 
+
 		/// <summary>
-		/// Compresses vertices into an array where each float component of each vertex is represented by an Int16 value.
+		/// Compresses vectors into an array where each float component of each vector is represented by an Int16 value, based one scale and translation.
 		/// </summary>
 		/// <typeparam name="T">A class/structure of <see cref="float" /> fields, like <see cref="Vector2" /> or <see cref="Vector3" />.</typeparam>
-		/// <param name="vertices"></param>
-		/// <param name="padToCount">Optional argument, to pad the result array of vertices to. This is useful for animation sequences where each animation frame requires the same amount of vertices, but should otherwise be omitted.</param>
-		/// <returns>A <see cref="CompressedVertices" /> with the compressed vertices.</returns>
-		public static CompressedVertices Compress<T>(ICollection<T> vertices, int padToCount = -1)
+		/// <param name="vectors"></param>
+		/// <param name="padToCount">Optional argument, to pad the result array of vectors to. This is useful for animation sequences where each animation frame requires the same amount of vectors, but should otherwise be omitted.</param>
+		/// <returns>A <see cref="CompressedVectors" /> with the compressed vectors.</returns>
+		public static CompressedVectors Compress<T>(ICollection<T> vectors, int padToCount = -1)
 			where T : struct
 		{
+			CheckIfSupportedVectorType(typeof(T));
+
 			FieldInfo[] fields = typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Public);
 
-			GetCompressionRange(vertices, out float bias, out float scale);
+			GetCompressionRange(vectors, out float bias, out float scale);
 
-			var compressedMeshTransform = new CompressedVertices
+			var compressedMeshTransform = new CompressedVectors
 			{
 				Scale = scale,
 				Translation = bias,
-				Vertices = new List<short>(padToCount * fields.Length)
+				Vectors = new List<short>(padToCount > 0 ? padToCount * fields.Length : 0)
 			};
 
-			foreach (float floatValue in vertices
+			foreach (float floatValue in vectors
 					.SelectMany(v => fields
 						.Select(f => (float)f.GetValue(v))
 					)
 				)
 			{
-				compressedMeshTransform.Vertices.Add(
+				compressedMeshTransform.Vectors.Add(
 					(short)Math.Round(
 						((double)floatValue - bias) / scale
 					)
 				);
 			}
 
-			// Add extra zeroes, in case a fixed length of vertices is required. Animation sequences require each frame to have the same number of vertices. Note however, that adding zeroes will break the mesh animation.
+			// Add extra zeroes, in case a fixed length of vectors is required. Animation sequences require each frame to have the same number of vectors. Note however, that adding zeroes will break the mesh animation.
 			// This is an edge case that's simply as a fix to prevent crashes, but is not an actual solution and should typically be handled externally.
-			for (int i = 0; i < (padToCount - vertices.Count) * fields.Length; i++)
+			if (padToCount > 0)
 			{
-				compressedMeshTransform.Vertices.Add(0);
+				for (int i = 0; i < (padToCount - vectors.Count) * fields.Length; i++)
+				{
+					compressedMeshTransform.Vectors.Add(0);
+				}
 			}
 
 			return compressedMeshTransform;
 		}
 
+		// ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
+		private static void CheckIfSupportedVectorType(Type type)
+		{
+			if (type != typeof(Vector2) && type != typeof(Vector3))
+			{
+				throw new NotSupportedException("Expected Vector2 or Vector3");
+			}
+		}
+
 		/// <summary>
-		/// Gets the best possible compression factors required (least amount of loss of precision) to align compressed vertices into Int16 values.
+		/// Gets the best possible compression factors required (least amount of loss of precision) to align compressed vectors into Int16 values.
 		/// </summary>
 		/// <typeparam name="T">A class/structure of <see cref="float" /> fields, like <see cref="Vector2" /> or <see cref="Vector3" />.</typeparam>
-		/// <param name="vertices">The vertices to determine compression factors for.</param>
+		/// <param name="vectors">The vectors to determine compression factors for.</param>
 		/// <param name="bias">The bias for each vector component.</param>
 		/// <param name="scale">The scaling factor for each vector component.</param>
-		private static void GetCompressionRange<T>(IEnumerable<T> vertices, out float bias, out float scale)
+		private static void GetCompressionRange<T>(IEnumerable<T> vectors, out float bias, out float scale)
 			where T : struct
 		{
 			FieldInfo[] fields = typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Public);
 
 			float fmax = 0, fmin = 0;
 
-			// We need highest and lowest possible floats from all vertices.
-			foreach (float floatValue in vertices
+			// We need highest and lowest possible floats from all vectors.
+			foreach (float floatValue in vectors
 					.SelectMany(v => fields
 						.Select(f => (float)f.GetValue(v))
 					)
