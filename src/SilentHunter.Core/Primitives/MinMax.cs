@@ -1,6 +1,6 @@
 ﻿using SilentHunter.Controllers.Decoration;
 
-namespace SilentHunter.Controllers
+namespace SilentHunter
 {
 	[SHType]
 	public class MinMax
