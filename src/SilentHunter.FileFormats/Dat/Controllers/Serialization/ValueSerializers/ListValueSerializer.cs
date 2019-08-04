@@ -35,7 +35,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 
 			Type[] typeArgs = serializationContext.Type.GetGenericArguments();
 			Type elementType = typeArgs[0];
-			var innerContext = new ControllerSerializationContext(elementType);
+			var innerContext = new ControllerSerializationContext(elementType, serializationContext.Controller);
 
 			Type countType = serializationContext.Member.GetCustomAttribute<CountTypeAttribute>()?.SerializationType;
 			if (countType != null)
@@ -57,7 +57,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 
 			Type[] typeArgs = serializationContext.Type.GetGenericArguments();
 			Type elementType = typeArgs[0];
-			var innerContext = new ControllerSerializationContext(elementType);
+			var innerContext = new ControllerSerializationContext(elementType, serializationContext.Controller);
 
 			Type countType = serializationContext.Member.GetCustomAttribute<CountTypeAttribute>()?.SerializationType;
 			if (countType != null)

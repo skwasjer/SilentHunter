@@ -35,7 +35,8 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 		{
 			Type underlyingType = Nullable.GetUnderlyingType(serializationContext.Type);
 
-			IControllerValueSerializer serializer = _serializers.FirstOrDefault(s => s.IsSupported(new ControllerSerializationContext(underlyingType)));
+			var innerContext = new ControllerSerializationContext(underlyingType, serializationContext.Controller);
+			IControllerValueSerializer serializer = _serializers.FirstOrDefault(s => s.IsSupported(innerContext));
 
 			return serializer != null
 				? serializer.Deserialize(reader, serializationContext)

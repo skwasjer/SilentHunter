@@ -29,35 +29,35 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 		/// <summary>
 		/// When implemented, deserializes the controller from specified <paramref name="stream" />.
 		/// </summary>
-		protected override void Deserialize(BinaryReader reader, Type instanceType, object instance)
+		protected override void Deserialize(BinaryReader reader, ControllerSerializationContext serializationContext, object instance)
 		{
 			// Read the size of the controller.
 			int size = reader.ReadInt32();
 			// Save current position of stream. At the end, we compare the size with the number of bytes read for validation purposes.
 			long startPos = reader.BaseStream.Position;
 
-			string controllerName = instanceType.Name;
-			reader.SkipMember(instanceType, controllerName);
+			string controllerName = serializationContext.Type.Name;
+			reader.SkipMember(serializationContext.Type, controllerName);
 
-			base.Deserialize(reader, instanceType, instance);
+			base.Deserialize(reader, serializationContext, instance);
 
 			reader.BaseStream.EnsureStreamPosition(startPos + size, controllerName);
 		}
 
-		protected override object DeserializeField(BinaryReader reader, FieldInfo fieldInfo)
+		protected override object DeserializeField(BinaryReader reader, ControllerSerializationContext serializationContext)
 		{
-			object value = base.DeserializeField(reader, fieldInfo);
+			object value = base.DeserializeField(reader, serializationContext);
 			// Strings can have null are always optional.
-			if (value != null || fieldInfo.FieldType == typeof(string))
+			if (value != null || serializationContext.Type == typeof(string))
 			{
 				return value;
 			}
 
 			// If null is returned, check if the field is optional and if the type supports a nullable type.
-			if (fieldInfo.FieldType.IsValueType && !fieldInfo.FieldType.IsNullable())
+			if (serializationContext.Type.IsValueType && !serializationContext.Type.IsNullable())
 			{
 				throw new SilentHunterParserException(
-					$"The property '{fieldInfo.Name}' is defined as optional, but the type '{fieldInfo.FieldType}' does not support null values. Use Nullable<> if the property is a value type, or a class otherwise.");
+					$"The property '{serializationContext.Name}' is defined as optional, but the type '{serializationContext.Type}' does not support null values. Use Nullable<> if the property is a value type, or a class otherwise.");
 			}
 
 			return null;
@@ -116,7 +116,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 		/// When implemented, serializes the controller to specified <paramref name="stream" />.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
-		protected override void Serialize(BinaryWriter writer, Type instanceType, object instance)
+		protected override void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext, object instance)
 		{
 			// We don't know the size yet, so just write 0 for now.
 			writer.Write(0);
@@ -124,10 +124,10 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			// Save current position of stream. At the end, we have to set the size.
 			long startPos = writer.BaseStream.Position;
 
-			string controllerName = instanceType.Name;
+			string controllerName = serializationContext.Type.Name;
 			writer.WriteNullTerminatedString(controllerName);
 
-			base.Serialize(writer, instanceType, instance);
+			base.Serialize(writer, serializationContext, instance);
 
 			// After the object is written, determine and write the size.
 			long currentPos = writer.BaseStream.Position;
@@ -138,21 +138,21 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			writer.BaseStream.Position = currentPos;
 		}
 
-		protected override void SerializeField(BinaryWriter writer, FieldInfo field, object value)
+		protected override void SerializeField(BinaryWriter writer, ControllerSerializationContext serializationContext, object value)
 		{
 			// If the value is null, the property has be optional, otherwise throw error.
-			if (value == null && field.FieldType != typeof(string))
+			if (value == null && serializationContext.Type != typeof(string))
 			{
-				if (field.HasAttribute<OptionalAttribute>())
+				if (serializationContext.Member.HasAttribute<OptionalAttribute>())
 				{
 					return;
 				}
 
-				string fieldName = field.GetCustomAttribute<ParseNameAttribute>()?.Name ?? field.Name;
+				string fieldName = serializationContext.Member.GetCustomAttribute<ParseNameAttribute>()?.Name ?? serializationContext.Name;
 				throw new SilentHunterParserException($"The field '{fieldName}' is not defined as optional.");
 			}
 
-			base.SerializeField(writer, field, value);
+			base.SerializeField(writer, serializationContext, value);
 		}
 
 		protected override void WriteField(BinaryWriter writer, ControllerSerializationContext serializationContext, object value)

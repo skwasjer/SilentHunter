@@ -50,15 +50,16 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			Type controllerType = controller.GetType();
 			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
 			{
-				Deserialize(reader, controllerType, controller);
+				var ctx = new ControllerSerializationContext(controllerType, controller);
+				Deserialize(reader, ctx, controller);
 
 				reader.BaseStream.EnsureStreamPosition(reader.BaseStream.Length, controllerType.Name);
 			}
 		}
 
-		protected virtual void Deserialize(BinaryReader reader, Type instanceType, object instance)
+		protected virtual void Deserialize(BinaryReader reader, ControllerSerializationContext serializationContext, object instance)
 		{
-			DeserializeFields(reader, instanceType, instance);
+			DeserializeFields(reader, serializationContext, instance);
 		}
 
 		/// <summary>
@@ -70,16 +71,16 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 		/// <exception cref="IOException">Thrown for any IO error or parsing error.</exception>
 		/// <exception cref="NotSupportedException">Thrown when <paramref name="instanceType" /> is not supported.</exception>
 		/// <exception cref="NotImplementedException">Thrown when <see cref="Array" />s array used in the controller definitions.</exception>
-		private void DeserializeFields(BinaryReader reader, Type instanceType, object instance)
+		private void DeserializeFields(BinaryReader reader, ControllerSerializationContext serializationContext, object instance)
 		{
 			if (reader == null)
 			{
 				throw new ArgumentNullException(nameof(reader));
 			}
 
-			if (instanceType == null)
+			if (serializationContext == null)
 			{
-				throw new ArgumentNullException(nameof(instanceType));
+				throw new ArgumentNullException(nameof(serializationContext));
 			}
 
 			if (instance == null)
@@ -87,19 +88,19 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 				throw new ArgumentNullException(nameof(instance));
 			}
 			
-			FieldInfo[] fields = instanceType.GetFields(BindingFlags.Public | BindingFlags.Instance);
+			FieldInfo[] fields = serializationContext.Type.GetFields(BindingFlags.Public | BindingFlags.Instance);
 			foreach (FieldInfo field in fields)
 			{
-				var value = DeserializeField(reader, field);
+				var ctx = new ControllerSerializationContext(field, serializationContext.Controller);
+				var value = DeserializeField(reader, ctx);
 				// We have our value, set it.
 				field.SetValue(instance, value);
 			}
 		}
 
-		protected virtual object DeserializeField(BinaryReader reader, FieldInfo fieldInfo)
+		protected virtual object DeserializeField(BinaryReader reader, ControllerSerializationContext serializationContext)
 		{
-			var ctx = new ControllerSerializationContext(fieldInfo);
-			return ReadField(reader, ctx);
+			return ReadField(reader, serializationContext);
 		}
 
 		object IControllerFieldSerializer.ReadField(BinaryReader reader, ControllerSerializationContext serializationContext)
@@ -116,7 +117,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 				// Create a new instance of this type.
 				retVal = Activator.CreateInstance(serializationContext.Type);
 
-				DeserializeFields(reader, serializationContext.Type, retVal);
+				DeserializeFields(reader, serializationContext, retVal);
 			}
 			else
 			{
@@ -141,16 +142,17 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			Type controllerType = controller.GetType();
 			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
-				Serialize(writer, controllerType, controller);
+				var ctx = new ControllerSerializationContext(controllerType, controller);
+				Serialize(writer, ctx, controller);
 			}
 		}
 
-		protected virtual void Serialize(BinaryWriter writer, Type instanceType, object instance)
+		protected virtual void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext, object instance)
 		{
-			SerializeFields(writer, instanceType, instance);
+			SerializeFields(writer, serializationContext, instance);
 		}
 
-		private void SerializeFields(BinaryWriter writer, Type typeOfValue, object instance)
+		private void SerializeFields(BinaryWriter writer, ControllerSerializationContext serializationContext, object instance)
 		{
 			if (writer == null)
 			{
@@ -162,19 +164,18 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 				throw new ArgumentNullException(nameof(instance));
 			}
 
-			FieldInfo[] fields = typeOfValue.GetFields(BindingFlags.Public | BindingFlags.Instance);
+			FieldInfo[] fields = serializationContext.Type.GetFields(BindingFlags.Public | BindingFlags.Instance);
 			foreach (FieldInfo field in fields)
 			{
+				var ctx = new ControllerSerializationContext(field, serializationContext.Controller);
 				object value = field.GetValue(instance);
-				SerializeField(writer, field, value);
+				SerializeField(writer, ctx, value);
 			}
 		}
 
-		protected virtual void SerializeField(BinaryWriter writer, FieldInfo field, object value)
+		protected virtual void SerializeField(BinaryWriter writer, ControllerSerializationContext serializationContext, object value)
 		{
-			// Write the value.
-			var ctx = new ControllerSerializationContext(field);
-			WriteField(writer, ctx, value);
+			WriteField(writer, serializationContext, value);
 		}
 
 		void IControllerFieldSerializer.WriteField(BinaryWriter writer, ControllerSerializationContext serializationContext, object value)
@@ -186,7 +187,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 		{
 			if (serializationContext.Type.IsControllerOrObject())
 			{
-				SerializeFields(writer, serializationContext.Type, value);
+				SerializeFields(writer, serializationContext, value);
 			}
 			else
 			{
