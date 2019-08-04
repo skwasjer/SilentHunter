@@ -14,7 +14,8 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 	{
 		public bool IsSupported(ControllerSerializationContext context)
 		{
-			return context.Type.IsPrimitive || context.Type.IsEnum || context.Type.IsValueType;
+			// context.Type.IsPrimitive || context.Type.IsEnum ||
+			return context.Type.IsValueType;
 		}
 
 		public void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext, object value)

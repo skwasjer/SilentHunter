@@ -26,7 +26,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 				case 4:
 					return reader.ReadInt32() > 0;
 				default:
-					throw new NotSupportedException();
+					throw new FormatException($"Unable to convert {boolLen} bytes into a boolean.");
 			}
 		}
 	}

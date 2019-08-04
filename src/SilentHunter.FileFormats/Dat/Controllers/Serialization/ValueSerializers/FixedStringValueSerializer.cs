@@ -32,7 +32,12 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			int fixedLength = serializationContext.Member.GetCustomAttribute<FixedStringAttribute>().Length;
 			if (reader.BaseStream.Length > fixedLength)
 			{
-				throw new InvalidOperationException($"The stream contains more data than expected for '{serializationContext.Member.Name}', length {fixedLength}.");
+				throw new SilentHunterParserException($"The stream contains more data than expected for '{serializationContext.Member.Name}', length {fixedLength}.");
+			}
+
+			if (reader.BaseStream.Length < fixedLength)
+			{
+				throw new SilentHunterParserException($"The stream does not contain enough data for '{serializationContext.Member.Name}', length {fixedLength}.");
 			}
 
 			string s = reader.ReadString(fixedLength);
