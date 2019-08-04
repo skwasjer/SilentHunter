@@ -1,8 +1,11 @@
-using System;
+﻿using System;
 
 namespace SilentHunter.Controllers.Decoration
 {
-	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Class, AllowMultiple = true)]
+	/// <summary>
+	/// Currently unused, but can be used to hint that the field it is applied to belongs to a specific version.
+	/// </summary>
+	[AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
 	// ReSharper disable once InconsistentNaming
 	public sealed class SHVersionAttribute : Attribute
 	{
