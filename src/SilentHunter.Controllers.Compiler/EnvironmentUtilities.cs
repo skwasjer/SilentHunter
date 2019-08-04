@@ -11,7 +11,14 @@ namespace SilentHunter.Controllers.Compiler
 		/// <returns></returns>
 		public static string GetCurrentTargetFramework()
 		{
-			string frameworkVersion = Assembly.GetExecutingAssembly()
+			Assembly assembly = Assembly.GetCallingAssembly();
+
+			return GetTargetFramework(assembly);
+		}
+
+		private static string GetTargetFramework(Assembly assembly)
+		{
+			string frameworkVersion = assembly
 				.GetCustomAttribute<TargetFrameworkAttribute>()
 				.FrameworkName.ToLowerInvariant()
 				.Replace(",version=v", string.Empty)
