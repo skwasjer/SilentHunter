@@ -64,7 +64,6 @@ namespace SHControllers
 		PPI
 	}
 
-	[SHType]
 	public class RangeDim
 	{
 		/// <summary>

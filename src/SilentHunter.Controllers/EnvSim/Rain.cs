@@ -13,7 +13,6 @@
 
 using SilentHunter;
 using SilentHunter.Controllers;
-using SilentHunter.Controllers.Decoration;
 
 namespace EnvSim
 {
@@ -64,7 +63,6 @@ namespace EnvSim
 		public float TailAlpha;
 	}
 
-	[SHType]
 	public class RandomWind
 	{
 		/// <summary>

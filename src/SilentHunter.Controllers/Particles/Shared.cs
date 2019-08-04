@@ -37,7 +37,6 @@ namespace Particles
 		Infinity
 	}
 
-	[SHType]
 	public class Wind
 	{
 		/// <summary>
@@ -53,7 +52,6 @@ namespace Particles
 	/// <summary>
 	/// Global scale coefficients for near subparticles.
 	/// </summary>
-	[SHType]
 	public class GlobalScale
 	{
 		/// <summary>
@@ -96,7 +94,7 @@ namespace Particles
 		/// <summary>
 		/// Global scale coefficients for near subparticles.
 		/// </summary>
-		[SHType]
+		
 		public class GlobalScale2
 		{
 			/// <summary>
@@ -133,7 +131,6 @@ namespace Particles
 	/// <summary>
 	/// Global scale coefficients for far subparticles.
 	/// </summary>
-	[SHType]
 	public class GlobalScaleFar
 		: BehaviorController
 	{
@@ -151,7 +148,6 @@ namespace Particles
 		public float OpacityScale;
 	}
 
-	[SHType]
 	public class Creation
 	{
 		/// <summary>
@@ -168,7 +164,6 @@ namespace Particles
 		public List<OverLife> OverLife;
 	}
 
-	[SHType]
 	public class ParticleVelocity
 	{
 		/// <summary>
@@ -189,7 +184,6 @@ namespace Particles
 		public List<OverLife> OverLife;
 	}
 
-	[SHType]
 	public class ParticleWeight
 	{
 		/// <summary>
@@ -206,7 +200,6 @@ namespace Particles
 		public List<OverLife> OverLife;
 	}
 
-	[SHType]
 	public class ParticleSpin
 	{
 		/// <summary>
@@ -262,7 +255,6 @@ namespace Particles
 		public float Variation;
 	}
 
-	[SHType]
 	public class SequenceParameters
 	{
 		/// <summary>
@@ -302,7 +294,6 @@ namespace Particles
 		Stop
 	}
 
-	[SHType]
 	public class RandomMotion
 	{
 		/// <summary>
@@ -343,7 +334,6 @@ namespace Particles
 		Random
 	}
 
-	[SHType]
 	public class ParticleSize
 	{
 		/// <summary>

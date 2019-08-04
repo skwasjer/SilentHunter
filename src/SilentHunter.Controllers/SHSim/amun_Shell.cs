@@ -12,7 +12,6 @@
 */
 
 using SilentHunter.Controllers;
-using SilentHunter.Controllers.Decoration;
 
 namespace SHSim
 {
@@ -40,7 +39,6 @@ namespace SHSim
 		public ShellDetonation Detonation;
 	}
 
-	[SHType]
 	public class ShellDetonation
 	{
 		/// <summary>

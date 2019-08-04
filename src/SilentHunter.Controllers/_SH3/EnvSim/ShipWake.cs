@@ -124,7 +124,6 @@ namespace SH3.EnvSim
 		public bool DisplayLayer4;
 	}
 
-	[SHType]
 	public class ShipWakeStartParams
 		: BehaviorController
 	{
@@ -138,7 +137,6 @@ namespace SH3.EnvSim
 		public VertexStartPosition RightVertex;
 	}
 
-	[SHType]
 	public class VertexStartPosition
 		: BehaviorController
 	{
@@ -148,7 +146,6 @@ namespace SH3.EnvSim
 		public Vector2XZ StartPosition;
 	}
 
-	[SHType]
 	public class ShipWakeSpeed
 		: BehaviorController
 	{
@@ -159,7 +156,6 @@ namespace SH3.EnvSim
 		public Vector2 Layer4TextureSpeed;
 	}
 
-	[SHType]
 	public class ShipWakeHeight
 		: BehaviorController
 	{
@@ -181,7 +177,6 @@ namespace SH3.EnvSim
 		public float FadeOutSpeed;
 	}
 
-	[SHType]
 	public class ShipWakeTransparency
 		: BehaviorController
 	{

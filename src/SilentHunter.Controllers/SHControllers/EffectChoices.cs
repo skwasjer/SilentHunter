@@ -12,7 +12,6 @@
 */
 
 using SilentHunter.Controllers;
-using SilentHunter.Controllers.Decoration;
 
 namespace SHControllers
 {
@@ -28,7 +27,6 @@ namespace SHControllers
 	/// <summary>
 	/// Water Condition
 	/// </summary>
-	[SHType]
 	public class WaterCondition
 	{
 		/// <summary>

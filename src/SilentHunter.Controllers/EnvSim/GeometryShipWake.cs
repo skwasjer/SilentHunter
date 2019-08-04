@@ -12,7 +12,6 @@
 */
 
 using SilentHunter.Controllers;
-using SilentHunter.Controllers.Decoration;
 
 namespace EnvSim
 {
@@ -48,7 +47,6 @@ namespace EnvSim
 		public WakeType WakeType;
 	}
 
-	[SHType]
 	public class GlobalTransparency
 	{
 		/// <summary>

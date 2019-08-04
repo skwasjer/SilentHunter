@@ -13,7 +13,6 @@
 
 using System.Collections.Generic;
 using SilentHunter.Controllers;
-using SilentHunter.Controllers.Decoration;
 
 namespace SHSim
 {
@@ -49,7 +48,6 @@ namespace SHSim
 		public List<FireRestrictions> Fire;
 	}
 
-	[SHType]
 	public class obj_TurretDebugInfo
 	{
 		/// <summary>
@@ -62,7 +60,6 @@ namespace SHSim
 		public float restr_dist;
 	}
 
-	[SHType]
 	public class TraverseRestrictions
 	{
 		/// <summary>
@@ -85,7 +82,6 @@ namespace SHSim
 		public string anm_human;
 	}
 
-	[SHType]
 	public class ElevationRestrictions
 	{
 		/// <summary>
@@ -108,7 +104,6 @@ namespace SHSim
 		public string anm_human;
 	}
 
-	[SHType]
 	public class FireRestrictions
 	{
 		/// <summary>

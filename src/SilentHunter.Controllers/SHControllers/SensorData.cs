@@ -13,7 +13,6 @@
 
 using System.Collections.Generic;
 using SilentHunter.Controllers;
-using SilentHunter.Controllers.Decoration;
 
 namespace SHControllers
 {
@@ -89,7 +88,6 @@ namespace SHControllers
 		public List<ElevationMinMax> Elevation;
 	}
 
-	[SHType]
 	public class BearingMinMax
 	{
 		/// <summary>
@@ -102,7 +100,6 @@ namespace SHControllers
 		public float BearingMax;
 	}
 
-	[SHType]
 	public class ElevationMinMax
 	{
 		/// <summary>

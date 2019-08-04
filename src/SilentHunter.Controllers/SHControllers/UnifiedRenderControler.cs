@@ -56,7 +56,6 @@ namespace SHControllers
 	/// <summary>
 	/// Water caustics on objects settings.
 	/// </summary>
-	[SHType]
 	public class WaterCaustics
 	{
 		/// <summary>

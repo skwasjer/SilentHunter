@@ -28,7 +28,6 @@ namespace anim
 		public List<AnimationSubObject> Animations;
 	}
 
-	[SHType]
 	public class AnimationSubObject
 	{
 		public ulong Id;

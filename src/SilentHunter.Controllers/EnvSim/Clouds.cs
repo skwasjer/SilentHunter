@@ -49,7 +49,6 @@ namespace EnvSim
 		public List<SceneParameters> SceneParameters;
 	}
 
-	[SHType]
 	public class SceneParameters
 	{
 		/// <summary>
@@ -78,7 +77,6 @@ namespace EnvSim
 		public float GlobalReflectionIntensity;
 	}
 
-	[SHType]
 	public class CloudWind
 	{
 		/// <summary>

@@ -87,7 +87,6 @@ namespace Particles
 		public List<ObjectParticles> ObjectParticles;
 	}
 
-	[SHType]
 	public class BitmapParticles
 	{
 		/// <summary>
@@ -194,7 +193,6 @@ namespace Particles
 		public float? GlobalColorFactor;
 	}
 
-	[SHType]
 	public class ParticleOpacity
 	{
 		/// <summary>
@@ -211,7 +209,6 @@ namespace Particles
 		public List<OverLife> OverLife;
 	}
 
-	[SHType]
 	public class ObjectParticles
 	{
 		/// <summary>

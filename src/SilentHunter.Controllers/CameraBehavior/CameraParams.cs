@@ -12,7 +12,6 @@
 */
 
 using SilentHunter.Controllers;
-using SilentHunter.Controllers.Decoration;
 
 namespace CameraBehavior
 {
@@ -55,7 +54,6 @@ namespace CameraBehavior
 		Exterior
 	}
 
-	[SHType]
 	public class Rectangle
 	{
 		/// <summary>

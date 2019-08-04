@@ -12,7 +12,6 @@
 */
 
 using SilentHunter.Controllers;
-using SilentHunter.Controllers.Decoration;
 
 namespace SHSim
 {
@@ -44,7 +43,6 @@ namespace SHSim
 		public float reload_time;
 	}
 
-	[SHType]
 	public class HedgehogAmmoStorage
 	{
 		/// <summary>

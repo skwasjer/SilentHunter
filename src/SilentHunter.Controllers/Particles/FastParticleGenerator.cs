@@ -90,7 +90,6 @@ namespace Particles
 		public List<FastBitmapParticles> BitmapParticles;
 	}
 
-	[SHType]
 	public class FastBitmapParticles
 	{
 		/// <summary>
@@ -164,7 +163,6 @@ namespace Particles
 		public float GlobalColorScale;
 	}
 
-	[SHType]
 	public class FastParticleSize
 	{
 		/// <summary>
@@ -181,7 +179,6 @@ namespace Particles
 		public List<OverLife> OverLife;
 	}
 
-	[SHType]
 	public class FastParticleOpacity
 	{
 		/// <summary>

@@ -62,7 +62,6 @@ namespace SHSim
 		public List<TorpedoGuidance> Guidances;
 	}
 
-	[SHType]
 	public class TorpedoSpeed
 	{
 		/// <summary>
@@ -75,7 +74,6 @@ namespace SHSim
 		public float range;
 	}
 
-	[SHType]
 	public class TorpedoDetonation
 	{
 		/// <summary>
@@ -104,7 +102,6 @@ namespace SHSim
 		public ulong above_explosion;
 	}
 
-	[SHType]
 	public class TorpedoPistol
 	{
 		/// <summary>
@@ -145,7 +142,6 @@ namespace SHSim
 		public List<PrematureChance> PrematureChances;
 	}
 
-	[SHType]
 	public class DudChance
 	{
 		/// <summary>
@@ -162,7 +158,6 @@ namespace SHSim
 		public float chance;
 	}
 
-	[SHType]
 	public class PrematureChance
 	{
 		/// <summary>
@@ -179,7 +174,6 @@ namespace SHSim
 		public float chance;
 	}
 
-	[SHType]
 	public class TorpedoGuidance
 	{
 		/// <summary>
@@ -204,7 +198,6 @@ namespace SHSim
 		public List<TorpedoDepthKeepingProblem> DepthKeepingProblems;
 	}
 
-	[SHType]
 	public class TorpedoGyroProblem
 	{
 		/// <summary>
@@ -217,7 +210,6 @@ namespace SHSim
 		public float chance;
 	}
 
-	[SHType]
 	public class TorpedoDepthKeepingProblem
 	{
 		/// <summary>

@@ -1,8 +1,5 @@
-﻿using SilentHunter.Controllers.Decoration;
-
-namespace SilentHunter
+﻿namespace SilentHunter
 {
-	[SHType]
 	public class MinMax
 	{
 		/// <summary>

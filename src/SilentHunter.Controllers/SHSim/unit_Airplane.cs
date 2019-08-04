@@ -13,7 +13,6 @@
 
 using System.Collections.Generic;
 using SilentHunter.Controllers;
-using SilentHunter.Controllers.Decoration;
 
 namespace SHSim
 {
@@ -33,7 +32,6 @@ namespace SHSim
 		public Wings Wings;
 	}
 
-	[SHType]
 	public class Wings
 	{
 		/// <summary>

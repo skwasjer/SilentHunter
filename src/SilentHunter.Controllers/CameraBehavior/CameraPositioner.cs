@@ -14,7 +14,6 @@
 using System.Collections.Generic;
 using SilentHunter;
 using SilentHunter.Controllers;
-using SilentHunter.Controllers.Decoration;
 
 namespace CameraBehavior
 {
@@ -30,7 +29,6 @@ namespace CameraBehavior
 		public List<VirtualCamera> VirtualCameras;
 	}
 
-	[SHType]
 	public class VirtualCamera
 	{
 		/// <summary>

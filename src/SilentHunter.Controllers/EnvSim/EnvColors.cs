@@ -29,7 +29,6 @@ namespace EnvSim
 		public List<EnvColorWeatherType> WeatherTypes;
 	}
 
-	[SHType]
 	public class EnvColorWeatherType
 	{
 		/// <summary>
@@ -38,7 +37,6 @@ namespace EnvSim
 		public List<EnvColor> Colors;
 	}
 
-	[SHType]
 	public class EnvColor
 	{
 		/// <summary>

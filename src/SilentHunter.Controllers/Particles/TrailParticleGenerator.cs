@@ -74,7 +74,6 @@ namespace Particles
 		public bool RenderOnlyInReflection;
 	}
 
-	[SHType]
 	public class TrailBitmapParticles
 	{
 		/// <summary>

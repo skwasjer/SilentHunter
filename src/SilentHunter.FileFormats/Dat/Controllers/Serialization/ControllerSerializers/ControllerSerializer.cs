@@ -111,7 +111,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 		{
 			object retVal;
 
-			if (serializationContext.Type.IsControllerOrSHType())
+			if (serializationContext.Type.IsControllerOrObject())
 			{
 				// Create a new instance of this type.
 				retVal = Activator.CreateInstance(serializationContext.Type);
@@ -184,7 +184,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 
 		protected virtual void WriteField(BinaryWriter writer, ControllerSerializationContext serializationContext, object value)
 		{
-			if (serializationContext.Type.IsControllerOrSHType())
+			if (serializationContext.Type.IsControllerOrObject())
 			{
 				SerializeFields(writer, serializationContext.Type, value);
 			}

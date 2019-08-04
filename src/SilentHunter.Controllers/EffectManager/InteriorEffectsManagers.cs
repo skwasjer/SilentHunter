@@ -13,7 +13,6 @@
 
 using System.Collections.Generic;
 using SilentHunter.Controllers;
-using SilentHunter.Controllers.Decoration;
 
 namespace EffectManager
 {
@@ -33,7 +32,6 @@ namespace EffectManager
 		public int TotalToPlay;
 	}
 
-	[SHType]
 	public class Category
 	{
 		/// <summary>

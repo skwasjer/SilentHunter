@@ -52,7 +52,7 @@ namespace SHSim
 		public obj_HydroParams Submerged;
 	}
 
-	[SHType]
+	
 	public class obj_HydroParams
 	{
 		/// <summary>
@@ -69,7 +69,7 @@ namespace SHSim
 		public Drag drag;
 	}
 
-	[SHType]
+	
 	public class Drag
 	{
 		/// <summary>
@@ -87,7 +87,7 @@ namespace SHSim
 		public float? FR;
 	}
 
-	[SHType]
+	
 	public class obj_HydroDebugInfo
 	{
 		/// <summary>

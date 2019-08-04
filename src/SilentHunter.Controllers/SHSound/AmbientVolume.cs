@@ -13,7 +13,6 @@
 
 using System.Collections.Generic;
 using SilentHunter.Controllers;
-using SilentHunter.Controllers.Decoration;
 
 namespace SHSound
 {
@@ -33,7 +32,6 @@ namespace SHSound
 		public List<SoundObject> Sounds;
 	}
 
-	[SHType]
 	public class SoundObject
 	{
 		/// <summary>

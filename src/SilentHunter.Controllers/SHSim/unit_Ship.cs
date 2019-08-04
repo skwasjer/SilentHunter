@@ -37,7 +37,6 @@ namespace SHSim
 		public Rudders Rudders;
 	}
 
-	[SHType]
 	public class Propulsion
 	{
 		/// <summary>
@@ -62,7 +61,6 @@ namespace SHSim
 		public float eng_rpm;
 	}
 
-	[SHType]
 	public class Rudders
 	{
 		/// <summary>

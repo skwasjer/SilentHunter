@@ -65,7 +65,6 @@ namespace EnvSim
 		public List<SkyParameter> Sky;
 	}
 
-	[SHType]
 	public class SkyParameter
 	{
 		/// <summary>
@@ -82,7 +81,6 @@ namespace EnvSim
 		public int SkyTextureIndex;
 	}
 
-	[SHType]
 	public class SeaFoam
 	{
 		/// <summary>
@@ -121,7 +119,6 @@ namespace EnvSim
 		public float AnimationSpeed;
 	}
 
-	[SHType]
 	public class ESFogDistance
 	{
 		/// <summary>
@@ -178,7 +175,6 @@ namespace EnvSim
 		public float YScaleForFog;
 	}
 
-	[SHType]
 	public class Fog
 	{
 		/// <summary>
@@ -203,7 +199,6 @@ namespace EnvSim
 		Heavy
 	}
 
-	[SHType]
 	public class DebugSettings
 	{
 		/// <summary>
@@ -212,7 +207,6 @@ namespace EnvSim
 		public bool ShowInfo;
 	}
 
-	[SHType]
 	public class Horizon
 	{
 		/// <summary>
@@ -255,7 +249,6 @@ namespace EnvSim
 		public float SunHaloReflectionFade;
 	}
 
-	[SHType]
 	public class SkyObjRadius
 	{
 		/// <summary>
@@ -272,7 +265,6 @@ namespace EnvSim
 		public float StarsRadius;
 	}
 
-	[SHType]
 	public class Wind
 	{
 		/// <summary>
@@ -305,7 +297,6 @@ namespace EnvSim
 		public List<WavesProperties> WavesProperties;
 	}
 
-	[SHType]
 	public class WavesProperties
 	{
 		/// <summary>
@@ -356,7 +347,6 @@ namespace EnvSim
 		public float WindCoef;
 	}
 
-	[SHType]
 	public class WindScale
 	{
 		/// <summary>
@@ -377,7 +367,6 @@ namespace EnvSim
 		public float Normal;
 	}
 
-	[SHType]
 	public class BumpScale
 	{
 		/// <summary>
@@ -394,7 +383,6 @@ namespace EnvSim
 		public float Amplitude;
 	}
 
-	[SHType]
 	public class WaterSpecularity
 	{
 		/// <summary>

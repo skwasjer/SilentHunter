@@ -137,7 +137,6 @@ namespace SHControllers
 		public int Patches;
 	}
 
-	[SHType]
 	public class SupressWaves
 	{
 		/// <summary>
@@ -156,7 +155,6 @@ namespace SHControllers
 		public float LargeWavesCoef;
 	}
 
-	[SHType]
 	public class UnderWater
 	{
 		/// <summary>

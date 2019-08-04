@@ -13,7 +13,6 @@
 
 using System.Collections.Generic;
 using SilentHunter.Controllers;
-using SilentHunter.Controllers.Decoration;
 
 namespace SHSim
 {
@@ -49,7 +48,6 @@ namespace SHSim
 		public ExternalStorages External;
 	}
 
-	[SHType]
 	public class Tube
 	{
 		/// <summary>
@@ -66,7 +64,6 @@ namespace SHSim
 		public TorpedoType torpedo;
 	}
 
-	[SHType]
 	public class TorpedoRooms
 	{
 		/// <summary>
@@ -79,7 +76,6 @@ namespace SHSim
 		public TorpedoRoom Aft;
 	}
 
-	[SHType]
 	public class TorpedoRoom
 	{
 		/// <summary>
@@ -92,7 +88,6 @@ namespace SHSim
 		public float load_time;
 	}
 
-	[SHType]
 	public class ExternalStorages
 	{
 		/// <summary>
@@ -105,7 +100,6 @@ namespace SHSim
 		public ExternalStorage Aft;
 	}
 
-	[SHType]
 	public class ExternalStorage
 	{
 		/// <summary>

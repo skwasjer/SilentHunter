@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -22,9 +23,9 @@ namespace SilentHunter.FileFormats.Extensions
 		}
 
 		// ReSharper disable once InconsistentNaming
-		public static bool IsControllerOrSHType(this Type type)
+		public static bool IsControllerOrObject(this Type type)
 		{
-			return type.IsController() || type.IsSHType();
+			return type.IsClass && !typeof(IEnumerable).IsAssignableFrom(type);
 		}
 
 		/// <summary>
@@ -52,12 +53,6 @@ namespace SilentHunter.FileFormats.Extensions
 		public static bool IsAnimationController(this Type type)
 		{
 			return typeof(AnimationController).IsAssignableFrom(type);
-		}
-
-		// ReSharper disable once InconsistentNaming
-		public static bool IsSHType(this Type type)
-		{
-			return type.HasAttribute<SHTypeAttribute>();
 		}
 
 		/// <summary>

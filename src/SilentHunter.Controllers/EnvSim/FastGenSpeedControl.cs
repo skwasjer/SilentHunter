@@ -13,7 +13,6 @@
 
 using System.Numerics;
 using SilentHunter.Controllers;
-using SilentHunter.Controllers.Decoration;
 
 namespace EnvSim
 {
@@ -37,7 +36,6 @@ namespace EnvSim
 		public MinParameters MinParameters;
 	}
 
-	[SHType]
 	public class MinParameters
 	{
 		/// <summary>

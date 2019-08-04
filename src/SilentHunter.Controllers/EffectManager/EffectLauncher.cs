@@ -13,7 +13,6 @@
 
 using System.Numerics;
 using SilentHunter.Controllers;
-using SilentHunter.Controllers.Decoration;
 
 namespace EffectManager
 {
@@ -37,7 +36,6 @@ namespace EffectManager
 		public ulong Object;
 	}
 
-	[SHType]
 	public class EffectLauncherDirection
 	{
 		/// <summary>

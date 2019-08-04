@@ -53,7 +53,6 @@ namespace SHSim
 		public Ballast Ballast;
 	}
 
-	[SHType]
 	public class DivePlane
 	{
 		/// <summary>
@@ -70,7 +69,6 @@ namespace SHSim
 		public float prop_fact;
 	}
 
-	[SHType]
 	public class SubPropulsion
 		: BehaviorController
 	{
@@ -88,7 +86,6 @@ namespace SHSim
 		public float eng_rpm;
 	}
 
-	[SHType]
 	public class Ballast
 	{
 		/// <summary>
@@ -115,7 +112,6 @@ namespace SHSim
 		public bool? HasHydrogenPeroxidProp;
 	}
 
-	[SHType]
 	public class SubRanges
 	{
 		/// <summary>
@@ -133,7 +129,6 @@ namespace SHSim
 		public SubRange HydroPeroxidPropulsion;
 	}
 
-	[SHType]
 	public class SubRange
 		: BehaviorController
 	{

@@ -14,7 +14,6 @@
 using System.Collections.Generic;
 using System.Numerics;
 using SilentHunter.Controllers;
-using SilentHunter.Controllers.Decoration;
 
 namespace SHSim
 {
@@ -70,7 +69,6 @@ namespace SHSim
 		public CannonFire Fire;
 	}
 
-	[SHType]
 	public class CannonFire
 	{
 		/// <summary>
@@ -95,7 +93,6 @@ namespace SHSim
 		public List<CannonMuzzle> Muzzles;
 	}
 
-	[SHType]
 	public class CannonMuzzle
 	{
 		/// <summary>
@@ -104,7 +101,6 @@ namespace SHSim
 		public Vector3 position;
 	}
 
-	[SHType]
 	public class CannonRange
 	{
 		/// <summary>
@@ -117,7 +113,6 @@ namespace SHSim
 		public float angle;
 	}
 
-	[SHType]
 	public class CannonAmmoStorage
 	{
 		/// <summary>
@@ -138,7 +133,6 @@ namespace SHSim
 		public ShellStorage SS;
 	}
 
-	[SHType]
 	public class ShellStorage
 	{
 		/// <summary>

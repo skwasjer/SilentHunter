@@ -36,7 +36,6 @@ namespace SHCollisions
 		public List<Box> Boxes;
 	}
 
-	[SHType]
 	public class Sphere
 	{
 		/// <summary>
@@ -65,7 +64,6 @@ namespace SHCollisions
 		public ulong LinkTo;
 	}
 
-	[SHType]
 	public class Box
 	{
 		/// <summary>

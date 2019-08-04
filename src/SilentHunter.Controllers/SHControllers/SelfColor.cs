@@ -13,7 +13,6 @@
 
 using System.Collections.Generic;
 using SilentHunter.Controllers;
-using SilentHunter.Controllers.Decoration;
 
 namespace SHControllers
 {
@@ -49,7 +48,6 @@ namespace SHControllers
 		AutoTgt
 	}
 
-	[SHType]
 	public class ColorsList
 	{
 		/// <summary>

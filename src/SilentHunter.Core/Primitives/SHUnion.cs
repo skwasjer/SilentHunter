@@ -4,21 +4,16 @@ namespace SilentHunter
 {
 	[Serializable]
 	// ReSharper disable once InconsistentNaming
-	public class SHUnion<TTypeA, TTypeB> : ICloneable
+	public struct SHUnion<TTypeA, TTypeB> : ICloneable
 		where TTypeA : struct
 		where TTypeB : struct
 	{
 		private object _value;
 		private Type _currentType;
 
-		public SHUnion()
-		{
-			_currentType = typeof(TTypeA);
-		}
-
 		public Type Type
 		{
-			get => _currentType;
+			get => _currentType ?? typeof(TTypeA);
 			set
 			{
 				if (value == _currentType)
@@ -45,17 +40,14 @@ namespace SilentHunter
 		{
 			get
 			{
-				if (_value == null)
+				if (_value != null)
 				{
-					if (_currentType == typeof(TTypeA))
-					{
-						return default(TTypeA);
-					}
-
-					return default(TTypeB);
+					return _value;
 				}
 
-				return _value;
+				return Type == typeof(TTypeA)
+					? (object)default(TTypeA)
+					: default(TTypeB);
 			}
 			set
 			{

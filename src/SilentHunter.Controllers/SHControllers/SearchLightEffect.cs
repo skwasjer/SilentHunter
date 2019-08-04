@@ -13,7 +13,6 @@
 
 using SilentHunter;
 using SilentHunter.Controllers;
-using SilentHunter.Controllers.Decoration;
 
 namespace SHControllers
 {
@@ -44,7 +43,6 @@ namespace SHControllers
 		public float HaloSize;
 	}
 
-	[SHType]
 	public class Atenuation
 	{
 		/// <summary>
