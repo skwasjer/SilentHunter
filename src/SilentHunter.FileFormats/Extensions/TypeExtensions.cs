@@ -37,12 +37,21 @@ namespace SilentHunter.FileFormats.Extensions
 		}
 
 		/// <summary>
-		/// Indicates if specified type is a raw controller only.
+		/// Indicates if specified type is a behavior controller.
 		/// </summary>
 		/// <param name="type">The type to check.</param>
-		public static bool IsRawController(this Type type)
+		public static bool IsBehaviorController(this Type type)
 		{
-			return typeof(Controller).IsAssignableFrom(type) && !typeof(BehaviorController).IsAssignableFrom(type);
+			return typeof(BehaviorController).IsAssignableFrom(type);
+		}
+
+		/// <summary>
+		/// Indicates if specified type is an animation controller.
+		/// </summary>
+		/// <param name="type">The type to check.</param>
+		public static bool IsAnimationController(this Type type)
+		{
+			return typeof(AnimationController).IsAssignableFrom(type);
 		}
 
 		// ReSharper disable once InconsistentNaming

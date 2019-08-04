@@ -50,7 +50,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers
 				Type controllerType = controller.GetType();
 				IControllerSerializer cs = _controllerSerializerResolver.GetSerializer(controllerType);
 
-				if (controllerType.IsRawController())
+				if (!controllerType.IsBehaviorController())
 				{
 					ControllerAttribute controllerAttribute = controllerType.GetCustomAttribute<ControllerAttribute>() ?? new ControllerAttribute();
 					if (controllerAttribute.SubType.HasValue)
@@ -58,7 +58,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers
 						writer.Write(controllerAttribute.SubType.Value);
 					}
 
-					if (typeof(AnimationController).IsAssignableFrom(controllerType) || !controllerAttribute.SubType.HasValue)
+					if (controllerType.IsAnimationController() || !controllerAttribute.SubType.HasValue)
 					{
 						// Skip writing the count field, the serializer will take care of it.
 					}

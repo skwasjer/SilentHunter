@@ -48,14 +48,14 @@ namespace SilentHunter.FileFormats.Dat.Controllers
 			if (isBaseController)
 			{
 				// First 4 bytes means something else.
-				ushort animationControllerType = unchecked((ushort)(controllerSize & 0xFFFF));
+				ushort animationControllerSubType = unchecked((ushort)(controllerSize & 0xFFFF));
 				ushort unknown = unchecked((ushort)((controllerSize & 0xFFFF0000) >> 16));
 				if (string.IsNullOrEmpty(controllerName))
 				{
 					// If no name provided, check if sub type matches that of an animation controller.
-					if (Enum.IsDefined(typeof(AnimationType), animationControllerType))
+					if (Enum.IsDefined(typeof(AnimationType), animationControllerSubType))
 					{
-						controllerName = ((AnimationType)animationControllerType).ToString();
+						controllerName = ((AnimationType)animationControllerSubType).ToString();
 					}
 				}
 
@@ -67,14 +67,14 @@ namespace SilentHunter.FileFormats.Dat.Controllers
 					if (profile != ControllerProfile.Unknown && _controllerAssembly.TryGetControllerType(controllerName, profile, out Type controllerType))
 					{
 						// Check if the controller is indeed a base/animation controller. If it isn't, the size descriptor may have contained an invalid size for controller data. We just attempt normal deserialization then.
-						if (controllerType.IsRawController())
+						if (!controllerType.IsBehaviorController())
 						{
 							ControllerAttribute controllerAttribute = controllerType.GetCustomAttribute<ControllerAttribute>() ?? new ControllerAttribute();
 							// Check that the detected controller matches subtype.
-							if (controllerAttribute.SubType.HasValue && controllerAttribute.SubType.Value == animationControllerType)
+							if (controllerAttribute.SubType.HasValue && controllerAttribute.SubType.Value == animationControllerSubType)
 							{
 								// For animation controllers, the 2 bytes are part of the data and identify an 'ushort' count field for n number of frames.
-								if (typeof(AnimationController).IsAssignableFrom(controllerType))
+								if (controllerType.IsAnimationController())
 								{
 									stream.Position -= 2;
 								}
