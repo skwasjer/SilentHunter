@@ -25,7 +25,6 @@ namespace anim
 		/// <summary>
 		/// A list of key frames.
 		/// </summary>
-		[CountType(typeof(ushort))]
 		public List<LightKeyFrame> Frames;
 	}
 

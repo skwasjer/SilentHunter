@@ -58,7 +58,6 @@ namespace anim
 		/// <summary>
 		/// A list of key frames.
 		/// </summary>
-		[CountType(typeof(ushort))]
 		public List<RotationKeyFrame> Frames;
 	}
 
@@ -79,7 +78,6 @@ namespace anim
 		/// <summary>
 		/// A list of key frames.
 		/// </summary>
-		[CountType(typeof(ushort))]
 		public List<PositionKeyFrame> Frames;
 	}
 

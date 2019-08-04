@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using SilentHunter.Controllers;
 using SilentHunter.Controllers.Decoration;
 using SilentHunter.FileFormats.Extensions;
 
@@ -37,12 +38,10 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			Type elementType = typeArgs[0];
 			var innerContext = new ControllerSerializationContext(elementType, serializationContext.Controller);
 
-			Type countType = serializationContext.Member.GetCustomAttribute<CountTypeAttribute>()?.SerializationType;
-			if (countType != null)
+			if (serializationContext.Controller is AnimationController)
 			{
 				// Output count field.
-				object count = Convert.ChangeType(list.Count, countType);
-				writer.WriteStruct(count);
+				writer.Write(unchecked((ushort)list.Count));
 			}
 
 			foreach (object item in list)
@@ -59,12 +58,11 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			Type elementType = typeArgs[0];
 			var innerContext = new ControllerSerializationContext(elementType, serializationContext.Controller);
 
-			Type countType = serializationContext.Member.GetCustomAttribute<CountTypeAttribute>()?.SerializationType;
-			if (countType != null)
+			if (serializationContext.Controller is AnimationController)
 			{
 				// Read n times, determined by prefixed count field.
-				int count = Convert.ToInt32(reader.ReadStruct(countType));
-				for (var i = 0; i < count; i++)
+				int count = reader.ReadUInt16();
+				for (int i = 0; i < count; i++)
 				{
 					list.Add(_controllerFieldSerializer.ReadField(reader, innerContext));
 				}
