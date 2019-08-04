@@ -5,7 +5,7 @@
     <DebugType>full</DebugType>
   </PropertyGroup>
 
-  <!--Import Project="..\Package.props" /-->
+  <Import Project="..\Package.props" />
 
   <PropertyGroup>
     <Description>SilentHunter controllers compiler library</Description>
