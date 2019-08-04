@@ -24,7 +24,7 @@ namespace SilentHunter.Controllers.Compiler
 		{
 		}
 
-		public RoslynCompiler(IFileSystem fileSystem)
+		internal RoslynCompiler(IFileSystem fileSystem)
 		{
 			_fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
 			_parseOptions = new CSharpParseOptions(LanguageVersion.CSharp8, DocumentationMode.Diagnose);
