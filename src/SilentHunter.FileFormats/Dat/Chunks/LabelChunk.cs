@@ -1,30 +1,39 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using SilentHunter.FileFormats.Extensions;
 
 namespace SilentHunter.FileFormats.Dat.Chunks
 {
+	/// <summary>
+	/// Represents the label chunk.
+	/// </summary>
+	[DebuggerDisplay("{ToString(),nq}: {Text}")]
 	public sealed class LabelChunk : DatChunk
 	{
+		private string _text;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="LabelChunk"/> class.
+		/// </summary>
 		public LabelChunk()
 			: base(DatFile.Magics.Label)
 		{
 		}
 
-		/// <summary>
-		/// Gets or sets the label text.
-		/// </summary>
-		public string Text { get; set; }
-
-		/// <summary>
-		/// Gets whether the chunk supports a parent id field.
-		/// </summary>
+		/// <inheritdoc />
 		public override bool SupportsParentId => true;
 
 		/// <summary>
-		/// Deserializes the chunk.
+		/// Gets or sets the label text.
 		/// </summary>
-		/// <param name="stream">The stream to read from.</param>
+		public string Text
+		{
+			get => _text ?? string.Empty;
+			set => _text = value;
+		}
+
+		/// <inheritdoc />
 		protected override Task DeserializeAsync(Stream stream)
 		{
 			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
@@ -39,7 +48,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 				}
 			}
 
-			// Some files contain more data, problem seen mainly in older mods. Chunk will be correctly serialized upon next save.
+			// Some files contain more data, problem seen mainly in some mods due to hex editing likely. Chunk will be correctly serialized upon next save.
 			if (stream.Length > stream.Position)
 			{
 				stream.Position = stream.Length;
@@ -48,10 +57,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 			return Task.CompletedTask;
 		}
 
-		/// <summary>
-		/// Serializes the chunk.
-		/// </summary>
-		/// <param name="stream">The stream to write to.</param>
+		/// <inheritdoc />
 		protected override Task SerializeAsync(Stream stream)
 		{
 			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
@@ -60,24 +66,10 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 				writer.Write(ParentId);
 
 				// Write name + terminating zero.
-				if (!string.IsNullOrEmpty(Text))
-				{
-					writer.Write(Text, '\0');
-				}
+				writer.Write(Text, '\0');
 			}
 
 			return Task.CompletedTask;
-		}
-
-		/// <summary>
-		/// Returns a string that represents the current object.
-		/// </summary>
-		/// <returns>
-		/// A string that represents the current object.
-		/// </returns>
-		public override string ToString()
-		{
-			return base.ToString() + ": " + Text;
 		}
 	}
 }

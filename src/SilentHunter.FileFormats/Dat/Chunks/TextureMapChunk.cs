@@ -1,151 +1,50 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using SilentHunter.FileFormats.Extensions;
 
 namespace SilentHunter.FileFormats.Dat.Chunks
 {
+	/// <summary>
+	/// Represents a texture map chunk.
+	/// </summary>
+	[DebuggerDisplay("{ToString(),nq}: {MapType}, texture: {Texture})")]
 	public sealed class TextureMapChunk : DatChunk
 	{
-		private const int TexmapNameLength = 8;
-
-		private long _creationTimeSinceEpoch;
+		private const int TextureMapNameLength = 8;
 		private static readonly DateTime Epoch = new DateTime(1970, 1, 1);
 
-		private string _originalTexture;
+		private long _creationTimeSinceEpoch;
 		private TextureMapType _mapType;
+		private string _texture;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="TextureMapChunk"/> class.
+		/// </summary>
 		public TextureMapChunk()
 			: base(DatFile.Magics.TextureMap)
 		{
-			_mapType = TextureMapType.AmbientOcclusionMap;
+			MapType = TextureMapType.AmbientOcclusionMap;
 			MapChannel = 2; // Default to 2 because in 99% this is the case.
 			Attributes = MaterialAttributes.MagFilterLinear | MaterialAttributes.MinFilterLinear;
-
-			CreationTime = DateTime.Now.ToUniversalTime();
+			CreationTime = DateTime.UtcNow;
 		}
 
-		/// <summary>
-		/// Gets whether the chunk supports an id field.
-		/// </summary>
+		/// <inheritdoc />
 		public override bool SupportsId => true;
 
-		/// <summary>
-		/// Gets whether the chunk supports a parent id field.
-		/// </summary>
+		/// <inheritdoc />
 		public override bool SupportsParentId => true;
 
 		/// <summary>
-		/// Deserializes the chunk.
+		/// Gets or sets the map channel index.
 		/// </summary>
-		/// <param name="stream">The stream to read from.</param>
-		protected override Task DeserializeAsync(Stream stream)
-		{
-			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
-			{
-				// Read id and parent id.
-				Id = reader.ReadUInt64();
-				ParentId = reader.ReadUInt64();
-
-				string name = reader.ReadString(TexmapNameLength).TrimEnd('\0');
-
-				switch (name)
-				{
-					case "specular":
-						_mapType = TextureMapType.SpecularMap;
-						break;
-
-					case "bump":
-						_mapType = TextureMapType.NormalMap;
-						break;
-
-					case "selfillu":
-						_mapType = TextureMapType.AmbientOcclusionMap;
-						break;
-					default:
-						_mapType = TextureMapType.AmbientOcclusionMap;
-						break;
-				}
-
-				MapChannel = reader.ReadInt32();
-#if DEBUG
-				/*	if (_mapChannel != 2)
-				{
-					Console.Write(GetBaseStreamName(stream) + "  " + ParentFile.Chunks.Count + "  ");
-					Console.WriteLine(_mapChannel);
-				}*/
-#endif
-
-				Attributes = (MaterialAttributes)reader.ReadInt32();
-
-				TgaTextureSize = reader.ReadInt32();
-				_creationTimeSinceEpoch = reader.ReadInt64();
-
-				// The rest of the stream holds the texture name + terminating zero.
-				if (stream.Length > stream.Position)
-				{
-					Texture = reader.ReadNullTerminatedString();
-				}
-
-				_originalTexture = Texture;
-			}
-
-			return Task.CompletedTask;
-		}
-
-		/// <summary>
-		/// Serializes the chunk.
-		/// </summary>
-		/// <param name="stream">The stream to write to.</param>
-		protected override Task SerializeAsync(Stream stream)
-		{
-			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
-			{
-				// Write id and parent id.
-				writer.Write(Id);
-				writer.Write(ParentId);
-
-				string mapTypeStr;
-				switch (_mapType)
-				{
-					case TextureMapType.AmbientOcclusionMap:
-						mapTypeStr = "selfillu";
-						break;
-					case TextureMapType.SpecularMap:
-						mapTypeStr = "specular";
-						break;
-					case TextureMapType.NormalMap:
-						mapTypeStr = "bump";
-						break;
-					default:
-						throw new InvalidOperationException($"Unexpected map type {_mapType}.");
-				}
-
-				writer.Write(mapTypeStr.PadRight(TexmapNameLength, '\0'), false);
-
-				writer.Write(MapChannel);
-
-				writer.WriteStruct((int)Attributes);
-
-				writer.Write(TgaTextureSize);
-				writer.Write(_creationTimeSinceEpoch);
-
-				// Write texture + terminating zero.
-				if (!string.IsNullOrEmpty(Texture))
-				{
-					writer.Write(Texture, '\0');
-				}
-				else
-				{
-					writer.Write(byte.MinValue); // Write terminating 0.
-				}
-			}
-
-			return Task.CompletedTask;
-		}
-
 		public int MapChannel { get; set; }
 
+		/// <summary>
+		/// Gets or sets the map type.
+		/// </summary>
 		public TextureMapType MapType
 		{
 			get => _mapType;
@@ -185,17 +84,102 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		/// <summary>
 		/// Gets or sets the (file)name of the texture.
 		/// </summary>
-		public string Texture { get; set; }
-
-		/// <summary>
-		/// Returns a string that represents the current object.
-		/// </summary>
-		/// <returns>
-		/// A string that represents the current object.
-		/// </returns>
-		public override string ToString()
+		public string Texture
 		{
-			return base.ToString() + ": " + MapType + ", texture: " + Texture;
+			get => _texture ?? string.Empty;
+			set => _texture = value;
+		}
+
+		/// <inheritdoc />
+		protected override Task DeserializeAsync(Stream stream)
+		{
+			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
+			{
+				// Read id and parent id.
+				Id = reader.ReadUInt64();
+				ParentId = reader.ReadUInt64();
+
+				string name = reader.ReadString(TextureMapNameLength).TrimEnd('\0');
+
+				switch (name)
+				{
+					case "specular":
+						MapType = TextureMapType.SpecularMap;
+						break;
+
+					case "bump":
+						MapType = TextureMapType.NormalMap;
+						break;
+
+					case "selfillu":
+						MapType = TextureMapType.AmbientOcclusionMap;
+						break;
+					default:
+						MapType = TextureMapType.AmbientOcclusionMap;
+						break;
+				}
+
+				MapChannel = reader.ReadInt32();
+
+				Attributes = reader.ReadStruct<MaterialAttributes>();
+
+				TgaTextureSize = reader.ReadInt32();
+				_creationTimeSinceEpoch = reader.ReadInt64();
+
+				// The rest of the stream holds the texture name + terminating zero.
+				if (stream.Length > stream.Position)
+				{
+					Texture = reader.ReadNullTerminatedString();
+				}
+
+				// Some files contain more data, problem seen mainly in some mods due to hex editing likely. Chunk will be correctly serialized upon next save.
+				if (stream.Length > stream.Position)
+				{
+					stream.Position = stream.Length;
+				}
+			}
+
+			return Task.CompletedTask;
+		}
+
+		/// <inheritdoc />
+		protected override Task SerializeAsync(Stream stream)
+		{
+			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
+			{
+				// Write id and parent id.
+				writer.Write(Id);
+				writer.Write(ParentId);
+
+				string mapTypeStr;
+				switch (MapType)
+				{
+					case TextureMapType.SpecularMap:
+						mapTypeStr = "specular";
+						break;
+					case TextureMapType.NormalMap:
+						mapTypeStr = "bump";
+						break;
+					case TextureMapType.AmbientOcclusionMap:
+						mapTypeStr = "selfillu";
+						break;
+					default:
+						throw new InvalidOperationException($"Unexpected map type {MapType}.");
+				}
+
+				writer.Write(mapTypeStr.PadRight(TextureMapNameLength, '\0'), false);
+
+				writer.Write(MapChannel);
+
+				writer.WriteStruct(Attributes);
+
+				writer.Write(TgaTextureSize);
+				writer.Write(_creationTimeSinceEpoch);
+
+				writer.Write(Texture, '\0');
+			}
+
+			return Task.CompletedTask;
 		}
 	}
 }
