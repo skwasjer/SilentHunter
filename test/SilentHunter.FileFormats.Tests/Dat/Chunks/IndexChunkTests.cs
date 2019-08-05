@@ -57,7 +57,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 						FileOffset = 123456789
 					}
 				});
-			var instance = new IndexChunk
+			var chunk = new IndexChunk
 			{
 				ParentFile = parentFileMock.Object
 			};
@@ -65,7 +65,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 			using (var ms = new MemoryStream())
 			{
 				// Act
-				await instance.SerializeAsync(ms, false);
+				await chunk.SerializeAsync(ms, false);
 
 				// Assert
 				ms.ToArray().Should().BeEquivalentTo(expectedRawData);

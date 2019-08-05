@@ -44,27 +44,24 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		/// <summary>
 		/// Gets a list of index entries.
 		/// </summary>
-		public List<Entry> Entries { get; } = new List<Entry>();
+		public IList<Entry> Entries { get; set; } = new List<Entry>();
 
 		/// <summary>
 		/// Rebuilds the index by enumerating all chunks in the parent file.
 		/// </summary>
 		public void Rebuild()
 		{
-			Entries.Clear();
-
 			if (ParentFile != null)
 			{
-				Entries.AddRange(
-					ParentFile.Chunks
-						.Cast<DatChunk>()
-						.Where(chunk => chunk.SupportsId)
-						.Select(chunk => new Entry
-						{
-							Id = chunk.Id,
-							FileOffset = (int)chunk.FileOffset
-						})
-				);
+				Entries = ParentFile.Chunks
+					.Cast<DatChunk>()
+					.Where(chunk => chunk.SupportsId)
+					.Select(chunk => new Entry
+					{
+						Id = chunk.Id,
+						FileOffset = (int)chunk.FileOffset
+					})
+					.ToList();
 			}
 		}
 
@@ -73,17 +70,19 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		{
 			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
 			{
-				Entries.Clear();
+				var entries = new List<Entry>();
 
 				int indexItems = (int)(stream.Length - stream.Position) / Entry.Size;
 				for (int i = 0; i < indexItems; i++)
 				{
-					Entries.Add(new Entry
+					entries.Add(new Entry
 					{
 						Id = reader.ReadUInt64(),
 						FileOffset = reader.ReadInt32()
 					});
 				}
+
+				Entries = entries;
 			}
 
 			// Sometimes some extra invalid data (not divisible by 12) is here, problem seen mainly in some mods due to hex editing likely. Chunk will be correctly serialized upon next save.

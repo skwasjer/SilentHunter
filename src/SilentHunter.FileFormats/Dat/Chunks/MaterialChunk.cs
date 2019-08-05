@@ -4,15 +4,21 @@ using System.IO;
 using System.Threading.Tasks;
 using SilentHunter.FileFormats.Extensions;
 
-// http://www.jalix.org/ressources/graphics/3DS/_unofficials/3ds-info.txt
-
 namespace SilentHunter.FileFormats.Dat.Chunks
 {
+	/// <summary>
+	/// Represents the material chunk.
+	/// </summary>
+	[DebuggerDisplay("{ToString(),nq}: Opacity = {Opacity}, Diffuse = {Diffuse}, SpecularMode = {SpecularMode}, Specular = {Specular} Attributes = {Attributes}, Texture = {Texture}")]
 	public sealed class MaterialChunk : DatChunk
 	{
 		private long _creationTimeSinceEpoch;
+		private string _texture;
 		private static readonly DateTime Epoch = new DateTime(1970, 1, 1);
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MaterialChunk"/> class.
+		/// </summary>
 		public MaterialChunk()
 			: base(DatFile.Magics.Material)
 		{
@@ -28,12 +34,14 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		/// </summary>
 		public override bool SupportsId => true;
 
-		// http://people.scs.fsu.edu/~burkardt/data/mtl/mtl.html
-
 		/// <summary>
 		/// Gets or sets the material attributes.
 		/// </summary>
-		/// <remarks>Not all flags are supported/understood. Some flags are not used with non-explicit texture.</remarks>
+		/// <remarks>
+		/// Not all flags are supported/understood. Some flags are not used with auto detected texture references.
+		///
+		/// OBJ spec regarding material attributes: http://people.scs.fsu.edu/~burkardt/data/mtl/mtl.html
+		/// </remarks>
 		public MaterialAttributes Attributes { get; set; }
 
 		/// <summary>
@@ -42,20 +50,20 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		public byte Opacity { get; set; }
 
 		/// <summary>
-		/// Gets or sets the file size of an explicit texture, when stored as TGA. Even if the file is DDS, the size indicated matches that of a TGA.
+		/// Gets or sets the file size of a referenced texture, when stored as TGA. Even if the file is DDS, the size indicated matches that of a TGA.
 		/// </summary>
-		/// <remarks>This property is not available for non-explicit textures, nor does it's value matter a whole lot anyway. It's not used by the game and probably a old/legacy attribute of Ubi's own exporter tools.</remarks>
+		/// <remarks>This property is not available when <see cref="HasTextureReference" /> is <see langword="false" />, nor does it's value matter a whole lot anyway. It's not used by the game and probably a old/legacy attribute of Ubi's own exporter tools.</remarks>
 		public int TgaTextureSize { get; set; }
 
 		/// <summary>
-		/// Gets whether the material is an explicit/internal texture (this is true when texture size &lt;&gt; 0)
+		/// Gets whether the material references a texture by filename, or otherwise should autodetect from other meta data (like label chunk).
 		/// </summary>
-		public bool IsInternalResource => TgaTextureSize != 0;
+		public bool HasTextureReference => TgaTextureSize != 0;
 
 		/// <summary>
 		/// Gets or sets the file date/time of the texture.
 		/// </summary>
-		/// <remarks>This property is not available for non-explicit textures, nor does it's value matter a whole lot anyway. It's not used by the game and probably a old/legacy attribute of Ubi's own exporter tools.</remarks>
+		/// <remarks>This property is not available when <see cref="HasTextureReference" /> is <see langword="false" />, nor does it's value matter a whole lot anyway. It's not used by the game and probably a old/legacy attribute of Ubi's own exporter tools.</remarks>
 		public DateTime CreationTime
 		{
 			get => Epoch + TimeSpan.FromSeconds(_creationTimeSinceEpoch);
@@ -67,6 +75,9 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		/// </summary>
 		public Color Diffuse { get; set; }
 
+		/// <summary>
+		/// Gets or sets the specular mode.
+		/// </summary>
 		public SpecularMode SpecularMode { get; set; }
 
 		/// <summary>
@@ -80,7 +91,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		public byte SpecularStrength { get; set; }
 
 		/// <summary>
-		/// Gets or sets the glosiness ('shininess') component for specular lighting.
+		/// Gets or sets the glossiness ('shininess') component for specular lighting.
 		/// </summary>
 		public byte Glossiness { get; set; }
 
@@ -92,7 +103,11 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		/// <summary>
 		/// Gets or sets the file name of the texture. Must be null, when non-explicit texture is used.
 		/// </summary>
-		public string Texture { get; set; }
+		public string Texture
+		{
+			get => _texture ?? string.Empty;
+			set => _texture = value;
+		}
 
 		/// <summary>
 		/// Gets or sets flag indicating if z-buffer write mode is enabled. This is a shortcut for Attributes property.
@@ -100,14 +115,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		public bool ZBufferWriteEnabled
 		{
 			get => !Attributes.HasFlag(MaterialAttributes.DisableZBufferWrite);
-			set
-			{
-				Attributes = Attributes | MaterialAttributes.DisableZBufferWrite;
-				if (value)
-				{
-					Attributes ^= MaterialAttributes.DisableZBufferWrite;
-				}
-			}
+			set => Attributes = SetOrUnset(Attributes, MaterialAttributes.DisableZBufferWrite, !value);
 		}
 
 		/// <summary>
@@ -116,14 +124,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		public bool UseCounterClockwiseCulling
 		{
 			get => !Attributes.HasFlag(MaterialAttributes.CullNone);
-			set
-			{
-				Attributes = Attributes | MaterialAttributes.CullNone;
-				if (value)
-				{
-					Attributes ^= MaterialAttributes.CullNone;
-				}
-			}
+			set => Attributes = SetOrUnset(Attributes, MaterialAttributes.CullNone, !value);
 		}
 
 		/// <summary>
@@ -132,14 +133,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		public bool MinFilterLinear
 		{
 			get => Attributes.HasFlag(MaterialAttributes.MinFilterLinear);
-			set
-			{
-				Attributes = Attributes | MaterialAttributes.MinFilterLinear;
-				if (!value)
-				{
-					Attributes ^= MaterialAttributes.MinFilterLinear;
-				}
-			}
+			set => Attributes = SetOrUnset(Attributes, MaterialAttributes.MinFilterLinear, value);
 		}
 
 		/// <summary>
@@ -148,14 +142,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		public bool MagFilterLinear
 		{
 			get => Attributes.HasFlag(MaterialAttributes.MagFilterLinear);
-			set
-			{
-				Attributes = Attributes | MaterialAttributes.MagFilterLinear;
-				if (!value)
-				{
-					Attributes ^= MaterialAttributes.MagFilterLinear;
-				}
-			}
+			set => Attributes = SetOrUnset(Attributes, MaterialAttributes.MagFilterLinear, value);
 		}
 
 		/// <summary>
@@ -164,22 +151,13 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		public bool DxtCompression
 		{
 			get => !Attributes.HasFlag(MaterialAttributes.NoDxtCompression);
-			set
-			{
-				Attributes = Attributes | MaterialAttributes.NoDxtCompression;
-				if (value)
-				{
-					Attributes ^= MaterialAttributes.NoDxtCompression;
-				}
-			}
+			set => Attributes = SetOrUnset(Attributes, MaterialAttributes.NoDxtCompression, !value);
 		}
 
-		/// <summary>
-		/// Deserializes the chunk.
-		/// </summary>
-		/// <param name="stream">The stream to read from.</param>
+		/// <inheritdoc />
 		protected override Task DeserializeAsync(Stream stream)
 		{
+			// Base material is 36 bytes.
 			bool isExtendedMaterial = stream.Length >= 36;
 
 			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
@@ -187,6 +165,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 				// Read the id.
 				Id = reader.ReadUInt64();
 
+				// ReSharper disable once JoinDeclarationAndInitializer
 				Color clr;
 
 				// Diffuse color and opacity.
@@ -197,7 +176,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 				// Specular color and mode.
 				clr = reader.ReadStruct<Color>();
 				Specular = Color.FromArgb(byte.MaxValue, clr);
-				SpecularMode = (SpecularMode)Specular.A; // Mode is in alpha component.
+				SpecularMode = (SpecularMode)clr.A; // Mode is in alpha component.
 
 				// Other material properties.
 				SpecularStrength = reader.ReadByte();
@@ -214,9 +193,9 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 				TgaTextureSize = reader.ReadInt32();
 
 				// For support of incorrect files, we still look for more bytes, even if the resource is external.
-				if (IsInternalResource || isExtendedMaterial)
+				if (HasTextureReference || isExtendedMaterial)
 				{
-					if (!IsInternalResource)
+					if (!HasTextureReference)
 					{
 						TgaTextureSize = -1; // If extended material (stream len >= 36).
 					}
@@ -236,15 +215,18 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 						TgaTextureSize = 0;
 					}
 				}
+
+				// Some files contain more data, problem seen mainly in some mods due to hex editing likely. Chunk will be correctly serialized upon next save.
+				if (stream.Length > stream.Position)
+				{
+					stream.Position = stream.Length;
+				}
 			}
 
 			return Task.CompletedTask;
 		}
 
-		/// <summary>
-		/// Serializes the chunk.
-		/// </summary>
-		/// <param name="stream">The stream to write to.</param>
+		/// <inheritdoc />
 		protected override Task SerializeAsync(Stream stream)
 		{
 			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
@@ -268,7 +250,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 				writer.Write(byte.MinValue);
 				writer.Write((int)Attributes);
 
-				if (IsInternalResource)
+				if (HasTextureReference)
 				{
 					/*				if (_tgaTextureSize == -1)
 									{
@@ -302,15 +284,11 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 			return Task.CompletedTask;
 		}
 
-		/// <summary>
-		/// Returns a string that represents the current object.
-		/// </summary>
-		/// <returns>
-		/// A string that represents the current object.
-		/// </returns>
-		public override string ToString()
+		private static MaterialAttributes SetOrUnset(MaterialAttributes flags, MaterialAttributes bit, bool condition)
 		{
-			return base.ToString() + (Texture != null ? ": " + Texture : null);
+			return condition
+				? flags | bit
+				: flags & ~bit;
 		}
 	}
 }

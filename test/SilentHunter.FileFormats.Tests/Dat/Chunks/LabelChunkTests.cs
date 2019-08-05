@@ -55,7 +55,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		public async Task When_serializing_should_produce_correct_binary_data()
 		{
 			byte[] expectedRawData = { 0x7b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x54, 0x68, 0x69, 0x73, 0x20, 0x69, 0x73, 0x20, 0x6d, 0x79, 0x20, 0x6c, 0x61, 0x62, 0x65, 0x6c, 0x00 };
-			var instance = new LabelChunk
+			var chunk = new LabelChunk
 			{
 				ParentId = 123,
 				Text = "This is my label"
@@ -64,7 +64,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 			using (var ms = new MemoryStream())
 			{
 				// Act
-				await instance.SerializeAsync(ms, false);
+				await chunk.SerializeAsync(ms, false);
 
 				// Assert
 				ms.ToArray().Should().BeEquivalentTo(expectedRawData);
