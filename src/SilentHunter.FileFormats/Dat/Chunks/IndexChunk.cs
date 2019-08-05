@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -6,11 +7,16 @@ using System.Threading.Tasks;
 
 namespace SilentHunter.FileFormats.Dat.Chunks
 {
+	/// <summary>
+	/// Represents the index chunk, which stores chunk ids with their absolute file position.
+	/// </summary>
+	[DebuggerDisplay("{ToString(),nq}: {Entries.Count} entries")]
 	public sealed class IndexChunk : DatChunk
 	{
 		/// <summary>
 		/// Represents a file index of a chunk.
 		/// </summary>
+		[DebuggerDisplay("Id = {Id,nq}, FileOffset = {FileOffset,nq}")]
 		[StructLayout(LayoutKind.Sequential, Pack = 4)]
 		public struct Entry
 		{
@@ -27,18 +33,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 			/// <summary>
 			/// The size of this structure.
 			/// </summary>
-			public static readonly int Size = Marshal.SizeOf(typeof(Entry));
-
-			/// <summary>
-			/// Returns the fully qualified type name of this instance.
-			/// </summary>
-			/// <returns>
-			/// A <see cref="T:System.String" /> containing a fully qualified type name.
-			/// </returns>
-			public override string ToString()
-			{
-				return $"0x{Id:x16}, offset 0x{FileOffset:x8}";
-			}
+			internal static readonly int Size = Marshal.SizeOf(typeof(Entry));
 		}
 
 		public IndexChunk()
@@ -52,9 +47,28 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		public List<Entry> Entries { get; } = new List<Entry>();
 
 		/// <summary>
-		/// Deserializes the chunk.
+		/// Rebuilds the index by enumerating all chunks in the parent file.
 		/// </summary>
-		/// <param name="stream">The stream to read from.</param>
+		public void Rebuild()
+		{
+			Entries.Clear();
+
+			if (ParentFile != null)
+			{
+				Entries.AddRange(
+					ParentFile.Chunks
+						.Cast<DatChunk>()
+						.Where(chunk => chunk.SupportsId)
+						.Select(chunk => new Entry
+						{
+							Id = chunk.Id,
+							FileOffset = (int)chunk.FileOffset
+						})
+				);
+			}
+		}
+
+		/// <inheritdoc />
 		protected override Task DeserializeAsync(Stream stream)
 		{
 			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
@@ -72,7 +86,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 				}
 			}
 
-			// Some GWX IndexEntry chunks contain some extra invalid data (not divisible by 12). We fix this by forwarding to end of stream. Upon the next save, the index is rebuilt and the problem will restore itself.
+			// Sometimes some extra invalid data (not divisible by 12) is here, problem seen mainly in some mods due to hex editing likely. Chunk will be correctly serialized upon next save.
 			if (stream.Length > stream.Position)
 			{
 				stream.Position = stream.Length;
@@ -81,42 +95,21 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 			return Task.CompletedTask;
 		}
 
-		/// <summary>
-		/// Serializes the chunk.
-		/// </summary>
-		/// <param name="stream">The stream to write to.</param>
+		/// <inheritdoc />
 		protected override Task SerializeAsync(Stream stream)
 		{
 			Rebuild();
 
 			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
 			{
-				Entries.ForEach(entry =>
+				foreach (Entry entry in Entries)
 				{
 					writer.Write(entry.Id);
 					writer.Write(entry.FileOffset);
-				});
+				}
 			}
 
 			return Task.CompletedTask;
-		}
-
-		/// <summary>
-		/// Rebuilds the index by enumerating all chunks in the parent file.
-		/// </summary>
-		public void Rebuild()
-		{
-			Entries.Clear();
-
-			Entries.AddRange(
-				ParentFile.Chunks.Cast<DatChunk>()
-					.Where(chunk => chunk.SupportsId)
-					.Select(chunk => new Entry
-					{
-						Id = chunk.Id,
-						FileOffset = (int)chunk.FileOffset
-					})
-			);
 		}
 	}
 }

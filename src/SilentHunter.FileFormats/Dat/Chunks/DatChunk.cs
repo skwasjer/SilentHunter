@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using SilentHunter.FileFormats.ChunkedFiles;
 using SilentHunter.FileFormats.IO;
@@ -236,6 +237,18 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 					return reader.ReadAsync().GetAwaiter().GetResult();
 				}
 			}
+		}
+
+		protected T ReadUnknownData<T>(BinaryReader reader, Func<BinaryReader, T> func, string description)
+			where T : struct
+		{
+			int structSize = Marshal.SizeOf<T>();
+			long relativeOffset = reader.BaseStream.Position - structSize;
+			var regionStream = reader.BaseStream as RegionStream;
+			long absoluteOffset = regionStream?.BaseStream.Position - structSize ?? relativeOffset;
+			T value = func(reader);
+			UnknownData.Add(new UnknownChunkData(absoluteOffset, relativeOffset, value, description));
+			return value;
 		}
 	}
 }
