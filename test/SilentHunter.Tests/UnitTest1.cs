@@ -1,64 +1,53 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
+using System.Threading.Tasks;
 using FluentAssertions;
-using SilentHunter.Dat;
-using SilentHunter.Dat.Chunks;
-using SilentHunter.Dat.Controllers;
-using SilentHunter.Dat.Controllers.Compiler;
-using skwas.IO;
+using Microsoft.Extensions.DependencyInjection;
+using SilentHunter.FileFormats.Dat;
+using SilentHunter.FileFormats.Dat.Chunks;
+using SilentHunter.FileFormats.Dat.Controllers;
+using SilentHunter.Fixtures;
 using Xunit;
 
-namespace SilentHunter.Tests
+namespace SilentHunter
 {
-	public class UnitTest1
+	public class UnitTest1 : IClassFixture<CompiledControllersFixture>
 	{
+		private readonly CompiledControllersFixture _compiledControllers;
 		private const string GamePath = @"N:\Games\Silent Hunter 4 Wolves of the Pacific\Data\Terrain\Data";
 
-		[Fact(Skip = "No BFI")]
-		public void TestMethod1()
+		public UnitTest1(CompiledControllersFixture compiledControllers)
 		{
-			using (var reader = new BinaryReader(File.OpenRead(Path.Combine(GamePath, "TerrainData.BFI")), Encoding.ParseEncoding))
-			{
-				while (reader.BaseStream.Position < reader.BaseStream.Length)
-				{
-					var count = reader.ReadInt32();
-					for (var i = 0; i < count; i++)
-					{
-						var str = reader.ReadNullTerminatedString();
-						var sz = reader.ReadInt32();
-						Debug.WriteLine(str + ":" + sz);
-					}
-				}
-			}
+			_compiledControllers = compiledControllers;
 		}
 
+		//[Fact(Skip = "No BFI")]
+		//public void TestMethod1()
+		//{
+		//	using (var reader = new BinaryReader(File.OpenRead(Path.Combine(GamePath, "TerrainData.BFI")), FileEncoding.Default))
+		//	{
+		//		while (reader.BaseStream.Position < reader.BaseStream.Length)
+		//		{
+		//			var count = reader.ReadInt32();
+		//			for (var i = 0; i < count; i++)
+		//			{
+		//				var str = reader.ReadNullTerminatedString();
+		//				var sz = reader.ReadInt32();
+		//				Debug.WriteLine(str + ":" + sz);
+		//			}
+		//		}
+		//	}
+		//}
+
 		[Fact]
-		public void ErrorInReader()
+		public async Task ErrorInReader()
 		{
-			string controllerPath = @"..\..\..\..\..\src\SilentHunter.Controllers";
-
-#if NETFRAMEWORK
-			var compiler = new CSharpCompiler();
-#else
-			var compiler = new RoslynCompiler();
-#endif
-
-			var controllerAssemblyCompiler = new ControllerAssemblyCompiler(compiler, "SilentHunter.Tests", controllerPath)
-				.AssemblyName("Controllers")
-				.IgnorePaths(f => f.Contains(@"\obj\"));
-			ControllerAssembly assembly = controllerAssemblyCompiler.Compile();
-
-			ControllerAssembly.Current = assembly;
-
-			var x = ControllerAssembly.Current.HelpText["asd"];
+			var datFile = _compiledControllers.ServiceProvider.GetRequiredService<DatFile>();
 
 			using (var fs = File.OpenRead(@"N:\Games\SH Mods\Animated Fans (v1.2)\Data\Interior\NSS_Gato\error.dat"))
-			using (var datFile = new DatFile(false))
 			{
-				datFile.Load(fs);
+				await datFile.LoadAsync(fs);
 
 				datFile.Chunks.Should().NotBeEmpty();
 				var c = datFile.Chunks.OfType<ControllerDataChunk>().First();
@@ -66,51 +55,52 @@ namespace SilentHunter.Tests
 				dt.Should().NotBeNull();
 
 				string saveAs = @"N:\Games\SH Mods\Animated Fans (v1.2)\Data\Interior\NSS_Gato\error.dat.copy-of-unit-test.dat";
-				datFile.Save(saveAs);
+				await datFile.SaveAsync(saveAs);
 
 				using (var fs2 = File.OpenRead(saveAs))
 				{
-					datFile.Load(fs2);
+					await datFile.LoadAsync(fs2);
 				}
 			}
 		}
 
 		[Fact]
-		public void TestDat()
+		public async Task TestDat()
 		{
-			string controllerPath = @"..\..\..\..\..\src\SilentHunter.Controllers";
+			var ctrlAsm = _compiledControllers.ServiceProvider.GetRequiredService<ControllerAssembly>();
+			var datFile = _compiledControllers.ServiceProvider.GetRequiredService<DatFile>();
 
-#if NETFRAMEWORK
-			var compiler = new CSharpCompiler();
-#else
-			var compiler = new RoslynCompiler();
-#endif
-			var controllerAssemblyCompiler = new ControllerAssemblyCompiler(compiler, "SilentHunter.Tests", controllerPath)
-				.AssemblyName("Controllers")
-				.IgnorePaths(f => f.Contains(@"\obj\"));
-//			controllerAssemblyCompiler.CleanArtifacts();
-			ControllerAssembly assembly = controllerAssemblyCompiler.Compile();
-
-			ControllerAssembly.Current = assembly;
-
-			var x = ControllerAssembly.Current.HelpText["asd"];
-
-			using (var fs = File.OpenRead(@"N:\Games\SH Mods\Animated Fans (v1.2)\Data\Interior\NSS_Gato\NSS_Gato_CT.dat"))
-			using (var datFile = new DatFile(false))
+			//using (var fs = File.OpenRead(@"N:\Games\SH Mods\TriggerMaru_Overhaul_17\Data\Library\Torpedoes_US.sim"))
+			//using (var fs = File.OpenRead(@"N:\Games\SH Mods\Animated Fans (v1.2)\Data\Interior\NSS_Gato\NSS_Gato_CR.dat")) // List
+			//using (var fs = File.OpenRead(@"N:\Games\SH Mods\TriggerMaru_Overhaul_17\Data\Sea\AuxGunboat\AuxGunboat.zon")) // SHUnion
+			//using (var fs = File.OpenRead(@"N:\Games\SH Mods\TriggerMaru_Overhaul_17\Data\Scene.dat"))
+			//using (var fs = File.OpenRead(@"N:\Games\SH Mods\TriggerMaru_Overhaul_17\Data\Library\Particles.dat"))
+			//using (var fs = File.OpenRead(@"N:\Games\SH Mods\TriggerMaru_Overhaul_17\Data\Interior\CaptainRoom\CaptainRoom.dat"))
+			//using (var fs = File.OpenRead(@"N:\Games\SH Mods\Animated Fans (v1.2)\Data\Library\GraphFanBlades.dat"))
+			using (var fs = File.OpenRead(@"N:\Games\SH Mods\TriggerMaru_Overhaul_17\Data\Air\AFB_p38j\AFB_p38j.dat")) // RawList
 			{
-				datFile.Load(fs);
+				await datFile.LoadAsync(fs);
 
 				datFile.Chunks.Should().NotBeEmpty();
 				var c = datFile.Chunks.OfType<ControllerDataChunk>().First();
 				var dt = (object)c.ControllerData;
 				dt.Should().NotBeNull();
 
+				datFile.Chunks.OfType<ControllerDataChunk>()
+					.Select(cd => (Type)cd.ControllerData.GetType())
+					.Should()
+					.NotContain(v => v == typeof(byte[]));
+
 				string saveAs = @"N:\Games\SH Mods\Animated Fans (v1.2)\Data\Interior\NSS_Gato\NSS_Gato_CT.dat.copy-of-unit-test.dat";
-				datFile.Save(saveAs);
+				await datFile.SaveAsync(saveAs);
 
 				using (var fs2 = File.OpenRead(saveAs))
 				{
-					datFile.Load(fs2);
+					await datFile.LoadAsync(fs2);
+					datFile.Chunks.OfType<ControllerDataChunk>()
+						.Select(cd => (Type)cd.ControllerData.GetType())
+						.Should()
+						.NotContain(v => v == typeof(byte[]));
 				}
 			}
 		}
