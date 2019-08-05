@@ -5,8 +5,17 @@ using SilentHunter.FileFormats.Extensions;
 
 namespace SilentHunter.FileFormats.Dat.Chunks
 {
+	/// <summary>
+	/// Represents a controller identifier class.
+	/// </summary>
+	[DebuggerDisplay("{ToString(),nq}: {Name}")]
 	public sealed class ControllerChunk : DatChunk
 	{
+		private string _name;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ControllerChunk"/> class.
+		/// </summary>
 		public ControllerChunk()
 			: base(DatFile.Magics.Controller)
 		{
@@ -15,7 +24,11 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		/// <summary>
 		/// Gets or sets the controller name.
 		/// </summary>
-		public string Name { get; set; }
+		public string Name
+		{
+			get => _name ?? string.Empty;
+			set => _name = value;
+		}
 
 		/// <summary>
 		/// Gets whether the chunk supports an id field.
@@ -27,10 +40,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		/// </summary>
 		public override bool SupportsParentId => true;
 
-		/// <summary>
-		/// Deserializes the chunk.
-		/// </summary>
-		/// <param name="stream">The stream to read from.</param>
+		/// <inheritdoc />
 		protected override Task DeserializeAsync(Stream stream)
 		{
 			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
@@ -47,16 +57,19 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 				if (stream.Length > stream.Position)
 				{
 					Name = reader.ReadNullTerminatedString();
+
+					// Some files contain more data, problem seen mainly in some mods due to hex editing likely. Chunk will be correctly serialized upon next save.
+					if (stream.Length > stream.Position)
+					{
+						stream.Position = stream.Length;
+					}
 				}
 			}
 
 			return Task.CompletedTask;
 		}
 
-		/// <summary>
-		/// Serializes the chunk.
-		/// </summary>
-		/// <param name="stream">The stream to write to.</param>
+		/// <inheritdoc />
 		protected override Task SerializeAsync(Stream stream)
 		{
 			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
@@ -69,24 +82,10 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 				writer.Write(byte.MinValue);
 
 				// Write name + terminating zero.
-				if (!string.IsNullOrEmpty(Name))
-				{
-					writer.Write(Name, '\0');
-				}
+				writer.Write(Name, '\0');
 			}
 
 			return Task.CompletedTask;
-		}
-
-		/// <summary>
-		/// Returns a string that represents the current object.
-		/// </summary>
-		/// <returns>
-		/// A string that represents the current object.
-		/// </returns>
-		public override string ToString()
-		{
-			return base.ToString() + ": " + Name;
 		}
 	}
 }
