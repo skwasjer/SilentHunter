@@ -101,7 +101,7 @@ namespace SilentHunter.FileFormats.ChunkedFiles
 		protected virtual Task DeserializeAsync(Stream stream)
 		{
 			_size = stream.Length - stream.Position;
-			var buffer = new byte[_size];
+			var buffer = Bytes = new byte[_size];
 			return stream.ReadAsync(buffer, 0, (int)_size);
 		}
 
