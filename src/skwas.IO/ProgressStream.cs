@@ -179,15 +179,18 @@ namespace skwas.IO
 		/// </summary>
 		private void NotifyProgress()
 		{
-			long pos = Position;
-			long length = Length;
+			if (CanSeek || CanWrite || CanRead)
+			{
+				long pos = Position;
+				long length = Length;
 
-			// _progressInstance can be null as the class is spooling up or disposing.
-			_progressInstance?.Report(new Progress(
-				length > 0 ? (float)((decimal)pos / length) * 100 : 0,
-				pos,
-				length
-			));
+				// _progressInstance can be null as the class is spooling up or disposing.
+				_progressInstance?.Report(new Progress(
+					length > 0 ? (float)((decimal)pos / length) * 100 : 0,
+					pos,
+					length
+				));
+			}
 		}
 
 		/// <summary>
