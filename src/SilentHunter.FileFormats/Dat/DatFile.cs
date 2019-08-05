@@ -133,11 +133,7 @@ namespace SilentHunter.FileFormats.Dat
 						}
 
 						// S3D stores a special chunk that has no purpose anymore, so we get rid of it.
-						if (chunk.Magic == Magics.S3DSettings)
-						{
-							chunk.Dispose();
-						}
-						else
+						if (chunk.Magic != Magics.S3DSettings)
 						{
 							Chunks.Add(chunk);
 						}

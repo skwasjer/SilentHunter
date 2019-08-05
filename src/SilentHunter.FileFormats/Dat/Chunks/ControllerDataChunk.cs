@@ -13,7 +13,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		private readonly IControllerReader _controllerReader;
 		private readonly IControllerWriter _controllerWriter;
 		private readonly object _lockObject = new object();
-		private MemoryStream _unparsedControllerStream;
+		private byte[] _unparsedControllerData;
 		private long _origin, _localOrigin;
 		private object _parsedController;
 
@@ -22,19 +22,6 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		{
 			_controllerReader = controllerReader ?? throw new ArgumentNullException(nameof(controllerReader));
 			_controllerWriter = controllerWriter ?? throw new ArgumentNullException(nameof(controllerWriter));
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			try
-			{
-				base.Dispose(disposing);
-			}
-			finally
-			{
-				_unparsedControllerStream?.Dispose();
-				_unparsedControllerStream = null;
-			}
 		}
 
 		/// <summary>
@@ -51,17 +38,17 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 
 				lock (_lockObject)
 				{
-					if (_parsedController == null && _unparsedControllerStream != null)
+					if (_parsedController == null && _unparsedControllerData != null)
 					{
 						string controllerName = GetControllerName();
 
-						using (_unparsedControllerStream)
+						using (var ms = new MemoryStream(_unparsedControllerData))
 						{
 							// Attempt to deserialize.
-							_parsedController = _controllerReader.Read(_unparsedControllerStream, controllerName);
+							_parsedController = _controllerReader.Read(ms, controllerName);
 						}
 
-						_unparsedControllerStream = null;
+						_unparsedControllerData = null;
 					}
 				}
 
@@ -136,7 +123,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 				_origin = regionStream?.BaseStream.Position ?? _localOrigin;
 
 				// Read the raw unparsed controller data (we defer deserializing until property access).
-				_unparsedControllerStream = new MemoryStream(reader.ReadBytes((int)(stream.Length - _localOrigin)));
+				_unparsedControllerData = reader.ReadBytes((int)(stream.Length - _localOrigin));
 			}
 
 			return Task.CompletedTask;

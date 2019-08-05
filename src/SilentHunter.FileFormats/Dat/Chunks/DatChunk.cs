@@ -10,7 +10,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 	/// <summary>
 	/// Represents a base class for extending specific chunks. Alternatively, serves as a raw chunk for unknown magics.
 	/// </summary>
-	public class DatChunk : Chunk<DatFile.Magics>, IChunk<DatFile.Magics>, ICloneable, IDisposable
+	public class DatChunk : Chunk<DatFile.Magics>, IChunk<DatFile.Magics>, ICloneable
 	{
 		public const int ChunkHeaderSize = 12;
 
@@ -36,33 +36,6 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		{
 			SubType = subType;
 		}
-
-		~DatChunk()
-		{
-			Dispose(false);
-		}
-
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-
-		protected virtual void Dispose(bool disposing)
-		{
-			if (IsDisposed)
-			{
-				return;
-			}
-
-			if (disposing)
-			{
-			}
-
-			IsDisposed = true;
-		}
-
-		protected bool IsDisposed { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the chunk subtype.
