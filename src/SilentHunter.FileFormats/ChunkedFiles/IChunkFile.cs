@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace SilentHunter.FileFormats.ChunkedFiles
 {
-	public interface IChunkFile : IDisposable
+	public interface IChunkFile
 	{
 		IList Chunks { get; }
 	}

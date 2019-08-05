@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SilentHunter.FileFormats.ChunkedFiles
 {
-	public abstract class ChunkFile<TChunk> : IChunkFile
+	public abstract class ChunkFile<TChunk> : IChunkFile, IDisposable
 		where TChunk : class, IChunk
 	{
 		private ObservableCollection<TChunk> _chunks;
