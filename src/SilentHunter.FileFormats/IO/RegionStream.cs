@@ -77,12 +77,7 @@ namespace SilentHunter.FileFormats.IO
 		{
 			get
 			{
-				if (_disposed)
-				{
-					throw new ObjectDisposedException(GetType().Name);
-				}
-
-				return BaseStream.CanRead && _forReading;
+				return !_disposed && BaseStream.CanRead && _forReading;
 			}
 		}
 
@@ -96,12 +91,7 @@ namespace SilentHunter.FileFormats.IO
 		{
 			get
 			{
-				if (_disposed)
-				{
-					throw new ObjectDisposedException(GetType().Name);
-				}
-
-				return BaseStream.CanSeek;
+				return !_disposed && BaseStream.CanSeek;
 			}
 		}
 
@@ -115,12 +105,7 @@ namespace SilentHunter.FileFormats.IO
 		{
 			get
 			{
-				if (_disposed)
-				{
-					throw new ObjectDisposedException(GetType().Name);
-				}
-
-				return BaseStream.CanWrite && !_forReading;
+				return !_disposed && BaseStream.CanWrite && !_forReading;
 			}
 		}
 
@@ -130,6 +115,11 @@ namespace SilentHunter.FileFormats.IO
 		/// <exception cref="T:System.IO.IOException">An I/O error occurs. </exception>
 		public override void Flush()
 		{
+			if (_disposed)
+			{
+				throw new ObjectDisposedException(GetType().Name);
+			}
+
 			BaseStream.Flush();
 		}
 
@@ -228,14 +218,14 @@ namespace SilentHunter.FileFormats.IO
 				throw new ArgumentOutOfRangeException(nameof(count));
 			}
 
-			if (!CanRead)
-			{
-				throw new NotSupportedException();
-			}
-
 			if (_disposed)
 			{
 				throw new ObjectDisposedException(GetType().Name);
+			}
+
+			if (!CanRead)
+			{
+				throw new NotSupportedException();
 			}
 
 			// We are at end of stream?
@@ -345,14 +335,14 @@ namespace SilentHunter.FileFormats.IO
 		/// <exception cref="T:System.ObjectDisposedException"><see cref="M:System.IO.Stream.Write(System.Byte[],System.Int32,System.Int32)" /> was called after the stream was closed.</exception>
 		public override void Write(byte[] buffer, int offset, int count)
 		{
-			if (!CanWrite)
-			{
-				throw new NotSupportedException();
-			}
-
 			if (_disposed)
 			{
 				throw new ObjectDisposedException(GetType().Name);
+			}
+
+			if (!CanWrite)
+			{
+				throw new NotSupportedException();
 			}
 
 			// TODO: we can actually exceed the bounds of the region. Add range checks.
