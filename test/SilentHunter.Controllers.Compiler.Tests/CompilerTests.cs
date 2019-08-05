@@ -42,6 +42,7 @@ namespace SilentHunter.Controllers.Compiler.Tests
 
 		public virtual Task DisposeAsync()
 		{
+			// ReSharper disable once SuspiciousTypeConversion.Global - justification: our CSharpCompiler implements it
 			(_sut as IDisposable)?.Dispose();
 			return Task.CompletedTask;
 		}
