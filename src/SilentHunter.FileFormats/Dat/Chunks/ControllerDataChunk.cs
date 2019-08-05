@@ -138,15 +138,12 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 			ControllerChunk prevControllerChunk = null;
 			if (ParentFile.Chunks.Count > 0)
 			{
-				if (ParentFile is DatFile f)
-				{
-					// Find it by searching up.
-					prevControllerChunk = (ControllerChunk)f.Chunks
-						.Reverse()
-						.FirstOrDefault(c =>
-							c.Magic == DatFile.Magics.Controller && c.Id == ParentId
-						);
-				}
+				// Find parent by searching up (reverse).
+				prevControllerChunk = ParentFile.Chunks
+					.OfType<ControllerChunk>()
+					// TODO: LastOrDefault? Not efficient either, rather I want to have a more efficient iteration.
+					.Reverse()
+					.FirstOrDefault(c => c.Id == ParentId);
 			}
 
 			string controllerName = prevControllerChunk?.Name;

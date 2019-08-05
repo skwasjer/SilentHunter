@@ -8,16 +8,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Dat\Controllers\Serialization\ControllerSerializers\StateMachineController.rawchunk" />
+    <None Remove="Dat\Chunks\Model.chunkdata" />
+    <None Remove="Dat\Chunks\ModelWithNormals.chunkdata" />
+    <None Remove="Dat\Controllers\Serialization\ControllerSerializers\StateMachineController.chunkdata" />
     <None Remove="Sdl\SdlWithOneItem.sdl" />
     <None Remove="Sdl\SdlWithS3DHeader.sdl" />
     <None Remove="Sdl\SdlWithTwoItems.sdl" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Dat\Controllers\Serialization\ControllerSerializers\StateMachineController.rawchunk" />
+    <EmbeddedResource Include="Dat\Chunks\Model.chunkdata" />
+    <EmbeddedResource Include="Dat\Chunks\ModelWithNormals.chunkdata" />
+    <EmbeddedResource Include="Dat\Controllers\Serialization\ControllerSerializers\StateMachineController.chunkdata" />
     <EmbeddedResource Include="Sdl\SdlWithOneItem.sdl" />
     <EmbeddedResource Include="Sdl\SdlWithS3DHeader.sdl" />
+    <EmbeddedResource Include="Sdl\SdlWithTwoItems.sdl" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,10 +38,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\SilentHunter.FileFormats\SilentHunter.FileFormats.csproj" />
     <ProjectReference Include="..\SilentHunter.Testing\SilentHunter.Testing.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Sdl\SdlWithTwoItems.sdl" />
   </ItemGroup>
 
 </Project>

@@ -15,7 +15,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 			: base(DatFile.Magics.Node)
 		{
 			Visible = true;
-			UnknownData.Add(new UnknownChunkData(0, 0, byte.MinValue, "The byte just before the 'Visibility' byte. No idea what it means. Values found: 1, 2, 128, 64, possibly others."));
+			PushUnknownData(0, 0, byte.MinValue, "The byte just before the 'Visibility' byte. No idea what it means. Values found: 1, 2, 128, 64, possibly others.");
 			Transform = Matrix4x4.Identity;
 		}
 
@@ -136,10 +136,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 				ParentId = reader.ReadUInt64();
 				ModelId = reader.ReadUInt64();
 
-				UnknownData.Add(new UnknownChunkData(regionStream?.BaseStream.Position ?? stream.Position,
-					stream.Position,
-					reader.ReadByte(),
-					"The byte just before the 'Visibility' byte. No idea what it means. Values found: 1, 2, 128, 64, possibly others."));
+				ReadUnknownData(reader, r => r.ReadByte(), "The byte just before the 'Visibility' byte. No idea what it means. Values found: 1, 2, 128, 64, possibly others.");
 
 #if DEBUG
 				//				if ((byte)UnknownData[0].Data != byte.MinValue)
@@ -201,7 +198,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 						// Read a 0.
 						Light.Reserved0 = reader.ReadUInt32();
 
-						_light.Type = (LightType)reader.ReadInt32();
+						_light.Type = reader.ReadStruct<LightType>();
 
 						// Ignore alpha component.
 						_light.Color = Color.FromArgb(byte.MaxValue, reader.ReadStruct<Color>());
@@ -227,10 +224,10 @@ namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 						int size = reader.ReadInt32();
 						if (size > 0)
 						{
-							UnknownData.Add(new UnknownChunkData(basePos,
+							PushUnknownData(basePos,
 								curPos,
 								size,
-								"Array size specifier. Some chunks with subtype 100 seem to have this size specifier, followed by an int-array of data. The 'size' seems to match the number of vertices of a linked model, and looks to be related to animation. In most cases though, this specifier is just 0 and the final data of the chunk."));
+								"Array size specifier. Some chunks with subtype 100 seem to have this size specifier, followed by an int-array of data. The 'size' seems to match the number of vertices of a linked model, and looks to be related to animation. In most cases though, this specifier is just 0 and the final data of the chunk.");
 
 							var remainingIntData = new int[size];
 							for (int i = 0; i < size; i++)
@@ -238,10 +235,10 @@ namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 								remainingIntData[i] = reader.ReadInt32();
 							}
 
-							UnknownData.Add(new UnknownChunkData(basePos + 4,
+							PushUnknownData(basePos + 4,
 								curPos + 4,
 								remainingIntData,
-								"Array. Some chunks with subtype 100 seem to have this array of ints.  The number of items seems to match the number of vertices of a linked model, and looks to be related to animation."));
+								"Array. Some chunks with subtype 100 seem to have this array of ints.  The number of items seems to match the number of vertices of a linked model, and looks to be related to animation.");
 						}
 
 						if (stream.Length > stream.Position)
@@ -294,13 +291,13 @@ namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 					case 2:
 						writer.Write(Light.Reserved0);
 
-						writer.Write((int)Light.Type);
+						writer.WriteStruct(Light.Type);
 						// Ignore alpha component.
 						writer.WriteStruct(Color.FromArgb(byte.MinValue, Light.Color));
 						writer.Write(Light.Attenuation);
 						if (Light.Type == LightType.Omni)
 						{
-							writer.WriteStruct(Light.Radius);
+							writer.Write(Light.Radius);
 						}
 
 						break;

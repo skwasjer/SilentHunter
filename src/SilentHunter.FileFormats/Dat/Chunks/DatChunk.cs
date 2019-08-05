@@ -247,8 +247,13 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 			var regionStream = reader.BaseStream as RegionStream;
 			long absoluteOffset = regionStream?.BaseStream.Position - structSize ?? relativeOffset;
 			T value = func(reader);
-			UnknownData.Add(new UnknownChunkData(absoluteOffset, relativeOffset, value, description));
+			PushUnknownData(absoluteOffset, relativeOffset, value, description);
 			return value;
+		}
+
+		protected void PushUnknownData<T>(long absoluteOffset, long relativeOffset, T data, string description)
+		{
+			UnknownData.Add(new UnknownChunkData(absoluteOffset, relativeOffset, data, description));
 		}
 	}
 }

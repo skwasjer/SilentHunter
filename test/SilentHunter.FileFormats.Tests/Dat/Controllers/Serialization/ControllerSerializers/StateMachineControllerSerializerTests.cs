@@ -22,7 +22,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization.ControllerSeria
 			_sut = new StateMachineControllerSerializer();
 			_controller = new Mock<StateMachineController>().Object;
 
-			_rawControllerData = GetType().Assembly.GetManifestResourceStream(GetType(), "StateMachineController.rawchunk").ToArray();
+			_rawControllerData = GetType().Assembly.GetManifestResourceStream(GetType(), "StateMachineController.chunkdata").ToArray();
 		}
 
 		[Fact]
