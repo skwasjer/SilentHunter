@@ -8,21 +8,37 @@ using SilentHunter.FileFormats.IO;
 
 namespace SilentHunter.FileFormats.Dat.Chunks
 {
+	/// <summary>
+	/// Represents a controller data chunk.
+	/// </summary>
 	public sealed class ControllerDataChunk : DatChunk
 	{
 		private readonly IControllerReader _controllerReader;
 		private readonly IControllerWriter _controllerWriter;
 		private readonly object _lockObject = new object();
 		private byte[] _unparsedControllerData;
-		private long _origin, _localOrigin;
+		private long _absolutePosition, _relativePosition;
 		private object _parsedController;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ControllerDataChunk"/> class.
+		/// </summary>
+		/// <param name="controllerReader">The controller reader.</param>
+		/// <param name="controllerWriter">The controller writer.</param>
 		public ControllerDataChunk(IControllerReader controllerReader, IControllerWriter controllerWriter)
 			: base(DatFile.Magics.ControllerData)
 		{
 			_controllerReader = controllerReader ?? throw new ArgumentNullException(nameof(controllerReader));
 			_controllerWriter = controllerWriter ?? throw new ArgumentNullException(nameof(controllerWriter));
 		}
+
+		/// <inheritdoc />
+		public override bool SupportsParentId => true;
+
+		/// <summary>
+		/// Gets the controller name. Returns <see cref="string.Empty"/> if the controller has not yet been read/parsed (by accessing <see cref="ControllerData"/> property).
+		/// </summary>
+		public string ControllerName => _parsedController?.GetType().Name ?? string.Empty;
 
 		/// <summary>
 		/// Gets or sets the controller.
@@ -55,8 +71,8 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 				// If controller data is a byte array, the controller was not deserialized. Either it's not implemented, or the data or the implementation contains a bug.
 				if (_parsedController is byte[])
 				{
-					UnknownData.Add(new UnknownChunkData(_origin,
-						_localOrigin,
+					UnknownData.Add(new UnknownChunkData(_absolutePosition,
+						_relativePosition,
 						_parsedController,
 						"Failed to read controller data. Either the data contains a bug, or S3D's controller definition is missing or incorrect."));
 				}
@@ -65,41 +81,14 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 			}
 			set
 			{
-				if (value == null)
-				{
-					throw new ArgumentNullException();
-				}
-
 				lock (_lockObject)
 				{
 					_parsedController = value;
-					UnknownData.Clear();
 				}
 			}
 		}
 
-		/// <summary>
-		/// Gets the controller name. Returns <see cref="string.Empty"/> if the controller has not yet been read/parsed (by accessing <see cref="ControllerData"/> property).
-		/// </summary>
-		public string ControllerName => _parsedController?.GetType().Name ?? string.Empty;
-
-		public override bool SupportsParentId => true;
-
-		protected override Task SerializeAsync(Stream stream)
-		{
-			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
-			{
-				writer.Write(ParentId);
-
-				// Always zero.
-				writer.Write((ulong)0);
-
-				_controllerWriter.Write(stream, ControllerData);
-			}
-
-			return Task.CompletedTask;
-		}
-
+		/// <inheritdoc />
 		protected override Task DeserializeAsync(Stream stream)
 		{
 			lock (_lockObject)
@@ -119,11 +108,35 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 				Debug.Assert(alwaysZero == 0, "Expected 0.");
 
 				// Cache position.
-				_localOrigin = stream.Position;
-				_origin = regionStream?.BaseStream.Position ?? _localOrigin;
+				_relativePosition = stream.Position;
+				_absolutePosition = regionStream?.BaseStream.Position ?? _relativePosition;
 
 				// Read the raw unparsed controller data (we defer deserializing until property access).
-				_unparsedControllerData = reader.ReadBytes((int)(stream.Length - _localOrigin));
+				_unparsedControllerData = reader.ReadBytes((int)(stream.Length - _relativePosition));
+			}
+
+			return Task.CompletedTask;
+		}
+
+		/// <inheritdoc />
+		protected override Task SerializeAsync(Stream stream)
+		{
+			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
+			{
+				writer.Write(ParentId);
+
+				// Always zero.
+				writer.Write((ulong)0);
+
+				// The controller has not been parsed yet, so we can simply write the unparsed data.
+				if (_unparsedControllerData != null && _parsedController == null)
+				{
+					writer.Write(_unparsedControllerData, 0, _unparsedControllerData.Length);
+				}
+				else if (_parsedController != null)
+				{
+					_controllerWriter.Write(stream, _parsedController);
+				}
 			}
 
 			return Task.CompletedTask;
@@ -136,7 +149,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		private string GetControllerName()
 		{
 			ControllerChunk prevControllerChunk = null;
-			if (ParentFile.Chunks.Count > 0)
+			if (ParentFile?.Chunks.Count > 0)
 			{
 				// Find parent by searching up (reverse).
 				prevControllerChunk = ParentFile.Chunks
