@@ -38,9 +38,7 @@ namespace SilentHunter.Controllers.Compiler
 			{
 				GenerateExecutable = false,
 				GenerateInMemory = false,
-#if DEBUG
 				IncludeDebugInformation = true,
-#endif
 				TreatWarningsAsErrors = false
 			};
 		}
