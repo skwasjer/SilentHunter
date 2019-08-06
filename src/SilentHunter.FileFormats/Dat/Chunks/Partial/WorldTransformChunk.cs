@@ -6,12 +6,32 @@ using SilentHunter.FileFormats.Extensions;
 namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 {
 #if DEBUG
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <remarks>
+	/// Probably not the best name for this chunk. Also, not even sure if its actually what it is.
+	/// </remarks>
 	public sealed class WorldTransformChunk : DatChunk
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="WorldTransformChunk"/>.
+		/// </summary>
+		public WorldTransformChunk()
+			: base(DatFile.Magics.WorldTransform)
+		{
+		}
+
 		private Vector3 _worldTranslation, _worldRotation;
 
+		/// <summary>
+		/// Gets the transform based on <see cref="Rotation"/> and <see cref="Translation"/>.
+		/// </summary>
 		public Matrix4x4 Transform { get; private set; }
 
+		/// <summary>
+		/// Gets or sets the world rotation?
+		/// </summary>
 		public Vector3 Rotation
 		{
 			get => _worldRotation;
@@ -22,6 +42,9 @@ namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the world translation?
+		/// </summary>
 		public Vector3 Translation
 		{
 			get => _worldTranslation;
@@ -30,11 +53,6 @@ namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 				_worldTranslation = value;
 				UpdateMatrix();
 			}
-		}
-
-		public WorldTransformChunk()
-			: base(DatFile.Magics.WorldTransform)
-		{
 		}
 
 		private void UpdateMatrix()
@@ -47,10 +65,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 			Transform = m;
 		}
 
-		/// <summary>
-		/// Deserializes the chunk.
-		/// </summary>
-		/// <param name="stream">The stream to read from.</param>
+		/// <inheritdoc />
 		protected override Task DeserializeAsync(Stream stream)
 		{
 			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
@@ -63,10 +78,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 			return Task.CompletedTask;
 		}
 
-		/// <summary>
-		/// Serializes the chunk.
-		/// </summary>
-		/// <param name="stream">The stream to write to.</param>
+		/// <inheritdoc />
 		protected override Task SerializeAsync(Stream stream)
 		{
 			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))

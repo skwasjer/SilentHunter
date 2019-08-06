@@ -6,8 +6,17 @@ using SilentHunter.FileFormats.Extensions;
 
 namespace SilentHunter.FileFormats.Dat.Chunks
 {
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <remarks>
+	/// Probably poorly named.
+	/// </remarks>
 	public sealed class BoneInfluencesChunk : DatChunk
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="BoneInfluencesChunk"/> class.
+		/// </summary>
 		public BoneInfluencesChunk()
 			: base(DatFile.Magics.BoneInfluences)
 		{
@@ -58,12 +67,11 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		/// </summary>
 		public override bool SupportsParentId => true;
 
+		/// <summary>
+		/// </summary>
 		public List<BoneInfluence> WeightsAndIndices { get; }
 
-		/// <summary>
-		/// Deserializes the chunk.
-		/// </summary>
-		/// <param name="stream">The stream to read from.</param>
+		/// <inheritdoc />
 		protected override Task DeserializeAsync(Stream stream)
 		{
 			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
@@ -83,10 +91,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 			return Task.CompletedTask;
 		}
 
-		/// <summary>
-		/// Serializes the chunk.
-		/// </summary>
-		/// <param name="stream">The stream to write to.</param>
+		/// <inheritdoc />
 		protected override Task SerializeAsync(Stream stream)
 		{
 			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))

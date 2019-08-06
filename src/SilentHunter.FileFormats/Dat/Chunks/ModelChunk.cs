@@ -20,13 +20,21 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 	[Flags]
 	public enum ModelType : byte
 	{
+#pragma warning disable 1591
 		None = 0,
 		Animation = 0x2,
 		Model = 0x4
+#pragma warning restore 1591
 	}
 
+	/// <summary>
+	/// Represents the model chunk.
+	/// </summary>
 	public sealed class ModelChunk : DatChunk
 	{
+		/// <summary>
+		/// Initializes a new instance of the model chunk.
+		/// </summary>
 		public ModelChunk()
 			: base(DatFile.Magics.Model)
 		{
@@ -39,18 +47,39 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 			MaterialIndices = new byte[0];
 		}
 
+		/// <summary>
+		/// Gets or sets the model type?
+		/// </summary>
 		public ModelType Type { get; set; }
 
+		/// <summary>
+		/// Gets or sets the vertices.
+		/// </summary>
 		public IList<Vector3> Vertices { get; set; }
 
+		/// <summary>
+		/// Gets or sets the texture coordinates.
+		/// </summary>
 		public IList<Vector2> TextureCoordinates { get; set; }
 
+		/// <summary>
+		/// Gets or sets the normals.
+		/// </summary>
 		public IList<Vector3> Normals { get; set; }
 
+		/// <summary>
+		/// Gets or sets the vertex indices.
+		/// </summary>
 		public IList<ushort> VertexIndices { get; set; }
 
+		/// <summary>
+		/// Gets or sets the texture indices.
+		/// </summary>
 		public IList<UvMap> TextureIndices { get; set; }
 
+		/// <summary>
+		/// Gets or sets the material indices.
+		/// </summary>
 		public IList<byte> MaterialIndices { get; set; }
 
 		/// <summary>
@@ -58,10 +87,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		/// </summary>
 		public override bool SupportsId => true;
 
-		/// <summary>
-		/// Deserializes the chunk.
-		/// </summary>
-		/// <param name="stream">The stream to read from.</param>
+		/// <inheritdoc />
 		protected override Task DeserializeAsync(Stream stream)
 		{
 			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
@@ -180,10 +206,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 			return verts;
 		}
 
-		/// <summary>
-		/// Serializes the chunk.
-		/// </summary>
-		/// <param name="stream">The stream to write to.</param>
+		/// <inheritdoc />
 		protected override Task SerializeAsync(Stream stream)
 		{
 			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))

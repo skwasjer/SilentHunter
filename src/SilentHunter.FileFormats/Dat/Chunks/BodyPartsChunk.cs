@@ -6,14 +6,24 @@ using SilentHunter.FileFormats.Extensions;
 
 namespace SilentHunter.FileFormats.Dat.Chunks
 {
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <remarks>
+	/// Probably poorly named.
+	/// </remarks>
 	public sealed class BodyPartsChunk : DatChunk
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="BodyPartsChunk"/> class.
+		/// </summary>
 		public BodyPartsChunk()
 			: base(DatFile.Magics.BodyParts)
 		{
 			Parts = new List<string>();
 		}
 
+		/// <inheritdoc />
 		public override ulong Id
 		{
 			get => base.Id;
@@ -28,6 +38,9 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 			}
 		}
 
+		/// <summary>
+		/// Gets the part names.
+		/// </summary>
 		public List<string> Parts { get; }
 
 		/// <summary>

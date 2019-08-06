@@ -9,8 +9,14 @@ using SilentHunter.FileFormats.IO;
 
 namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 {
+	/// <summary>
+	/// The node chunk.
+	/// </summary>
 	public sealed class NodeChunk : DatChunk
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="NodeChunk"/>.
+		/// </summary>
 		public NodeChunk()
 			: base(DatFile.Magics.Node)
 		{
@@ -27,6 +33,9 @@ namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 		// Sub type 3: ??
 		private Interior _interior;
 
+		/// <summary>
+		/// Gets light(ing) info.
+		/// </summary>
 		public Light Light
 		{
 			get
@@ -49,6 +58,9 @@ namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 			}
 		}
 
+		/// <summary>
+		/// Gets interior (root node) info.
+		/// </summary>
 		public Interior Interior
 		{
 			get
@@ -71,8 +83,14 @@ namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 			}
 		}
 
+		/// <summary>
+		/// Gets the model id.
+		/// </summary>
 		public ulong ModelId { get; set; }
 
+		/// <summary>
+		/// Gets a list of material ids.
+		/// </summary>
 		public List<ulong> Materials { get; } = new List<ulong>();
 
 		/// <summary>
@@ -126,6 +144,9 @@ namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 			Transform = m;
 		}
 
+		/// <summary>
+		/// Gets the transform based on <see cref="Rotation"/> and <see cref="Translation"/>.
+		/// </summary>
 		public Matrix4x4 Transform { get; private set; }
 
 		/// <summary>
@@ -138,10 +159,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 		/// </summary>
 		public override bool SupportsParentId => true;
 
-		/// <summary>
-		/// Deserializes the chunk.
-		/// </summary>
-		/// <param name="stream">The stream to read from.</param>
+		/// <inheritdoc />
 		protected override Task DeserializeAsync(Stream stream)
 		{
 			var regionStream = stream as RegionStream;
@@ -157,23 +175,20 @@ namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 				ReadUnknownData(reader, r => r.ReadByte(), "The byte just before the 'Visibility' byte. No idea what it means. Values found: 1, 2, 128, 64, possibly others.");
 
 #if DEBUG
-				//				if ((byte)UnknownData[0].Data != byte.MinValue)
-				//					Debug.WriteLine(GetBaseStreamName(stream) + "\r\n\tNodeLink-Unknown1: " + UnknownData[0].Data);
-
 				// Data\Library\Characters\SECONDARY.dat
-				// 	NodeLink-Unknown1: 1
+				// 	Unknown1: 1
 				// Data\Library\AntiSubNet.dat
-				// 	NodeLink-Unknown1: 2
+				// 	Unknown1: 2
 				// Data\Library\NavalMine.dat
-				// 	NodeLink-Unknown1: 2
+				// 	Unknown1: 2
 				// Data\Library\EventCamera.dat
-				// 	NodeLink-Unknown1: 128
-				// 	NodeLink-Unknown1: 128
-				// 	NodeLink-Unknown1: 128
-				// 	NodeLink-Unknown1: 128
+				// 	Unknown1: 128
+				// 	Unknown1: 128
+				// 	Unknown1: 128
+				// 	Unknown1: 128
 				// Data\scene.dat
-				// 	NodeLink-Unknown1: 64
-				// 	NodeLink-Unknown1: 64
+				// 	Unknown1: 64
+				// 	Unknown1: 64
 #endif
 
 				Visible = reader.ReadByte() > 0;
@@ -277,10 +292,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 			return Task.CompletedTask;
 		}
 
-		/// <summary>
-		/// Serializes the chunk.
-		/// </summary>
-		/// <param name="stream">The stream to write to.</param>
+		/// <inheritdoc />
 		protected override Task SerializeAsync(Stream stream)
 		{
 			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))

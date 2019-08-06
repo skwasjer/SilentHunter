@@ -6,13 +6,23 @@ using SilentHunter.FileFormats.Extensions;
 namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 {
 #if DEBUG
+	/// <summary>
+	/// </summary>
+	/// <remarks>
+	/// Largely unknown chunk (not released).
+	/// </remarks>
 	public sealed class Animation1Chunk : DatChunk
 	{
+		/// <summary>
+		/// </summary>
 		public Animation1Chunk()
 			: base(DatFile.Magics.Animation1)
 		{
 		}
 
+		/// <summary>
+		/// Gets or sets the name.
+		/// </summary>
 		public string Name { get; set; }
 
 		/// <summary>
@@ -59,10 +69,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 		/// </summary>
 		public override bool SupportsParentId => true;
 
-		/// <summary>
-		/// Deserializes the chunk.
-		/// </summary>
-		/// <param name="stream">The stream to read from.</param>
+		/// <inheritdoc />
 		protected override Task DeserializeAsync(Stream stream)
 		{
 			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
@@ -86,10 +93,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 			return Task.CompletedTask;
 		}
 
-		/// <summary>
-		/// Serializes the chunk.
-		/// </summary>
-		/// <param name="stream">The stream to write to.</param>
+		/// <inheritdoc />
 		protected override Task SerializeAsync(Stream stream)
 		{
 			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
@@ -111,12 +115,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 			return Task.CompletedTask;
 		}
 
-		/// <summary>
-		/// Returns a string that represents the current object.
-		/// </summary>
-		/// <returns>
-		/// A string that represents the current object.
-		/// </returns>
+		/// <inheritdoc />
 		public override string ToString()
 		{
 			return base.ToString() + ": " + Name;

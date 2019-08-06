@@ -5,8 +5,17 @@ using SilentHunter.FileFormats.Extensions;
 
 namespace SilentHunter.FileFormats.Dat.Chunks
 {
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <remarks>
+	/// The type name is somewhat poor choice.
+	/// </remarks>
 	public sealed class PlacementChunk : DatChunk
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="PlacementChunk"/>.
+		/// </summary>
 		public PlacementChunk()
 			: base(DatFile.Magics.Placement)
 		{
@@ -37,10 +46,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		/// </summary>
 		public ulong NodeId { get; set; }
 
-		/// <summary>
-		/// Deserializes the chunk.
-		/// </summary>
-		/// <param name="stream">The stream to read from.</param>
+		/// <inheritdoc />
 		protected override Task DeserializeAsync(Stream stream)
 		{
 			using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
@@ -57,10 +63,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 			return Task.CompletedTask;
 		}
 
-		/// <summary>
-		/// Serializes the chunk.
-		/// </summary>
-		/// <param name="stream">The stream to write to.</param>
+		/// <inheritdoc />
 		protected override Task SerializeAsync(Stream stream)
 		{
 			using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))

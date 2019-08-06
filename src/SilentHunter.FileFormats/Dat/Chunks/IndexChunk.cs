@@ -36,6 +36,9 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 			internal static readonly int Size = Marshal.SizeOf(typeof(Entry));
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="IndexChunk"/> class.
+		/// </summary>
 		public IndexChunk()
 			: base(DatFile.Magics.Index)
 		{

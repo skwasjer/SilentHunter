@@ -5,8 +5,15 @@ using System.Threading.Tasks;
 namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 {
 #if DEBUG
+	/// <summary>
+	/// </summary>
+	/// <remarks>
+	/// Largely unknown chunk (not released).
+	/// </remarks>
 	public sealed class Animation0Chunk : DatChunk
 	{
+		/// <summary>
+		/// </summary>
 		public Animation0Chunk()
 			: base(DatFile.Magics.Animation0)
 		{

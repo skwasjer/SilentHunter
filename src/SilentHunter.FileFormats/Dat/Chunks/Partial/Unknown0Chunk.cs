@@ -1,6 +1,6 @@
-namespace SilentHunter.FileFormats.Dat.Chunks.Partial
+﻿namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 {
-#if DEBUG1
+#if WIP
 	public sealed class Unknown0Chunk : DatChunk
 	{
 		public Unknown0()

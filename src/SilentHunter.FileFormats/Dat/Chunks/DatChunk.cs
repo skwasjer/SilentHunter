@@ -13,6 +13,9 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 	/// </summary>
 	public class DatChunk : Chunk<DatFile.Magics>, IChunk<DatFile.Magics>, ICloneable
 	{
+		/// <summary>
+		/// Gets the DAT-chunk header size (a header consists of a type (int), sub type (int) and chunk size (int)).
+		/// </summary>
 		public const int ChunkHeaderSize = 12;
 
 		private ulong _id, _parentId;
@@ -94,6 +97,9 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 
 		private List<UnknownChunkData> _unknownData;
 
+		/// <summary>
+		/// Gets the unknown data.
+		/// </summary>
 		public List<UnknownChunkData> UnknownData => _unknownData ?? (_unknownData = new List<UnknownChunkData>());
 
 		/// <summary>
@@ -208,17 +214,13 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 			}
 		}
 
-		/// <summary>
-		/// Returns a string that represents the current object.
-		/// </summary>
-		/// <returns>
-		/// A string that represents the current object.
-		/// </returns>
+		/// <inheritdoc />
 		public override string ToString()
 		{
 			return Enum.IsDefined(typeof(DatFile.Magics), Magic) ? Magic.ToString() : GetType().Name;
 		}
 
+		/// <inheritdoc />
 		public virtual object Clone()
 		{
 			using (var ms = new MemoryStream())
@@ -237,6 +239,14 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 			}
 		}
 
+		/// <summary>
+		/// Reads data with the <paramref name="reader"/> using specified <paramref name="func"/> and registers it as 'unknown' data.
+		/// </summary>
+		/// <typeparam name="T">The data type.</typeparam>
+		/// <param name="reader">The reader.</param>
+		/// <param name="func">The func providing the data.</param>
+		/// <param name="description">The description of it, if any</param>
+		/// <returns>Returns the value read using the <paramref name="func"/>.</returns>
 		protected T ReadUnknownData<T>(BinaryReader reader, Func<BinaryReader, T> func, string description)
 			where T : struct
 		{
@@ -249,6 +259,14 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 			return value;
 		}
 
+		/// <summary>
+		/// Registers data as 'unknown' data, at a specific <paramref name="absoluteOffset"/> and <paramref name="relativeOffset"/>.
+		/// </summary>
+		/// <typeparam name="T">The data type.</typeparam>
+		/// <param name="absoluteOffset">The absolute offset where the data is located in the file.</param>
+		/// <param name="relativeOffset">The relative offset in relation to this chunk where the data is located.</param>
+		/// <param name="data">The value.</param>
+		/// <param name="description">The description of it, if any</param>
 		protected void PushUnknownData<T>(long absoluteOffset, long relativeOffset, T data, string description)
 		{
 			UnknownData.Add(new UnknownChunkData(absoluteOffset, relativeOffset, data, description));
