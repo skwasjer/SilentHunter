@@ -236,12 +236,11 @@ namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 
 							// Ignore alpha component.
 							Color = Color.FromArgb(byte.MaxValue, reader.ReadStruct<Color>()),
-							Attenuation = reader.ReadSingle(),
-
+							Attenuation = reader.ReadSingle()
 						};
 
 						// Omni lights have an additional float value.
-						light.Radius = _light.Type == LightType.Omni ? reader.ReadSingle() : 0;
+						light.Radius = light.Type == LightType.Omni ? reader.ReadSingle() : 0;
 
 						Light = light;
 
