@@ -5,13 +5,16 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using SilentHunter.Controllers;
 using SilentHunter.FileFormats.Extensions;
 
 namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 {
+	/// <summary>
+	/// Serializes and deserializes <see cref="SHUnion{TTypeA,TTypeB}"/>.
+	/// </summary>
 	public class SHUnionValueSerializer : IControllerValueSerializer
 	{
+		// ReSharper disable once InconsistentNaming
 		private class SHUnionPropertyCache
 		{
 			public PropertyInfo TypeProperty { get; set; }
@@ -20,17 +23,20 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 
 		private static readonly IDictionary<Type, SHUnionPropertyCache> PropertyCache = new ConcurrentDictionary<Type, SHUnionPropertyCache>();
 
+		/// <inheritdoc />
 		public bool IsSupported(ControllerSerializationContext context)
 		{
 			return context.Type.IsClosedTypeOf(typeof(SHUnion<,>));
 		}
 
+		/// <inheritdoc />
 		public void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext, object value)
 		{
 			SHUnionPropertyCache propertyCache = GetCachedProperties(serializationContext.Type);
 			writer.WriteStruct(propertyCache.ValueProperty.GetValue(value, null));
 		}
 
+		/// <inheritdoc />
 		public object Deserialize(BinaryReader reader, ControllerSerializationContext serializationContext)
 		{
 			long dataSize = reader.BaseStream.Length - reader.BaseStream.Position;

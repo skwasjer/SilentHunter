@@ -4,25 +4,23 @@ using SilentHunter.FileFormats.Extensions;
 namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 {
 	/// <summary>
-	/// Serializer that reads/writes data as structs.
+	/// Serializes and deserializes value types.
 	/// </summary>
-	/// <remarks>
-	/// Because value types can contain primitives that are not (de)serializable with ReadStruct/WriteStruct, we have to enumerate all fields separately then.
-	///
-	/// </remarks>
 	public class ValueTypeSerializer : IControllerValueSerializer
 	{
+		/// <inheritdoc />
 		public bool IsSupported(ControllerSerializationContext context)
 		{
-			// context.Type.IsPrimitive || context.Type.IsEnum ||
 			return context.Type.IsValueType;
 		}
 
+		/// <inheritdoc />
 		public void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext, object value)
 		{
 			writer.WriteStruct(value);
 		}
 
+		/// <inheritdoc />
 		public object Deserialize(BinaryReader reader, ControllerSerializationContext serializationContext)
 		{
 			return reader.ReadStruct(serializationContext.Type);

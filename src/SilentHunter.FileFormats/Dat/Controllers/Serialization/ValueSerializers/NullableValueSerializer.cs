@@ -6,6 +6,9 @@ using SilentHunter.FileFormats.Extensions;
 
 namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 {
+	/// <summary>
+	/// Serializes and deserializes nullable values.
+	/// </summary>
 	public class NullableValueSerializer : IControllerValueSerializer
 	{
 		private readonly IList<IControllerValueSerializer> _serializers = new List<IControllerValueSerializer>
@@ -15,11 +18,13 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			new DateTimeValueSerializer()
 		};
 
+		/// <inheritdoc />
 		public bool IsSupported(ControllerSerializationContext context)
 		{
 			return Nullable.GetUnderlyingType(context.Type) != null;
 		}
 
+		/// <inheritdoc />
 		public void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext, object value)
 		{
 			if (value == null)
@@ -31,6 +36,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			writer.WriteStruct(value);
 		}
 
+		/// <inheritdoc />
 		public object Deserialize(BinaryReader reader, ControllerSerializationContext serializationContext)
 		{
 			Type underlyingType = Nullable.GetUnderlyingType(serializationContext.Type);

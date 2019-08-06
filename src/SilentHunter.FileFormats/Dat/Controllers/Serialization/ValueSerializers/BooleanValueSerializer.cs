@@ -4,18 +4,20 @@ using System.IO;
 namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 {
 	/// <summary>
-	/// 
+	/// Serializes and deserializes boolean values.
 	/// </summary>
 	/// <remarks>
 	/// Some files have int32 stored as boolean. This seems like a bug and we should resave the file properly.
 	/// </remarks>
 	public class BooleanValueSerializer : ControllerValueSerializer<bool>
 	{
+		/// <inheritdoc />
 		public override void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext, bool value)
 		{
 			writer.Write(value);
 		}
 
+		/// <inheritdoc />
 		public override bool Deserialize(BinaryReader reader, ControllerSerializationContext serializationContext)
 		{
 			long boolLen = reader.BaseStream.Length;

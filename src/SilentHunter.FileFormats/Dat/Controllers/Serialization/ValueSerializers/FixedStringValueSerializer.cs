@@ -6,13 +6,18 @@ using SilentHunter.FileFormats.Extensions;
 
 namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 {
+	/// <summary>
+	/// Serializes and deserializes fixed length strings.
+	/// </summary>
 	public class FixedStringValueSerializer : ControllerValueSerializer<string>
 	{
+		/// <inheritdoc />
 		public override bool IsSupported(ControllerSerializationContext context)
 		{
 			return base.IsSupported(context) && context.Member.HasAttribute<FixedStringAttribute>();
 		}
 
+		/// <inheritdoc />
 		public override void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext, string value)
 		{
 			int fixedLength = serializationContext.Member.GetCustomAttribute<FixedStringAttribute>().Length;
@@ -27,6 +32,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			writer.Write(s, fixedLength);
 		}
 
+		/// <inheritdoc />
 		public override string Deserialize(BinaryReader reader, ControllerSerializationContext serializationContext)
 		{
 			int fixedLength = serializationContext.Member.GetCustomAttribute<FixedStringAttribute>().Length;

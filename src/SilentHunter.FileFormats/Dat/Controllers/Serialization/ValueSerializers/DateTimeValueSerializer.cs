@@ -4,16 +4,21 @@ using System.IO;
 
 namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 {
+	/// <summary>
+	/// Serializes and deserializes date values.
+	/// </summary>
 	public class DateTimeValueSerializer : ControllerValueSerializer<DateTime>
 	{
 		private const string DateFormat = "yyyyMMdd";
 
+		/// <inheritdoc />
 		public override void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext, DateTime value)
 		{
 			string date = value.ToString("yyyyMMdd");
 			writer.Write(int.Parse(date));
 		}
 
+		/// <inheritdoc />
 		public override DateTime Deserialize(BinaryReader reader, ControllerSerializationContext serializationContext)
 		{
 			string sDate = reader.ReadInt32().ToString();

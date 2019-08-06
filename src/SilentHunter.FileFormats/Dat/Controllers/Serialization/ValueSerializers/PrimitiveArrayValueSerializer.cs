@@ -4,14 +4,19 @@ using SilentHunter.FileFormats.Extensions;
 
 namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 {
-	// FIX: I think we can remove this.
+	/// <summary>
+	/// 
+	/// </summary>
+	// FIX: I think we can remove this. Find examples.
 	public class PrimitiveArrayValueSerializer : IControllerValueSerializer
 	{
+		/// <inheritdoc />
 		public bool IsSupported(ControllerSerializationContext context)
 		{
 			return context.Type.IsArray && (context.Type.GetElementType()?.IsPrimitive ?? false);
 		}
 
+		/// <inheritdoc />
 		public void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext, object value)
 		{
 			if (value is byte[] byteArray)
@@ -29,6 +34,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			}
 		}
 
+		/// <inheritdoc />
 		public object Deserialize(BinaryReader reader, ControllerSerializationContext serializationContext)
 		{
 			throw new NotSupportedException("Arrays are not supported. Use List<> instead.");
