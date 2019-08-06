@@ -50,6 +50,9 @@ namespace SilentHunter.FileFormats.Sdl
 			set => _waveName = value;
 		}
 
+		/// <summary>
+		/// Gets or sets whether this represents a folder instead of a sound.
+		/// </summary>
 		public bool IsFolder { get; set; }
 
 		/// <summary>
@@ -257,6 +260,8 @@ namespace SilentHunter.FileFormats.Sdl
 			};
 		}
 
+		/// <summary>
+		/// </summary>
 		public bool Equals(SoundInfo other)
 		{
 			if (ReferenceEquals(null, other))
@@ -305,11 +310,15 @@ namespace SilentHunter.FileFormats.Sdl
 			}
 		}
 
+		/// <summary>
+		/// </summary>
 		public static bool operator ==(SoundInfo left, SoundInfo right)
 		{
 			return Equals(left, right);
 		}
 
+		/// <summary>
+		/// </summary>
 		public static bool operator !=(SoundInfo left, SoundInfo right)
 		{
 			return !Equals(left, right);

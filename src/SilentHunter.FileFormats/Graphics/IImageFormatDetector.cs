@@ -3,7 +3,7 @@
 namespace SilentHunter.FileFormats.Graphics
 {
 	/// <summary>
-	/// Describes means to determine an image format.
+	/// Determines if an image is a DDS image.
 	/// </summary>
 	public interface IImageFormatDetector
 	{

@@ -22,16 +22,30 @@ namespace SilentHunter.FileFormats.Dat.Controllers
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		private readonly Lazy<IDictionary<string, string>> _loadHelpText;
 
-		public ControllerAssemblyHelpText(string docFile)
-			: this(XmlReader.Create(docFile))
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ControllerAssemblyHelpText"/> using specified <paramref name="documentationFilePath"/>.
+		/// </summary>
+		/// <param name="documentationFilePath">The path of the XML document file.</param>
+		public ControllerAssemblyHelpText(string documentationFilePath)
+			: this(XmlReader.Create(documentationFilePath))
 		{
 		}
 
-		public ControllerAssemblyHelpText(Stream stream, bool disposeReader = true)
-			: this(XmlReader.Create(stream), disposeReader)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ControllerAssemblyHelpText"/> using specified <paramref name="stream"/>.
+		/// </summary>
+		/// <param name="stream">The stream to read the XML documentation from.</param>
+		/// <param name="disposeStream">true to dispose the stream when loading completed</param>
+		public ControllerAssemblyHelpText(Stream stream, bool disposeStream = true)
+			: this(XmlReader.Create(stream), disposeStream)
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ControllerAssemblyHelpText"/> using specified <paramref name="xmlReader"/>.
+		/// </summary>
+		/// <param name="xmlReader">The XML reader to read the XML documentation from.</param>
+		/// <param name="disposeReader">true to dispose the stream when loading completed</param>
 		public ControllerAssemblyHelpText(XmlReader xmlReader, bool disposeReader = true)
 		{
 			_loadHelpText = new Lazy<IDictionary<string, string>>(
@@ -60,6 +74,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers
 			}
 		}
 
+		/// <inheritdoc />
 		public string this[Type type]
 		{
 			get
@@ -78,6 +93,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers
 			}
 		}
 
+		/// <inheritdoc />
 		public string this[MemberInfo member]
 		{
 			get

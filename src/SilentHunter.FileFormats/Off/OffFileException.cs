@@ -3,6 +3,9 @@ using System.Runtime.Serialization;
 
 namespace SilentHunter.FileFormats.Off
 {
+	/// <summary>
+	/// Represents an exception thrown during OFF read/write operations.
+	/// </summary>
 	public class OffFileException : SilentHunterParserException
 	{
 		/// <summary>

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -33,6 +33,9 @@ namespace SilentHunter.FileFormats
 		/// </summary>
 		public Type Type => Data.GetType();
 
+		/// <summary>
+		/// Gets the estimated descriptive guess that this data represents.
+		/// </summary>
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		public string MyGuess { get; }
 
@@ -42,6 +45,9 @@ namespace SilentHunter.FileFormats
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		public object Data { get; }
 
+		/// <summary>
+		/// Gets the data as a byte array.
+		/// </summary>
 		public byte[] GetDataAsByteArray()
 		{
 			if (Data is byte[] data)

@@ -18,6 +18,9 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 	{
 		private readonly ICollection<IControllerValueSerializer> _serializers;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ControllerSerializer"/>.
+		/// </summary>
 		public ControllerSerializer()
 		{
 			_serializers = new List<IControllerValueSerializer>
@@ -35,6 +38,11 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			};
 		}
 
+		/// <summary>
+		/// Deserializes specified <paramref name="controller"/> from the <paramref name="stream"/>.
+		/// </summary>
+		/// <param name="stream">The stream to deserialize from.</param>
+		/// <param name="controller">The controller instance to populate with deserialized data.</param>
 		public void Deserialize(Stream stream, Controller controller)
 		{
 			if (stream == null)
@@ -57,20 +65,17 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			}
 		}
 
+		/// <summary>
+		/// Deserializes specified <paramref name="instance"/> using the <paramref name="reader"/>.
+		/// </summary>
+		/// <param name="reader">The reader to deserialize from.</param>
+		/// <param name="serializationContext">The serialization context.</param>
+		/// <param name="instance">The instance to populate with deserialized data.</param>
 		protected virtual void Deserialize(BinaryReader reader, ControllerSerializationContext serializationContext, object instance)
 		{
 			DeserializeFields(reader, serializationContext, instance);
 		}
 
-		/// <summary>
-		/// </summary>
-		/// <param name="reader"></param>
-		/// <param name="instanceType"></param>
-		/// <param name="instance"></param>
-		/// <exception cref="ArgumentNullException">Thrown for arguments that can't be null.</exception>
-		/// <exception cref="IOException">Thrown for any IO error or parsing error.</exception>
-		/// <exception cref="NotSupportedException">Thrown when <paramref name="instanceType" /> is not supported.</exception>
-		/// <exception cref="NotImplementedException">Thrown when <see cref="Array" />s array used in the controller definitions.</exception>
 		private void DeserializeFields(BinaryReader reader, ControllerSerializationContext serializationContext, object instance)
 		{
 			if (reader == null)
@@ -87,7 +92,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			{
 				throw new ArgumentNullException(nameof(instance));
 			}
-			
+
 			FieldInfo[] fields = serializationContext.Type.GetFields(BindingFlags.Public | BindingFlags.Instance);
 			foreach (FieldInfo field in fields)
 			{
@@ -98,6 +103,11 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			}
 		}
 
+		/// <summary>
+		/// Deserializes a field from the <paramref name="reader"/>.
+		/// </summary>
+		/// <param name="reader">The reader to deserialize from.</param>
+		/// <param name="serializationContext">The serialization context.</param>
 		protected virtual object DeserializeField(BinaryReader reader, ControllerSerializationContext serializationContext)
 		{
 			return ReadField(reader, serializationContext);
@@ -108,6 +118,11 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			return ReadField(reader, serializationContext);
 		}
 
+		/// <summary>
+		/// Reads a field from the <paramref name="reader"/>.
+		/// </summary>
+		/// <param name="reader">The reader to deserialize from.</param>
+		/// <param name="serializationContext">The serialization context.</param>
 		protected virtual object ReadField(BinaryReader reader, ControllerSerializationContext serializationContext)
 		{
 			object retVal;
@@ -127,6 +142,11 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			return retVal;
 		}
 
+		/// <summary>
+		/// Serializes specified <paramref name="controller"/> to the <paramref name="stream"/>.
+		/// </summary>
+		/// <param name="stream">The stream to serialize to.</param>
+		/// <param name="controller">The controller instance to serialize.</param>
 		public void Serialize(Stream stream, Controller controller)
 		{
 			if (stream == null)
@@ -147,6 +167,12 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			}
 		}
 
+		/// <summary>
+		/// Serializes specified <paramref name="instance"/> using the <paramref name="writer"/>.
+		/// </summary>
+		/// <param name="writer">The writer to serialize to.</param>
+		/// <param name="serializationContext">The serialization context.</param>
+		/// <param name="instance">The instance to serialize.</param>
 		protected virtual void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext, object instance)
 		{
 			SerializeFields(writer, serializationContext, instance);
@@ -173,6 +199,12 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			}
 		}
 
+		/// <summary>
+		/// Serializes specified <paramref name="value"/> using the <paramref name="writer"/>.
+		/// </summary>
+		/// <param name="writer">The writer to serialize to.</param>
+		/// <param name="serializationContext">The serialization context.</param>
+		/// <param name="value">The value to serialize.</param>
 		protected virtual void SerializeField(BinaryWriter writer, ControllerSerializationContext serializationContext, object value)
 		{
 			WriteField(writer, serializationContext, value);
@@ -183,6 +215,12 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			WriteField(writer, serializationContext, value);
 		}
 
+		/// <summary>
+		/// Writes specified <paramref name="value"/> using the <paramref name="writer"/>.
+		/// </summary>
+		/// <param name="writer">The writer to serialize to.</param>
+		/// <param name="serializationContext">The serialization context.</param>
+		/// <param name="value">The value to serialize.</param>
 		protected virtual void WriteField(BinaryWriter writer, ControllerSerializationContext serializationContext, object value)
 		{
 			if (serializationContext.Type.IsControllerOrObject())
@@ -216,30 +254,6 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			}
 
 			serializer.Serialize(writer, ctx, value);
-		}
-		
-		/// <summary>
-		/// Checks that the specified arguments are valid.
-		/// </summary>
-		/// <param name="reader">The reader to check.</param>
-		/// <param name="memberInfo">The member info to check.</param>
-		protected static void CheckArguments(BinaryReader reader, MemberInfo memberInfo)
-		{
-			if (reader == null)
-			{
-				throw new ArgumentNullException(nameof(reader));
-			}
-
-			if (memberInfo == null)
-			{
-				throw new ArgumentNullException(nameof(memberInfo));
-			}
-
-			// Member info can be a Type or a FieldInfo.
-			if (!(memberInfo is Type || memberInfo is FieldInfo))
-			{
-				throw new ArgumentException("Expected a Type or FieldInfo.", nameof(memberInfo));
-			}
 		}
 	}
 }

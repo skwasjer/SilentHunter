@@ -3,8 +3,12 @@ using System.Reflection;
 
 namespace SilentHunter.FileFormats.ChunkedFiles
 {
+	/// <summary>
+	/// Represents an activator for creating chunks using <see cref="Activator"/>.
+	/// </summary>
 	public class ChunkActivator : IChunkActivator
 	{
+		/// <inheritdoc />
 		public IChunk Create(Type chunkType, object magic)
 		{
 			if (chunkType == null)

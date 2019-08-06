@@ -1,13 +1,20 @@
-using System;
+﻿using System;
 
 namespace SilentHunter.FileFormats.Dat
 {
+	/// <summary>
+	/// Material attributes.
+	/// </summary>
 	[Flags]
 	public enum MaterialAttributes
 	{
+		/// <summary>
+		/// </summary>
 		None = 0,
 
-		// If this flag is set, z-buffer writing is disabled.
+		/// <summary>
+		/// If this flag is set, z-buffer writing is disabled.
+		/// </summary>
 		DisableZBufferWrite = 1,
 
 		/// <summary>

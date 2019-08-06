@@ -3,10 +3,14 @@ using System.IO;
 
 namespace SilentHunter.FileFormats.Graphics
 {
+	/// <summary>
+	/// A DDS image format detector.
+	/// </summary>
 	public class DdsImageFormatDetector : IImageFormatDetector
 	{
 		private const int DdsMagic = 0x20534444;
 
+		/// <inheritdoc />
 		public string GetImageFormat(Stream stream)
 		{
 			const int magicSize = 4;

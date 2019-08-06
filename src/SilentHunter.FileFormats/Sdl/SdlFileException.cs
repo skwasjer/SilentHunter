@@ -3,6 +3,9 @@ using System.Runtime.Serialization;
 
 namespace SilentHunter.FileFormats.Sdl
 {
+	/// <summary>
+	/// Represents an exception thrown during SDL read/write operations.
+	/// </summary>
 	public class SdlFileException : SilentHunterParserException
 	{
 		/// <summary>

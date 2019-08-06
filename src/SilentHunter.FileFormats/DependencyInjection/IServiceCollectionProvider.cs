@@ -9,6 +9,8 @@ namespace SilentHunter.FileFormats.DependencyInjection
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public interface IServiceCollectionProvider : IFluentInterface
 	{
+		/// <summary>
+		/// </summary>
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		IServiceCollection ServiceCollection { get; }
 	}

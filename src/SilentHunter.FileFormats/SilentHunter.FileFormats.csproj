@@ -8,6 +8,11 @@
   <Import Project="..\Package.props" />
 
   <PropertyGroup>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <!--WarningsAsErrors>NU1605;CS1591</WarningsAsErrors-->
+  </PropertyGroup>
+
+  <PropertyGroup>
     <Description>Provides SilentHunter file format support, with parsers for DAT, SIM, ZON, VAL, DSD, CAM, SDL and OFF files.</Description>
     <PackageProjectUrl>https://github.com/skwasjer/SilentHunter</PackageProjectUrl>
     <PackageTags>silenthunter silent hunter fileformat dat sim zon val dsd cam sdl off</PackageTags>

@@ -56,6 +56,8 @@ namespace SilentHunter.FileFormats.Off
 			};
 		}
 
+		/// <summary>
+		/// </summary>
 		public bool Equals(OffCharacter other)
 		{
 			if (ReferenceEquals(null, other))
@@ -86,11 +88,15 @@ namespace SilentHunter.FileFormats.Off
 			}
 		}
 
+		/// <summary>
+		/// </summary>
 		public static bool operator ==(OffCharacter left, OffCharacter right)
 		{
 			return Equals(left, right);
 		}
 
+		/// <summary>
+		/// </summary>
 		public static bool operator !=(OffCharacter left, OffCharacter right)
 		{
 			return !Equals(left, right);

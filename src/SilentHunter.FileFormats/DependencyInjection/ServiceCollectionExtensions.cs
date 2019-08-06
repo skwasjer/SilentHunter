@@ -11,8 +11,16 @@ using SilentHunter.FileFormats.Sdl;
 
 namespace SilentHunter.FileFormats.DependencyInjection
 {
+	/// <summary>
+	/// Extensions for <see cref="IServiceCollection"/>.
+	/// </summary>
 	public static class ServiceCollectionExtensions
 	{
+		/// <summary>
+		/// Adds Silent Hunter parser services.
+		/// </summary>
+		/// <param name="services">The service collection.</param>
+		/// <param name="configurer">The configurer.</param>
 		public static IServiceCollection AddSilentHunterParsers(this IServiceCollection services, Action<SilentHunterParsersConfigurer> configurer)
 		{
 			var c = new SilentHunterParsersConfigurer(services);
