@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
+using SilentHunter.Controllers;
 
-namespace SilentHunter.Controllers
+namespace SilentHunter.FileFormats.Dat.Controllers
 {
 	public static class VectorCompression
 	{
