@@ -123,9 +123,18 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		}
 
 		/// <inheritdoc />
-		protected override Task DeserializeAsync(Stream stream)
+		protected override async Task DeserializeAsync(Stream stream)
 		{
-			return WriteAsync(stream);
+			// Temp fix: we wrap in memory stream in order for image detection to work
+			// and to be able to fix any bugs in TGA streams. Rather though, would be nice
+			// to do this on the fly without having to read stream twice.
+			using (var ms = new MemoryStream())
+			{
+				await stream.CopyToAsync(ms).ConfigureAwait(false);
+				ms.Position = 0;
+
+				await WriteAsync(ms).ConfigureAwait(false);
+			}
 		}
 
 		/// <inheritdoc />
