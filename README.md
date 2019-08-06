@@ -33,7 +33,6 @@ The file parsers are developed with dependency injection for `IServiceCollection
 ```powershell
 Install-Package SilentHunter.Controllers.Templates
 Install-Package SilentHunter.Controllers.Compiler
-Install-Package SilentHunter.FileFormats
 ```
 
 By adding the package `SilentHunter.Controllers.Templates`, the template source files are added to your application build output directory.
