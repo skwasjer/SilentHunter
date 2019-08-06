@@ -32,6 +32,8 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 	/// </summary>
 	public sealed class ModelChunk : DatChunk
 	{
+		private const int PrimaryChannelIndex = 1;
+
 		/// <summary>
 		/// Initializes a new instance of the model chunk.
 		/// </summary>
@@ -103,7 +105,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 				{
 					new UvMap
 					{
-						Channel = 1,
+						Channel = PrimaryChannelIndex,
 						TextureIndices = textureIndices
 					}
 				};
@@ -226,7 +228,10 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 
 				writer.WriteStruct(Type);
 
-				WriteMesh(writer, Vertices, VertexIndices, TextureIndices.FirstOrDefault(ti => ti.Channel == 1).TextureIndices ?? new ushort[0], MaterialIndices);
+				UvMap uvMap = TextureIndices.Any(ti => ti.Channel == PrimaryChannelIndex)
+					? TextureIndices.First(ti => ti.Channel == PrimaryChannelIndex)
+					: TextureIndices.First();
+				WriteMesh(writer, Vertices, VertexIndices, uvMap.TextureIndices ?? new ushort[0], MaterialIndices);
 
 				WriteTextureCoordinates(writer, TextureCoordinates);
 
