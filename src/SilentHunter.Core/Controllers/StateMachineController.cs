@@ -5,13 +5,6 @@ namespace SilentHunter.Controllers
 {
 	public class StateMachineController : Controller
 	{
-		private static class Magics
-		{
-			public const int Entry = 0x6cf46e74;
-			public const int Condition = 0x596344fb;
-			public const int Action = 0x7e03767b;
-		}
-
 		// NOTE: some unknown fields, but they always seem to be the same. So mark them advanced, so they don't show up in simple editor views.
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -29,7 +22,7 @@ namespace SilentHunter.Controllers
 		public int Unknown2 = 0x24CE7F70;
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public int Unknown3;
+		public int Unknown3 = 0;
 
 		/// <summary>
 		/// A list of state entries that make up the state (behavior) of a character or object.
