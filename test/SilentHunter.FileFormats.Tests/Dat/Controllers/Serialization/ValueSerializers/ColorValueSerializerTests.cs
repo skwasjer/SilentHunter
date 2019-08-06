@@ -15,9 +15,11 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 
 		private class TestClass
 		{
+#pragma warning disable 649
 			public Color Supported;
 
 			public string NotSupported;
+#pragma warning restore 649
 		}
 
 		private readonly ControllerSerializationContext _serializationContext;

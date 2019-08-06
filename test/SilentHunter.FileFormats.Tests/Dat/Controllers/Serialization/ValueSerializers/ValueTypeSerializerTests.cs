@@ -13,9 +13,11 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 		private struct TestClass<T>
 			where T : struct
 		{
+#pragma warning disable 649
 			public T Supported;
 
 			public string NotSupported;
+#pragma warning restore 649
 		}
 
 		private readonly ValueTypeSerializer _sut;

@@ -14,9 +14,11 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 	{
 		private class TestClass
 		{
+#pragma warning disable 649
 			public DateTime Supported;
 
 			public string NotSupported;
+#pragma warning restore 649
 		}
 
 		private readonly DateTimeValueSerializer _sut;

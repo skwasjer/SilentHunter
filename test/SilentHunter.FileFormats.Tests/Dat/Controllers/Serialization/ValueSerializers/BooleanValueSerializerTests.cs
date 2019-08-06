@@ -13,9 +13,11 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 	{
 		private class TestClass
 		{
+#pragma warning disable 649
 			public bool Supported;
 
 			public string NotSupported;
+#pragma warning restore 649
 		}
 
 		private readonly BooleanValueSerializer _sut;

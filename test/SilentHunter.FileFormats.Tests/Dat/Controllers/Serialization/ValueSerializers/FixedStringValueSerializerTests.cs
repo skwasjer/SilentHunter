@@ -14,10 +14,12 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 	{
 		private class TestClass
 		{
+#pragma warning disable 649
 			[FixedString(10)]
 			public string Supported;
 
 			public string NotSupported;
+#pragma warning restore 649
 		}
 
 		private readonly FixedStringValueSerializer _sut;
