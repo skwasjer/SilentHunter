@@ -23,7 +23,9 @@ build:
   publish_nuget_symbols: true
   verbosity: minimal
 after_build:
-- ps: nuget pack .\src\SilentHunter.Controllers\SilentHunter.Controllers.Templates.nuspec -version $env:package_version -outputdirectory .\src\SilentHunter.Controllers\bin
+- ps: nuget pack .\src\SilentHunter.Controllers\SilentHunter.Controllers.Templates.nuspec -version $env:package_version
+artifacts:
+  - path: '**\*.nupkg'
 test:
   categories:
     except:
@@ -32,6 +34,5 @@ deploy:
 - provider: NuGet
   api_key:
     secure: V2QFEs9EHhZ5Fxgocpd0/jKOMhiFx1wXkLqPvs7DxSKJT9vItwFMwNQgI8yP1io+
-  artifact: '**\*.nupkg'
   on:
     branch: /release/.*/
