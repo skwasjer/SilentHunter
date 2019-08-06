@@ -18,7 +18,7 @@ nuget:
 before_build:
 - ps: dotnet restore
 build:
-  project: Correlate.sln
+  project: SilentHunter.sln
   publish_nuget: true
   publish_nuget_symbols: true
   verbosity: minimal
