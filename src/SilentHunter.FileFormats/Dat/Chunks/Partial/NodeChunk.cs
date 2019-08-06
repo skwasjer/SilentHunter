@@ -33,10 +33,19 @@ namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 			{
 				if (SubType != 2)
 				{
-					throw new NotSupportedException("This object is not valid for sub type (2).");
+					return _light = null;
 				}
 
 				return _light ?? (_light = new Light());
+			}
+			private set
+			{
+				if (SubType != 2)
+				{
+					throw new ArgumentException("This object is not valid for sub type (2).", nameof(value));
+				}
+
+				_light = value ?? new Light();
 			}
 		}
 
@@ -46,10 +55,19 @@ namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 			{
 				if (SubType != 3)
 				{
-					throw new NotSupportedException("This object is not valid for sub type (3).");
+					return _interior = null;
 				}
 
 				return _interior ?? (_interior = new Interior());
+			}
+			private set
+			{
+				if (SubType != 3)
+				{
+					throw new ArgumentException("This object is not valid for sub type (3).", nameof(value));
+				}
+
+				_interior = value ?? new Interior();
 			}
 		}
 
@@ -195,23 +213,28 @@ namespace SilentHunter.FileFormats.Dat.Chunks.Partial
 					case 2:
 						// 20 bytes, or 16 bytes depending on light type.
 
-						// Read a 0.
-						Light.Reserved0 = reader.ReadUInt32();
+						var light = new Light
+						{
+							Reserved0 = reader.ReadUInt32(),
 
-						_light.Type = reader.ReadStruct<LightType>();
+							Type = reader.ReadStruct<LightType>(),
 
-						// Ignore alpha component.
-						_light.Color = Color.FromArgb(byte.MaxValue, reader.ReadStruct<Color>());
-						_light.Attenuation = reader.ReadSingle();
+							// Ignore alpha component.
+							Color = Color.FromArgb(byte.MaxValue, reader.ReadStruct<Color>()),
+							Attenuation = reader.ReadSingle(),
+
+						};
 
 						// Omni lights have an additional float value.
-						_light.Radius = _light.Type == LightType.Omni ? reader.ReadSingle() : 0;
+						light.Radius = _light.Type == LightType.Omni ? reader.ReadSingle() : 0;
+
+						Light = light;
 
 						break;
 
 					case 3:
 						// Interior node.
-						_interior = reader.ReadStruct<Interior>();
+						Interior = reader.ReadStruct<Interior>();
 
 						Debug.Assert(_interior.Reserved0 == 0, "Expected 0.");
 						Debug.Assert(_interior.Reserved1 == byte.MinValue, "Expected 0.");
