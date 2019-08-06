@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SilentHunter.FileFormats.Dat
@@ -8,6 +9,8 @@ namespace SilentHunter.FileFormats.Dat
 	/// </summary>
 	public struct UvMap : IEquatable<UvMap>
 	{
+		private byte _channel;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="UvMap"/> type.
 		/// </summary>
@@ -15,19 +18,35 @@ namespace SilentHunter.FileFormats.Dat
 		/// <param name="textureIndices">The texture indices.</param>
 		public UvMap(byte channel, ushort[] textureIndices)
 		{
-			Channel = channel;
+			if (channel <= 0)
+			{
+				throw new ArgumentOutOfRangeException(nameof(channel));
+			}
+
+			_channel = channel;
 			TextureIndices = textureIndices ?? throw new ArgumentNullException(nameof(textureIndices));
 		}
 
 		/// <summary>
-		/// Gets or sets the map channel.
+		/// Gets or sets the map channel (1 or higher).
 		/// </summary>
-		public byte Channel;
+		public byte Channel
+		{
+			get => _channel;
+			set
+			{
+				if (value <= 0)
+				{
+					throw new ArgumentOutOfRangeException(nameof(value), "Map channels must be 1 or higher.");
+				}
+				_channel = value;
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the texture indices.
 		/// </summary>
-		public ushort[] TextureIndices;
+		public IList<ushort> TextureIndices { get; set; }
 
 		/// <summary>
 		/// </summary>

@@ -99,7 +99,14 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 				LoadMesh(reader, out Vector3[] vertices, out ushort[] vertexIndices, out ushort[] textureIndices, out byte[] materialIndices);
 				Vertices = vertices;
 				VertexIndices = vertexIndices;
-				TextureIndices = new[] { new UvMap { Channel = 1, TextureIndices = textureIndices } };
+				TextureIndices = new[]
+				{
+					new UvMap
+					{
+						Channel = 1,
+						TextureIndices = textureIndices
+					}
+				};
 				MaterialIndices = materialIndices;
 
 				TextureCoordinates = ReadTextureCoordinates(reader).ToArray();
@@ -190,7 +197,11 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 			byte mapCount = reader.ReadByte();
 			for (int i = 0; i < mapCount; i++)
 			{
-				yield return new UvMap { Channel = reader.ReadByte(), TextureIndices = GetTextureIndices() };
+				yield return new UvMap
+				{
+					Channel = reader.ReadByte(),
+					TextureIndices = GetTextureIndices()
+				};
 			}
 		}
 
@@ -215,7 +226,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 
 				writer.WriteStruct(Type);
 
-				WriteMesh(writer, Vertices, VertexIndices, TextureIndices.FirstOrDefault().TextureIndices ?? new ushort[0], MaterialIndices);
+				WriteMesh(writer, Vertices, VertexIndices, TextureIndices.FirstOrDefault(ti => ti.Channel == 1).TextureIndices ?? new ushort[0], MaterialIndices);
 
 				WriteTextureCoordinates(writer, TextureCoordinates);
 
