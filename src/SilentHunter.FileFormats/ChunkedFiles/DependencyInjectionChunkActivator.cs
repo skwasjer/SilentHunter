@@ -19,18 +19,18 @@ namespace SilentHunter.FileFormats.ChunkedFiles
 				throw new ArgumentNullException(nameof(chunkType));
 			}
 
-			if (magic == null)
-			{
-				throw new ArgumentNullException(nameof(magic));
-			}
-
 			try
 			{
 				return (IChunk)ActivatorUtilities.CreateInstance(_serviceProvider, chunkType);
 			}
 			catch (InvalidOperationException)
 			{
-				return (IChunk)ActivatorUtilities.CreateInstance(_serviceProvider, chunkType, magic);
+				if (magic != null)
+				{
+					return (IChunk)ActivatorUtilities.CreateInstance(_serviceProvider, chunkType, magic);
+				}
+
+				throw;
 			}
 		}
 	}
