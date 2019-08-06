@@ -26,7 +26,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		/// </summary>
 		public string Name
 		{
-			get => _name ?? string.Empty;
+			get => _name;
 			set => _name = value;
 		}
 
@@ -82,7 +82,10 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 				writer.Write(byte.MinValue);
 
 				// Write name + terminating zero.
-				writer.Write(Name, '\0');
+				if (Name != null)
+				{
+					writer.Write(Name, '\0');
+				}
 			}
 
 			return Task.CompletedTask;

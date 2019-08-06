@@ -60,7 +60,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		public async Task When_serializing_should_produce_correct_binary_data(string controllerName)
 		{
 			byte[] expectedRawData = new byte[] { 0xc8, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
-					.Concat(string.IsNullOrEmpty(controllerName) ? new byte[] { 0 } : FileEncoding.Default.GetBytes(controllerName + '\0'))
+					.Concat(controllerName == null ? new byte[0] : FileEncoding.Default.GetBytes(controllerName + '\0'))
 					.ToArray()
 				;
 			var chunk = new ControllerChunk
@@ -100,7 +100,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 				// Assert
 				chunk.Id.Should().Be(456);
 				chunk.ParentId.Should().Be(123);
-				chunk.Name.Should().Be(controllerName ?? string.Empty);
+				chunk.Name.Should().Be(controllerName);
 			}
 		}
 
