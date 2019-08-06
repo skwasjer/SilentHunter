@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 namespace SilentHunter.Controllers.Compiler
 {
 	[XmlRoot("cache")]
-	public class CompilerBuildCache
+	internal class CompilerBuildCache
 	{
 		[XmlAttribute("appver")]
 		public string Version { get; set; }

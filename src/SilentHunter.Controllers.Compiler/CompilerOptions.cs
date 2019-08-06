@@ -2,6 +2,9 @@
 
 namespace SilentHunter.Controllers.Compiler
 {
+	/// <summary>
+	/// Represents controller compiler options.
+	/// </summary>
 	public class CompilerOptions
 	{
 		/// <summary>

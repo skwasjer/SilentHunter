@@ -10,6 +10,9 @@ using System.Xml.Serialization;
 
 namespace SilentHunter.Controllers.Compiler
 {
+	/// <summary>
+	/// Represents a controller template assembly compiler.
+	/// </summary>
 	public class ControllerAssemblyCompiler : IControllerAssemblyCompiler
 	{
 		private class Dependency
@@ -46,12 +49,18 @@ namespace SilentHunter.Controllers.Compiler
 		private readonly IFileSystem _fileSystem;
 		private readonly ICSharpCompiler _compiler;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ControllerAssemblyCompiler"/> class.
+		/// </summary>
+		/// <param name="compiler">The compiler to use.</param>
+		/// <param name="applicationName">The application name. This is used in the temp path used to generate the assembly, as to not conflict with other applications that also dynamically compile SilentHunter controllers.</param>
+		/// <param name="controllerDir">The path containing controller source files.</param>
 		public ControllerAssemblyCompiler(ICSharpCompiler compiler, string applicationName, string controllerDir)
 			: this(new FileSystem(), compiler, applicationName, controllerDir)
 		{
 		}
 
-		public ControllerAssemblyCompiler(IFileSystem fileSystem, ICSharpCompiler compiler, string applicationName, string controllerDir)
+		internal ControllerAssemblyCompiler(IFileSystem fileSystem, ICSharpCompiler compiler, string applicationName, string controllerDir)
 		{
 			_fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
 			_compiler = compiler ?? throw new ArgumentNullException(nameof(compiler));
@@ -84,6 +93,7 @@ namespace SilentHunter.Controllers.Compiler
 		/// </summary>
 		public IEnumerable<string> DependencySearchDirs { get; set; }
 
+		/// <inheritdoc />
 		public Assembly Compile(bool force = false)
 		{
 			string outputDir = GetTargetDir();

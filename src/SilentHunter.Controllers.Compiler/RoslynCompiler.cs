@@ -14,11 +14,17 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace SilentHunter.Controllers.Compiler
 {
+	/// <summary>
+	/// Wraps the Roslyn compiler for use by the controller compiler.
+	/// </summary>
 	public class RoslynCompiler : ICSharpCompiler
 	{
 		private readonly IFileSystem _fileSystem;
 		private readonly CSharpParseOptions _parseOptions;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="RoslynCompiler"/>.
+		/// </summary>
 		public RoslynCompiler()
 			: this(new FileSystem())
 		{
@@ -31,6 +37,7 @@ namespace SilentHunter.Controllers.Compiler
 			_parseOptions = new CSharpParseOptions(LanguageVersion.CSharp8, DocumentationMode.Diagnose);
 		}
 
+		/// <inheritdoc />
 		public Assembly CompileCode(ICollection<string> fileNames, CompilerOptions options, bool loadAssembly = false)
 		{
 			if (fileNames == null)

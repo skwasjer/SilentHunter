@@ -11,6 +11,9 @@ using Microsoft.CSharp;
 
 namespace SilentHunter.Controllers.Compiler
 {
+	/// <summary>
+	/// Wraps the CSharp compiler for use by the controller compiler.
+	/// </summary>
 	public sealed class CSharpCompiler : ICSharpCompiler, IDisposable
 	{
 		private const string RequiredCompilerOptions = "/target:library /optimize";
@@ -19,6 +22,9 @@ namespace SilentHunter.Controllers.Compiler
 		private CodeDomProvider _codeProvider;
 		private bool _disposed;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CSharpCompiler"/> class.
+		/// </summary>
 		public CSharpCompiler()
 			: this(new FileSystem())
 		{
@@ -43,6 +49,8 @@ namespace SilentHunter.Controllers.Compiler
 			};
 		}
 
+		/// <summary>
+		/// </summary>
 		~CSharpCompiler()
 		{
 			Dispose(false);
@@ -64,19 +72,14 @@ namespace SilentHunter.Controllers.Compiler
 			_disposed = true;
 		}
 
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
-		/// <summary>
-		/// Compiles the specified <paramref name="fileNames" /> and <see name="DocFile" /> into an <see cref="Assembly" />.
-		/// </summary>
-		/// <param name="fileNames"></param>
-		/// <param name="options"></param>
-		/// <param name="loadAssembly"></param>
-		/// <returns></returns>
+		/// <inheritdoc />
 		public Assembly CompileCode(ICollection<string> fileNames, CompilerOptions options, bool loadAssembly = false)
 		{
 			if (_disposed)

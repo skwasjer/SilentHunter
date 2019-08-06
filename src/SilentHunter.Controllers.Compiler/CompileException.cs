@@ -7,7 +7,7 @@ namespace SilentHunter.Controllers.Compiler
 	/// </summary>
 	public class CompileException : Exception
 	{
-		public CompileException(string message) : base(message)
+		internal CompileException(string message) : base(message)
 		{
 		}
 	}

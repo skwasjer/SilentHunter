@@ -2,6 +2,9 @@
 
 namespace SilentHunter.Controllers.Compiler
 {
+	/// <summary>
+	/// Describes an assembly compiler for controller templates.
+	/// </summary>
 	public interface IControllerAssemblyCompiler
 	{
 		/// <summary>

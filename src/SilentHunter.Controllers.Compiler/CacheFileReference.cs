@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 
 namespace SilentHunter.Controllers.Compiler
 {
-	public class CacheFileReference : IXmlSerializable, IEquatable<CacheFileReference>
+	internal class CacheFileReference : IXmlSerializable, IEquatable<CacheFileReference>
 	{
 		public string Name { get; set; }
 
