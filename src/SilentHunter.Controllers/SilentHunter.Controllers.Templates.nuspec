@@ -4,11 +4,11 @@
         <!-- Required elements-->
         <id>SilentHunter.Controllers.Templates</id>
         <version>1.0.0</version>
-        <description>Silent Hunter DAT file controller templates</description>
+        <description>Silent Hunter DAT file controller templates, to be used in conjunction with the SilentHunter.FileFormats and SilentHunter.Controllers.Compiler package</description>
         <authors>Martijn Bodeman</authors>
-        <summary>Contains the controller templates to be used in conjunction with the SilentHunter.FileFormats and SilentHunter.Controllers.Compiler package.</summary>
+        <tags>silenthunter silent hunter controllers</tags>
 
-        <projectUrl>https://github.com/skwasjer/SilentHunter</projectUrl>
+        <projectUrl>https://github.com/skwasjer/SilentHunter/tree/master/src/SilentHunter.Controllers</projectUrl>
         <license type="expression">Apache-2.0</license>
         <copyright>Copyright © 2019</copyright>
 

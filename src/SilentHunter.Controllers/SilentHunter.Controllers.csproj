@@ -2,16 +2,16 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
-    <RootNamespace>SilentHunter.Dat</RootNamespace>
+    <RootNamespace></RootNamespace>
     <DebugType>full</DebugType>
   </PropertyGroup>
 
   <Import Project="..\Package.props" />
 
   <PropertyGroup>
-    <Description>SilentHunter controllers library</Description>
-    <!--PackageProjectUrl>https://github.com/skwasjer/...</PackageProjectUrl-->
-    <PackageTags></PackageTags>
+    <Description>Silent Hunter DAT file controllers, to be used in conjunction with the SilentHunter.FileFormats package</Description>
+    <PackageProjectUrl>https://github.com/skwasjer/SilentHunter/tree/master/src/SilentHunter.Controllers</PackageProjectUrl>
+    <PackageTags>silenthunter silent hunter controllers</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

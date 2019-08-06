@@ -9,9 +9,9 @@
   <Import Project="..\Package.props" />
 
   <PropertyGroup>
-    <Description>SilentHunter core library</Description>
-    <!--PackageProjectUrl>https://github.com/skwasjer/...</PackageProjectUrl-->
-    <PackageTags></PackageTags>
+    <Description>Silent Hunter core library containing primitives, base controllers and decorators for defining controller templates</Description>
+    <PackageProjectUrl>https://github.com/skwasjer/SilentHunter</PackageProjectUrl>
+    <PackageTags>silenthunter silent hunter</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

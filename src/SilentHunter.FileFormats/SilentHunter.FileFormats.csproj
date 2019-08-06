@@ -8,9 +8,9 @@
   <Import Project="..\Package.props" />
 
   <PropertyGroup>
-    <Description>SilentHunter file formats library</Description>
-    <!--PackageProjectUrl>https://github.com/skwasjer/...</PackageProjectUrl-->
-    <PackageTags></PackageTags>
+    <Description>Provides SilentHunter file format support, with parsers for DAT, SIM, ZON, VAL, DSD, CAM, SDL and OFF files.</Description>
+    <PackageProjectUrl>https://github.com/skwasjer/SilentHunter</PackageProjectUrl>
+    <PackageTags>silenthunter silent hunter fileformat dat sim zon val dsd cam sdl off</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

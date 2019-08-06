@@ -8,9 +8,9 @@
   <Import Project="..\Package.props" />
 
   <PropertyGroup>
-    <Description>SilentHunter controllers compiler library</Description>
-    <!--PackageProjectUrl>https://github.com/skwasjer/...</PackageProjectUrl-->
-    <PackageTags></PackageTags>
+    <Description>Silent Hunter controllers compiler to dynamically compile controller templates</Description>
+    <PackageProjectUrl>https://github.com/skwasjer/SilentHunter</PackageProjectUrl>
+    <PackageTags>silenthunter silent hunter controllers compiler</PackageTags>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
