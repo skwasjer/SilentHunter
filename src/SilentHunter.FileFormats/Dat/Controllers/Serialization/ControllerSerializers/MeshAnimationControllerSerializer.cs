@@ -5,8 +5,12 @@ using SilentHunter.Controllers;
 
 namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 {
+	/// <summary>
+	/// Serializes and deserializes <see cref="MeshAnimationController"/>s.
+	/// </summary>
 	public class MeshAnimationControllerSerializer : IControllerSerializer
 	{
+		/// <inheritdoc />
 		public void Deserialize(Stream stream, Controller controller)
 		{
 			MeshAnimationController mac = EnsureControllerType(controller);
@@ -55,6 +59,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			}
 		}
 
+		/// <inheritdoc />
 		public void Serialize(Stream stream, Controller controller)
 		{
 			MeshAnimationController mac = EnsureControllerType(controller);

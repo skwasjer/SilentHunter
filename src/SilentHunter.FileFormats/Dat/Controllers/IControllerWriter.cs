@@ -2,6 +2,9 @@
 
 namespace SilentHunter.FileFormats.Dat.Controllers
 {
+	/// <summary>
+	/// Writes controllers to a stream.
+	/// </summary>
 	public interface IControllerWriter
 	{
 		/// <summary>

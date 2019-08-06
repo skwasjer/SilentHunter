@@ -7,6 +7,9 @@ using SilentHunter.Controllers;
 
 namespace SilentHunter.FileFormats.Dat.Controllers
 {
+	/// <summary>
+	/// Helpers to compress and decompress arrays/lists of <see cref="Vector2"/> and <see cref="Vector3"/> for the specific purpose of storage in DAT-file.
+	/// </summary>
 	public static class VectorCompression
 	{
 		/// <summary>

@@ -2,6 +2,9 @@
 
 namespace SilentHunter.FileFormats.Dat.Controllers
 {
+	/// <summary>
+	/// Reads controllers from a stream.
+	/// </summary>
 	public interface IControllerReader
 	{
 		/// <summary>

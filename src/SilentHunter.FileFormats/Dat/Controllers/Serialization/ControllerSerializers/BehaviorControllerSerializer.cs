@@ -26,9 +26,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 	/// </remarks>
 	public class BehaviorControllerSerializer : ControllerSerializer
 	{
-		/// <summary>
-		/// When implemented, deserializes the controller from specified <paramref name="stream" />.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void Deserialize(BinaryReader reader, ControllerSerializationContext serializationContext, object instance)
 		{
 			// Read the size of the controller.
@@ -44,6 +42,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			reader.BaseStream.EnsureStreamPosition(startPos + size, controllerName);
 		}
 
+		/// <inheritdoc />
 		protected override object DeserializeField(BinaryReader reader, ControllerSerializationContext serializationContext)
 		{
 			object value = base.DeserializeField(reader, serializationContext);
@@ -63,14 +62,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			return null;
 		}
 
-		/// <summary>
-		/// Reads the next field or controller from the stream.
-		/// </summary>
-		/// <param name="reader">The reader to read from.</param>
-		/// <param name="memberInfo">A <see cref="FieldInfo" /> for field members or a <see cref="Type" /> for controllers or name prefixed types.</param>
-		/// <returns>Returns the object read from stream.</returns>
-		/// <exception cref="IOException">Thrown when an error occurred during parsing.</exception>
-		/// <exception cref="NotImplementedException">Thrown when a type is not implemented.</exception>
+		/// <inheritdoc />
 		protected override object ReadField(BinaryReader reader, ControllerSerializationContext serializationContext)
 		{
 			string name = null;
@@ -112,10 +104,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			}
 		}
 
-		/// <summary>
-		/// When implemented, serializes the controller to specified <paramref name="stream" />.
-		/// </summary>
-		/// <param name="stream">The stream.</param>
+		/// <inheritdoc />
 		protected override void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext, object instance)
 		{
 			// We don't know the size yet, so just write 0 for now.
@@ -138,6 +127,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			writer.BaseStream.Position = currentPos;
 		}
 
+		/// <inheritdoc />
 		protected override void SerializeField(BinaryWriter writer, ControllerSerializationContext serializationContext, object value)
 		{
 			// If the value is null, the property has be optional, otherwise throw error.
@@ -155,6 +145,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			base.SerializeField(writer, serializationContext, value);
 		}
 
+		/// <inheritdoc />
 		protected override void WriteField(BinaryWriter writer, ControllerSerializationContext serializationContext, object value)
 		{
 			// Write size 0. We don't know actual the size yet.

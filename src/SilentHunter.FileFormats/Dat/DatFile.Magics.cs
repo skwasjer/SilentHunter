@@ -2,8 +2,12 @@
 {
 	public partial class DatFile
 	{
+		/// <summary>
+		/// DAT file magics (chunk identifiers).
+		/// </summary>
 		public enum Magics
 		{
+#pragma warning disable 1591
 			Unknown = 0,
 			Model = 1,
 			Material = 2,
@@ -32,6 +36,7 @@
 
 			//Unknown0 = -660898478
 #endif
+#pragma warning restore 1591
 		}
 	}
 }

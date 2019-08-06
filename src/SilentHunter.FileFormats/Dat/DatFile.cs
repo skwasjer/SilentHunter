@@ -197,22 +197,63 @@ namespace SilentHunter.FileFormats.Dat
 			}
 		}
 
+		/// <summary>
+		/// Creates a new chunk using a <see cref="IChunkActivator"/>.
+		/// </summary>
+		/// <typeparam name="T">The chunk type.</typeparam>
+		/// <returns>The created chunk instance.</returns>
 		public virtual T CreateChunk<T>()
 			where T : DatChunk
 		{
 			return (T)CreateChunk(typeof(T));
 		}
 
+		/// <summary>
+		/// Creates a new chunk using a <see cref="IChunkActivator"/>.
+		/// </summary>
+		/// <param name="chunkType">The chunk type.</param>
+		/// <returns>The created chunk instance.</returns>
 		public virtual object CreateChunk(Type chunkType)
 		{
+			if (chunkType == null)
+			{
+				throw new ArgumentNullException(nameof(chunkType));
+			}
+
 			return _chunkActivator.Create(chunkType, null);
 		}
 
+		/// <summary>
+		/// Creates a new chunk using a <see cref="IChunkActivator"/>.
+		/// </summary>
+		/// <param name="magic">The chunk magic.</param>
+		/// <returns>The created chunk instance.</returns>
+		public virtual object CreateChunk(Magics magic)
+		{
+			Type chunkType = _chunkResolver.Resolve(magic);
+			if (chunkType == null)
+			{
+				throw new ArgumentException($"No chunk type registered for specified magic ({magic}).");
+			}
+
+			return CreateChunk(chunkType);
+		}
+
+		/// <summary>
+		/// Creates a chunk reader for specified stream.
+		/// </summary>
+		/// <param name="stream">The stream.</param>
+		/// <returns>Returns the reader.</returns>
 		public virtual ChunkReader<Magics, DatChunk> CreateReader(Stream stream)
 		{
 			return new ChunkReader<Magics, DatChunk>(stream, _chunkResolver, _chunkActivator, true);
 		}
 
+		/// <summary>
+		/// Creates a chunk writer for specified stream.
+		/// </summary>
+		/// <param name="stream">The stream.</param>
+		/// <returns>Returns the writer.</returns>
 		public virtual ChunkWriter<Magics, DatChunk> CreateWriter(Stream stream)
 		{
 			return new ChunkWriter<Magics, DatChunk>(stream, true);

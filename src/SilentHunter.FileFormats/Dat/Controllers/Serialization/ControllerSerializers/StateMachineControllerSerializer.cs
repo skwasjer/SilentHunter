@@ -6,6 +6,9 @@ using SilentHunter.FileFormats.Extensions;
 
 namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 {
+	/// <summary>
+	/// Serializes and deserializes <see cref="StateMachineController"/>s.
+	/// </summary>
 	public class StateMachineControllerSerializer : IControllerSerializer
 	{
 		private static class Magics
@@ -15,6 +18,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			public const int Action = 0x7e03767b;
 		}
 
+		/// <inheritdoc />
 		public void Deserialize(Stream stream, Controller controller)
 		{
 			StateMachineController smc = EnsureControllerType(controller);
@@ -42,6 +46,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 			}
 		}
 
+		/// <inheritdoc />
 		public void Serialize(Stream stream, Controller controller)
 		{
 			StateMachineController smc = EnsureControllerType(controller);

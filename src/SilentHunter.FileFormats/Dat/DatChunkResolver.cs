@@ -7,6 +7,9 @@ using SilentHunter.FileFormats.ChunkedFiles;
 
 namespace SilentHunter.FileFormats.Dat
 {
+	/// <summary>
+	/// Chunk resolver that returns the chunk type that is associated with a given magic.
+	/// </summary>
 	public class DatChunkResolver : IChunkResolver<DatFile.Magics>
 	{
 		private static readonly Lazy<ReadOnlyDictionary<DatFile.Magics, Type>> ResolvedTypes = new Lazy<ReadOnlyDictionary<DatFile.Magics, Type>>(LoadTypes, LazyThreadSafetyMode.PublicationOnly);

@@ -3,6 +3,9 @@ using SilentHunter.Controllers;
 
 namespace SilentHunter.FileFormats.Dat.Controllers
 {
+	/// <summary>
+	/// Creates a controller by name/profile and optionally initializes its fields.
+	/// </summary>
 	public interface IControllerFactory
 	{
 		/// <summary>
@@ -21,7 +24,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers
 		/// <param name="controllerType">The controller type.</param>
 		/// <param name="initializeFields">True to initialize fields.</param>
 		/// <returns>Returns the newly created controller. All (child) fields that are reference types are also instantiated using the default constructor.</returns>
-		/// <exception cref="ArgumentException">Thrown when the controller name is empty or cannot be found for the <paramref name="profile" />.</exception>
+		/// <exception cref="ArgumentException">Thrown when the controller name is empty or cannot be found.</exception>
 		Controller CreateController(Type controllerType, bool initializeFields);
 
 		/// <summary>

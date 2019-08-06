@@ -21,6 +21,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers
 			_itemFactory = itemFactory ?? throw new ArgumentNullException(nameof(itemFactory));
 		}
 
+		/// <inheritdoc />
 		public bool CanCreate(Type controllerType)
 		{
 			return _controllerAssembly.Controllers
@@ -28,14 +29,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers
 				.Any(t => t == controllerType) && controllerType.IsController();
 		}
 
-		/// <summary>
-		/// Creates the specified controller name for the requested profile.
-		/// </summary>
-		/// <param name="controllerName"></param>
-		/// <param name="profile">The profile to search for the controller.</param>
-		/// <param name="initializeFields">True to initialize fields.</param>
-		/// <returns>Returns the newly created controller. All (child) fields that are reference types are also pre-instantiated.</returns>
-		/// <exception cref="ArgumentException">Thrown when the controller name is empty or cannot be found for the <paramref name="profile" />.</exception>
+		/// <inheritdoc />
 		public Controller CreateController(string controllerName, ControllerProfile profile, bool initializeFields)
 		{
 			if (string.IsNullOrEmpty(controllerName))
@@ -51,13 +45,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers
 			throw new ArgumentException("Unknown controller type.");
 		}
 
-		/// <summary>
-		/// Creates the controller for specified <paramref name="controllerType" />.
-		/// </summary>
-		/// <param name="controllerType">The controller type.</param>
-		/// <param name="initializeFields">True to initialize fields.</param>
-		/// <returns>Returns the newly created controller. All (child) fields that are reference types are also instantiated using the default constructor.</returns>
-		/// <exception cref="ArgumentException">Thrown when the controller name is empty or cannot be found for the <paramref name="profile" />.</exception>
+		/// <inheritdoc />
 		public Controller CreateController(Type controllerType, bool initializeFields)
 		{
 			if (controllerType == null)
@@ -75,11 +63,13 @@ namespace SilentHunter.FileFormats.Dat.Controllers
 			throw new ArgumentException("Unknown controller type.");
 		}
 
+		/// <inheritdoc />
 		public object CreateNewItem(Type type)
 		{
 			return _itemFactory.CreateNewItem(type);
 		}
 
+		/// <inheritdoc />
 		public object CreateNewItem(object original)
 		{
 			return _itemFactory.CreateNewItem(original);

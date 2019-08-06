@@ -20,6 +20,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 		/// </summary>
 		/// <param name="writer">The writer to write to.</param>
 		/// <param name="serializationContext">The context describing the type and name of the field to read.</param>
+		/// <param name="value">The value to write.</param>
 		void WriteField(BinaryWriter writer, ControllerSerializationContext serializationContext, object value);
 	}
 }
