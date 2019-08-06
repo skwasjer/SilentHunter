@@ -192,6 +192,9 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 				// A texture size indicates if the referenced texture is internal. If 0, then it's an external texture.
 				TgaTextureSize = reader.ReadInt32();
 
+				// When reading, assume no date.
+				_creationTimeSinceEpoch = 0;
+
 				// For support of incorrect files, we still look for more bytes, even if the resource is external.
 				if (HasTextureReference || isExtendedMaterial)
 				{
