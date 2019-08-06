@@ -100,20 +100,18 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		/// Deserializes the chunk. Note that the first 12 bytes (type, subtype and chunk size) are already read by the base class. Inheritors can override the default behavior, which is nothing more then reading all data, and caching it for later (ie. for serialization).
 		/// </summary>
 		/// <param name="stream">The stream to read from.</param>
-		protected override Task DeserializeAsync(Stream stream)
+		protected override async Task DeserializeAsync(Stream stream)
 		{
 			var regionStream = stream as RegionStream;
 			long origin = regionStream?.BaseStream.Position ?? stream.Position;
 			long relativeOrigin = stream.Position;
 
-			base.DeserializeAsync(stream);
+			await base.DeserializeAsync(stream).ConfigureAwait(false);
 
 			if (Bytes != null && Bytes.Length > 0)
 			{
 				UnknownData.Add(new UnknownChunkData(origin, relativeOrigin, Bytes, "Unknown"));
 			}
-
-			return Task.CompletedTask;
 		}
 
 		/// <summary>
