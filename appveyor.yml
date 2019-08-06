@@ -22,6 +22,8 @@ build:
   publish_nuget: true
   publish_nuget_symbols: true
   verbosity: minimal
+after_build:
+- ps: nuget pack .\src\SilentHunter.Controllers\SilentHunter.Controllers.Templates.nuspec -version $env:package_version -outputdirectory .\src\SilentHunter.Controllers\bin
 test:
   categories:
     except:
