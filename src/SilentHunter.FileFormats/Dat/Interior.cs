@@ -1,5 +1,4 @@
-﻿using System.Numerics;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace SilentHunter.FileFormats.Dat
 {
@@ -17,9 +16,10 @@ namespace SilentHunter.FileFormats.Dat
 
 		internal byte Reserved1 { get; set; }
 
-		public Vector3 BoundingBoxMin { get; set; }
-
-		public Vector3 BoundingBoxMax { get; set; }
+		/// <summary>
+		/// Gets or sets the bounding box.
+		/// </summary>
+		public BoundingBox BoundingBox { get; set; }
 
 		internal uint Reserved2 { get; set; }
 
@@ -31,7 +31,7 @@ namespace SilentHunter.FileFormats.Dat
 		/// </returns>
 		public override string ToString()
 		{
-			return BoundingBoxMin + " " + BoundingBoxMax + " " + Reserved0 + " " + Reserved1 + " " + Reserved2;
+			return BoundingBox.Min + " " + BoundingBox.Max + " " + Reserved0 + " " + Reserved1 + " " + Reserved2;
 		}
 	}
 }
