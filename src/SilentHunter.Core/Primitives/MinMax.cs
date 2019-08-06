@@ -1,5 +1,8 @@
 ﻿namespace SilentHunter
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public class MinMax
 	{
 		/// <summary>

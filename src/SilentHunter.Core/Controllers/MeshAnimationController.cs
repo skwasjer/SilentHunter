@@ -3,6 +3,9 @@ using System.ComponentModel;
 
 namespace SilentHunter.Controllers
 {
+	/// <summary>
+	/// Represents as the base for all mesh animation controllers.
+	/// </summary>
 	public abstract class MeshAnimationController : AnimationController
 	{
 		// NOTE: Only 'Frames' should be exposed to browsers.

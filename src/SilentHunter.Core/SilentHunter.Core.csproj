@@ -9,6 +9,11 @@
   <Import Project="..\Package.props" />
 
   <PropertyGroup>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <WarningsAsErrors>NU1605;CS1591</WarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <Description>Silent Hunter core library containing primitives, base controllers and decorators for defining controller templates</Description>
     <PackageProjectUrl>https://github.com/skwasjer/SilentHunter</PackageProjectUrl>
     <PackageTags>silenthunter silent hunter</PackageTags>

@@ -1,5 +1,8 @@
 ﻿namespace SilentHunter.Controllers
 {
+	/// <summary>
+	/// Represents a key frame for key frame animations.
+	/// </summary>
 	public class AnimationKeyFrame
 	{
 		/// <summary>

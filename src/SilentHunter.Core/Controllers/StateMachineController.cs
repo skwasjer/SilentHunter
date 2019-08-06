@@ -3,10 +3,16 @@ using System.ComponentModel;
 
 namespace SilentHunter.Controllers
 {
-	public class StateMachineController : Controller
+	/// <summary>
+	/// Represents the state machine controller.
+	/// </summary>
+	public abstract class StateMachineController : Controller
 	{
 		// NOTE: some unknown fields, but they always seem to be the same. So mark them advanced, so they don't show up in simple editor views.
 
+		/// <summary>
+		/// Unknown field, but always seems to be the same.
+		/// </summary>
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public int Unknown0 = 0x423B410F;
 
@@ -15,12 +21,21 @@ namespace SilentHunter.Controllers
 		/// </summary>
 		public string GraphName;
 
+		/// <summary>
+		/// Unknown field, but always seems to be the same.
+		/// </summary>
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public int Unknown1 = 0x73A2500A;
 
+		/// <summary>
+		/// Unknown field, but always seems to be the same.
+		/// </summary>
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public int Unknown2 = 0x24CE7F70;
 
+		/// <summary>
+		/// Unknown field, but always seems to be the same.
+		/// </summary>
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public int Unknown3 = 0;
 

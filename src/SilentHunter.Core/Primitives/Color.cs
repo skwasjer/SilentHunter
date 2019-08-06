@@ -4,19 +4,41 @@ using System.Runtime.InteropServices;
 
 namespace SilentHunter
 {
+	/// <summary>
+	/// Represents a color primitive.
+	/// </summary>
 	[Serializable]
 	[StructLayout(LayoutKind.Explicit, Pack = 1)]
 	public struct Color : IEquatable<Color>
 	{
+		/// <summary>
+		/// The alpha component.
+		/// </summary>
 		[FieldOffset(0)]
 		public byte A;
+
+		/// <summary>
+		/// The red component.
+		/// </summary>
 		[FieldOffset(3)]
 		public byte R;
+
+		/// <summary>
+		/// The green component.
+		/// </summary>
 		[FieldOffset(2)]
 		public byte G;
+
+		/// <summary>
+		/// The blue component.
+		/// </summary>
 		[FieldOffset(1)]
 		public byte B;
 
+		/// <summary>
+		/// Returns the string representation, optionally omitting the alpha value.
+		/// </summary>
+		/// <param name="ignoreAlpha">true to omit the alpha component in the string representation</param>
 		public string ToString(bool ignoreAlpha)
 		{
 			return A < 255 && !ignoreAlpha
@@ -30,12 +52,18 @@ namespace SilentHunter
 			return ToString(true);
 		}
 
+		/// <summary>
+		/// Returns a <see cref="Color"/> from an alpha value and a <paramref name="color"/>.
+		/// </summary>
 		public static Color FromArgb(int alpha, Color color)
 		{
 			color.A = (byte)(alpha & byte.MaxValue);
 			return color;
 		}
 
+		/// <summary>
+		/// Returns a <see cref="Color"/> from an alpha, red, green and blue component.
+		/// </summary>
 		public static Color FromArgb(int alpha, int red, int green, int blue)
 		{
 			return new Color
@@ -47,11 +75,17 @@ namespace SilentHunter
 			};
 		}
 
+		/// <summary>
+		/// Returns a <see cref="Color"/> from a red, green and blue component.
+		/// </summary>
 		public static Color FromArgb(int red, int green, int blue)
 		{
 			return FromArgb(byte.MaxValue, red, green, blue);
 		}
 
+		/// <summary>
+		/// Returns a <see cref="Color"/> from an integer.
+		/// </summary>
 		public static Color FromArgb(int argb)
 		{
 			return new Color
@@ -63,11 +97,16 @@ namespace SilentHunter
 			};
 		}
 
+		/// <summary>
+		/// Converts to an integer.
+		/// </summary>
 		public int ToArgb()
 		{
 			return (int)(((long)A << 24) | ((long)R << 16) | ((long)G << 8) | B);
 		}
 
+		/// <summary>
+		/// </summary>
 		public bool Equals(Color other)
 		{
 			return A == other.A && R == other.R && G == other.G && B == other.B;
@@ -87,11 +126,15 @@ namespace SilentHunter
 			// ReSharper restore NonReadonlyMemberInGetHashCode
 		}
 
+		/// <summary>
+		/// </summary>
 		public static bool operator ==(Color left, Color right)
 		{
 			return left.Equals(right);
 		}
 
+		/// <summary>
+		/// </summary>
 		public static bool operator !=(Color left, Color right)
 		{
 			return !left.Equals(right);

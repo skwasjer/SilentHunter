@@ -1,5 +1,8 @@
-namespace SilentHunter.Controllers.Decoration
+﻿namespace SilentHunter.Controllers.Decoration
 {
+	/// <summary>
+	/// The Silent Hunter game versions. This is only used for decoration purposes.
+	/// </summary>
 	// ReSharper disable once InconsistentNaming
 	public enum SHVersions
 	{

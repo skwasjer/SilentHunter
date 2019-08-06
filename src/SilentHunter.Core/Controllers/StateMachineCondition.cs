@@ -6,7 +6,7 @@ using SilentHunter.Controllers.Decoration;
 namespace SilentHunter.Controllers
 {
 	/// <summary>
-	/// A condition that is checked in a gamestate update.
+	/// A condition that is checked in a game state update.
 	/// </summary>
 	[DebuggerDisplay("ConditionIndex={ParentEntryIndex}, GotoEntry={GotoEntry}, Type={Type}, Name={Expression}, Value={Value}")]
 	public class StateMachineCondition
@@ -35,7 +35,7 @@ namespace SilentHunter.Controllers
 		public string Value;
 
 		/// <summary>
-		/// The state entry to jump to when this condition is met. The jump is performed in the next gamestate update.
+		/// The state entry to jump to when this condition is met. The jump is performed in the next game state update.
 		/// </summary>
 		public int GotoEntry;
 

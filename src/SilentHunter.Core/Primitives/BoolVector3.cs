@@ -3,13 +3,27 @@ using System.Runtime.InteropServices;
 
 namespace SilentHunter
 {
+	/// <summary>
+	/// Represents a vector3 of boolean flags.
+	/// </summary>
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
 	public struct BoolVector3
 	{
+		/// <summary>
+		/// The X component.
+		/// </summary>
 		[MarshalAs(UnmanagedType.U1)]
 		public bool X;
+
+		/// <summary>
+		/// The Y component.
+		/// </summary>
 		[MarshalAs(UnmanagedType.U1)]
 		public bool Y;
+
+		/// <summary>
+		/// The Z component.
+		/// </summary>
 		[MarshalAs(UnmanagedType.U1)]
 		public bool Z;
 
