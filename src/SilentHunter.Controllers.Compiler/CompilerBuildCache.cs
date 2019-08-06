@@ -3,23 +3,42 @@ using System.Xml.Serialization;
 
 namespace SilentHunter.Controllers.Compiler
 {
+	// TODO: switch to DataContractSerializer so this does not have to be public.
+
+	/// <summary>
+	/// The compiler build cache file format.
+	/// </summary>
 	[XmlRoot("cache")]
-	internal class CompilerBuildCache
+	public class CompilerBuildCache
 	{
+		/// <summary>
+		/// Gets or sets the compiler version.
+		/// </summary>
 		[XmlAttribute("appver")]
 		public string Version { get; set; }
 
+		/// <summary>
+		/// Gets or sets the last used build configuration.
+		/// </summary>
 		[XmlAttribute("build")]
 		public string BuildConfiguration { get; set; }
 
+		/// <summary>
+		/// Gets or sets the dependencies.
+		/// </summary>
 		[XmlArray("dependencies")]
 		[XmlArrayItem("dependency")]
 		public HashSet<CacheFileReference> Dependencies { get; set; }
 
+		/// <summary>
+		/// Gets or sets the source files.
+		/// </summary>
 		[XmlArray("files")]
 		[XmlArrayItem("file")]
 		public HashSet<CacheFileReference> SourceFiles { get; set; }
 
+		/// <summary>
+		/// </summary>
 		protected bool Equals(CompilerBuildCache other)
 		{
 			return string.Equals(Version, other.Version) && string.Equals(BuildConfiguration, other.BuildConfiguration)
@@ -42,13 +61,7 @@ namespace SilentHunter.Controllers.Compiler
 			return self.SetEquals(other);
 		}
 
-		/// <summary>
-		/// Determines whether the specified object is equal to the current object.
-		/// </summary>
-		/// <returns>
-		/// true if the specified object  is equal to the current object; otherwise, false.
-		/// </returns>
-		/// <param name="obj">The object to compare with the current object. </param>
+		/// <inheritdoc />
 		public override bool Equals(object obj)
 		{
 			if (ReferenceEquals(null, obj))
@@ -69,12 +82,7 @@ namespace SilentHunter.Controllers.Compiler
 			return Equals((CompilerBuildCache)obj);
 		}
 
-		/// <summary>
-		/// Serves as the default hash function.
-		/// </summary>
-		/// <returns>
-		/// A hash code for the current object.
-		/// </returns>
+		/// <inheritdoc />
 		public override int GetHashCode()
 		{
 			unchecked
@@ -87,11 +95,15 @@ namespace SilentHunter.Controllers.Compiler
 			}
 		}
 
+		/// <summary>
+		/// </summary>
 		public static bool operator ==(CompilerBuildCache left, CompilerBuildCache right)
 		{
 			return Equals(left, right);
 		}
 
+		/// <summary>
+		/// </summary>
 		public static bool operator !=(CompilerBuildCache left, CompilerBuildCache right)
 		{
 			return !Equals(left, right);

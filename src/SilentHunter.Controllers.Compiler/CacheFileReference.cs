@@ -5,12 +5,26 @@ using System.Xml.Serialization;
 
 namespace SilentHunter.Controllers.Compiler
 {
-	internal class CacheFileReference : IXmlSerializable, IEquatable<CacheFileReference>
+	// TODO: switch to DataContractSerializer so this does not have to be public.
+
+	/// <summary>
+	/// Represents a cached file reference.
+	/// </summary>
+	public class CacheFileReference : IXmlSerializable, IEquatable<CacheFileReference>
 	{
+		/// <summary>
+		/// Gets or sets the file path.
+		/// </summary>
 		public string Name { get; set; }
 
+		/// <summary>
+		/// Gets or sets when the file was last modified.
+		/// </summary>
 		public DateTime? LastModified { get; set; }
 
+		/// <summary>
+		/// Gets or sets the length (size) of the file.
+		/// </summary>
 		public long? Length { get; set; }
 
 		XmlSchema IXmlSerializable.GetSchema()
@@ -58,11 +72,14 @@ namespace SilentHunter.Controllers.Compiler
 			}
 		}
 
+		/// <inheritdoc />
 		public override string ToString()
 		{
 			return Name;
 		}
 
+		/// <summary>
+		/// </summary>
 		public bool Equals(CacheFileReference other)
 		{
 			if (ReferenceEquals(null, other))
@@ -78,6 +95,7 @@ namespace SilentHunter.Controllers.Compiler
 			return string.Equals(Name, other.Name) && LastModified.Equals(other.LastModified) && Length == other.Length;
 		}
 
+		/// <inheritdoc />
 		public override bool Equals(object obj)
 		{
 			if (ReferenceEquals(null, obj))
@@ -98,6 +116,7 @@ namespace SilentHunter.Controllers.Compiler
 			return Equals((CacheFileReference)obj);
 		}
 
+		/// <inheritdoc />
 		public override int GetHashCode()
 		{
 			unchecked
@@ -109,11 +128,15 @@ namespace SilentHunter.Controllers.Compiler
 			}
 		}
 
+		/// <summary>
+		/// </summary>
 		public static bool operator ==(CacheFileReference left, CacheFileReference right)
 		{
 			return Equals(left, right);
 		}
 
+		/// <summary>
+		/// </summary>
 		public static bool operator !=(CacheFileReference left, CacheFileReference right)
 		{
 			return !Equals(left, right);
