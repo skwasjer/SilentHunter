@@ -10,7 +10,7 @@ namespace SilentHunter.FileFormats.Dat
 	/// <summary>
 	/// Represents an DAT/SIM/ZON/DSD/CAM/ANM file parser.
 	/// </summary>
-	public sealed partial class DatFile : ChunkFile<DatChunk>, ISilentHunterFile
+	public partial class DatFile : ChunkFile<DatChunk>, ISilentHunterFile
 	{
 		private readonly IChunkResolver<Magics> _chunkResolver;
 		private readonly IChunkActivator _chunkActivator;
@@ -197,12 +197,23 @@ namespace SilentHunter.FileFormats.Dat
 			}
 		}
 
-		public ChunkReader<Magics, DatChunk> CreateReader(Stream stream)
+		public virtual T CreateChunk<T>()
+			where T : DatChunk
+		{
+			return (T)CreateChunk(typeof(T));
+		}
+
+		public virtual object CreateChunk(Type chunkType)
+		{
+			return _chunkActivator.Create(chunkType, null);
+		}
+
+		public virtual ChunkReader<Magics, DatChunk> CreateReader(Stream stream)
 		{
 			return new ChunkReader<Magics, DatChunk>(stream, _chunkResolver, _chunkActivator, true);
 		}
 
-		public ChunkWriter<Magics, DatChunk> CreateWriter(Stream stream)
+		public virtual ChunkWriter<Magics, DatChunk> CreateWriter(Stream stream)
 		{
 			return new ChunkWriter<Magics, DatChunk>(stream, true);
 		}
