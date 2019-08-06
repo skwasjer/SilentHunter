@@ -1,9 +1,9 @@
 # Silent Hunter 3/4/5 file parsers
 
 This repository contains:
+- Silent Hunter game file parsers (with extensions `.dat`, `.sim`, `.zon`, `.dsd`, `.cam`, `.val`, `.sdl`, `.off`)
 - Silent Hunter controller templates
-- Dynamic code compiler (for the controllers)
-- Silent Hunter game file parsers (with extensions .dat, .sim, .zon, .dsd, .cam, .val, .sdl, .off)
+- Dynamic code compiler (for controller templates)
 
 ## Why?
 
@@ -24,7 +24,7 @@ S3D specifically uses the dynamic controller assembly. This enabled modders to m
 
 Which method you choose depends on how you wish to distribute your application. If you do not care much about this, simply use the precompiled package.
 
-## Dependency injection
+## Configuration
 
 The file parsers are developed with dependency injection for `IServiceCollection` in mind, allowing you to inject the parsers in your own code base. As such, you need to configure the container before being able to use the parsers.
 
@@ -100,7 +100,32 @@ For SDL and OFF files, the principle is the same. Simply request a new instance 
 
 ```csharp
 SdlFile sdlFile = serviceProvider.GetRequiredService<SdlFile>();
+await sdlFile.LoadAsync(..filename..);
+var newSound = new SoundInfo
+{
+    Name = "sound_name",
+    WaveName = "sound.wav",
+    Volume = 0.9f,
+    ..
+};
+sdlFile.Add(newSound);
+```
+
+```csharp
 OffFile offFile = serviceProvider.GetRequiredService<OffFile>();
+await offFile.LoadAsync(..filename..);
+var newChar = new OffCharacter
+{
+    Character = 'A',
+    BoundingBox = new Rectangle
+    {
+        X = 10,
+        Y = 20,
+        Width = 30,
+        Height = 40
+    }
+}
+offFile.Add(newChar);
 ```
 
 ### Contributions
