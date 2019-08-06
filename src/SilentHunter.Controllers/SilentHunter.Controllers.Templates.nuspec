@@ -18,11 +18,12 @@
         <contentFiles>
             <!-- Copy controller templates to output dir of consuming project -->
             <files include="**.cs" buildAction="None" copyToOutput="true" flatten="false" />
+            <files include="**.md" buildAction="None" copyToOutput="false" flatten="false" />
         </contentFiles>
     </metadata>
     <files>
         <!-- Include all .cs files except those in obj folder. -->
-        <file src="**.cs" exclude="obj\**\*" target="Controllers" />
-        <file src="**.md" target="Controllers" />
+        <file src="**.cs" exclude="obj\**\*" target="contentFiles\any\any\Controllers" />
+        <file src="**.md" target="contentFiles\any\any\Controllers" />
     </files>
 </package>
