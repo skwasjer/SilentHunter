@@ -25,19 +25,23 @@ namespace SilentHunter.Controllers.Compiler.Tests
 
 			// Act
 			// ReSharper disable once RedundantArgumentDefaultValue
-			var targetFileData = new FileInfo(targetDllFile);
-			var pdbFile = Path.Combine(Path.GetDirectoryName(targetDllFile), Path.GetFileNameWithoutExtension(targetDllFile) + ".pdb");
-			var pdbFileData = new FileInfo(pdbFile);
+			string pdbFile = Path.Combine(Path.GetDirectoryName(targetDllFile), Path.GetFileNameWithoutExtension(targetDllFile) + ".pdb");
 			try
 			{
 				Assembly result = _sut.CompileCode(_fakeSourceFiles.Keys, compilerOptions);
 
 				// Assert
+				var targetFileData = new FileInfo(targetDllFile);
 				targetFileData.Exists.Should().BeTrue("an assembly DLL should be generated");
 				targetFileData.Length.Should().NotBe(0, "the assembly DLL contains IL");
 
+				var pdbFileData = new FileInfo(pdbFile);
 				pdbFileData.Exists.Should().BeTrue("a PDB should be generated");
 				pdbFileData.Length.Should().NotBe(0);
+				if (File.Exists(pdbFile))
+				{
+					File.Delete(pdbFile);
+				}
 
 				result.Should().BeNull("'loadAssembly' was set to false");
 
@@ -49,14 +53,9 @@ namespace SilentHunter.Controllers.Compiler.Tests
 			}
 			finally
 			{
-				if (targetFileData.Exists)
+				if (File.Exists(targetDllFile))
 				{
-					targetFileData.Delete();
-				}
-
-				if (pdbFileData.Exists)
-				{
-					pdbFileData.Delete();
+					File.Delete(targetDllFile);
 				}
 			}
 		}
