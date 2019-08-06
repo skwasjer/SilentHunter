@@ -5,6 +5,16 @@ This repository contains:
 - Silent Hunter controller templates
 - Dynamic code compiler (for controller templates)
 
+[![Build status](https://ci.appveyor.com/api/projects/status/cg0l2nchhnjngcu2/branch/master?svg=true)](https://ci.appveyor.com/project/skwasjer/silenthunter/branch/master)
+
+| | |
+|---|---|
+| `SilentHunter.FileFormats` | [![NuGet](https://img.shields.io/nuget/v/SilentHunter.FileFormats.svg)](https://www.nuget.org/packages/SilentHunter.FileFormats/) [![NuGet](https://img.shields.io/nuget/dt/SilentHunter.FileFormats.svg)](https://www.nuget.org/packages/SilentHunter.FileFormats/) |
+| `SilentHunter.Controllers` | [![NuGet](https://img.shields.io/nuget/v/SilentHunter.Controllers.svg)](https://www.nuget.org/packages/SilentHunter.Controllers/) [![NuGet](https://img.shields.io/nuget/dt/SilentHunter.Controllers.svg)](https://www.nuget.org/packages/SilentHunter.Controllers/) |
+| `SilentHunter.Controllers.Templates` | [![NuGet](https://img.shields.io/nuget/v/SilentHunter.Controllers.Templates.svg)](https://www.nuget.org/packages/SilentHunter.Controllers.Templates/) [![NuGet](https://img.shields.io/nuget/dt/SilentHunter.Controllers.Templates.svg)](https://www.nuget.org/packages/SilentHunter.Controllers.Templates/) |
+| `SilentHunter.Controllers.Compiler` | [![NuGet](https://img.shields.io/nuget/v/SilentHunter.Controllers.Compiler.svg)](https://www.nuget.org/packages/SilentHunter.Controllers.Compiler/) [![NuGet](https://img.shields.io/nuget/dt/SilentHunter.Controllers.Compiler.svg)](https://www.nuget.org/packages/SilentHunter.Controllers.Compiler/) |
+
+
 ## Why?
 
 Over a decade ago, I wrote a popular modding application called S3D (http://s3d.skwas.com) for Silent Hunter game files. Back then, I used some proprietary code to do so (from my own business). Fast forward to today - for posterity sake - I took some time to clean up the old code base and release it for everyone to use.
@@ -33,9 +43,12 @@ The file parsers are developed with dependency injection for `IServiceCollection
 ```powershell
 Install-Package SilentHunter.Controllers.Templates
 Install-Package SilentHunter.Controllers.Compiler
+Install-Package SilentHunter.FileFormats
 ```
 
 By adding the package `SilentHunter.Controllers.Templates`, the template source files are added to your application build output directory.
+
+The benefit of using the dynamic compiled assembly is that controllers can be updated without rebuilding/redistributing the whole application, and at the same time allowing modders control over the controller templates (hence why I did this for S3D).
 
 ```csharp
 IServiceCollection services = ...
@@ -53,6 +66,8 @@ services
 ```
 
 ### Using a precompiled controller assembly
+
+The benefit of using the precompiled assembly is that you have strong typed access to all controllers and don't have to use reflection.
 
 ```powershell
 Install-Package SilentHunter.Controllers
