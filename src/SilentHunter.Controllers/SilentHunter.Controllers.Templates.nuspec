@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <!-- Required elements-->
+        <id>SilentHunter.Controllers.Templates</id>
+        <version>1.0.0</version>
+        <description>Silent Hunter DAT file controller templates</description>
+        <authors>Martijn Bodeman</authors>
+        <summary>Contains the controller templates to be used in conjunction with the SilentHunter.FileFormats and SilentHunter.Controllers.Compiler package.</summary>
+
+        <projectUrl>https://github.com/skwasjer/SilentHunter</projectUrl>
+        <license type="expression">Apache-2.0</license>
+        <copyright>Copyright © 2019</copyright>
+
+        <repository type="git" url="https://github.com/skwasjer/SilentHunter" />
+
+        <!-- Optional elements -->
+        <contentFiles>
+            <!-- Copy controller templates to output dir of consuming project -->
+            <files include="**.cs" buildAction="None" copyToOutput="true" flatten="false" />
+        </contentFiles>
+    </metadata>
+    <files>
+        <!-- Include all .cs files except those in obj folder. -->
+        <file src="**.cs" exclude="obj\**\*" target="Controllers" />
+        <file src="**.md" target="Controllers" />
+    </files>
+</package>
