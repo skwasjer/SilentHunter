@@ -3,14 +3,14 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-namespace SilentHunter.Controllers.Compiler
+namespace SilentHunter.Controllers.Compiler.BuildCache
 {
 	// TODO: switch to DataContractSerializer so this does not have to be public.
 
 	/// <summary>
 	/// Represents a cached file reference.
 	/// </summary>
-	public class CacheFileReference : IXmlSerializable, IEquatable<CacheFileReference>
+	internal class CacheFileReference : IXmlSerializable, IEquatable<CacheFileReference>
 	{
 		/// <summary>
 		/// Gets or sets the file path.

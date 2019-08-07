@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace SilentHunter.Controllers.Compiler
+namespace SilentHunter.Controllers.Compiler.BuildCache
 {
 	// TODO: switch to DataContractSerializer so this does not have to be public.
 
@@ -9,7 +9,7 @@ namespace SilentHunter.Controllers.Compiler
 	/// The compiler build cache file format.
 	/// </summary>
 	[XmlRoot("cache")]
-	public class CompilerBuildCache
+	internal class CompilerBuildCache
 	{
 		/// <summary>
 		/// Gets or sets the compiler version.

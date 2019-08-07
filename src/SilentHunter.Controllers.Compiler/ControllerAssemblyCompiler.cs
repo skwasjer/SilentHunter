@@ -6,7 +6,7 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
-using System.Xml.Serialization;
+using SilentHunter.Controllers.Compiler.BuildCache;
 
 namespace SilentHunter.Controllers.Compiler
 {
@@ -47,6 +47,7 @@ namespace SilentHunter.Controllers.Compiler
 		};
 
 		private readonly IFileSystem _fileSystem;
+		private readonly ICompilerBuildCacheSerializer _cacheSerializer;
 		private readonly ICSharpCompiler _compiler;
 
 		/// <summary>
@@ -56,13 +57,14 @@ namespace SilentHunter.Controllers.Compiler
 		/// <param name="applicationName">The application name. This is used in the temp path used to generate the assembly, as to not conflict with other applications that also dynamically compile SilentHunter controllers.</param>
 		/// <param name="controllerDir">The path containing controller source files.</param>
 		public ControllerAssemblyCompiler(ICSharpCompiler compiler, string applicationName, string controllerDir)
-			: this(new FileSystem(), compiler, applicationName, controllerDir)
+			: this(new FileSystem(), new CompilerBuildCacheJsonSerializer(), compiler, applicationName, controllerDir)
 		{
 		}
 
-		internal ControllerAssemblyCompiler(IFileSystem fileSystem, ICSharpCompiler compiler, string applicationName, string controllerDir)
+		internal ControllerAssemblyCompiler(IFileSystem fileSystem, ICompilerBuildCacheSerializer cacheSerializer, ICSharpCompiler compiler, string applicationName, string controllerDir)
 		{
 			_fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
+			_cacheSerializer = cacheSerializer ?? throw new ArgumentNullException(nameof(cacheSerializer));
 			_compiler = compiler ?? throw new ArgumentNullException(nameof(compiler));
 			ApplicationName = applicationName ?? throw new ArgumentNullException(nameof(applicationName));
 			ControllerDir = _fileSystem.Path.GetFullPath(controllerDir ?? throw new ArgumentNullException(nameof(controllerDir)));
@@ -238,11 +240,10 @@ namespace SilentHunter.Controllers.Compiler
 		private void SaveBuildCache(CompilerBuildCache assemblyCache, string outputFile)
 		{
 			// Save the cache file.
-			var serializer = new XmlSerializer(typeof(CompilerBuildCache));
 			string cacheFile = GetBuildCacheFileName(outputFile);
 			using (Stream fs = _fileSystem.File.Open(cacheFile, FileMode.Create, FileAccess.Write, FileShare.Read))
 			{
-				serializer.Serialize(fs, assemblyCache);
+				_cacheSerializer.Serialize(fs, assemblyCache);
 			}
 		}
 
@@ -255,11 +256,17 @@ namespace SilentHunter.Controllers.Compiler
 			}
 
 			CompilerBuildCache oldCache;
-			// Load the cache file.
-			using (Stream fs = _fileSystem.File.OpenRead(cacheFile))
+			try
 			{
-				var serializer = new XmlSerializer(typeof(CompilerBuildCache));
-				oldCache = (CompilerBuildCache)serializer.Deserialize(fs);
+				// Load the cache file.
+				using (Stream fs = _fileSystem.File.OpenRead(cacheFile))
+				{
+					oldCache = _cacheSerializer.Deserialize(fs);
+				}
+			}
+			catch
+			{
+				return true;
 			}
 
 			// Check if cache is not out of sync and that all files exist.
