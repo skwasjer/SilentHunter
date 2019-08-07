@@ -12,7 +12,8 @@ using Xunit;
 
 namespace SilentHunter.FileFormats.Dat
 {
-	public class DatFileIntegrationTests : IClassFixture<CompiledControllersFixture>, IDisposable
+	[Collection(nameof(CompiledControllers))]
+	public class DatFileIntegrationTests : IDisposable
 	{
 		private const string S3DSignature = "\0Modified with S3D - Silent 3ditor (version 0.9.9.0). © 2007-2009 skwas";
 

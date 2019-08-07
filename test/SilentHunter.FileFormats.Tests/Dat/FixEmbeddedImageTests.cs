@@ -11,7 +11,8 @@ using Xunit;
 
 namespace SilentHunter.FileFormats.Dat
 {
-	public class FixEmbeddedImageTests : IClassFixture<CompiledControllersFixture>, IDisposable
+	[Collection(nameof(CompiledControllers))]
+	public class FixEmbeddedImageTests : IDisposable
 	{
 		private readonly CompiledControllersFixture _compiledControllers;
 		private readonly MemoryStream _datFileStream;
