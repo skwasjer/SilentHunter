@@ -12,23 +12,12 @@ namespace SilentHunter.FileFormats.Graphics
 	/// </summary>
 	public class TgaImageFormatDetector : IImageFormatDetector
 	{
-		private readonly bool _fix;
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="TgaImageFormatDetector"/> class.
-		/// </summary>
-		/// <param name="fix"><see langword="true" /> to check for common bugs and fix them in the stream.</param>
-		public TgaImageFormatDetector(bool fix)
-		{
-			_fix = fix;
-		}
-
 		/// <inheritdoc />
 		public string GetImageFormat(Stream stream)
 		{
 			try
 			{
-				return ValidateTgaStream(stream) ? "tga" : null;
+				return ValidateTgaStream(stream, false) ? "tga" : null;
 			}
 			catch
 			{
@@ -113,7 +102,7 @@ namespace SilentHunter.FileFormats.Graphics
 		/// <summary>
 		/// Validates stream contains valid TGA data.
 		/// </summary>
-		private bool ValidateTgaStream(Stream stream)
+		private bool ValidateTgaStream(Stream stream, bool tryApplyFixes)
 		{
 			if (stream == null)
 			{
@@ -130,51 +119,70 @@ namespace SilentHunter.FileFormats.Graphics
 				throw new ArgumentException("The stream does not support reading.");
 			}
 
-			// TODO: use ILogger instead of Debug.WriteLine.
-
-			long position = stream.Position;
-			Encoding parseEncoding = Encoding.ASCII;
-			TGA_HEADER tgaHeader;
-			using (var reader = new BinaryReader(stream, parseEncoding, true))
-			{
-				tgaHeader = (TGA_HEADER)reader.ReadStruct(typeof(TGA_HEADER));
-				if (tgaHeader.identsize > 0)
-				{
-					string imageId = reader.ReadString(tgaHeader.identsize);
-					Debug.WriteLine($"Has ImageID: {imageId}.");
-				}
-
-				if (!Enum.IsDefined(typeof(TgaPixelFormat), tgaHeader.PixelFormat))
-				{
-					Debug.WriteLine($"Unknown image data type {tgaHeader.PixelFormat}.");
-					return false;
-				}
-
-				if (tgaHeader.PixelFormat == TgaPixelFormat.Indexed)
-				{
-					if (!tgaHeader.HasPalette)
-					{
-						Debug.WriteLine("Palette is required but unavailable.");
-						return false;
-					}
-
-					// Check if all the color map data is available.
-					int paletteLength = tgaHeader.colormapbits / 8 * tgaHeader.colormaplength;
-					var colorMap = new byte[paletteLength];
-					if (reader.Read(colorMap, 0, paletteLength) != paletteLength)
-					{
-						Debug.WriteLine("Palette is not valid.");
-						return false;
-					}
-				}
-			}
-
-			if (_fix && !CheckAndFixBugsIfPossible(stream, position, ref tgaHeader))
+			if (stream.Length < Marshal.SizeOf(typeof(TGA_HEADER)))
 			{
 				return false;
 			}
 
-			stream.Seek(position, SeekOrigin.Begin);
+			// TODO: use ILogger instead of Debug.WriteLine.
+
+			long startPosition = stream.Position;
+			Encoding parseEncoding = Encoding.ASCII;
+			TGA_HEADER tgaHeader;
+			try
+			{
+				using (var reader = new BinaryReader(stream, parseEncoding, true))
+				{
+					tgaHeader = (TGA_HEADER)reader.ReadStruct(typeof(TGA_HEADER));
+					if (tgaHeader.identsize > 0)
+					{
+						string imageId = reader.ReadString(tgaHeader.identsize).TrimEnd('\0');
+						if (!string.IsNullOrEmpty(imageId))
+						{
+							Debug.WriteLine($"Has ImageID: {imageId}.");
+						}
+					}
+
+					if (!Enum.IsDefined(typeof(TgaPixelFormat), tgaHeader.PixelFormat))
+					{
+						Debug.WriteLine($"Unknown image data type {tgaHeader.PixelFormat}.");
+						return false;
+					}
+
+					if (tgaHeader.PixelFormat == TgaPixelFormat.Indexed)
+					{
+						if (!tgaHeader.HasPalette)
+						{
+							Debug.WriteLine("Palette is required but unavailable.");
+							return false;
+						}
+
+						// Check if all the color map data is available.
+						int paletteLength = tgaHeader.colormapbits / 8 * tgaHeader.colormaplength;
+						var colorMap = new byte[paletteLength];
+						if (reader.Read(colorMap, 0, paletteLength) != paletteLength)
+						{
+							Debug.WriteLine("Palette is not valid.");
+							return false;
+						}
+					}
+				}
+			}
+			finally
+			{
+				stream.Position = startPosition;
+			}
+
+			if (!CheckAndFixBugsIfPossible(stream, ref tgaHeader, tryApplyFixes))
+			{
+				return false;
+			}
+
+			return VerifyPixelFormat(tgaHeader);
+		}
+
+		private static bool VerifyPixelFormat(TGA_HEADER tgaHeader)
+		{
 			switch (tgaHeader.bits)
 			{
 				case 8:
@@ -191,7 +199,7 @@ namespace SilentHunter.FileFormats.Graphics
 			}
 		}
 
-		private static bool CheckAndFixBugsIfPossible(Stream stream, long position, ref TGA_HEADER tgaHeader)
+		private static bool CheckAndFixBugsIfPossible(Stream stream, ref TGA_HEADER tgaHeader, bool tryApplyFixes)
 		{
 			bool doesNotUsePalette = !tgaHeader.HasPalette && tgaHeader.PixelFormat != TgaPixelFormat.Indexed;
 			bool hasColorMapStartOrLength = tgaHeader.colormapstart != 0 || tgaHeader.colormaplength != 0;
@@ -203,22 +211,39 @@ namespace SilentHunter.FileFormats.Graphics
 				return true;
 			}
 
-			if (!stream.CanWrite)
+			if (!stream.CanWrite || !tryApplyFixes)
 			{
 				// Unable to patch header, so the stream is not considered a valid TGA stream.
-				Debug.WriteLine("TGA header contains invalid data, but unable to patch header: stream is not writable.");
+				Debug.WriteLine("TGA header contains invalid data, but did not patch header.");
 				return false;
 			}
 
-			stream.Seek(position, SeekOrigin.Begin);
-			tgaHeader.colormapstart = 0;
-			tgaHeader.colormaplength = 0;
-			using (var writer = new BinaryWriter(stream, Encoding.ASCII, true))
+			long startPosition = stream.Position;
+			try
 			{
-				writer.WriteStruct(tgaHeader);
+				tgaHeader.colormapstart = 0;
+				tgaHeader.colormaplength = 0;
+				using (var writer = new BinaryWriter(stream, Encoding.ASCII, true))
+				{
+					writer.WriteStruct(tgaHeader);
+				}
+
+				Debug.WriteLine("Patched TGA header with invalid data.");
+			}
+			finally
+			{
+				stream.Position = startPosition;
 			}
 
 			return true;
+		}
+
+		/// <summary>
+		/// Applies fixes, returns true if the TGA is valid after fixes.
+		/// </summary>
+		internal bool TryApplyFixes(Stream stream)
+		{
+			return ValidateTgaStream(stream, true);
 		}
 	}
 }

@@ -20,11 +20,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		/// Initializes a new instance of the <see cref="EmbeddedImageChunk"/> class.
 		/// </summary>
 		public EmbeddedImageChunk()
-			: this(new ImageFormatDetection(new IImageFormatDetector[]
-			{
-				new DdsImageFormatDetector(),
-				new TgaImageFormatDetector(true)
-			}))
+			: this(ImageFormatDetection.Default)
 		{
 		}
 
@@ -84,25 +80,50 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 				throw new ArgumentException("No data to read from stream.", nameof(imageData));
 			}
 
-			var buffer = new byte[bytesToRead];
-			await imageData.ReadAsync(buffer, 0, bytesToRead).ConfigureAwait(false);
-
-			Stream detectStream = imageData.CanSeek ? imageData : new MemoryStream(buffer);
+			Stream localStream = imageData;
 			try
 			{
-				detectStream.Position = 0;
-				ImageFormat = _imageFormatDetection.GetFormat(detectStream);
-				detectStream.Position = detectStream.Length;
+				if (!imageData.CanSeek)
+				{
+					localStream = new MemoryStream();
+					await imageData.CopyToAsync(localStream).ConfigureAwait(false);
+					localStream.Position = 0;
+				}
+
+				ImageFormat = _imageFormatDetection.GetFormat(localStream);
+				if (ImageFormat == ImageFormat.Unknown)
+				{
+					// Attempt to apply fixes.
+					TgaImageFormatDetector tgaDetector = _imageFormatDetection.Detectors.OfType<TgaImageFormatDetector>().FirstOrDefault();
+					if (tgaDetector != null)
+					{
+						using (var ms = new MemoryStream())
+						{
+							await localStream.CopyToAsync(ms).ConfigureAwait(false);
+
+							ms.Position = 0;
+							if (tgaDetector.TryApplyFixes(ms))
+							{
+								ImageFormat = ImageFormat.Tga;
+							}
+
+							_buffer = ms.ToArray();
+							return;
+						}
+					}
+				}
+
+				// Using indirection because we can't write directly to field, so we just use the same ref to the local var.
+				byte[] buffer = _buffer = new byte[bytesToRead];
+				await localStream.ReadAsync(buffer, 0, bytesToRead).ConfigureAwait(false);
 			}
 			finally
 			{
-				if (detectStream != imageData)
+				if (localStream != imageData)
 				{
-					detectStream.Dispose();
+					localStream.Dispose();
 				}
 			}
-
-			_buffer = buffer;
 		}
 
 		/// <summary>
@@ -123,18 +144,9 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		}
 
 		/// <inheritdoc />
-		protected override async Task DeserializeAsync(Stream stream)
+		protected override Task DeserializeAsync(Stream stream)
 		{
-			// Temp fix: we wrap in memory stream in order for image detection to work
-			// and to be able to fix any bugs in TGA streams. Rather though, would be nice
-			// to do this on the fly without having to read stream twice.
-			using (var ms = new MemoryStream())
-			{
-				await stream.CopyToAsync(ms).ConfigureAwait(false);
-				ms.Position = 0;
-
-				await WriteAsync(ms).ConfigureAwait(false);
-			}
+			return WriteAsync(stream);
 		}
 
 		/// <inheritdoc />

@@ -12,6 +12,7 @@
     <None Remove="Dat\Chunks\ModelWithNormals.chunkdata" />
     <None Remove="Dat\Controllers\Serialization\ControllerSerializers\StateMachineController.chunkdata" />
     <None Remove="Dat\DatFileTest.dat" />
+    <None Remove="Dat\TgaHeaderErrors.dat" />
     <None Remove="Sdl\SdlWithOneItem.sdl" />
     <None Remove="Sdl\SdlWithS3DHeader.sdl" />
     <None Remove="Sdl\SdlWithTwoItems.sdl" />
@@ -22,6 +23,7 @@
     <EmbeddedResource Include="Dat\Chunks\ModelWithNormals.chunkdata" />
     <EmbeddedResource Include="Dat\Controllers\Serialization\ControllerSerializers\StateMachineController.chunkdata" />
     <EmbeddedResource Include="Dat\DatFileTest.dat" />
+    <EmbeddedResource Include="Dat\TgaHeaderErrors.dat" />
     <EmbeddedResource Include="Sdl\SdlWithOneItem.sdl" />
     <EmbeddedResource Include="Sdl\SdlWithS3DHeader.sdl" />
     <EmbeddedResource Include="Sdl\SdlWithTwoItems.sdl" />

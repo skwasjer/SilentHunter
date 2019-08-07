@@ -9,8 +9,6 @@ namespace SilentHunter.FileFormats.Graphics
 	/// </summary>
 	public class ImageFormatDetection
 	{
-		private readonly IEnumerable<IImageFormatDetector> _detectors;
-
 		/// <summary>
 		/// Gets the default image format detection instance.
 		/// </summary>
@@ -18,7 +16,7 @@ namespace SilentHunter.FileFormats.Graphics
 			new IImageFormatDetector[]
 			{
 				new DdsImageFormatDetector(),
-				new TgaImageFormatDetector(false),
+				new TgaImageFormatDetector(),
 			}
 		);
 
@@ -28,8 +26,13 @@ namespace SilentHunter.FileFormats.Graphics
 		/// <param name="detectors"></param>
 		public ImageFormatDetection(IEnumerable<IImageFormatDetector> detectors)
 		{
-			_detectors = detectors ?? throw new ArgumentNullException(nameof(detectors));
+			Detectors = detectors ?? throw new ArgumentNullException(nameof(detectors));
 		}
+
+		/// <summary>
+		/// Gets the chained detectors used.
+		/// </summary>
+		public IEnumerable<IImageFormatDetector> Detectors { get; }
 
 		/// <summary>
 		/// Gets the image format from image data on specified <paramref name="stream"/>.
@@ -57,13 +60,19 @@ namespace SilentHunter.FileFormats.Graphics
 
 			long currentPos = stream.Position;
 			string formatStr = null;
-			foreach (IImageFormatDetector detector in _detectors)
+			foreach (IImageFormatDetector detector in Detectors)
 			{
-				formatStr = detector.GetImageFormat(stream);
-				stream.Position = currentPos;
-				if (formatStr != null)
+				try
 				{
-					break;
+					formatStr = detector.GetImageFormat(stream);
+					if (formatStr != null)
+					{
+						break;
+					}
+				}
+				finally
+				{
+					stream.Position = currentPos;
 				}
 			}
 
