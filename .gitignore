@@ -234,3 +234,5 @@ _Pvt_Extensions
 # Mac desktop service store files
 .DS_Store
 
+# JetBrains
+.idea/
