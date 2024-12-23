@@ -3,10 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
     <RootNamespace></RootNamespace>
-    <DebugType>full</DebugType>
   </PropertyGroup>
-
-  <Import Project="..\Package.props" />
 
   <PropertyGroup>
     <Description>Silent Hunter DAT file controllers, to be used in conjunction with the SilentHunter.FileFormats package</Description>

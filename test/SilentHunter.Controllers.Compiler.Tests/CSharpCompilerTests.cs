@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using FluentAssertions;
-using Xunit;
 
 namespace SilentHunter.Controllers.Compiler.Tests
 {
@@ -23,24 +21,30 @@ namespace SilentHunter.Controllers.Compiler.Tests
 				IgnoreCompilerErrors = new[] { "CS0042" }
 			};
 
+			bool isRunningOnMono = Type.GetType("Mono.Runtime") != null;
+
 			// Act
 			// ReSharper disable once RedundantArgumentDefaultValue
-			string pdbFile = Path.Combine(Path.GetDirectoryName(targetDllFile), Path.GetFileNameWithoutExtension(targetDllFile) + ".pdb");
+			string strDebugFileExt = isRunningOnMono ? ".mdb" : ".pdb";
+			string debugSymbolFile = Path.Combine(
+				Path.GetDirectoryName(targetDllFile),
+				(isRunningOnMono ? targetDllFile : Path.GetFileNameWithoutExtension(targetDllFile)) + strDebugFileExt
+			);
 			try
 			{
 				Assembly result = _sut.CompileCode(_fakeSourceFiles.Keys, compilerOptions);
 
 				// Assert
 				var targetFileData = new FileInfo(targetDllFile);
-				targetFileData.Exists.Should().BeTrue("an assembly DLL should be generated");
+				targetFileData.Exists.Should().BeTrue($"an assembly DLL should be generated at {targetDllFile}");
 				targetFileData.Length.Should().NotBe(0, "the assembly DLL contains IL");
 
-				var pdbFileData = new FileInfo(pdbFile);
-				pdbFileData.Exists.Should().BeTrue("a PDB should be generated");
+				var pdbFileData = new FileInfo(debugSymbolFile);
+				pdbFileData.Exists.Should().BeTrue($"a debug symbol file should be generated at {debugSymbolFile}");
 				pdbFileData.Length.Should().NotBe(0);
-				if (File.Exists(pdbFile))
+				if (File.Exists(debugSymbolFile))
 				{
-					File.Delete(pdbFile);
+					File.Delete(debugSymbolFile);
 				}
 
 				result.Should().BeNull("'loadAssembly' was set to false");
@@ -62,10 +66,7 @@ namespace SilentHunter.Controllers.Compiler.Tests
 
 		protected override List<string> GetReferencedAssemblies()
 		{
-			return new List<string>
-			{
-				"System.dll"
-			};
+			return new List<string> { "System.dll" };
 		}
 	}
 }

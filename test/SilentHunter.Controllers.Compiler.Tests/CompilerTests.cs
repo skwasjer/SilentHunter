@@ -7,9 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using FluentAssertions;
 using SilentHunter.Testing.FluentAssertions;
-using Xunit;
 
 namespace SilentHunter.Controllers.Compiler.Tests
 {
@@ -18,7 +16,7 @@ namespace SilentHunter.Controllers.Compiler.Tests
 	{
 		protected readonly string[] _typesToCompile = { "Foo", "Bar" };
 
-		private const string TargetDllFile = @"C:\bin\output.dll";
+		private static readonly string TargetDllFile = $"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}output.dll";
 		protected ICSharpCompiler _sut;
 		protected readonly Dictionary<string, MockFileData> _fakeSourceFiles;
 		private readonly MockFileSystem _fileSystem;
@@ -28,7 +26,7 @@ namespace SilentHunter.Controllers.Compiler.Tests
 			_fakeSourceFiles = new Dictionary<string, MockFileData>();
 			foreach (string typeName in _typesToCompile)
 			{
-				_fakeSourceFiles.Add($"C:\\src\\{typeName}.cs", new MockFileData($"public class {typeName} {{ }}"));
+				_fakeSourceFiles.Add($"src{Path.DirectorySeparatorChar}Fake{Path.DirectorySeparatorChar}{typeName}.cs", new MockFileData($"public class {typeName} {{ }}"));
 			}
 
 			_fileSystem = new MockFileSystem(_fakeSourceFiles);
@@ -53,10 +51,7 @@ namespace SilentHunter.Controllers.Compiler.Tests
 				typeof(TCompiler),
 				BindingFlags.Instance | BindingFlags.NonPublic,
 				null,
-				new object[]
-				{
-					fileSystem
-				},
+				new object[] { fileSystem },
 				null);
 		}
 
@@ -67,7 +62,8 @@ namespace SilentHunter.Controllers.Compiler.Tests
 			Action act = () => _sut.CompileCode((string[])null, new CompilerOptions());
 
 			// Assert
-			act.Should().Throw<ArgumentNullException>()
+			act.Should()
+				.Throw<ArgumentNullException>()
 				.WithParamName("fileNames");
 		}
 
@@ -78,7 +74,8 @@ namespace SilentHunter.Controllers.Compiler.Tests
 			Action act = () => _sut.CompileCode(new List<string>(), null);
 
 			// Assert
-			act.Should().Throw<ArgumentNullException>()
+			act.Should()
+				.Throw<ArgumentNullException>()
 				.WithParamName("options");
 		}
 
@@ -89,7 +86,8 @@ namespace SilentHunter.Controllers.Compiler.Tests
 			Action act = () => _sut.CompileCode(new List<string>(), new CompilerOptions());
 
 			// Assert
-			act.Should().Throw<ArgumentOutOfRangeException>()
+			act.Should()
+				.Throw<ArgumentOutOfRangeException>()
 				.WithParamName("fileNames");
 		}
 
@@ -97,10 +95,7 @@ namespace SilentHunter.Controllers.Compiler.Tests
 		public void Given_outputDir_does_not_exist_when_compiling_should_create_dir()
 		{
 			Action act = () =>
-				_sut.CompileCode(_fakeSourceFiles.Keys, new CompilerOptions
-				{
-					OutputFile = TargetDllFile
-				});
+				_sut.CompileCode(_fakeSourceFiles.Keys, new CompilerOptions { OutputFile = TargetDllFile });
 
 			act.Should().NotThrow<DirectoryNotFoundException>();
 		}
@@ -115,7 +110,7 @@ namespace SilentHunter.Controllers.Compiler.Tests
 			{
 				ReferencedAssemblies = GetReferencedAssemblies(),
 				OutputFile = TargetDllFile,
-				IgnoreCompilerErrors = new [] { "CS0042" }
+				IgnoreCompilerErrors = new[] { "CS0042" }
 			};
 
 			// Act
@@ -152,11 +147,7 @@ namespace SilentHunter.Controllers.Compiler.Tests
 		[Fact]
 		public void Given_source_file_has_syntax_error_when_compiling_should_throw()
 		{
-			var compilerOptions = new CompilerOptions
-			{
-				ReferencedAssemblies = GetReferencedAssemblies(),
-				OutputFile = TargetDllFile
-			};
+			var compilerOptions = new CompilerOptions { ReferencedAssemblies = GetReferencedAssemblies(), OutputFile = TargetDllFile };
 
 			// Replace contents of first file with invalid source code.
 			_fakeSourceFiles.First().Value.Contents = Encoding.UTF8.GetBytes("Invalid C# code");
