@@ -13,7 +13,7 @@ namespace SilentHunter.Controllers.Compiler
 
 			// Assert
 #if NETFRAMEWORK
-			targetFramework.Should().Be("net462");
+			targetFramework.Should().Be("net472");
 #else
 			targetFramework.Should().Be("netcoreapp8.0");
 #endif
