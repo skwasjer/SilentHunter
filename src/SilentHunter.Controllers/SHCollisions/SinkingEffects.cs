@@ -1,25 +1,25 @@
-/* 
+/*
  * SHCollisions.act - SinkingEffects
  *
  * © 2007-2016 skwas. All rights reserved.
  * This code is provided as is. Change at your own risk.
  * --------------------------------------------------
- * 
+ *
  * S3D template for the SinkingEffects controller of Silent Hunter.
- * 
+ *
  * For documentation on templates, requirements and restrictions, please refer to the documentation.
- * 
-*/
+ *
+ */
 
 using SilentHunter.Controllers;
 
 namespace SHCollisions
 {
-	/// <summary>
-	/// SinkingEffects controller. The visual effects when sinking object.
-	/// </summary>
-	public class SinkingEffects
-		: BehaviorController
-	{
-	}
+    /// <summary>
+    /// SinkingEffects controller. The visual effects when sinking object.
+    /// </summary>
+    public class SinkingEffects
+        : BehaviorController
+    {
+    }
 }
