@@ -1,8 +1,8 @@
 ﻿using System;
+using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using SilentHunter.Controllers.Compiler.DependencyInjection;
 using SilentHunter.FileFormats.DependencyInjection;
-using Xunit;
 
 namespace SilentHunter.FileFormats.Fixtures
 {
@@ -15,10 +15,10 @@ namespace SilentHunter.FileFormats.Fixtures
 	{
 		public CompiledControllersFixture()
 		{
-			const string controllerPath = @"..\..\..\..\..\src\SilentHunter.Controllers";
+			string controllerPath = string.Join(Path.DirectorySeparatorChar.ToString(), "..", "..", "..", "..", "..", "src", "SilentHunter.Controllers");
 			var services = new ServiceCollection();
 			services.AddSilentHunterParsers(configurer => configurer
-				.Controllers.CompileFrom(controllerPath, "Controllers", ignorePaths: f => f.StartsWith(@"obj\"))
+				.Controllers.CompileFrom(controllerPath, "Controllers", ignorePaths: f => f.StartsWith($"obj{Path.DirectorySeparatorChar}"))
 			);
 
 			ServiceProvider = services.BuildServiceProvider();
