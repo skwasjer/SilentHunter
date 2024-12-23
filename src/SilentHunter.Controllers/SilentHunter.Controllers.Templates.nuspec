@@ -8,6 +8,10 @@
         <authors>Martijn Bodeman</authors>
         <tags>silenthunter silent hunter controllers</tags>
 
+        <icon>package-icon.png</icon>
+
+        <releaseNotes>Release notes are at https://github.com/skwasjer/SilentHunter/releases</releaseNotes>
+
         <projectUrl>https://github.com/skwasjer/SilentHunter/tree/master/src/SilentHunter.Controllers</projectUrl>
         <license type="expression">Apache-2.0</license>
         <copyright>Copyright © 2019</copyright>
@@ -25,5 +29,6 @@
         <!-- Include all .cs files except those in obj folder. -->
         <file src="**.cs" exclude="obj\**\*" target="contentFiles\any\any\Controllers" />
         <file src="**.md" target="contentFiles\any\any\Controllers" />
+        <file src="..\..\assets\package-icon.png" target="package-icon.png" />
     </files>
 </package>

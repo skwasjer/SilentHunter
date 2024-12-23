@@ -3,13 +3,6 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
     <RootNamespace>SilentHunter</RootNamespace>
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-
-  <Import Project="..\Package.props" />
-
-  <PropertyGroup>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <WarningsAsErrors>NU1605;CS1591</WarningsAsErrors>
   </PropertyGroup>
 
