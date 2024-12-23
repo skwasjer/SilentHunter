@@ -117,7 +117,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 		}
 
 		[Fact]
-		public void Given_null_byteArray_when_writing_should_throw()
+		public async Task Given_null_byteArray_when_writing_should_throw()
 		{
 			byte[] imageData = null;
 			var chunk = new EmbeddedImageChunk();
@@ -127,13 +127,13 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 			Func<Task> act = () => chunk.WriteAsync(imageData);
 
 			// Assert
-			act.Should()
-				.Throw<ArgumentNullException>()
-				.WithParamName(nameof(imageData));
+			await act.Should()
+				.ThrowAsync<ArgumentNullException>()
+				.WithParameterName(nameof(imageData));
 		}
 
 		[Fact]
-		public void Given_null_stream_when_writing_should_throw()
+		public async Task Given_null_stream_when_writing_should_throw()
 		{
 			Stream imageData = null;
 			var chunk = new EmbeddedImageChunk();
@@ -143,13 +143,13 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 			Func<Task> act = () => chunk.WriteAsync(imageData);
 
 			// Assert
-			act.Should()
-				.Throw<ArgumentNullException>()
-				.WithParamName(nameof(imageData));
+			await act.Should()
+				.ThrowAsync<ArgumentNullException>()
+				.WithParameterName(nameof(imageData));
 		}
 
 		[Fact]
-		public void Given_non_readable_stream_when_writing_should_throw()
+		public async Task Given_non_readable_stream_when_writing_should_throw()
 		{
 			var streamMock = new Mock<Stream>();
 			streamMock.Setup(m => m.CanRead).Returns(false);
@@ -160,26 +160,26 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 			Func<Task> act = () => chunk.WriteAsync(imageData);
 
 			// Assert
-			act.Should()
-				.Throw<ArgumentException>()
+			await act.Should()
+				.ThrowAsync<ArgumentException>()
 				.WithMessage("The stream does not support reading.*")
-				.WithParamName(nameof(imageData));
+				.WithParameterName(nameof(imageData));
 		}
 
 		[Fact]
-		public void Given_no_data_when_writing_should_throw()
+		public async Task Given_no_data_when_writing_should_throw()
 		{
-			var imageData = new byte[0];
+			byte[] imageData = new byte[0];
 			var chunk = new EmbeddedImageChunk();
 
 			// Act
 			Func<Task> act = () => chunk.WriteAsync(imageData);
 
 			// Assert
-			act.Should()
-				.Throw<ArgumentException>()
+			await act.Should()
+				.ThrowAsync<ArgumentException>()
 				.WithMessage("No data to read from stream.*")
-				.WithParamName(nameof(imageData));
+				.WithParameterName(nameof(imageData));
 		}
 
 		[Fact]
@@ -209,7 +209,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 			Func<Task> act = () => chunk.WriteAsync(imageData);
 
 			// Assert
-			act.Should().NotThrow<Exception>();
+			await act.Should().NotThrowAsync<Exception>();
 			chunk.ImageFormat.Should().Be(ImageFormat.Tga);
 			(await chunk.ReadAsByteArrayAsync()).Should().BeEquivalentTo(fakeImageData);
 			imageFormatDetectorMock.Verify();

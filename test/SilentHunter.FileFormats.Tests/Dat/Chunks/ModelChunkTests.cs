@@ -76,9 +76,11 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 
 				// Assert
 				// For purpose of test, we use a very lax epsilon, since our vectors above are not remotely as precise as the binary representation.
-				deserializedChunk.Should().BeEquivalentTo(expectedChunk, opts =>
-					opts.Using(new VectorEquivalencyStep<Vector3>(0.0000005f))
-						.Using(new VectorEquivalencyStep<Vector2>(0.0000005f)));
+				deserializedChunk.Should()
+					.BeEquivalentTo(expectedChunk,
+						opts =>
+							opts.Using(new VectorEquivalencyStep<Vector3>(0.0000005f))
+								.Using(new VectorEquivalencyStep<Vector2>(0.0000005f)));
 				ms.Should().BeEof();
 			}
 		}
@@ -100,9 +102,11 @@ namespace SilentHunter.FileFormats.Dat.Chunks
 				await deserializedChunk.DeserializeAsync(ms, false);
 
 				// Assert
-				deserializedChunk.Should().BeEquivalentTo(chunk, opts =>
-					opts.Using(new VectorEquivalencyStep<Vector3>(float.Epsilon))
-						.Using(new VectorEquivalencyStep<Vector2>(float.Epsilon)));
+				deserializedChunk.Should()
+					.BeEquivalentTo(chunk,
+						opts =>
+							opts.Using(new VectorEquivalencyStep<Vector3>(float.Epsilon))
+								.Using(new VectorEquivalencyStep<Vector2>(float.Epsilon)));
 				ms.Should().BeEof();
 			}
 		}

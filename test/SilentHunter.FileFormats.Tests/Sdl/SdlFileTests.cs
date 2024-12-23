@@ -9,7 +9,6 @@ using FluentAssertions;
 using FluentAssertions.Specialized;
 using Moq;
 using SilentHunter.Testing.Extensions;
-using SilentHunter.Testing.FluentAssertions;
 using Xunit;
 
 namespace SilentHunter.FileFormats.Sdl
@@ -75,31 +74,31 @@ namespace SilentHunter.FileFormats.Sdl
 		}
 
 		[Fact]
-		public void Given_null_stream_when_loading_should_throw()
+		public async Task Given_null_stream_when_loading_should_throw()
 		{
 			// Act
 			Func<Task> act = () => _sut.LoadAsync(null);
 
 			// Assert
-			act.Should()
-				.Throw<ArgumentNullException>()
-				.WithParamName("stream");
+			await act.Should()
+				.ThrowAsync<ArgumentNullException>()
+				.WithParameterName("stream");
 		}
 
 		[Fact]
-		public void Given_null_stream_when_saving_should_throw()
+		public async Task Given_null_stream_when_saving_should_throw()
 		{
 			// Act
 			Func<Task> act = () => _sut.SaveAsync(null);
 
 			// Assert
-			act.Should()
-				.Throw<ArgumentNullException>()
-				.WithParamName("stream");
+			await act.Should()
+				.ThrowAsync<ArgumentNullException>()
+				.WithParameterName("stream");
 		}
 
 		[Fact]
-		public void Given_stream_is_not_readable_when_loading_should_throw()
+		public async Task Given_stream_is_not_readable_when_loading_should_throw()
 		{
 			var unreadableStreamMock = new Mock<Stream>();
 			unreadableStreamMock.Setup(m => m.CanRead).Returns(false);
@@ -108,14 +107,14 @@ namespace SilentHunter.FileFormats.Sdl
 			Func<Task> act = () => _sut.LoadAsync(unreadableStreamMock.Object);
 
 			// Assert
-			act.Should()
-				.Throw<ArgumentException>()
+			await act.Should()
+				.ThrowAsync<ArgumentException>()
 				.WithMessage("The stream does not support reading.*")
-				.WithParamName("stream");
+				.WithParameterName("stream");
 		}
 
 		[Fact]
-		public void Given_stream_is_not_writable_when_saving_should_throw()
+		public async Task Given_stream_is_not_writable_when_saving_should_throw()
 		{
 			var unwritableStreamMock = new Mock<Stream>();
 			unwritableStreamMock.Setup(m => m.CanWrite).Returns(false);
@@ -124,15 +123,15 @@ namespace SilentHunter.FileFormats.Sdl
 			Func<Task> act = () => _sut.SaveAsync(unwritableStreamMock.Object);
 
 			// Assert
-			act.Should()
-				.Throw<ArgumentException>()
+			await act.Should()
+				.ThrowAsync<ArgumentException>()
 				.WithMessage("The stream does not support writing.*")
-				.WithParamName("stream");
+				.WithParameterName("stream");
 		}
 
 		[Theory]
 		[MemberData(nameof(TestCasesWithInvalidData))]
-		public void Given_invalid_data_when_reading_should_throw(SoundInfoTestCase testCase)
+		public async Task Given_invalid_data_when_reading_should_throw(SoundInfoTestCase testCase)
 		{
 			// Act
 			Func<Task> act = () =>
@@ -144,7 +143,7 @@ namespace SilentHunter.FileFormats.Sdl
 			};
 
 			// Assert
-			ExceptionAssertions<SdlFileException> ex = act.Should().Throw<SdlFileException>();
+			ExceptionAssertions<SdlFileException> ex = await act.Should().ThrowAsync<SdlFileException>();
 			ex.WithInnerExceptionExactly<SilentHunterParserException>()
 				.WithMessage(testCase.ExpectedError);
 			ex.Which.ItemIndex.Should().Be(testCase.ExpectedIndex);
