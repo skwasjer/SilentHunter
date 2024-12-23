@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using FluentAssertions.Equivalency;
-using SilentHunter.FileFormats.Extensions;
 
 namespace SilentHunter.FileFormats.FluentAssertions
 {
@@ -17,38 +16,31 @@ namespace SilentHunter.FileFormats.FluentAssertions
 			_epsilon = epsilon;
 		}
 
-		public bool CanHandle(IEquivalencyValidationContext context, IEquivalencyAssertionOptions config)
+		public EquivalencyResult Handle(Comparands comparands, IEquivalencyValidationContext context, IEquivalencyValidator nestedValidator)
 		{
-			// TODO: support also for non enumerable types, if needed.
-			if (!context.RuntimeType.IsClosedTypeOf(typeof(IEnumerable<>)))
+			if (ReferenceEquals(comparands.Subject, comparands.Expectation))
 			{
-				return false;
-			}
-
-			Type elementType = context.RuntimeType.GetElementType();
-			return elementType == typeof(T);
-
-		}
-
-		public bool Handle(IEquivalencyValidationContext context, IEquivalencyValidator parent, IEquivalencyAssertionOptions config)
-		{
-			if (ReferenceEquals(context.Subject, context.Expectation))
-			{
-				return true;
+				return EquivalencyResult.AssertionCompleted;
 			}
 
 			FieldInfo[] fieldInfos = typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Public);
 			if (!fieldInfos.All(fi => fi.FieldType == typeof(float) || fi.FieldType == typeof(double)))
 			{
-				throw new InvalidOperationException("Cannot compare vectors. One or more fields is not a float or double.");
+				return EquivalencyResult.ContinueWithNext;
+				//throw new InvalidOperationException("Cannot compare vectors. One or more fields is not a float or double.");
 			}
 
-			List<T> vectors = ((IEnumerable<T>)context.Subject).ToList();
-			List<T> expectedVectors = ((IEnumerable<T>)context.Expectation).ToList();
+			if (!(comparands.Subject is IEnumerable<T> subject && comparands.Expectation is IEnumerable<T> expectation))
+			{
+				return EquivalencyResult.ContinueWithNext;
+			}
+
+			var vectors = subject.ToList();
+			var expectedVectors = expectation.ToList();
 
 			if (vectors.Count != expectedVectors.Count)
 			{
-				return false;
+				return EquivalencyResult.ContinueWithNext;
 			}
 
 			for (int i = 0; i < vectors.Count; i++)
@@ -63,12 +55,12 @@ namespace SilentHunter.FileFormats.FluentAssertions
 
 					if (!NearlyEqual(leftValue, rightValue, _epsilon))
 					{
-						return false;
+						return EquivalencyResult.ContinueWithNext;
 					}
 				}
 			}
 
-			return true;
+			return EquivalencyResult.AssertionCompleted;
 		}
 
 		private static bool NearlyEqual(double a, double b, double epsilon)
@@ -88,7 +80,7 @@ namespace SilentHunter.FileFormats.FluentAssertions
 			{
 				// a or b is zero or both are extremely close to it
 				// relative error is less meaningful here
-				return diff < (epsilon * minNormal);
+				return diff < epsilon * minNormal;
 			}
 
 			// use relative error

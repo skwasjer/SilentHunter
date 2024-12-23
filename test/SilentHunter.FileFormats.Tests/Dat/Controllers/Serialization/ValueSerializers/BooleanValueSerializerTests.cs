@@ -36,7 +36,8 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 		{
 			// Act & assert
 			_sut.IsSupported(_serializationContext)
-				.Should().BeTrue();
+				.Should()
+				.BeTrue();
 		}
 
 		[Fact]
@@ -46,7 +47,8 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 
 			// Act & assert
 			_sut.IsSupported(new ControllerSerializationContext(field, new Mock<Controller>().Object))
-				.Should().BeFalse();
+				.Should()
+				.BeFalse();
 		}
 
 		[Theory]
@@ -61,7 +63,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization
 				_sut.Serialize(writer, _serializationContext, value);
 
 				// Assert
-				ms.ToArray().Should().BeEquivalentTo(expectedSerialized);
+				ms.ToArray().Should().BeEquivalentTo(new[] { expectedSerialized });
 			}
 		}
 

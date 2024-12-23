@@ -40,7 +40,7 @@ namespace SilentHunter.FileFormats.Extensions
 			using (var reader = new BinaryReader(new MemoryStream(BitConverter.GetBytes((int)expected))))
 			{
 				var value = reader.ReadStruct<IntEnum>();
-				value.Should().BeOfType<IntEnum>().And.Be(expected);
+				value.Should().Be(expected);
 				reader.BaseStream.Should().BeEof();
 			}
 		}
@@ -70,7 +70,7 @@ namespace SilentHunter.FileFormats.Extensions
 			using (var reader = new BinaryReader(new MemoryStream(BitConverter.GetBytes((long)expected))))
 			{
 				var value = reader.ReadStruct<LongEnum>();
-				value.Should().BeOfType<LongEnum>().And.Be(expected);
+				value.Should().Be(expected);
 				reader.BaseStream.Should().BeEof();
 			}
 		}
