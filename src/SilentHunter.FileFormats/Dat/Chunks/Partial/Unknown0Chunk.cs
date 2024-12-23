@@ -1,5 +1,4 @@
-﻿namespace SilentHunter.FileFormats.Dat.Chunks.Partial
-{
+﻿namespace SilentHunter.FileFormats.Dat.Chunks.Partial;
 #if WIP
 	public sealed class Unknown0Chunk : DatChunk
 	{
@@ -29,19 +28,19 @@
 		protected override void OnDeserialize(Stream stream)
 		{
 			/*RegionStream RegionStream = stream as RegionStream;
-
-			BinaryReader reader = new BinaryReader(stream, Encoding.ParseEncoding);
-
-			Id = reader.ReadUInt64();
-
-			_morphedVertices = new List<MorphedVertex>(reader.ReadInt32());
-
-			UnknownData.Add(new UnknownChunkData(RegionStream == null ? stream.Position - 4 : RegionStream.BasePosition - 4, stream.Position - 4, _morphedVertices, "A list of morph info per vertex."));			
-
-			for (int i = 0; i < _morphedVertices.Capacity; i++)
-			{
-				_morphedVertices.Add((MorphedVertex)reader.ReadStruct(typeof(MorphedVertex)));
-			}*/
+			
+            BinaryReader reader = new BinaryReader(stream, Encoding.ParseEncoding);
+			
+            Id = reader.ReadUInt64();
+			
+            _morphedVertices = new List<MorphedVertex>(reader.ReadInt32());
+			
+            UnknownData.Add(new UnknownChunkData(RegionStream == null ? stream.Position - 4 : RegionStream.BasePosition - 4, stream.Position - 4, _morphedVertices, "A list of morph info per vertex."));
+			
+            for (int i = 0; i < _morphedVertices.Capacity; i++)
+            {
+                _morphedVertices.Add((MorphedVertex)reader.ReadStruct(typeof(MorphedVertex)));
+            }*/
 
 			base.OnDeserialize(stream);
 		}
@@ -77,4 +76,3 @@
 		}
 	}
 #endif
-}

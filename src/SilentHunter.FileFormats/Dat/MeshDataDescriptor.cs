@@ -1,18 +1,17 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilentHunter.FileFormats.Dat
-{
-	[SuppressMessage("ReSharper", "InconsistentNaming")]
-	internal enum MeshDataDescriptor
-	{
-		/// <summary>
-		/// Ambient occlusion map.
-		/// </summary>
-		TMAP,
+namespace SilentHunter.FileFormats.Dat;
 
-		/// <summary>
-		/// Vertex normals.
-		/// </summary>
-		NORM
-	}
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+internal enum MeshDataDescriptor
+{
+    /// <summary>
+    /// Ambient occlusion map.
+    /// </summary>
+    TMAP,
+
+    /// <summary>
+    /// Vertex normals.
+    /// </summary>
+    NORM
 }

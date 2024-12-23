@@ -1,29 +1,28 @@
 ﻿using System.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace SilentHunter.FileFormats.DependencyInjection
+namespace SilentHunter.FileFormats.DependencyInjection;
+
+/// <summary>
+/// Configurer for Silent Hunter parser dependencies.
+/// </summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
+public class SilentHunterParsersConfigurer : IServiceCollectionProvider
 {
-	/// <summary>
-	/// Configurer for Silent Hunter parser dependencies.
-	/// </summary>
-	[EditorBrowsable(EditorBrowsableState.Never)]
-	public class SilentHunterParsersConfigurer : IServiceCollectionProvider
-	{
-		private readonly IServiceCollection _serviceCollection;
+    private readonly IServiceCollection _serviceCollection;
 
-		internal SilentHunterParsersConfigurer(IServiceCollection serviceCollection)
-		{
-			_serviceCollection = serviceCollection;
+    internal SilentHunterParsersConfigurer(IServiceCollection serviceCollection)
+    {
+        _serviceCollection = serviceCollection;
 
-			Controllers = new ControllerConfigurer(this);
-		}
+        Controllers = new ControllerConfigurer(this);
+    }
 
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		IServiceCollection IServiceCollectionProvider.ServiceCollection => _serviceCollection;
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    IServiceCollection IServiceCollectionProvider.ServiceCollection => _serviceCollection;
 
-		/// <summary>
-		/// Configure how controller types are loaded.
-		/// </summary>
-		public ControllerConfigurer Controllers { get; }
-	}
+    /// <summary>
+    /// Configure how controller types are loaded.
+    /// </summary>
+    public ControllerConfigurer Controllers { get; }
 }
