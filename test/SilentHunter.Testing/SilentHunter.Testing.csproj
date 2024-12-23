@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="7.0.0" />
-    <PackageReference Include="Moq" Version="4.10.1" />
+    <PackageReference Include="Moq" Version="4.18.4" />
     <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="6.0.15" />
   </ItemGroup>
 
