@@ -2,11 +2,8 @@
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using FluentAssertions;
-using Moq;
 using SilentHunter.Controllers;
 using SilentHunter.Testing.FluentAssertions;
-using Xunit;
 
 namespace SilentHunter.FileFormats.Dat.Controllers.Serialization;
 
@@ -37,7 +34,8 @@ public class DateTimeValueSerializerTests
     {
         // Act & assert
         _sut.IsSupported(_serializationContext)
-            .Should().BeTrue();
+            .Should()
+            .BeTrue();
     }
 
     [Fact]
@@ -47,7 +45,8 @@ public class DateTimeValueSerializerTests
 
         // Act & assert
         _sut.IsSupported(new ControllerSerializationContext(field, new Mock<Controller>().Object))
-            .Should().BeFalse();
+            .Should()
+            .BeFalse();
     }
 
     [Theory]
@@ -58,15 +57,13 @@ public class DateTimeValueSerializerTests
     {
         var date = DateTime.ParseExact(dateStr, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
-        using (var ms = new MemoryStream())
-        using (var writer = new BinaryWriter(ms, FileEncoding.Default))
-        {
-            // Act
-            _sut.Serialize(writer, _serializationContext, date);
+        using var ms = new MemoryStream();
+        using var writer = new BinaryWriter(ms, FileEncoding.Default);
+        // Act
+        _sut.Serialize(writer, _serializationContext, date);
 
-            // Assert
-            BitConverter.ToInt32(ms.ToArray(), 0).Should().Be(expectedSerialized);
-        }
+        // Assert
+        BitConverter.ToInt32(ms.ToArray(), 0).Should().Be(expectedSerialized);
     }
 
     [Theory]
@@ -77,16 +74,14 @@ public class DateTimeValueSerializerTests
     {
         var expectedDate = DateTime.ParseExact(expectedDateStr, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
-        using (var ms = new MemoryStream(BitConverter.GetBytes(serializedDate)))
-        using (var reader = new BinaryReader(ms, FileEncoding.Default))
-        {
-            // Act
-            DateTime actual = _sut.Deserialize(reader, _serializationContext);
+        using var ms = new MemoryStream(BitConverter.GetBytes(serializedDate));
+        using var reader = new BinaryReader(ms, FileEncoding.Default);
+        // Act
+        DateTime actual = _sut.Deserialize(reader, _serializationContext);
 
-            // Assert
-            actual.Should().Be(expectedDate);
-            ms.Should().BeEof();
-        }
+        // Assert
+        actual.Should().Be(expectedDate);
+        ms.Should().BeEof();
     }
 
     /// <summary>
@@ -101,15 +96,13 @@ public class DateTimeValueSerializerTests
     {
         var expectedDate = DateTime.ParseExact(expectedDateStr, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
-        using (var ms = new MemoryStream(BitConverter.GetBytes(serializedDate)))
-        using (var reader = new BinaryReader(ms, FileEncoding.Default))
-        {
-            // Act
-            DateTime actual = _sut.Deserialize(reader, _serializationContext);
+        using var ms = new MemoryStream(BitConverter.GetBytes(serializedDate));
+        using var reader = new BinaryReader(ms, FileEncoding.Default);
+        // Act
+        DateTime actual = _sut.Deserialize(reader, _serializationContext);
 
-            // Assert
-            actual.Should().Be(expectedDate);
-        }
+        // Assert
+        actual.Should().Be(expectedDate);
     }
 
     [Fact]
@@ -120,11 +113,9 @@ public class DateTimeValueSerializerTests
         // Act
         Action act = () =>
         {
-            using (var ms = new MemoryStream(BitConverter.GetBytes(impossibleDate)))
-            using (var reader = new BinaryReader(ms, FileEncoding.Default))
-            {
-                _sut.Deserialize(reader, _serializationContext);
-            }
+            using var ms = new MemoryStream(BitConverter.GetBytes(impossibleDate));
+            using var reader = new BinaryReader(ms, FileEncoding.Default);
+            _sut.Deserialize(reader, _serializationContext);
         };
 
         // Assert

@@ -20,7 +20,7 @@ public abstract class ControllerValueSerializer<T> : IControllerValueSerializer
     }
 
     /// <summary>
-    /// Serializes a field and value to the <paramref name="writer"/> using the specified <paramref name="serializationContext"/>.
+    /// Serializes a field and value to the <paramref name="writer" /> using the specified <paramref name="serializationContext" />.
     /// </summary>
     /// <param name="writer">The writer to write to.</param>
     /// <param name="serializationContext">The context describing the type and name of the field to read.</param>
@@ -33,7 +33,7 @@ public abstract class ControllerValueSerializer<T> : IControllerValueSerializer
     }
 
     /// <summary>
-    /// Deserializes a field and value from the <paramref name="reader"/> using the specified <paramref name="serializationContext"/>.
+    /// Deserializes a field and value from the <paramref name="reader" /> using the specified <paramref name="serializationContext" />.
     /// </summary>
     /// <param name="reader">The reader to read from.</param>
     /// <param name="serializationContext">The context describing the type and name of the field to read.</param>

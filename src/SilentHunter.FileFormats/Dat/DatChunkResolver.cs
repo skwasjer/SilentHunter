@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
@@ -12,11 +11,11 @@ namespace SilentHunter.FileFormats.Dat;
 /// </summary>
 public class DatChunkResolver : IChunkResolver<DatFile.Magics>
 {
-    private static readonly Lazy<ReadOnlyDictionary<DatFile.Magics, Type>> ResolvedTypes = new Lazy<ReadOnlyDictionary<DatFile.Magics, Type>>(LoadTypes, LazyThreadSafetyMode.PublicationOnly);
+    private static readonly Lazy<ReadOnlyDictionary<DatFile.Magics, Type>> ResolvedTypes = new(LoadTypes, LazyThreadSafetyMode.PublicationOnly);
 
     private static ReadOnlyDictionary<DatFile.Magics, Type> LoadTypes()
     {
-        Dictionary<DatFile.Magics, Type> types = typeof(DatFile).Assembly
+        var types = typeof(DatFile).Assembly
             .DefinedTypes
             .Where(t => t.IsClass && !t.IsAbstract && typeof(IChunk).IsAssignableFrom(t.UnderlyingSystemType))
             .Select(t =>
@@ -29,11 +28,7 @@ public class DatChunkResolver : IChunkResolver<DatFile.Magics>
 
                 if (Enum.TryParse(chunkName, out DatFile.Magics m))
                 {
-                    return new
-                    {
-                        Magic = m,
-                        Type = t.UnderlyingSystemType
-                    };
+                    return new { Magic = m, Type = t.UnderlyingSystemType };
                 }
 
                 return null;

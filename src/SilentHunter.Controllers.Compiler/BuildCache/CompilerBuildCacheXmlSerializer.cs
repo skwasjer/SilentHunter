@@ -13,6 +13,7 @@ internal class CompilerBuildCacheXmlSerializer : ICompilerBuildCacheSerializer
     {
         _serializer = new XmlSerializer(typeof(CompilerBuildCache));
     }
+
     public void Serialize(Stream stream, CompilerBuildCache buildCache)
     {
         _serializer.Serialize(stream, buildCache);

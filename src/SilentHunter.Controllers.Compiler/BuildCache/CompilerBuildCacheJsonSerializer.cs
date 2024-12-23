@@ -14,28 +14,21 @@ internal class CompilerBuildCacheJsonSerializer : ICompilerBuildCacheSerializer
         {
             NullValueHandling = NullValueHandling.Ignore,
             Formatting = Formatting.Indented,
-            ContractResolver = new CamelCasePropertyNamesContractResolver
-            {
-                NamingStrategy = new CamelCaseNamingStrategy()
-            }
+            ContractResolver = new CamelCasePropertyNamesContractResolver { NamingStrategy = new CamelCaseNamingStrategy() }
         };
     }
 
     public void Serialize(Stream stream, CompilerBuildCache buildCache)
     {
-        using (var sw = new StreamWriter(stream))
-        using (var writer = new JsonTextWriter(sw))
-        {
-            _serializer.Serialize(writer, buildCache);
-        }
+        using var sw = new StreamWriter(stream);
+        using var writer = new JsonTextWriter(sw);
+        _serializer.Serialize(writer, buildCache);
     }
 
     public CompilerBuildCache Deserialize(Stream stream)
     {
-        using (var sr = new StreamReader(stream))
-        using (var reader = new JsonTextReader(sr))
-        {
-            return _serializer.Deserialize<CompilerBuildCache>(reader);
-        }
+        using var sr = new StreamReader(stream);
+        using var reader = new JsonTextReader(sr);
+        return _serializer.Deserialize<CompilerBuildCache>(reader);
     }
 }

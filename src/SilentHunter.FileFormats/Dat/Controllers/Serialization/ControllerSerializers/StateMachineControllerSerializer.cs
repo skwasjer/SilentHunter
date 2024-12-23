@@ -7,7 +7,7 @@ using SilentHunter.FileFormats.Extensions;
 namespace SilentHunter.FileFormats.Dat.Controllers.Serialization;
 
 /// <summary>
-/// Serializes and deserializes <see cref="StateMachineController"/>s.
+/// Serializes and deserializes <see cref="StateMachineController" />s.
 /// </summary>
 public class StateMachineControllerSerializer : IControllerSerializer
 {
@@ -23,26 +23,24 @@ public class StateMachineControllerSerializer : IControllerSerializer
     {
         StateMachineController smc = EnsureControllerType(controller);
 
-        using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
+        using var reader = new BinaryReader(stream, FileEncoding.Default, true);
+        smc.Unknown0 = reader.ReadInt32();
+        smc.GraphName = reader.ReadNullTerminatedString();
+        smc.Unknown1 = reader.ReadInt32();
+        int entryCount = reader.ReadInt32();
+        smc.Unknown2 = reader.ReadInt32();
+        smc.Unknown3 = reader.ReadInt32();
+
+        smc.StateEntries = new List<StateMachineEntry>(entryCount);
+
+        for (int i = 0; i < entryCount; i++)
         {
-            smc.Unknown0 = reader.ReadInt32();
-            smc.GraphName = reader.ReadNullTerminatedString();
-            smc.Unknown1 = reader.ReadInt32();
-            int entryCount = reader.ReadInt32();
-            smc.Unknown2 = reader.ReadInt32();
-            smc.Unknown3 = reader.ReadInt32();
-
-            smc.StateEntries = new List<StateMachineEntry>(entryCount);
-
-            for (int i = 0; i < entryCount; i++)
+            if (reader.ReadInt32() != Magics.Entry)
             {
-                if (reader.ReadInt32() != Magics.Entry)
-                {
-                    throw new SilentHunterParserException("Unexpected data encountered.");
-                }
-
-                smc.StateEntries.Add(ReadEntry(stream, reader));
+                throw new SilentHunterParserException("Unexpected data encountered.");
             }
+
+            smc.StateEntries.Add(ReadEntry(stream, reader));
         }
     }
 
@@ -51,30 +49,24 @@ public class StateMachineControllerSerializer : IControllerSerializer
     {
         StateMachineController smc = EnsureControllerType(controller);
 
-        using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
-        {
-            writer.Write(smc.Unknown0);
-            writer.WriteNullTerminatedString(smc.GraphName);
-            writer.Write(smc.Unknown1);
-            writer.Write(smc.StateEntries.Count);
-            writer.Write(smc.Unknown2);
-            writer.Write(smc.Unknown3);
+        using var writer = new BinaryWriter(stream, FileEncoding.Default, true);
+        writer.Write(smc.Unknown0);
+        writer.WriteNullTerminatedString(smc.GraphName);
+        writer.Write(smc.Unknown1);
+        writer.Write(smc.StateEntries.Count);
+        writer.Write(smc.Unknown2);
+        writer.Write(smc.Unknown3);
 
-            for (int entryIndex = 0; entryIndex < smc.StateEntries.Count; entryIndex++)
-            {
-                StateMachineEntry entry = smc.StateEntries[entryIndex];
-                WriteEntry(writer, entryIndex, entry);
-            }
+        for (int entryIndex = 0; entryIndex < smc.StateEntries.Count; entryIndex++)
+        {
+            StateMachineEntry entry = smc.StateEntries[entryIndex];
+            WriteEntry(writer, entryIndex, entry);
         }
     }
 
     private static StateMachineEntry ReadEntry(Stream stream, BinaryReader reader)
     {
-        var newEntry = new StateMachineEntry
-        {
-            Index = reader.ReadInt32(),
-            Name = reader.ReadNullTerminatedString()
-        };
+        var newEntry = new StateMachineEntry { Index = reader.ReadInt32(), Name = reader.ReadNullTerminatedString() };
 
         while (stream.Position < stream.Length)
         {

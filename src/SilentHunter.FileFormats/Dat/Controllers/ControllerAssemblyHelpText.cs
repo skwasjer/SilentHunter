@@ -11,7 +11,7 @@ using System.Xml;
 namespace SilentHunter.FileFormats.Dat.Controllers;
 
 /// <summary>
-/// Encapsulates XML documentation file that is generated for a <see cref="ControllerAssembly"/>, and allows querying for this documentation by key, type or member (field).
+/// Encapsulates XML documentation file that is generated for a <see cref="ControllerAssembly" />, and allows querying for this documentation by key, type or member (field).
 /// </summary>
 /// <remarks>
 /// Uses lazy loading, so file will only be read when key is requested. Thus, if a stream or reader is provided, do not dispose it after creating an instance of this class.
@@ -23,7 +23,7 @@ public class ControllerAssemblyHelpText : IReadOnlyDictionary<string, string>, I
     private readonly Lazy<IDictionary<string, string>> _loadHelpText;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ControllerAssemblyHelpText"/> using specified <paramref name="documentationFilePath"/>.
+    /// Initializes a new instance of the <see cref="ControllerAssemblyHelpText" /> using specified <paramref name="documentationFilePath" />.
     /// </summary>
     /// <param name="documentationFilePath">The path of the XML document file.</param>
     public ControllerAssemblyHelpText(string documentationFilePath)
@@ -32,7 +32,7 @@ public class ControllerAssemblyHelpText : IReadOnlyDictionary<string, string>, I
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ControllerAssemblyHelpText"/> using specified <paramref name="stream"/>.
+    /// Initializes a new instance of the <see cref="ControllerAssemblyHelpText" /> using specified <paramref name="stream" />.
     /// </summary>
     /// <param name="stream">The stream to read the XML documentation from.</param>
     /// <param name="disposeStream">true to dispose the stream when loading completed</param>
@@ -42,7 +42,7 @@ public class ControllerAssemblyHelpText : IReadOnlyDictionary<string, string>, I
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ControllerAssemblyHelpText"/> using specified <paramref name="xmlReader"/>.
+    /// Initializes a new instance of the <see cref="ControllerAssemblyHelpText" /> using specified <paramref name="xmlReader" />.
     /// </summary>
     /// <param name="xmlReader">The XML reader to read the XML documentation from.</param>
     /// <param name="disposeReader">true to dispose the stream when loading completed</param>
@@ -70,7 +70,6 @@ public class ControllerAssemblyHelpText : IReadOnlyDictionary<string, string>, I
             }
 
             throw new KeyNotFoundException($"Key '{key}' not found.");
-
         }
     }
 
@@ -132,7 +131,7 @@ public class ControllerAssemblyHelpText : IReadOnlyDictionary<string, string>, I
     /// <inheritdoc />
     public bool ContainsKey(MemberInfo key)
     {
-        return key != null 
+        return key != null
          && key.DeclaringType != null
          && ContainsKey(GetKey(key));
     }
@@ -162,21 +161,21 @@ public class ControllerAssemblyHelpText : IReadOnlyDictionary<string, string>, I
     }
 
     /// <inheritdoc />
-    public IEnumerable<string> Keys => _loadHelpText.Value.Keys;
+    public IEnumerable<string> Keys { get => _loadHelpText.Value.Keys; }
 
     /// <summary>Gets an enumerable collection that contains the values in the read-only dictionary.</summary>
     /// <returns>An enumerable collection that contains the values in the read-only dictionary.</returns>
-    public IEnumerable<string> Values => _loadHelpText.Value.Values;
+    public IEnumerable<string> Values { get => _loadHelpText.Value.Values; }
 
     /// <inheritdoc />
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     [EditorBrowsable(EditorBrowsableState.Never)]
-    IEnumerable<Type> IReadOnlyDictionary<Type, string>.Keys => throw new NotImplementedException();
+    IEnumerable<Type> IReadOnlyDictionary<Type, string>.Keys { get => throw new NotImplementedException(); }
 
     /// <inheritdoc />
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     [EditorBrowsable(EditorBrowsableState.Never)]
-    IEnumerable<MemberInfo> IReadOnlyDictionary<MemberInfo, string>.Keys => throw new NotImplementedException();
+    IEnumerable<MemberInfo> IReadOnlyDictionary<MemberInfo, string>.Keys { get => throw new NotImplementedException(); }
 
     /// <inheritdoc />
     public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
@@ -202,7 +201,7 @@ public class ControllerAssemblyHelpText : IReadOnlyDictionary<string, string>, I
 
     /// <summary>Gets the number of elements in the collection.</summary>
     /// <returns>The number of elements in the collection.</returns>
-    public int Count => _loadHelpText.Value.Count;
+    public int Count { get => _loadHelpText.Value.Count; }
 
     private static IDictionary<string, string> LoadHelpText(XmlReader xmlReader, bool disposeReader)
     {

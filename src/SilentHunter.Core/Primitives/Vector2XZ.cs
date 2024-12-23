@@ -32,22 +32,14 @@ public struct Vector2XZ
     /// </summary>
     public static implicit operator Vector2(Vector2XZ v)
     {
-        return new Vector2
-        {
-            X = v.X,
-            Y = v.Z
-        };
+        return new Vector2 { X = v.X, Y = v.Z };
     }
 
     /// <summary>
     /// </summary>
     public static implicit operator Vector2XZ(Vector2 v)
     {
-        return new Vector2XZ
-        {
-            X = v.X,
-            Z = v.Y
-        };
+        return new Vector2XZ { X = v.X, Z = v.Y };
     }
 
     /// <summary>Determines whether the specified object is equal to the current object.</summary>

@@ -6,7 +6,6 @@ using SilentHunter.FileFormats.Extensions;
 namespace SilentHunter.FileFormats.Dat.Chunks;
 
 /// <summary>
-/// 
 /// </summary>
 /// <remarks>
 /// The type name is somewhat poor choice.
@@ -14,7 +13,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks;
 public sealed class PlacementChunk : DatChunk
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="PlacementChunk"/>.
+    /// Initializes a new instance of the <see cref="PlacementChunk" />.
     /// </summary>
     public PlacementChunk()
         : base(DatFile.Magics.Placement)
@@ -24,12 +23,12 @@ public sealed class PlacementChunk : DatChunk
     /// <summary>
     /// Gets whether the chunk supports an id field.
     /// </summary>
-    public override bool SupportsId => true;
+    public override bool SupportsId { get => true; }
 
     /// <summary>
     /// Gets whether the chunk supports a parent id field.
     /// </summary>
-    public override bool SupportsParentId => true;
+    public override bool SupportsParentId { get => true; }
 
     /// <summary>
     /// Gets or sets the world offset.

@@ -13,5 +13,5 @@ public interface IControllerReader
     /// <param name="stream">The stream.</param>
     /// <param name="controllerName">The name of the controller or null if the controller must be auto-detected (not optimal, some controllers cannot be detected).</param>
     /// <returns></returns>
-    object Read(Stream stream, string controllerName);
+    public object Read(Stream stream, string controllerName);
 }

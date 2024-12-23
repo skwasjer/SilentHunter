@@ -8,7 +8,7 @@ using SilentHunter.Controllers;
 namespace SilentHunter.FileFormats.Dat.Controllers;
 
 /// <summary>
-/// Helpers to compress and decompress arrays/lists of <see cref="Vector2"/> and <see cref="Vector3"/> for the specific purpose of storage in DAT-file.
+/// Helpers to compress and decompress arrays/lists of <see cref="Vector2" /> and <see cref="Vector3" /> for the specific purpose of storage in DAT-file.
 /// </summary>
 public static class VectorCompression
 {
@@ -26,17 +26,16 @@ public static class VectorCompression
         for (int i = 0; i < compressedVectors.Vectors.Count; i += fields.Length)
         {
             // Box value type.
-            var inst = (object)new T();
+            object inst = (object)new T();
             for (int j = 0; j < fields.Length; j++)
             {
-                float val = compressedVectors.Scale * compressedVectors.Vectors[i + j] + compressedVectors.Translation;
+                float val = (compressedVectors.Scale * compressedVectors.Vectors[i + j]) + compressedVectors.Translation;
                 fields[j].SetValue(inst, val);
             }
 
             yield return (T)inst;
         }
     }
-
 
     /// <summary>
     /// Compresses vectors into an array where each float component of each vector is represented by an Int16 value, based one scale and translation.
@@ -127,11 +126,11 @@ public static class VectorCompression
 
         if (fmax / scale > short.MaxValue)
         {
-            bias = (fmax / scale - short.MaxValue) * scale;
+            bias = ((fmax / scale) - short.MaxValue) * scale;
         }
         else if (fmin / scale < short.MinValue)
         {
-            bias = (fmin / scale - short.MinValue) * scale;
+            bias = ((fmin / scale) - short.MinValue) * scale;
         }
     }
 }

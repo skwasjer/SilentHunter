@@ -42,7 +42,7 @@ public class StateMachineCondition
     /// <summary>
     /// A list of actions to perform when the condition is met.
     /// </summary>
-    public List<StateMachineAction> Actions = new List<StateMachineAction>();
+    public List<StateMachineAction> Actions = new();
 
     /// <summary>
     /// Returns a string that represents the current object.

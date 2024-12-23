@@ -3,18 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using SilentHunter.FileFormats.Extensions;
 
 namespace SilentHunter.FileFormats.Dat.Chunks;
 
 /// <summary>
-/// 
 /// </summary>
 /// <remarks>
 /// See https://www.subsim.com/radioroom/showthread.php?p=1177807#post1177807
-///
 /// While I believe poster is on the right track, I believe its bitwise flags instead. However, the names may not be accurate.
 /// </remarks>
 [Flags]
@@ -87,7 +84,7 @@ public sealed class ModelChunk : DatChunk
     /// <summary>
     /// Gets whether the chunk supports an id field.
     /// </summary>
-    public override bool SupportsId => true;
+    public override bool SupportsId { get => true; }
 
     /// <inheritdoc />
     protected override Task DeserializeAsync(Stream stream)
@@ -101,14 +98,7 @@ public sealed class ModelChunk : DatChunk
             LoadMesh(reader, out Vector3[] vertices, out ushort[] vertexIndices, out ushort[] textureIndices, out byte[] materialIndices);
             Vertices = vertices;
             VertexIndices = vertexIndices;
-            TextureIndices = new[]
-            {
-                new UvMap
-                {
-                    Channel = PrimaryChannelIndex,
-                    TextureIndices = textureIndices
-                }
-            };
+            TextureIndices = [new UvMap { Channel = PrimaryChannelIndex, TextureIndices = textureIndices }];
             MaterialIndices = materialIndices;
 
             TextureCoordinates = ReadTextureCoordinates(reader).ToArray();
@@ -186,7 +176,7 @@ public sealed class ModelChunk : DatChunk
     {
         ushort[] GetTextureIndices()
         {
-            var textureIndices = new ushort[vertexCount];
+            ushort[] textureIndices = new ushort[vertexCount];
             for (int i = 0; i < vertexCount; i++)
             {
                 textureIndices[i] = reader.ReadUInt16();
@@ -199,11 +189,7 @@ public sealed class ModelChunk : DatChunk
         byte mapCount = reader.ReadByte();
         for (int i = 0; i < mapCount; i++)
         {
-            yield return new UvMap
-            {
-                Channel = reader.ReadByte(),
-                TextureIndices = GetTextureIndices()
-            };
+            yield return new UvMap { Channel = reader.ReadByte(), TextureIndices = GetTextureIndices() };
         }
     }
 

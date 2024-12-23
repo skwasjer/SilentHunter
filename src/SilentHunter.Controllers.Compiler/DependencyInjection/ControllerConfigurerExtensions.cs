@@ -8,12 +8,12 @@ using SilentHunter.FileFormats.DependencyInjection;
 namespace SilentHunter.Controllers.Compiler.DependencyInjection;
 
 /// <summary>
-/// Extensions for <see cref="ControllerConfigurer"/>.
+/// Extensions for <see cref="ControllerConfigurer" />.
 /// </summary>
 public static class ControllerConfigurerExtensions
 {
     /// <summary>
-    /// Registers a <see cref="ControllerAssembly"/> based on dynamically compiled controllers.
+    /// Registers a <see cref="ControllerAssembly" /> based on dynamically compiled controllers.
     /// </summary>
     /// <param name="controllerConfigurer"></param>
     /// <param name="controllerPath">The path containing the controller templates.</param>
@@ -28,7 +28,7 @@ public static class ControllerConfigurerExtensions
 
         return controllerConfigurer.FromAssembly(s =>
         {
-            Assembly entryAssembly = Assembly.GetEntryAssembly();
+            var entryAssembly = Assembly.GetEntryAssembly();
             string appName = applicationName ?? entryAssembly?.GetName().Name ?? "SilentHunter.Controllers";
             var assemblyCompiler = new ControllerAssemblyCompiler(s.GetRequiredService<ICSharpCompiler>(), appName, controllerPath)
             {
@@ -44,7 +44,7 @@ public static class ControllerConfigurerExtensions
     {
         IServiceCollection services = controllerConfigurer.ServiceCollection;
 #if NETFRAMEWORK
-			services.TryAddTransient<ICSharpCompiler, CSharpCompiler>();
+        services.TryAddTransient<ICSharpCompiler, CSharpCompiler>();
 #else
         services.TryAddTransient<ICSharpCompiler, RoslynCompiler>();
 #endif

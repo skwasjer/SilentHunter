@@ -5,7 +5,6 @@ using SilentHunter.FileFormats.Extensions;
 namespace SilentHunter.FileFormats.Dat.Controllers.Serialization;
 
 /// <summary>
-/// 
 /// </summary>
 // FIX: I think we can remove this. Find examples.
 public class PrimitiveArrayValueSerializer : IControllerValueSerializer
@@ -28,7 +27,7 @@ public class PrimitiveArrayValueSerializer : IControllerValueSerializer
 
         // Otherwise write each primitive separately.
         var array = (Array)value;
-        for (var i = 0; i < array.Length; i++)
+        for (int i = 0; i < array.Length; i++)
         {
             writer.WriteStruct(array.GetValue(i));
         }

@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using FluentAssertions;
-using Moq;
 using SilentHunter.Controllers;
 using SilentHunter.Testing.Extensions;
 using SilentHunter.Testing.FluentAssertions;
-using Xunit;
 
 namespace SilentHunter.FileFormats.Dat.Controllers.Serialization.ControllerSerializers;
 
@@ -52,32 +49,28 @@ public class StateMachineControllerSerializerTests
     [Fact]
     public void When_deserializing_should_populate_controller_with_correct_stateMachine()
     {
-        string[] expectedEntryNames = { "Start", "Stalker_Idle", "Stalker_Idle_Finish", "Stalker_Idle_Finish_DIE", "Hunter_Idle", "Hunter_Idle_Finish", "Hunter_Idle_Finish_DIE", "Prey_Idle", "Prey_Idle_Finish", "Prey_Idle_Finish_DIE" };
+        string[] expectedEntryNames = ["Start", "Stalker_Idle", "Stalker_Idle_Finish", "Stalker_Idle_Finish_DIE", "Hunter_Idle", "Hunter_Idle_Finish", "Hunter_Idle_Finish_DIE", "Prey_Idle", "Prey_Idle_Finish", "Prey_Idle_Finish_DIE"];
 
-        using (var ms = new MemoryStream(_rawControllerData))
-        {
-            // Act
-            _sut.Deserialize(ms, _controller);
+        using var ms = new MemoryStream(_rawControllerData);
+        // Act
+        _sut.Deserialize(ms, _controller);
 
-            // Assert
-            _controller.GraphName.Should().Be("BMC01");
-            _controller.StateEntries.Select(se => se.Name).Should().BeEquivalentTo(expectedEntryNames);
-            ms.Should().BeEof();
-        }
+        // Assert
+        _controller.GraphName.Should().Be("BMC01");
+        _controller.StateEntries.Select(se => se.Name).Should().BeEquivalentTo(expectedEntryNames);
+        ms.Should().BeEof();
     }
 
     [Fact]
     public void When_serializing_should_produce_same_byte_result()
     {
-        using (var ms = new MemoryStream(_rawControllerData))
-        {
-            _sut.Deserialize(ms, _controller);
-            ms.SetLength(0);
+        using var ms = new MemoryStream(_rawControllerData);
+        _sut.Deserialize(ms, _controller);
+        ms.SetLength(0);
 
-            // Act
-            _sut.Serialize(ms, _controller);
-            ms.ToArray().Should().BeEquivalentTo(_rawControllerData);
-        }
+        // Act
+        _sut.Serialize(ms, _controller);
+        ms.ToArray().Should().BeEquivalentTo(_rawControllerData);
     }
 
     [Fact]
@@ -88,49 +81,47 @@ public class StateMachineControllerSerializerTests
         _controller.Unknown1 = 2;
         _controller.Unknown2 = 3;
         _controller.Unknown3 = 4;
-        _controller.StateEntries = new List<StateMachineEntry>
-        {
-            new StateMachineEntry
+        _controller.StateEntries =
+        [
+            new()
             {
                 Name = "MyEntryName",
                 Index = 0,
-                Conditions = new List<StateMachineCondition>
-                {
-                    new StateMachineCondition
+                Conditions =
+                [
+                    new()
                     {
                         ParentEntryIndex = 0,
                         Type = 123,
                         Value = "MyConditionValue",
                         Expression = "MyExpression",
                         GotoEntry = 20,
-                        Actions = new List<StateMachineAction>
-                        {
-                            new StateMachineAction
+                        Actions =
+                        [
+                            new()
                             {
                                 ParentEntryIndex = 0,
                                 ParentConditionIndex = 0,
                                 Name = "MyActionName",
-                                Value = "MyActionValue",
+                                Value = "MyActionValue"
                             }
-                        }
+                        ]
                     }
-                }
+                ]
             }
-        };
+        ];
 
         StateMachineController deserializedController = new Mock<StateMachineController>().Object;
 
         // Act
-        using (var ms = new MemoryStream())
-        {
-            _sut.Serialize(ms, _controller);
-            ms.Position = 0;
+        using var ms = new MemoryStream();
+        _sut.Serialize(ms, _controller);
+        ms.Position = 0;
 
-            _sut.Deserialize(ms, deserializedController);
+        _sut.Deserialize(ms, deserializedController);
 
-            // Assert
-            ms.Should().BeEof();
-            _controller.Should().BeEquivalentTo(deserializedController);
-        }
+        // Assert
+        ms.Should().BeEof();
+        _controller.Should().BeEquivalentTo(deserializedController);
     }
 }

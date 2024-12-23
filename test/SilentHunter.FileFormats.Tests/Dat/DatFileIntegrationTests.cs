@@ -2,13 +2,11 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using SilentHunter.FileFormats.Dat.Chunks;
 using SilentHunter.FileFormats.Fixtures;
 using SilentHunter.Testing.Extensions;
 using SilentHunter.Testing.FluentAssertions;
-using Xunit;
 
 namespace SilentHunter.FileFormats.Dat;
 
@@ -37,14 +35,15 @@ public class DatFileIntegrationTests : IDisposable
     [Fact]
     public async Task Given_loaded_datFile_when_checking_all_controllerData_should_not_contain_byte_arrays()
     {
-        var datFile = _compiledControllers.ServiceProvider.GetRequiredService<DatFile>();
+        DatFile datFile = _compiledControllers.ServiceProvider.GetRequiredService<DatFile>();
 
         // Act
         await datFile.LoadAsync(_datFileStream);
 
         // Assert
         datFile.Chunks
-            .Should().NotBeEmpty()
+            .Should()
+            .NotBeEmpty()
             .And.Subject.OfType<ControllerDataChunk>()
             .Select(cd => cd.ControllerData)
             .Should()
@@ -56,8 +55,8 @@ public class DatFileIntegrationTests : IDisposable
     [Fact]
     public async Task Given_datFile_when_reloading_saved_file_should_be_equivalent()
     {
-        var sourceDatFile = _compiledControllers.ServiceProvider.GetRequiredService<DatFile>();
-        var targetDatFile = _compiledControllers.ServiceProvider.GetRequiredService<DatFile>();
+        DatFile sourceDatFile = _compiledControllers.ServiceProvider.GetRequiredService<DatFile>();
+        DatFile targetDatFile = _compiledControllers.ServiceProvider.GetRequiredService<DatFile>();
 
         await sourceDatFile.LoadAsync(_datFileStream);
 
@@ -72,37 +71,37 @@ public class DatFileIntegrationTests : IDisposable
 
         // Assert
         targetDatFile.Chunks.Should()
-            .BeEquivalentTo(sourceDatFile.Chunks, options => options
-                .RespectingRuntimeTypes()
-                .IncludingProperties()
-                .IncludingFields()
-                .Excluding(c => c.ParentFile)
-                .Excluding(c => c.UnknownData)
+            .BeEquivalentTo(sourceDatFile.Chunks,
+                options => options
+                    .RespectingRuntimeTypes()
+                    .IncludingProperties()
+                    .IncludingFields()
+                    .Excluding(c => c.ParentFile)
+                    .Excluding(c => c.UnknownData)
             );
     }
 
     [Fact]
     public async Task Given_loaded_datFile_when_saving_should_be_binary_equivalent()
     {
-        var sourceDatFile = _compiledControllers.ServiceProvider.GetRequiredService<DatFile>();
+        DatFile sourceDatFile = _compiledControllers.ServiceProvider.GetRequiredService<DatFile>();
 
         await sourceDatFile.LoadAsync(_datFileStream);
 
-        using (var ms = new MemoryStream())
-        {
-            // Act
-            // In order to make binary comparison, inject S3D signature. Our test file was made with S3D, thus we need this in there.
-            sourceDatFile.Chunks
-                .OfType<AuthorInfoChunk>().First()
-                .Description += S3DSignature;
-            await sourceDatFile.SaveAsync(ms);
+        using var ms = new MemoryStream();
+        // Act
+        // In order to make binary comparison, inject S3D signature. Our test file was made with S3D, thus we need this in there.
+        sourceDatFile.Chunks
+            .OfType<AuthorInfoChunk>()
+            .First()
+            .Description += S3DSignature;
+        await sourceDatFile.SaveAsync(ms);
 
-            // Assert
-            _datFileStream.Position = 0;
-            byte[] sourceBytes = _datFileStream.ToArray();
-            byte[] savedBytes = ms.ToArray();
+        // Assert
+        _datFileStream.Position = 0;
+        byte[] sourceBytes = _datFileStream.ToArray();
+        byte[] savedBytes = ms.ToArray();
 
-            savedBytes.Should().BeEquivalentTo(sourceBytes);
-        }
+        savedBytes.Should().BeEquivalentTo(sourceBytes);
     }
 }

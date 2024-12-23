@@ -1,7 +1,4 @@
-﻿using FluentAssertions;
-using Xunit;
-
-namespace SilentHunter.Controllers.Compiler;
+﻿namespace SilentHunter.Controllers.Compiler;
 
 public class EnvironmentUtilitiesTests
 {
@@ -13,7 +10,7 @@ public class EnvironmentUtilitiesTests
 
         // Assert
 #if NETFRAMEWORK
-			targetFramework.Should().Be("net472");
+        targetFramework.Should().Be("net472");
 #else
         targetFramework.Should().Be("netcoreapp8.0");
 #endif

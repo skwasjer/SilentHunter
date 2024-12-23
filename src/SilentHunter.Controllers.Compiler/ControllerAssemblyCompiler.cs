@@ -32,10 +32,10 @@ public class ControllerAssemblyCompiler : IControllerAssemblyCompiler
         public bool IsLocal { get; }
     }
 
-    private static readonly List<Dependency> RequiredDependencies = new List<Dependency>
+    private static readonly List<Dependency> RequiredDependencies = new()
     {
 #if NETFRAMEWORK
-			new Dependency("System.dll"),
+        new Dependency("System.dll"),
 #else
         new Dependency(Assembly.Load("netstandard, Version=2.0.0.0").Location),
         new Dependency(typeof(object)),
@@ -51,7 +51,7 @@ public class ControllerAssemblyCompiler : IControllerAssemblyCompiler
     private readonly ICSharpCompiler _compiler;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ControllerAssemblyCompiler"/> class.
+    /// Initializes a new instance of the <see cref="ControllerAssemblyCompiler" /> class.
     /// </summary>
     /// <param name="compiler">The compiler to use.</param>
     /// <param name="applicationName">The application name. This is used in the temp path used to generate the assembly, as to not conflict with other applications that also dynamically compile SilentHunter controllers.</param>
@@ -141,11 +141,13 @@ public class ControllerAssemblyCompiler : IControllerAssemblyCompiler
 #if DEBUG
             BuildConfiguration = "debug",
 #else
-				BuildConfiguration = "release",
+            BuildConfiguration = "release",
 #endif
             Version = FileVersionInfo.GetVersionInfo(typeof(ControllerAssemblyCompiler).Assembly.Location).FileVersion,
-            Dependencies = new HashSet<CacheFileReference>(
-                RequiredDependencies
+            Dependencies =
+            [
+
+                ..RequiredDependencies
                     .Select(rd =>
                     {
                         string path = rd.IsLocal ? _fileSystem.Path.Combine(outputDir, rd.Location) : rd.Location;
@@ -154,11 +156,12 @@ public class ControllerAssemblyCompiler : IControllerAssemblyCompiler
                         {
                             Name = rd.Location,
                             LastModified = includeDetails ? (DateTime?)_fileSystem.File.GetLastWriteTimeUtc(path) : null,
-                            Length = includeDetails ? (long?)_fileSystem.FileInfo.FromFileName(path).Length : null,
+                            Length = includeDetails ? (long?)_fileSystem.FileInfo.FromFileName(path).Length : null
                         };
                     })
-            ),
-            SourceFiles = new HashSet<CacheFileReference>(sourceFiles)
+
+            ],
+            SourceFiles = [..sourceFiles]
         };
         return newCache;
     }
@@ -169,7 +172,7 @@ public class ControllerAssemblyCompiler : IControllerAssemblyCompiler
         {
             // Find the dependency.
             string dependencyFullPath = (DependencySearchDirs ?? new List<string>())
-                .Union(new[] { baseDirectory }) // Always include base dir
+                .Union([baseDirectory]) // Always include base dir
                 .Select(p =>
                 {
                     string depFilename = _fileSystem.Path.Combine(p, requiredDependency.Location);
@@ -241,10 +244,8 @@ public class ControllerAssemblyCompiler : IControllerAssemblyCompiler
     {
         // Save the cache file.
         string cacheFile = GetBuildCacheFileName(outputFile);
-        using (Stream fs = _fileSystem.File.Open(cacheFile, FileMode.Create, FileAccess.Write, FileShare.Read))
-        {
-            _cacheSerializer.Serialize(fs, assemblyCache);
-        }
+        using Stream fs = _fileSystem.File.Open(cacheFile, FileMode.Create, FileAccess.Write, FileShare.Read);
+        _cacheSerializer.Serialize(fs, assemblyCache);
     }
 
     private bool GetIfMustRecompile(CompilerBuildCache assemblyCache, string outputFile)
@@ -259,10 +260,8 @@ public class ControllerAssemblyCompiler : IControllerAssemblyCompiler
         try
         {
             // Load the cache file.
-            using (Stream fs = _fileSystem.File.OpenRead(cacheFile))
-            {
-                oldCache = _cacheSerializer.Deserialize(fs);
-            }
+            using Stream fs = _fileSystem.File.OpenRead(cacheFile);
+            oldCache = _cacheSerializer.Deserialize(fs);
         }
         catch
         {

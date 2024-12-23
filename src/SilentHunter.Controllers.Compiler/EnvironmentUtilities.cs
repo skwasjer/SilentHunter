@@ -11,7 +11,7 @@ internal class EnvironmentUtilities
     /// <returns></returns>
     public static string GetCurrentTargetFramework()
     {
-        Assembly assembly = Assembly.GetCallingAssembly();
+        var assembly = Assembly.GetCallingAssembly();
 
         return GetTargetFramework(assembly);
     }

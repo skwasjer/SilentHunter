@@ -15,13 +15,13 @@ public sealed class ControllerDataChunk : DatChunk
 {
     private readonly IControllerReader _controllerReader;
     private readonly IControllerWriter _controllerWriter;
-    private readonly object _lockObject = new object();
+    private readonly object _lockObject = new();
     private byte[] _unparsedControllerData;
     private long _absolutePosition, _relativePosition;
     private object _parsedController;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ControllerDataChunk"/> class.
+    /// Initializes a new instance of the <see cref="ControllerDataChunk" /> class.
     /// </summary>
     /// <param name="controllerReader">The controller reader.</param>
     /// <param name="controllerWriter">The controller writer.</param>
@@ -33,12 +33,12 @@ public sealed class ControllerDataChunk : DatChunk
     }
 
     /// <inheritdoc />
-    public override bool SupportsParentId => true;
+    public override bool SupportsParentId { get => true; }
 
     /// <summary>
-    /// Gets the controller name. Returns <see cref="string.Empty"/> if the controller has not yet been read/parsed (by accessing <see cref="ControllerData"/> property).
+    /// Gets the controller name. Returns <see cref="string.Empty" /> if the controller has not yet been read/parsed (by accessing <see cref="ControllerData" /> property).
     /// </summary>
-    public string ControllerName => _parsedController?.GetType().Name ?? string.Empty;
+    public string ControllerName { get => _parsedController?.GetType().Name ?? string.Empty; }
 
     /// <summary>
     /// Gets or sets the controller.

@@ -53,7 +53,7 @@ public struct Color : IEquatable<Color>
     }
 
     /// <summary>
-    /// Returns a <see cref="Color"/> from an alpha value and a <paramref name="color"/>.
+    /// Returns a <see cref="Color" /> from an alpha value and a <paramref name="color" />.
     /// </summary>
     public static Color FromArgb(int alpha, Color color)
     {
@@ -62,7 +62,7 @@ public struct Color : IEquatable<Color>
     }
 
     /// <summary>
-    /// Returns a <see cref="Color"/> from an alpha, red, green and blue component.
+    /// Returns a <see cref="Color" /> from an alpha, red, green and blue component.
     /// </summary>
     public static Color FromArgb(int alpha, int red, int green, int blue)
     {
@@ -76,7 +76,7 @@ public struct Color : IEquatable<Color>
     }
 
     /// <summary>
-    /// Returns a <see cref="Color"/> from a red, green and blue component.
+    /// Returns a <see cref="Color" /> from a red, green and blue component.
     /// </summary>
     public static Color FromArgb(int red, int green, int blue)
     {
@@ -84,7 +84,7 @@ public struct Color : IEquatable<Color>
     }
 
     /// <summary>
-    /// Returns a <see cref="Color"/> from an integer.
+    /// Returns a <see cref="Color" /> from an integer.
     /// </summary>
     public static Color FromArgb(int argb)
     {

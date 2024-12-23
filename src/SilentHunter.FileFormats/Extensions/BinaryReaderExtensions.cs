@@ -177,7 +177,7 @@ internal static class BinaryReaderExtensions
     [SecuritySafeCritical]
     public static string ReadNullTerminatedString(this BinaryReader reader)
     {
-        return ReadString(reader, new[] { '\0' });
+        return ReadString(reader, ['\0']);
     }
 
     /// <summary>
@@ -189,7 +189,7 @@ internal static class BinaryReaderExtensions
     [SecuritySafeCritical]
     public static string ReadString(this BinaryReader reader, char terminatingCharacter)
     {
-        return ReadString(reader, new[] { terminatingCharacter });
+        return ReadString(reader, [terminatingCharacter]);
     }
 
     /// <summary>

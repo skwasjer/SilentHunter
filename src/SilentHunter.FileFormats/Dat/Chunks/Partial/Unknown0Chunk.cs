@@ -1,33 +1,33 @@
 ﻿namespace SilentHunter.FileFormats.Dat.Chunks.Partial;
 #if WIP
-	public sealed class Unknown0Chunk : DatChunk
-	{
-		public Unknown0()
-			: base(Magics.Unknown0)
-		{
-		}
+public sealed class Unknown0Chunk : DatChunk
+{
+    public Unknown0()
+        : base(Magics.Unknown0)
+    {
+    }
 
-		public override bool SupportsId
-		{
-			get
-			{
-				return true;
-			}
-		}
+    public override bool SupportsId
+    {
+        get
+        {
+            return true;
+        }
+    }
 
-		public override bool SupportsParentId
-		{
-			get
-			{
-				return base.SupportsParentId;
-			}
-		}
+    public override bool SupportsParentId
+    {
+        get
+        {
+            return base.SupportsParentId;
+        }
+    }
 
-		private List<MorphedVertex> _morphedVertices;
+    private List<MorphedVertex> _morphedVertices;
 
-		protected override void OnDeserialize(Stream stream)
-		{
-			/*RegionStream RegionStream = stream as RegionStream;
+    protected override void OnDeserialize(Stream stream)
+    {
+        /*RegionStream RegionStream = stream as RegionStream;
 			
             BinaryReader reader = new BinaryReader(stream, Encoding.ParseEncoding);
 			
@@ -42,37 +42,37 @@
                 _morphedVertices.Add((MorphedVertex)reader.ReadStruct(typeof(MorphedVertex)));
             }*/
 
-			base.OnDeserialize(stream);
-		}
+        base.OnDeserialize(stream);
+    }
 
-		protected override void OnSerialize(Stream stream)
-		{
-			//BinaryWriter writer = new BinaryWriter(stream, Encoding.ParseEncoding);
-			//writer.Write(Id);
+    protected override void OnSerialize(Stream stream)
+    {
+        //BinaryWriter writer = new BinaryWriter(stream, Encoding.ParseEncoding);
+        //writer.Write(Id);
 
-			base.OnSerialize(stream);
-		}
+        base.OnSerialize(stream);
+    }
 
-		private struct MorphedVertex
-		{
-			public int A;
-			public float A1;
-			public int B;
-			public float B1;
-			public int C;
-			public float C1;
-			public int D;
-			public float D1;
+    private struct MorphedVertex
+    {
+        public int A;
+        public float A1;
+        public int B;
+        public float B1;
+        public int C;
+        public float C1;
+        public int D;
+        public float D1;
 
-			public override string ToString()
-			{
-				return string.Format("{0} {1} - {2} {3} - {4} {5} - {6} {7}", A, A1, B, B1, C, C1, D, D1);
-			}
-		}
+        public override string ToString()
+        {
+            return string.Format("{0} {1} - {2} {3} - {4} {5} - {6} {7}", A, A1, B, B1, C, C1, D, D1);
+        }
+    }
 
-		public override string ToString()
-		{
-			return base.ToString();
-		}
-	}
+    public override string ToString()
+    {
+        return base.ToString();
+    }
+}
 #endif

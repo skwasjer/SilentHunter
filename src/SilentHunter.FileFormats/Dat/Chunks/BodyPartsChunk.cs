@@ -7,7 +7,6 @@ using SilentHunter.FileFormats.Extensions;
 namespace SilentHunter.FileFormats.Dat.Chunks;
 
 /// <summary>
-/// 
 /// </summary>
 /// <remarks>
 /// Probably poorly named.
@@ -15,7 +14,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks;
 public sealed class BodyPartsChunk : DatChunk
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="BodyPartsChunk"/> class.
+    /// Initializes a new instance of the <see cref="BodyPartsChunk" /> class.
     /// </summary>
     public BodyPartsChunk()
         : base(DatFile.Magics.BodyParts)
@@ -46,7 +45,7 @@ public sealed class BodyPartsChunk : DatChunk
     /// <summary>
     /// Gets whether the chunk supports an id field.
     /// </summary>
-    public override bool SupportsId => true;
+    public override bool SupportsId { get => true; }
 
     /// <summary>
     /// Deserializes the chunk.

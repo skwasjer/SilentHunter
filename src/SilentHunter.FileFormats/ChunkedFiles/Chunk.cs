@@ -62,7 +62,7 @@ public abstract class Chunk<TMagic> : IChunk<TMagic>
     /// <summary>
     /// Gets the size of the chunk.
     /// </summary>
-    public virtual long Size => _size;
+    public virtual long Size { get => _size; }
 
     /// <summary>
     /// Gets or sets the file offset.
@@ -101,7 +101,7 @@ public abstract class Chunk<TMagic> : IChunk<TMagic>
     protected virtual Task DeserializeAsync(Stream stream)
     {
         _size = stream.Length - stream.Position;
-        var buffer = Bytes = new byte[_size];
+        byte[] buffer = Bytes = new byte[_size];
         return stream.ReadAsync(buffer, 0, (int)_size);
     }
 

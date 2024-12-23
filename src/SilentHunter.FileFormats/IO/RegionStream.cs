@@ -75,10 +75,7 @@ public class RegionStream : Stream
     /// </returns>
     public override bool CanRead
     {
-        get
-        {
-            return !_disposed && BaseStream.CanRead && _forReading;
-        }
+        get => !_disposed && BaseStream.CanRead && _forReading;
     }
 
     /// <summary>
@@ -89,10 +86,7 @@ public class RegionStream : Stream
     /// </returns>
     public override bool CanSeek
     {
-        get
-        {
-            return !_disposed && BaseStream.CanSeek;
-        }
+        get => !_disposed && BaseStream.CanSeek;
     }
 
     /// <summary>
@@ -103,10 +97,7 @@ public class RegionStream : Stream
     /// </returns>
     public override bool CanWrite
     {
-        get
-        {
-            return !_disposed && BaseStream.CanWrite && !_forReading;
-        }
+        get => !_disposed && BaseStream.CanWrite && !_forReading;
     }
 
     /// <summary>

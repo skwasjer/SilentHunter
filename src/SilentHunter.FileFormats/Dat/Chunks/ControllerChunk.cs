@@ -11,10 +11,8 @@ namespace SilentHunter.FileFormats.Dat.Chunks;
 [DebuggerDisplay("{ToString(),nq}: {Name}")]
 public sealed class ControllerChunk : DatChunk
 {
-    private string _name;
-
     /// <summary>
-    /// Initializes a new instance of the <see cref="ControllerChunk"/> class.
+    /// Initializes a new instance of the <see cref="ControllerChunk" /> class.
     /// </summary>
     public ControllerChunk()
         : base(DatFile.Magics.Controller)
@@ -24,21 +22,17 @@ public sealed class ControllerChunk : DatChunk
     /// <summary>
     /// Gets or sets the controller name.
     /// </summary>
-    public string Name
-    {
-        get => _name;
-        set => _name = value;
-    }
+    public string Name { get; set; }
 
     /// <summary>
     /// Gets whether the chunk supports an id field.
     /// </summary>
-    public override bool SupportsId => true;
+    public override bool SupportsId { get => true; }
 
     /// <summary>
     /// Gets whether the chunk supports a parent id field.
     /// </summary>
-    public override bool SupportsParentId => true;
+    public override bool SupportsParentId { get => true; }
 
     /// <inheritdoc />
     protected override Task DeserializeAsync(Stream stream)

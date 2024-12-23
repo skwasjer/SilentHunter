@@ -55,12 +55,12 @@ public sealed class Animation0Chunk : DatChunk
     /// <summary>
     /// Gets whether the chunk supports an id field.
     /// </summary>
-    public override bool SupportsId => true;
+    public override bool SupportsId { get => true; }
 
     /// <summary>
     /// Gets whether the chunk supports a parent id field.
     /// </summary>
-    public override bool SupportsParentId => true;
+    public override bool SupportsParentId { get => true; }
 
     /// <summary>
     /// Deserializes the chunk.

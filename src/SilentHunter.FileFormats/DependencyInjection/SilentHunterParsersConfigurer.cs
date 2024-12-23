@@ -19,7 +19,7 @@ public class SilentHunterParsersConfigurer : IServiceCollectionProvider
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    IServiceCollection IServiceCollectionProvider.ServiceCollection => _serviceCollection;
+    IServiceCollection IServiceCollectionProvider.ServiceCollection { get => _serviceCollection; }
 
     /// <summary>
     /// Configure how controller types are loaded.

@@ -10,7 +10,7 @@ namespace SilentHunter.FileFormats;
 public class SilentHunterParserException : IOException
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="SilentHunterParserException"/> using specified <paramref name="message"/>.
+    /// Initializes a new instance of the <see cref="SilentHunterParserException" /> using specified <paramref name="message" />.
     /// </summary>
     /// <param name="message">The error message.</param>
     public SilentHunterParserException(string message) : base(message)
@@ -18,7 +18,7 @@ public class SilentHunterParserException : IOException
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SilentHunterParserException"/> using specified <paramref name="message"/> and <paramref name="innerException"/>.
+    /// Initializes a new instance of the <see cref="SilentHunterParserException" /> using specified <paramref name="message" /> and <paramref name="innerException" />.
     /// </summary>
     /// <param name="message">The error message.</param>
     /// <param name="innerException">The inner exception.</param>

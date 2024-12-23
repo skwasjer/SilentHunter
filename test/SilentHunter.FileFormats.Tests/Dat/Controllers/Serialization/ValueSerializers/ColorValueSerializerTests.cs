@@ -1,11 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using FluentAssertions;
-using Moq;
 using SilentHunter.Controllers;
 using SilentHunter.Testing.FluentAssertions;
-using Xunit;
 
 namespace SilentHunter.FileFormats.Dat.Controllers.Serialization;
 
@@ -37,7 +34,8 @@ public class ColorValueSerializerTests
     {
         // Act & assert
         _sut.IsSupported(_serializationContext)
-            .Should().BeTrue();
+            .Should()
+            .BeTrue();
     }
 
     [Fact]
@@ -47,7 +45,8 @@ public class ColorValueSerializerTests
 
         // Act & assert
         _sut.IsSupported(new ControllerSerializationContext(field, new Mock<Controller>().Object))
-            .Should().BeFalse();
+            .Should()
+            .BeFalse();
     }
 
     [Theory]
@@ -57,17 +56,15 @@ public class ColorValueSerializerTests
     [InlineData(0x00000000, 0x00000000)]
     public void Given_color_when_serializing_should_write_color_without_alpha(uint value, uint expectedSerialized)
     {
-        Color color = Color.FromArgb(unchecked((int)value));
+        var color = Color.FromArgb(unchecked((int)value));
 
-        using (var ms = new MemoryStream())
-        using (var writer = new BinaryWriter(ms, FileEncoding.Default))
-        {
-            // Act
-            _sut.Serialize(writer, _serializationContext, color);
+        using var ms = new MemoryStream();
+        using var writer = new BinaryWriter(ms, FileEncoding.Default);
+        // Act
+        _sut.Serialize(writer, _serializationContext, color);
 
-            // Assert
-            BitConverter.ToInt32(ms.ToArray(), 0).Should().Be(unchecked((int)expectedSerialized));
-        }
+        // Assert
+        BitConverter.ToInt32(ms.ToArray(), 0).Should().Be(unchecked((int)expectedSerialized));
     }
 
     [Theory]
@@ -77,17 +74,15 @@ public class ColorValueSerializerTests
     [InlineData(0xFF000000, 0x00000000)]
     public void Given_serialized_color_when_deserializing_should_read_correct_color(uint expectedColor, uint serialized)
     {
-        Color color = Color.FromArgb(unchecked((int)expectedColor));
+        var color = Color.FromArgb(unchecked((int)expectedColor));
 
-        using (var ms = new MemoryStream(BitConverter.GetBytes(serialized)))
-        using (var reader = new BinaryReader(ms, FileEncoding.Default))
-        {
-            // Act
-            Color actual = _sut.Deserialize(reader, _serializationContext);
+        using var ms = new MemoryStream(BitConverter.GetBytes(serialized));
+        using var reader = new BinaryReader(ms, FileEncoding.Default);
+        // Act
+        Color actual = _sut.Deserialize(reader, _serializationContext);
 
-            // Assert
-            actual.Should().Be(color);
-            ms.Should().BeEof();
-        }
+        // Assert
+        actual.Should().Be(color);
+        ms.Should().BeEof();
     }
 }

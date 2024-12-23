@@ -9,16 +9,16 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization;
 public interface IControllerSerializer
 {
     /// <summary>
-    /// Deserializes specified <paramref name="controller"/> from the <paramref name="stream"/>.
+    /// Deserializes specified <paramref name="controller" /> from the <paramref name="stream" />.
     /// </summary>
     /// <param name="stream">The input stream.</param>
     /// <param name="controller">The controller to deserialize into.</param>
-    void Deserialize(Stream stream, Controller controller);
+    public void Deserialize(Stream stream, Controller controller);
 
     /// <summary>
-    /// Serializes specified <paramref name="controller"/> to the <paramref name="stream"/>.
+    /// Serializes specified <paramref name="controller" /> to the <paramref name="stream" />.
     /// </summary>
     /// <param name="stream">The output stream.</param>
     /// <param name="controller">The controller to serialize.</param>
-    void Serialize(Stream stream, Controller controller);
+    public void Serialize(Stream stream, Controller controller);
 }

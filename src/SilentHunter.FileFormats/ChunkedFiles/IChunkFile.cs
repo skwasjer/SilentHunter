@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 
 namespace SilentHunter.FileFormats.ChunkedFiles;
 
@@ -11,5 +10,5 @@ public interface IChunkFile
     /// <summary>
     /// Gets the chunks in the file.
     /// </summary>
-    IList Chunks { get; }
+    public IList Chunks { get; }
 }

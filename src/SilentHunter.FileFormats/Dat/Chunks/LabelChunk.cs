@@ -14,7 +14,7 @@ public sealed class LabelChunk : DatChunk
     private string _text;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="LabelChunk"/> class.
+    /// Initializes a new instance of the <see cref="LabelChunk" /> class.
     /// </summary>
     public LabelChunk()
         : base(DatFile.Magics.Label)
@@ -22,7 +22,7 @@ public sealed class LabelChunk : DatChunk
     }
 
     /// <inheritdoc />
-    public override bool SupportsParentId => true;
+    public override bool SupportsParentId { get => true; }
 
     /// <summary>
     /// Gets or sets the label text.

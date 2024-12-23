@@ -1,12 +1,8 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
-using FluentAssertions;
-using Moq;
 using SilentHunter.Controllers;
 using SilentHunter.Controllers.Decoration;
 using SilentHunter.Testing.FluentAssertions;
-using Xunit;
 
 namespace SilentHunter.FileFormats.Dat.Controllers.Serialization;
 
@@ -38,7 +34,8 @@ public class StringValueSerializerTests
     {
         // Act & assert
         _sut.IsSupported(_serializationContext)
-            .Should().BeTrue();
+            .Should()
+            .BeTrue();
     }
 
     [Fact]
@@ -48,7 +45,8 @@ public class StringValueSerializerTests
 
         // Act & assert
         _sut.IsSupported(new ControllerSerializationContext(field, new Mock<Controller>().Object))
-            .Should().BeFalse();
+            .Should()
+            .BeFalse();
     }
 
     [Theory]
@@ -59,15 +57,13 @@ public class StringValueSerializerTests
     [InlineData("a very long string", "a very long string\0")]
     public void Given_string_when_serializing_should_write_null_terminated_string(string value, string expectedSerialized)
     {
-        using (var ms = new MemoryStream())
-        using (var writer = new BinaryWriter(ms, FileEncoding.Default))
-        {
-            // Act
-            _sut.Serialize(writer, _serializationContext, value);
+        using var ms = new MemoryStream();
+        using var writer = new BinaryWriter(ms, FileEncoding.Default);
+        // Act
+        _sut.Serialize(writer, _serializationContext, value);
 
-            // Assert
-            FileEncoding.Default.GetString(ms.ToArray()).Should().BeEquivalentTo(expectedSerialized);
-        }
+        // Assert
+        FileEncoding.Default.GetString(ms.ToArray()).Should().BeEquivalentTo(expectedSerialized);
     }
 
     [Theory]
@@ -78,15 +74,13 @@ public class StringValueSerializerTests
     [InlineData("a very long string\0", "a very long string")]
     public void Given_null_terminated_serialized_string_when_deserializing_should_return_string_without_terminator(string serialized, string expectedDeserialized)
     {
-        using (var ms = new MemoryStream(FileEncoding.Default.GetBytes(serialized)))
-        using (var reader = new BinaryReader(ms, FileEncoding.Default))
-        {
-            // Act
-            string actual = _sut.Deserialize(reader, _serializationContext);
+        using var ms = new MemoryStream(FileEncoding.Default.GetBytes(serialized));
+        using var reader = new BinaryReader(ms, FileEncoding.Default);
+        // Act
+        string actual = _sut.Deserialize(reader, _serializationContext);
 
-            // Assert
-            actual.Should().Be(expectedDeserialized);
-            ms.Should().BeEof();
-        }
+        // Assert
+        actual.Should().Be(expectedDeserialized);
+        ms.Should().BeEof();
     }
 }

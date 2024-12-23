@@ -24,7 +24,7 @@ public class StateMachineEntry
     /// <summary>
     /// The list of conditions to check in sequential order in a single gamestate update. If a condition is met, all other condition checks are skipped.
     /// </summary>
-    public List<StateMachineCondition> Conditions = new List<StateMachineCondition>();
+    public List<StateMachineCondition> Conditions = new();
 
     /// <summary>
     /// Returns a string that represents the current object.

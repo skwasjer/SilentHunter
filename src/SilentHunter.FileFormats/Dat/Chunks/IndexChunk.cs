@@ -37,7 +37,7 @@ public sealed class IndexChunk : DatChunk
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="IndexChunk"/> class.
+    /// Initializes a new instance of the <see cref="IndexChunk" /> class.
     /// </summary>
     public IndexChunk()
         : base(DatFile.Magics.Index)
@@ -59,11 +59,7 @@ public sealed class IndexChunk : DatChunk
             Entries = ParentFile.Chunks
                 .Cast<DatChunk>()
                 .Where(chunk => chunk.SupportsId)
-                .Select(chunk => new Entry
-                {
-                    Id = chunk.Id,
-                    FileOffset = (int)chunk.FileOffset
-                })
+                .Select(chunk => new Entry { Id = chunk.Id, FileOffset = (int)chunk.FileOffset })
                 .ToList();
         }
     }
@@ -78,11 +74,7 @@ public sealed class IndexChunk : DatChunk
             int indexItems = (int)(stream.Length - stream.Position) / Entry.Size;
             for (int i = 0; i < indexItems; i++)
             {
-                entries.Add(new Entry
-                {
-                    Id = reader.ReadUInt64(),
-                    FileOffset = reader.ReadInt32()
-                });
+                entries.Add(new Entry { Id = reader.ReadUInt64(), FileOffset = reader.ReadInt32() });
             }
 
             Entries = entries;

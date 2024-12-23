@@ -15,7 +15,7 @@ public sealed class SdlFile : KeyedCollection<string, SoundInfo>, ISilentHunterF
     private const string S3DAssemblyPath = "Sdl.dll";
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SdlFile"/> class.
+    /// Initializes a new instance of the <see cref="SdlFile" /> class.
     /// </summary>
     public SdlFile()
         : base(EqualityComparer<string>.Default, -1)
@@ -29,11 +29,11 @@ public sealed class SdlFile : KeyedCollection<string, SoundInfo>, ISilentHunterF
     }
 
     /// <summary>
-    /// Loads from specified <paramref name="stream"/>.
+    /// Loads from specified <paramref name="stream" />.
     /// </summary>
     /// <param name="stream">The stream to load from.</param>
     /// <exception cref="SdlFileException">Thrown when a parsing error occurs.</exception>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="stream"/> is null.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="stream" /> is null.</exception>
     public async Task LoadAsync(Stream stream)
     {
         if (stream == null)
@@ -73,11 +73,11 @@ public sealed class SdlFile : KeyedCollection<string, SoundInfo>, ISilentHunterF
     }
 
     /// <summary>
-    /// Saves to specified <paramref name="stream"/>.
+    /// Saves to specified <paramref name="stream" />.
     /// </summary>
     /// <param name="stream">The stream to write to.</param>
     /// <exception cref="SdlFileException">Thrown when a parsing error occurs.</exception>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="stream"/> is null.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="stream" /> is null.</exception>
     public async Task SaveAsync(Stream stream)
     {
         if (stream == null)

@@ -12,11 +12,11 @@ public interface IRawSerializable
     /// When implemented, deserializes the implemented class from specified <paramref name="stream" />.
     /// </summary>
     /// <param name="stream">The stream.</param>
-    Task DeserializeAsync(Stream stream);
+    public Task DeserializeAsync(Stream stream);
 
     /// <summary>
     /// When implemented, serializes the implemented class to specified <paramref name="stream" />.
     /// </summary>
     /// <param name="stream">The stream.</param>
-    Task SerializeAsync(Stream stream);
+    public Task SerializeAsync(Stream stream);
 }

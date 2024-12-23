@@ -4,7 +4,7 @@ using System.Reflection;
 namespace SilentHunter.FileFormats.ChunkedFiles;
 
 /// <summary>
-/// Represents an activator for creating chunks using <see cref="Activator"/>.
+/// Represents an activator for creating chunks using <see cref="Activator" />.
 /// </summary>
 public class ChunkActivator : IChunkActivator
 {
@@ -24,7 +24,7 @@ public class ChunkActivator : IChunkActivator
         ConstructorInfo constructor = chunkType.GetConstructor(
             BindingFlags.Public | BindingFlags.Instance,
             null,
-            new[] { magic.GetType() },
+            [magic.GetType()],
             null
         );
         if (constructor != null)

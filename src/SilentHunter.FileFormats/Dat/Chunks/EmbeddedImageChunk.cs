@@ -17,7 +17,7 @@ public sealed class EmbeddedImageChunk : DatChunk
     private byte[] _buffer;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="EmbeddedImageChunk"/> class.
+    /// Initializes a new instance of the <see cref="EmbeddedImageChunk" /> class.
     /// </summary>
     public EmbeddedImageChunk()
         : this(ImageFormatDetection.Default)
@@ -25,7 +25,7 @@ public sealed class EmbeddedImageChunk : DatChunk
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="EmbeddedImageChunk"/> class.
+    /// Initializes a new instance of the <see cref="EmbeddedImageChunk" /> class.
     /// </summary>
     /// <param name="imageFormatDetection">The image format detector.</param>
     internal EmbeddedImageChunk(ImageFormatDetection imageFormatDetection)
@@ -37,7 +37,7 @@ public sealed class EmbeddedImageChunk : DatChunk
     /// <summary>
     /// Gets the image data length in bytes.
     /// </summary>
-    public long Length => _buffer?.Length ?? 0;
+    public long Length { get => _buffer?.Length ?? 0; }
 
     /// <summary>
     /// Reads the image data as stream.
@@ -45,7 +45,7 @@ public sealed class EmbeddedImageChunk : DatChunk
     /// <returns>the image data as stream.</returns>
     public Task<Stream> ReadAsStreamAsync()
     {
-        return Task.FromResult<Stream>(new MemoryStream(_buffer ?? new byte[0]));
+        return Task.FromResult<Stream>(new MemoryStream(_buffer ?? []));
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ public sealed class EmbeddedImageChunk : DatChunk
     /// <returns>the image data as byte array.</returns>
     public Task<byte[]> ReadAsByteArrayAsync()
     {
-        return Task.FromResult(_buffer?.ToArray() ?? new byte[0]);
+        return Task.FromResult(_buffer?.ToArray() ?? []);
     }
 
     /// <summary>
@@ -97,19 +97,17 @@ public sealed class EmbeddedImageChunk : DatChunk
                 TgaImageFormatDetector tgaDetector = _imageFormatDetection.Detectors.OfType<TgaImageFormatDetector>().FirstOrDefault();
                 if (tgaDetector != null)
                 {
-                    using (var ms = new MemoryStream())
+                    using var ms = new MemoryStream();
+                    await localStream.CopyToAsync(ms).ConfigureAwait(false);
+
+                    ms.Position = 0;
+                    if (tgaDetector.TryApplyFixes(ms))
                     {
-                        await localStream.CopyToAsync(ms).ConfigureAwait(false);
-
-                        ms.Position = 0;
-                        if (tgaDetector.TryApplyFixes(ms))
-                        {
-                            ImageFormat = ImageFormat.Tga;
-                        }
-
-                        _buffer = ms.ToArray();
-                        return;
+                        ImageFormat = ImageFormat.Tga;
                     }
+
+                    _buffer = ms.ToArray();
+                    return;
                 }
             }
 
@@ -137,10 +135,8 @@ public sealed class EmbeddedImageChunk : DatChunk
             throw new ArgumentNullException(nameof(imageData));
         }
 
-        using (var ms = new MemoryStream(imageData))
-        {
-            await WriteAsync(ms).ConfigureAwait(false);
-        }
+        using var ms = new MemoryStream(imageData);
+        await WriteAsync(ms).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -152,10 +148,8 @@ public sealed class EmbeddedImageChunk : DatChunk
     /// <inheritdoc />
     protected override async Task SerializeAsync(Stream stream)
     {
-        using (Stream imageData = await ReadAsStreamAsync().ConfigureAwait(false))
-        {
-            await imageData.CopyToAsync(stream).ConfigureAwait(false);
-        }
+        using Stream imageData = await ReadAsStreamAsync().ConfigureAwait(false);
+        await imageData.CopyToAsync(stream).ConfigureAwait(false);
     }
 
     /// <summary>

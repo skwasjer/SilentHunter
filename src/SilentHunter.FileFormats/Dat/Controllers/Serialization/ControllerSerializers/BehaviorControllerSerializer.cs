@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
 using SilentHunter.Controllers.Decoration;
 using SilentHunter.FileFormats.Extensions;
@@ -12,16 +11,13 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization;
 /// </summary>
 /// <remarks>
 /// Controllers are typically stored in a specific binary format like so:
-/// 
-///     [int32] size in bytes of property
-///     [string] null terminated string indicating the name of the property.
-///     [array of bytes] property data
-/// 
+/// [int32] size in bytes of property
+/// [string] null terminated string indicating the name of the property.
+/// [array of bytes] property data
 /// The array of bytes is typically dictated by the (predefined) type of the property.
 /// F.ex. for simple types a float takes 4 bytes, a boolean 1 byte. For nested more complex types, it contains
 /// the data for the entire type, which can again be enumerated following the same rules.
 /// Lastly, there are also value type structures, which are parsed in binary sequential order.
-/// 
 /// Controller data is stored as an entire tree in this layout.
 /// </remarks>
 public class BehaviorControllerSerializer : ControllerSerializer
@@ -93,15 +89,11 @@ public class BehaviorControllerSerializer : ControllerSerializer
 
         long expectedPosition = startPos + size;
         long dataSize = expectedPosition - reader.BaseStream.Position;
-        using (var regionStream = new RegionStream(reader.BaseStream, dataSize))
-        {
-            using (var regionReader = new BinaryReader(regionStream, FileEncoding.Default, true))
-            {
-                object retVal = base.ReadField(regionReader, serializationContext);
-                reader.BaseStream.EnsureStreamPosition(expectedPosition, name ?? serializationContext.Name);
-                return retVal;
-            }
-        }
+        using var regionStream = new RegionStream(reader.BaseStream, dataSize);
+        using var regionReader = new BinaryReader(regionStream, FileEncoding.Default, true);
+        object retVal = base.ReadField(regionReader, serializationContext);
+        reader.BaseStream.EnsureStreamPosition(expectedPosition, name ?? serializationContext.Name);
+        return retVal;
     }
 
     /// <inheritdoc />

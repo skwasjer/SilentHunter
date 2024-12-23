@@ -88,11 +88,7 @@ public struct SHUnion<TTypeA, TTypeB> : ICloneable
     /// <inheritdoc />
     public object Clone()
     {
-        var clone = new SHUnion<TTypeA, TTypeB>
-        {
-            _currentType = _currentType,
-            _value = _value
-        };
+        var clone = new SHUnion<TTypeA, TTypeB> { _currentType = _currentType, _value = _value };
         return clone;
     }
 }

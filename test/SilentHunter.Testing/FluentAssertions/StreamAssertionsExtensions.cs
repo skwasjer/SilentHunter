@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using FluentAssertions.Streams;
+﻿using FluentAssertions.Streams;
 
 namespace SilentHunter.Testing.FluentAssertions;
 

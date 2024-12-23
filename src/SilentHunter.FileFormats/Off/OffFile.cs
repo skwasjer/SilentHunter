@@ -36,11 +36,11 @@ public sealed class OffFile : KeyedCollection<char, OffCharacter>, ISilentHunter
     }
 
     /// <summary>
-    /// Loads from specified <paramref name="stream"/>.
+    /// Loads from specified <paramref name="stream" />.
     /// </summary>
     /// <param name="stream">The stream to load from.</param>
     /// <exception cref="OffFileException">Thrown when a parsing error occurs.</exception>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="stream"/> is null.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="stream" /> is null.</exception>
     public async Task LoadAsync(Stream stream)
     {
         if (stream == null)
@@ -48,42 +48,40 @@ public sealed class OffFile : KeyedCollection<char, OffCharacter>, ISilentHunter
             throw new ArgumentNullException(nameof(stream));
         }
 
-        using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
+        using var reader = new BinaryReader(stream, FileEncoding.Default, true);
+        long itemStartPosition = 0;
+        try
         {
-            long itemStartPosition = 0;
-            try
+            int characterCount = reader.ReadInt32();
+            CharacterSpacing = reader.ReadStruct<Point>();
+
+            Clear();
+            for (int i = 0; i < characterCount; i++)
             {
-                int characterCount = reader.ReadInt32();
-                CharacterSpacing = reader.ReadStruct<Point>();
+                itemStartPosition = stream.Position;
+                var character = new OffCharacter();
+                await ((IRawSerializable)character).DeserializeAsync(stream).ConfigureAwait(false);
 
-                Clear();
-                for (int i = 0; i < characterCount; i++)
-                {
-                    itemStartPosition = stream.Position;
-                    var character = new OffCharacter();
-                    await ((IRawSerializable)character).DeserializeAsync(stream).ConfigureAwait(false);
-
-                    Add(character);
-                }
-
-                if (reader.BaseStream.Position != reader.BaseStream.Length)
-                {
-                    throw new SilentHunterParserException($"The stream contains unexpected data at 0x{reader.BaseStream.Position:x8}");
-                }
+                Add(character);
             }
-            catch (Exception ex)
+
+            if (reader.BaseStream.Position != reader.BaseStream.Length)
             {
-                throw new OffFileException(Count, itemStartPosition, "The file could not be read due to a parser error.", ex);
+                throw new SilentHunterParserException($"The stream contains unexpected data at 0x{reader.BaseStream.Position:x8}");
             }
+        }
+        catch (Exception ex)
+        {
+            throw new OffFileException(Count, itemStartPosition, "The file could not be read due to a parser error.", ex);
         }
     }
 
     /// <summary>
-    /// Saves to specified <paramref name="stream"/>.
+    /// Saves to specified <paramref name="stream" />.
     /// </summary>
     /// <param name="stream">The stream to write to.</param>
     /// <exception cref="OffFileException">Thrown when a parsing error occurs.</exception>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="stream"/> is null.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="stream" /> is null.</exception>
     public async Task SaveAsync(Stream stream)
     {
         if (stream == null)
@@ -91,28 +89,26 @@ public sealed class OffFile : KeyedCollection<char, OffCharacter>, ISilentHunter
             throw new ArgumentNullException(nameof(stream));
         }
 
-        using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
+        using var writer = new BinaryWriter(stream, FileEncoding.Default, true);
+        long itemStartPosition = 0;
+        int itemIndex = -1;
+        try
         {
-            long itemStartPosition = 0;
-            int itemIndex = -1;
-            try
-            {
-                writer.Write(Count);
-                writer.WriteStruct(CharacterSpacing);
+            writer.Write(Count);
+            writer.WriteStruct(CharacterSpacing);
 
-                foreach (OffCharacter character in this)
-                {
-                    itemStartPosition = stream.Position;
-                    itemIndex++;
-                    await ((IRawSerializable)character).SerializeAsync(stream).ConfigureAwait(false);
-                }
-
-                writer.Flush();
-            }
-            catch (Exception ex)
+            foreach (OffCharacter character in this)
             {
-                throw new OffFileException(itemIndex, itemStartPosition, "The file could not be written due to a parser error.", ex);
+                itemStartPosition = stream.Position;
+                itemIndex++;
+                await ((IRawSerializable)character).SerializeAsync(stream).ConfigureAwait(false);
             }
+
+            writer.Flush();
+        }
+        catch (Exception ex)
+        {
+            throw new OffFileException(itemIndex, itemStartPosition, "The file could not be written due to a parser error.", ex);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks.Partial;
 public sealed class NodeChunk : DatChunk
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="NodeChunk"/>.
+    /// Initializes a new instance of the <see cref="NodeChunk" />.
     /// </summary>
     public NodeChunk()
         : base(DatFile.Magics.Node)
@@ -91,7 +91,7 @@ public sealed class NodeChunk : DatChunk
     /// <summary>
     /// Gets a list of material ids.
     /// </summary>
-    public List<ulong> Materials { get; } = new List<ulong>();
+    public List<ulong> Materials { get; } = new();
 
     /// <summary>
     /// Gets or sets whether the node (and/or attached behaviors) is visible in game.
@@ -136,7 +136,7 @@ public sealed class NodeChunk : DatChunk
 
     private void UpdateTransform()
     {
-        Matrix4x4 m = Matrix4x4.CreateRotationX(-_rotation.X);
+        var m = Matrix4x4.CreateRotationX(-_rotation.X);
         m *= Matrix4x4.CreateRotationY(-_rotation.Y);
         m *= Matrix4x4.CreateRotationZ(-_rotation.Z);
         m *= Matrix4x4.CreateTranslation(_translation);
@@ -145,19 +145,19 @@ public sealed class NodeChunk : DatChunk
     }
 
     /// <summary>
-    /// Gets the transform based on <see cref="Rotation"/> and <see cref="Translation"/>.
+    /// Gets the transform based on <see cref="Rotation" /> and <see cref="Translation" />.
     /// </summary>
     public Matrix4x4 Transform { get; private set; }
 
     /// <summary>
     /// Gets whether the chunk supports an id field.
     /// </summary>
-    public override bool SupportsId => true;
+    public override bool SupportsId { get => true; }
 
     /// <summary>
     /// Gets whether the chunk supports a parent id field.
     /// </summary>
-    public override bool SupportsParentId => true;
+    public override bool SupportsParentId { get => true; }
 
     /// <inheritdoc />
     protected override Task DeserializeAsync(Stream stream)
@@ -231,7 +231,6 @@ public sealed class NodeChunk : DatChunk
                     var light = new Light
                     {
                         Reserved0 = reader.ReadUInt32(),
-
                         Type = reader.ReadStruct<LightType>(),
 
                         // Ignore alpha component.
@@ -266,7 +265,7 @@ public sealed class NodeChunk : DatChunk
                             size,
                             "Array size specifier. Some chunks with subtype 100 seem to have this size specifier, followed by an int-array of data. The 'size' seems to match the number of vertices of a linked model, and looks to be related to animation. In most cases though, this specifier is just 0 and the final data of the chunk.");
 
-                        var remainingIntData = new int[size];
+                        int[] remainingIntData = new int[size];
                         for (int i = 0; i < size; i++)
                         {
                             remainingIntData[i] = reader.ReadInt32();
@@ -344,7 +343,7 @@ public sealed class NodeChunk : DatChunk
                 case 100:
                     if (UnknownData.Count > 1)
                     {
-                        var remainingIntData = (int[])UnknownData[2].Data;
+                        int[] remainingIntData = (int[])UnknownData[2].Data;
                         writer.Write(remainingIntData.Length);
                         foreach (int t in remainingIntData)
                         {

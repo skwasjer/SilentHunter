@@ -1,11 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using FluentAssertions;
-using Moq;
 using SilentHunter.FileFormats.Graphics;
 using SilentHunter.Testing.FluentAssertions;
-using Xunit;
 
 namespace SilentHunter.FileFormats.Dat.Chunks;
 
@@ -41,12 +38,12 @@ public class EmbeddedImageChunkTests
     [InlineData(null, ImageFormat.Unknown)]
     public async Task When_writing_imageData_should_attempt_to_detect_image_format(string imageIdentifier, ImageFormat expectedImageFormat)
     {
-        byte[] fakeImageData = { 0x1, 0x2, 0x3, 0x4 };
+        byte[] fakeImageData = [0x1, 0x2, 0x3, 0x4];
         var imageFormatDetectorMock = new Mock<IImageFormatDetector>();
         imageFormatDetectorMock
             .Setup(m => m.GetImageFormat(It.IsAny<Stream>()))
             .Returns(imageIdentifier);
-        var chunk = new EmbeddedImageChunk(new ImageFormatDetection(new[] { imageFormatDetectorMock.Object }));
+        var chunk = new EmbeddedImageChunk(new ImageFormatDetection([imageFormatDetectorMock.Object]));
 
         // Act
         await chunk.WriteAsync(fakeImageData);
@@ -59,18 +56,16 @@ public class EmbeddedImageChunkTests
     [Fact]
     public async Task Given_imageData_When_serializing_should_save_exact_same_imageData()
     {
-        byte[] fakeImageData = { 0x1, 0x2, 0x3, 0x4 };
+        byte[] fakeImageData = [0x1, 0x2, 0x3, 0x4];
         var chunk = new EmbeddedImageChunk();
 
-        using (var ms = new MemoryStream())
-        {
-            // Act
-            await chunk.WriteAsync(fakeImageData);
-            await chunk.SerializeAsync(ms, false);
+        using var ms = new MemoryStream();
+        // Act
+        await chunk.WriteAsync(fakeImageData);
+        await chunk.SerializeAsync(ms, false);
 
-            // Assert
-            ms.ToArray().Should().BeEquivalentTo(fakeImageData);
-        }
+        // Assert
+        ms.ToArray().Should().BeEquivalentTo(fakeImageData);
     }
 
     [Theory]
@@ -79,34 +74,32 @@ public class EmbeddedImageChunkTests
     [InlineData(null, ImageFormat.Unknown)]
     public async Task When_serializing_and_then_deserializing_should_produce_equivalent(string imageIdentifier, ImageFormat expectedImageFormat)
     {
-        byte[] fakeImageData = { 0x1, 0x2, 0x3, 0x4 };
+        byte[] fakeImageData = [0x1, 0x2, 0x3, 0x4];
         var imageFormatDetectorMock = new Mock<IImageFormatDetector>();
         imageFormatDetectorMock
             .Setup(m => m.GetImageFormat(It.IsAny<Stream>()))
             .Returns(imageIdentifier);
         var chunk = new EmbeddedImageChunk();
 
-        using (var ms = new MemoryStream())
-        {
-            await chunk.WriteAsync(fakeImageData);
-            await chunk.SerializeAsync(ms, false);
-            ms.Position = 0;
+        using var ms = new MemoryStream();
+        await chunk.WriteAsync(fakeImageData);
+        await chunk.SerializeAsync(ms, false);
+        ms.Position = 0;
 
-            // Act
-            var deserializedChunk = new EmbeddedImageChunk(new ImageFormatDetection(new[] { imageFormatDetectorMock.Object }));
-            await deserializedChunk.DeserializeAsync(ms, false);
+        // Act
+        var deserializedChunk = new EmbeddedImageChunk(new ImageFormatDetection([imageFormatDetectorMock.Object]));
+        await deserializedChunk.DeserializeAsync(ms, false);
 
-            // Assert
-            (await deserializedChunk.ReadAsByteArrayAsync()).Should().BeEquivalentTo(fakeImageData);
-            deserializedChunk.ImageFormat.Should().Be(expectedImageFormat);
-            ms.Should().BeEof();
-        }
+        // Assert
+        (await deserializedChunk.ReadAsByteArrayAsync()).Should().BeEquivalentTo(fakeImageData);
+        deserializedChunk.ImageFormat.Should().Be(expectedImageFormat);
+        ms.Should().BeEof();
     }
 
     [Fact]
     public async Task When_writing_imageData_should_set_length()
     {
-        byte[] fakeImageData = { 0x1, 0x2, 0x3, 0x4 };
+        byte[] fakeImageData = [0x1, 0x2, 0x3, 0x4];
         var chunk = new EmbeddedImageChunk();
 
         // Act
@@ -169,7 +162,7 @@ public class EmbeddedImageChunkTests
     [Fact]
     public async Task Given_no_data_when_writing_should_throw()
     {
-        byte[] imageData = new byte[0];
+        byte[] imageData = [];
         var chunk = new EmbeddedImageChunk();
 
         // Act
@@ -185,7 +178,7 @@ public class EmbeddedImageChunkTests
     [Fact]
     public async Task Given_stream_does_not_support_seeking_when_writing_should_not_throw()
     {
-        byte[] fakeImageData = { 0x1, 0x2, 0x3, 0x4 };
+        byte[] fakeImageData = [0x1, 0x2, 0x3, 0x4];
 
         // Create stream stub that does not support seeking.
         var streamMock = new Mock<MemoryStream> { CallBase = true };
@@ -200,10 +193,7 @@ public class EmbeddedImageChunkTests
             .Returns("tga")
             .Verifiable();
 
-        var chunk = new EmbeddedImageChunk(new ImageFormatDetection(new []
-        {
-            imageFormatDetectorMock.Object
-        }));
+        var chunk = new EmbeddedImageChunk(new ImageFormatDetection([imageFormatDetectorMock.Object]));
 
         // Act
         Func<Task> act = () => chunk.WriteAsync(imageData);

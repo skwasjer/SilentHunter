@@ -7,9 +7,9 @@ namespace SilentHunter.Testing.FluentAssertions;
 public static class ExceptionAssertionsExtensions
 {
     /// <summary>
-    /// Asserts that an <see cref="ArgumentException"/> (or inherited exception) is thrown with the expected parameter name.
+    /// Asserts that an <see cref="ArgumentException" /> (or inherited exception) is thrown with the expected parameter name.
     /// </summary>
-    /// <typeparam name="TException">The <see cref="ArgumentException"/> (or inherited exception).</typeparam>
+    /// <typeparam name="TException">The <see cref="ArgumentException" /> (or inherited exception).</typeparam>
     /// <param name="assertion"></param>
     /// <param name="expectedParameterName">The expected parameter name.</param>
     public static ExceptionAssertions<TException> WithParamName<TException>(this ExceptionAssertions<TException> assertion, string expectedParameterName, string because = "", params object[] becauseArgs)

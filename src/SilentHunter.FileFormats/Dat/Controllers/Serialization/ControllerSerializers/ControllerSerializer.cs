@@ -19,7 +19,7 @@ public class ControllerSerializer : IControllerSerializer, IControllerFieldSeria
     private readonly ICollection<IControllerValueSerializer> _serializers;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ControllerSerializer"/>.
+    /// Initializes a new instance of the <see cref="ControllerSerializer" />.
     /// </summary>
     public ControllerSerializer()
     {
@@ -34,12 +34,12 @@ public class ControllerSerializer : IControllerSerializer, IControllerFieldSeria
             new PrimitiveArrayValueSerializer(),
             new ListValueSerializer(this),
             new SHUnionValueSerializer(),
-            new ValueTypeSerializer()	// Should be last.
+            new ValueTypeSerializer() // Should be last.
         };
     }
 
     /// <summary>
-    /// Deserializes specified <paramref name="controller"/> from the <paramref name="stream"/>.
+    /// Deserializes specified <paramref name="controller" /> from the <paramref name="stream" />.
     /// </summary>
     /// <param name="stream">The stream to deserialize from.</param>
     /// <param name="controller">The controller instance to populate with deserialized data.</param>
@@ -56,17 +56,15 @@ public class ControllerSerializer : IControllerSerializer, IControllerFieldSeria
         }
 
         Type controllerType = controller.GetType();
-        using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
-        {
-            var ctx = new ControllerSerializationContext(controllerType, controller);
-            Deserialize(reader, ctx, controller);
+        using var reader = new BinaryReader(stream, FileEncoding.Default, true);
+        var ctx = new ControllerSerializationContext(controllerType, controller);
+        Deserialize(reader, ctx, controller);
 
-            reader.BaseStream.EnsureStreamPosition(reader.BaseStream.Length, controllerType.Name);
-        }
+        reader.BaseStream.EnsureStreamPosition(reader.BaseStream.Length, controllerType.Name);
     }
 
     /// <summary>
-    /// Deserializes specified <paramref name="instance"/> using the <paramref name="reader"/>.
+    /// Deserializes specified <paramref name="instance" /> using the <paramref name="reader" />.
     /// </summary>
     /// <param name="reader">The reader to deserialize from.</param>
     /// <param name="serializationContext">The serialization context.</param>
@@ -97,14 +95,14 @@ public class ControllerSerializer : IControllerSerializer, IControllerFieldSeria
         foreach (FieldInfo field in fields)
         {
             var ctx = new ControllerSerializationContext(field, serializationContext.Controller);
-            var value = DeserializeField(reader, ctx);
+            object value = DeserializeField(reader, ctx);
             // We have our value, set it.
             field.SetValue(instance, value);
         }
     }
 
     /// <summary>
-    /// Deserializes a field from the <paramref name="reader"/>.
+    /// Deserializes a field from the <paramref name="reader" />.
     /// </summary>
     /// <param name="reader">The reader to deserialize from.</param>
     /// <param name="serializationContext">The serialization context.</param>
@@ -119,7 +117,7 @@ public class ControllerSerializer : IControllerSerializer, IControllerFieldSeria
     }
 
     /// <summary>
-    /// Reads a field from the <paramref name="reader"/>.
+    /// Reads a field from the <paramref name="reader" />.
     /// </summary>
     /// <param name="reader">The reader to deserialize from.</param>
     /// <param name="serializationContext">The serialization context.</param>
@@ -143,7 +141,7 @@ public class ControllerSerializer : IControllerSerializer, IControllerFieldSeria
     }
 
     /// <summary>
-    /// Serializes specified <paramref name="controller"/> to the <paramref name="stream"/>.
+    /// Serializes specified <paramref name="controller" /> to the <paramref name="stream" />.
     /// </summary>
     /// <param name="stream">The stream to serialize to.</param>
     /// <param name="controller">The controller instance to serialize.</param>
@@ -160,15 +158,13 @@ public class ControllerSerializer : IControllerSerializer, IControllerFieldSeria
         }
 
         Type controllerType = controller.GetType();
-        using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
-        {
-            var ctx = new ControllerSerializationContext(controllerType, controller);
-            Serialize(writer, ctx, controller);
-        }
+        using var writer = new BinaryWriter(stream, FileEncoding.Default, true);
+        var ctx = new ControllerSerializationContext(controllerType, controller);
+        Serialize(writer, ctx, controller);
     }
 
     /// <summary>
-    /// Serializes specified <paramref name="instance"/> using the <paramref name="writer"/>.
+    /// Serializes specified <paramref name="instance" /> using the <paramref name="writer" />.
     /// </summary>
     /// <param name="writer">The writer to serialize to.</param>
     /// <param name="serializationContext">The serialization context.</param>
@@ -200,7 +196,7 @@ public class ControllerSerializer : IControllerSerializer, IControllerFieldSeria
     }
 
     /// <summary>
-    /// Serializes specified <paramref name="value"/> using the <paramref name="writer"/>.
+    /// Serializes specified <paramref name="value" /> using the <paramref name="writer" />.
     /// </summary>
     /// <param name="writer">The writer to serialize to.</param>
     /// <param name="serializationContext">The serialization context.</param>
@@ -216,7 +212,7 @@ public class ControllerSerializer : IControllerSerializer, IControllerFieldSeria
     }
 
     /// <summary>
-    /// Writes specified <paramref name="value"/> using the <paramref name="writer"/>.
+    /// Writes specified <paramref name="value" /> using the <paramref name="writer" />.
     /// </summary>
     /// <param name="writer">The writer to serialize to.</param>
     /// <param name="serializationContext">The serialization context.</param>

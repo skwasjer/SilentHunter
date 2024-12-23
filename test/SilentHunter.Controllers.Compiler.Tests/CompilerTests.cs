@@ -14,7 +14,7 @@ namespace SilentHunter.Controllers.Compiler.Tests;
 public abstract class CompilerTests<TCompiler> : IAsyncLifetime
     where TCompiler : ICSharpCompiler
 {
-    protected readonly string[] _typesToCompile = { "Foo", "Bar" };
+    protected readonly string[] _typesToCompile = ["Foo", "Bar"];
 
     private static readonly string TargetDllFile = $"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}output.dll";
     protected ICSharpCompiler _sut;
@@ -51,7 +51,7 @@ public abstract class CompilerTests<TCompiler> : IAsyncLifetime
             typeof(TCompiler),
             BindingFlags.Instance | BindingFlags.NonPublic,
             null,
-            new object[] { fileSystem },
+            [fileSystem],
             null);
     }
 
@@ -110,7 +110,7 @@ public abstract class CompilerTests<TCompiler> : IAsyncLifetime
         {
             ReferencedAssemblies = GetReferencedAssemblies(),
             OutputFile = TargetDllFile,
-            IgnoreCompilerErrors = new[] { "CS0042" }
+            IgnoreCompilerErrors = ["CS0042"]
         };
 
         // Act

@@ -5,11 +5,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using FluentAssertions;
 using FluentAssertions.Specialized;
-using Moq;
 using SilentHunter.Testing.Extensions;
-using Xunit;
 
 namespace SilentHunter.FileFormats.Sdl;
 
@@ -19,7 +16,7 @@ public class SdlFileTests
 
     public SdlFileTests()
     {
-        _sut = new SdlFile();
+        _sut = [];
     }
 
     [Theory]
@@ -136,10 +133,8 @@ public class SdlFileTests
         // Act
         Func<Task> act = () =>
         {
-            using (var ms = new MemoryStream(testCase.Data))
-            {
-                return _sut.LoadAsync(ms);
-            }
+            using var ms = new MemoryStream(testCase.Data);
+            return _sut.LoadAsync(ms);
         };
 
         // Assert
@@ -188,8 +183,8 @@ public class SdlFileTests
         Type thisType = typeof(SdlFileTests);
         Assembly thisAssembly = thisType.Assembly;
 
-        yield return new object[]
-        {
+        yield return
+        [
             thisAssembly.GetManifestResourceStream(thisType, "SdlWithOneItem.sdl"),
             new SoundInfo
             {
@@ -210,10 +205,10 @@ public class SdlFileTests
                 VolumeVar = 0F,
                 WaveName = "sample.wav"
             }
-        };
+        ];
 
-        yield return new object[]
-        {
+        yield return
+        [
             thisAssembly.GetManifestResourceStream(thisType, "SdlWithTwoItems.sdl"),
             new SoundInfo
             {
@@ -253,13 +248,13 @@ public class SdlFileTests
                 VolumeVar = 2.5f,
                 WaveName = "anm_Crowd_01.wav"
             }
-        };
+        ];
 
-        yield return new object[]
-        {
+        yield return
+        [
             // Only has S3D special header, and no items.
             thisAssembly.GetManifestResourceStream(thisType, "SdlWithS3DHeader.sdl")
-        };
+        ];
     }
 
     public static IEnumerable<object[]> TestCasesWithInvalidData()
@@ -273,41 +268,32 @@ public class SdlFileTests
 
         byte[] testData = GetSoundInfo();
 
-        yield return new object[]
-        {
-            new SoundInfoTestCase
-            {
-                Data = testData.Concat(new byte[] { 0, 1, 2, 3, 4, 5 }).ToArray(),
-                ExpectedError = "The file appears invalid. Unexpected size specifier encountered."
-            }
-        };
+        yield return [new SoundInfoTestCase { Data = testData.Concat(new byte[] { 0, 1, 2, 3, 4, 5 }).ToArray(), ExpectedError = "The file appears invalid. Unexpected size specifier encountered." }];
 
         testData = testData
             // Valid size.
             .Concat(new byte[] { 0x10, 0x01, 0x0C, 0x01, 0x00, 0x00 })
             .ToArray();
 
-        yield return new object[]
-        {
+        yield return
+        [
             new SoundInfoTestCase
             {
                 // Expect 'SoundInfo'
-                Data = testData.Concat(Encoding.UTF8.GetBytes("NotSoundInfo\0")).ToArray(),
-                ExpectedError = "The file appears invalid. Unexpected item header encountered."
+                Data = testData.Concat(Encoding.UTF8.GetBytes("NotSoundInfo\0")).ToArray(), ExpectedError = "The file appears invalid. Unexpected item header encountered."
             }
-        };
+        ];
 
         testData = testData.Concat(Encoding.UTF8.GetBytes("SoundInfo\0")).ToArray();
 
-        yield return new object[]
-        {
+        yield return
+        [
             new SoundInfoTestCase
             {
                 // Expect 'Name' property
-                Data = testData.Concat(new byte[] { 0, 1, 2, 3 }).Concat(Encoding.UTF8.GetBytes("NotN")).ToArray(),
-                ExpectedError = "The file appears invalid. Expected property 'Name' but encountered 'NotN'."
+                Data = testData.Concat(new byte[] { 0, 1, 2, 3 }).Concat(Encoding.UTF8.GetBytes("NotN")).ToArray(), ExpectedError = "The file appears invalid. Expected property 'Name' but encountered 'NotN'."
             }
-        };
+        ];
     }
 }
 

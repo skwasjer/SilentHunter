@@ -13,14 +13,14 @@ namespace SilentHunter.FileFormats.Dat.Chunks;
 public sealed class TextureMapChunk : DatChunk
 {
     private const int TextureMapNameLength = 8;
-    private static readonly DateTime Epoch = new DateTime(1970, 1, 1);
+    private static readonly DateTime Epoch = new(1970, 1, 1);
 
     private long _creationTimeSinceEpoch;
     private TextureMapType _mapType;
     private string _texture;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="TextureMapChunk"/> class.
+    /// Initializes a new instance of the <see cref="TextureMapChunk" /> class.
     /// </summary>
     public TextureMapChunk()
         : base(DatFile.Magics.TextureMap)
@@ -32,10 +32,10 @@ public sealed class TextureMapChunk : DatChunk
     }
 
     /// <inheritdoc />
-    public override bool SupportsId => true;
+    public override bool SupportsId { get => true; }
 
     /// <inheritdoc />
-    public override bool SupportsParentId => true;
+    public override bool SupportsParentId { get => true; }
 
     /// <summary>
     /// Gets or sets the map channel index.

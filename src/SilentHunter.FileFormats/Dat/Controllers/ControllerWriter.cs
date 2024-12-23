@@ -45,53 +45,51 @@ internal class ControllerWriter : IControllerWriter
             return;
         }
 
-        using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
+        using var writer = new BinaryWriter(stream, FileEncoding.Default, true);
+        Type controllerType = controller.GetType();
+        IControllerSerializer cs = _controllerSerializerResolver.GetSerializer(controllerType);
+
+        if (!controllerType.IsBehaviorController())
         {
-            Type controllerType = controller.GetType();
-            IControllerSerializer cs = _controllerSerializerResolver.GetSerializer(controllerType);
-
-            if (!controllerType.IsBehaviorController())
+            ControllerAttribute controllerAttribute = controllerType.GetCustomAttribute<ControllerAttribute>() ?? new ControllerAttribute();
+            if (controllerAttribute.SubType.HasValue)
             {
-                ControllerAttribute controllerAttribute = controllerType.GetCustomAttribute<ControllerAttribute>() ?? new ControllerAttribute();
-                if (controllerAttribute.SubType.HasValue)
-                {
-                    writer.Write(controllerAttribute.SubType.Value);
-                }
-
-                if (controllerType.IsAnimationController() || !controllerAttribute.SubType.HasValue)
-                {
-                    // Skip writing the count field, the serializer will take care of it.
-                }
-                else
-                {
-                    writer.Write((ushort)0);
-                }
-
-                cs.Serialize(stream, (Controller)controller);
-
-                return;
+                writer.Write(controllerAttribute.SubType.Value);
             }
 
-            // Test if the type is from our controller assembly.
-            if (!_controllerFactory.CanCreate(controllerType))
+            if (controllerType.IsAnimationController() || !controllerAttribute.SubType.HasValue)
             {
-                throw new NotSupportedException("Invalid controller.");
+                // Skip writing the count field, the serializer will take care of it.
             }
-
-            // We don't know the size yet, so just write 0 for now.
-            writer.Write(0);
-
-            long startPos = stream.Position;
+            else
+            {
+                writer.Write((ushort)0);
+            }
 
             cs.Serialize(stream, (Controller)controller);
 
-            // After the controller is written, determine and write the size.
-            long currentPos = stream.Position;
-            stream.Position = startPos - 4;
-            writer.Write((int)(currentPos - startPos));
-
-            // Restore position to the end of the controller.
-            stream.Position = currentPos;
+            return;
         }
+
+        // Test if the type is from our controller assembly.
+        if (!_controllerFactory.CanCreate(controllerType))
+        {
+            throw new NotSupportedException("Invalid controller.");
+        }
+
+        // We don't know the size yet, so just write 0 for now.
+        writer.Write(0);
+
+        long startPos = stream.Position;
+
+        cs.Serialize(stream, (Controller)controller);
+
+        // After the controller is written, determine and write the size.
+        long currentPos = stream.Position;
+        stream.Position = startPos - 4;
+        writer.Write((int)(currentPos - startPos));
+
+        // Restore position to the end of the controller.
+        stream.Position = currentPos;
     }
 }

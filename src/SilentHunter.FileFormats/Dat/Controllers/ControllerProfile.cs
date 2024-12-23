@@ -4,7 +4,7 @@
 /// Controllers are grouped in a profile by Silent Hunter game version.
 /// </summary>
 /// <remarks>
-/// Originally, it was on purposely ordered latest to oldest version, due to some logic in <see cref="ControllerFactory"/> and <see cref="ControllerReader"/>.
+/// Originally, it was on purposely ordered latest to oldest version, due to some logic in <see cref="ControllerFactory" /> and <see cref="ControllerReader" />.
 /// </remarks>
 public enum ControllerProfile
 {

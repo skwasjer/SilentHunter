@@ -7,7 +7,6 @@ using SilentHunter.FileFormats.Extensions;
 namespace SilentHunter.FileFormats.Dat.Chunks;
 
 /// <summary>
-/// 
 /// </summary>
 /// <remarks>
 /// Probably poorly named.
@@ -15,7 +14,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks;
 public sealed class BoneInfluencesChunk : DatChunk
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="BoneInfluencesChunk"/> class.
+    /// Initializes a new instance of the <see cref="BoneInfluencesChunk" /> class.
     /// </summary>
     public BoneInfluencesChunk()
         : base(DatFile.Magics.BoneInfluences)
@@ -60,12 +59,12 @@ public sealed class BoneInfluencesChunk : DatChunk
     /// <summary>
     /// Gets whether the chunk supports an id field.
     /// </summary>
-    public override bool SupportsId => true;
+    public override bool SupportsId { get => true; }
 
     /// <summary>
     /// Gets whether the chunk supports a parent id field.
     /// </summary>
-    public override bool SupportsParentId => true;
+    public override bool SupportsParentId { get => true; }
 
     /// <summary>
     /// </summary>

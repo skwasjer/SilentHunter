@@ -12,16 +12,12 @@ public class ImageFormatDetection
     /// <summary>
     /// Gets the default image format detection instance.
     /// </summary>
-    public static ImageFormatDetection Default { get; } = new ImageFormatDetection(
-        new IImageFormatDetector[]
-        {
-            new DdsImageFormatDetector(),
-            new TgaImageFormatDetector(),
-        }
+    public static ImageFormatDetection Default { get; } = new(
+        [new DdsImageFormatDetector(), new TgaImageFormatDetector()]
     );
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ImageFormatDetection"/> class using specified image detectors.
+    /// Initializes a new instance of the <see cref="ImageFormatDetection" /> class using specified image detectors.
     /// </summary>
     /// <param name="detectors"></param>
     public ImageFormatDetection(IEnumerable<IImageFormatDetector> detectors)
@@ -35,12 +31,12 @@ public class ImageFormatDetection
     public IEnumerable<IImageFormatDetector> Detectors { get; }
 
     /// <summary>
-    /// Gets the image format from image data on specified <paramref name="stream"/>.
+    /// Gets the image format from image data on specified <paramref name="stream" />.
     /// </summary>
     /// <param name="stream">The stream to read from.</param>
     /// <returns>The image format</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="stream"/> is null.</exception>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="stream"/> is not readable or seekable.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="stream" /> is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="stream" /> is not readable or seekable.</exception>
     public ImageFormat GetFormat(Stream stream)
     {
         if (stream == null)

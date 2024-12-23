@@ -32,7 +32,7 @@ public class DateTimeValueSerializer : ControllerValueSerializer<DateTime>
         sDate = sDate.Remove(6);
 
         // 3 extra attempts max.
-        for (var i = 0; i < 3; i++)
+        for (int i = 0; i < 3; i++)
         {
             days--;
             if (DateTime.TryParseExact(sDate + days, DateFormat, null, DateTimeStyles.None, out date))

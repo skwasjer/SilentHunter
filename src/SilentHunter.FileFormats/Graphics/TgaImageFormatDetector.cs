@@ -72,9 +72,9 @@ public class TgaImageFormatDetector : IImageFormatDetector
         /// <summary>Image descriptor bits (vh flip bits).</summary>
         public byte descriptor;
 
-        public TgaPixelFormat PixelFormat => (TgaPixelFormat)(imagetype - (imagetype > (byte)8 ? 8 : 0));
+        public TgaPixelFormat PixelFormat { get => (TgaPixelFormat)(imagetype - (imagetype > (byte)8 ? 8 : 0)); }
 
-        public bool HasPalette => colormaptype == 1;
+        public bool HasPalette { get => colormaptype == 1; }
     }
     // ReSharper restore InconsistentNaming
     // ReSharper restore IdentifierTypo
@@ -131,40 +131,38 @@ public class TgaImageFormatDetector : IImageFormatDetector
         TGA_HEADER tgaHeader;
         try
         {
-            using (var reader = new BinaryReader(stream, parseEncoding, true))
+            using var reader = new BinaryReader(stream, parseEncoding, true);
+            tgaHeader = (TGA_HEADER)reader.ReadStruct(typeof(TGA_HEADER));
+            if (tgaHeader.identsize > 0)
             {
-                tgaHeader = (TGA_HEADER)reader.ReadStruct(typeof(TGA_HEADER));
-                if (tgaHeader.identsize > 0)
+                string imageId = reader.ReadString(tgaHeader.identsize).TrimEnd('\0');
+                if (!string.IsNullOrEmpty(imageId))
                 {
-                    string imageId = reader.ReadString(tgaHeader.identsize).TrimEnd('\0');
-                    if (!string.IsNullOrEmpty(imageId))
-                    {
-                        Debug.WriteLine($"Has ImageID: {imageId}.");
-                    }
+                    Debug.WriteLine($"Has ImageID: {imageId}.");
                 }
+            }
 
-                if (!Enum.IsDefined(typeof(TgaPixelFormat), tgaHeader.PixelFormat))
+            if (!Enum.IsDefined(typeof(TgaPixelFormat), tgaHeader.PixelFormat))
+            {
+                Debug.WriteLine($"Unknown image data type {tgaHeader.PixelFormat}.");
+                return false;
+            }
+
+            if (tgaHeader.PixelFormat == TgaPixelFormat.Indexed)
+            {
+                if (!tgaHeader.HasPalette)
                 {
-                    Debug.WriteLine($"Unknown image data type {tgaHeader.PixelFormat}.");
+                    Debug.WriteLine("Palette is required but unavailable.");
                     return false;
                 }
 
-                if (tgaHeader.PixelFormat == TgaPixelFormat.Indexed)
+                // Check if all the color map data is available.
+                int paletteLength = tgaHeader.colormapbits / 8 * tgaHeader.colormaplength;
+                byte[] colorMap = new byte[paletteLength];
+                if (reader.Read(colorMap, 0, paletteLength) != paletteLength)
                 {
-                    if (!tgaHeader.HasPalette)
-                    {
-                        Debug.WriteLine("Palette is required but unavailable.");
-                        return false;
-                    }
-
-                    // Check if all the color map data is available.
-                    int paletteLength = tgaHeader.colormapbits / 8 * tgaHeader.colormaplength;
-                    var colorMap = new byte[paletteLength];
-                    if (reader.Read(colorMap, 0, paletteLength) != paletteLength)
-                    {
-                        Debug.WriteLine("Palette is not valid.");
-                        return false;
-                    }
+                    Debug.WriteLine("Palette is not valid.");
+                    return false;
                 }
             }
         }
@@ -186,7 +184,7 @@ public class TgaImageFormatDetector : IImageFormatDetector
         switch (tgaHeader.bits)
         {
             case 8:
-                return tgaHeader.HasPalette && tgaHeader.PixelFormat == TgaPixelFormat.Indexed
+                return (tgaHeader.HasPalette && tgaHeader.PixelFormat == TgaPixelFormat.Indexed)
                  || tgaHeader.PixelFormat == TgaPixelFormat.Greyscale;
 
             case 16:

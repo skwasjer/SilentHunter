@@ -48,6 +48,6 @@ public class FixedStringValueSerializer : ControllerValueSerializer<string>
 
         string s = reader.ReadString(fixedLength);
         // Take care of possible '\0' char in middle of string.
-        return s.Split(new[] { '\0' }, 2, StringSplitOptions.None)[0];
+        return s.Split(['\0'], 2, StringSplitOptions.None)[0];
     }
 }

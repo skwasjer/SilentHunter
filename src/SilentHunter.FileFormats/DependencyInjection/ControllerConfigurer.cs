@@ -22,10 +22,10 @@ public class ControllerConfigurer : IServiceCollectionProvider
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    IServiceCollection IServiceCollectionProvider.ServiceCollection => _serviceCollection;
+    IServiceCollection IServiceCollectionProvider.ServiceCollection { get => _serviceCollection; }
 
     /// <summary>
-    /// Loads controller types from specified <paramref name="assembly"/>.
+    /// Loads controller types from specified <paramref name="assembly" />.
     /// </summary>
     /// <param name="assembly">The assembly to load controller types from.</param>
     public SilentHunterParsersConfigurer FromAssembly(Assembly assembly)
@@ -34,7 +34,7 @@ public class ControllerConfigurer : IServiceCollectionProvider
     }
 
     /// <summary>
-    /// Loads controller types from specified <paramref name="controllerAssembly"/>.
+    /// Loads controller types from specified <paramref name="controllerAssembly" />.
     /// </summary>
     /// <param name="controllerAssembly">The assembly to load controller types from.</param>
     public SilentHunterParsersConfigurer FromAssembly(ControllerAssembly controllerAssembly)
@@ -43,7 +43,7 @@ public class ControllerConfigurer : IServiceCollectionProvider
     }
 
     /// <summary>
-    /// Loads controller types from specified <paramref name="controllerAssembly"/>.
+    /// Loads controller types from specified <paramref name="controllerAssembly" />.
     /// </summary>
     /// <param name="controllerAssembly">The assembly to load controller types from.</param>
     public SilentHunterParsersConfigurer FromAssembly(Func<ControllerAssembly> controllerAssembly)
@@ -52,7 +52,7 @@ public class ControllerConfigurer : IServiceCollectionProvider
     }
 
     /// <summary>
-    /// Loads controller types from specified <paramref name="controllerAssembly"/>.
+    /// Loads controller types from specified <paramref name="controllerAssembly" />.
     /// </summary>
     /// <param name="controllerAssembly">The assembly to load controller types from.</param>
     public SilentHunterParsersConfigurer FromAssembly(Func<IServiceProvider, ControllerAssembly> controllerAssembly)

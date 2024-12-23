@@ -15,7 +15,7 @@ public sealed class AuthorInfoChunk : DatChunk
     private string _author;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AuthorInfoChunk"/> class.
+    /// Initializes a new instance of the <see cref="AuthorInfoChunk" /> class.
     /// </summary>
     public AuthorInfoChunk()
         : base(DatFile.Magics.AuthorInfo)
@@ -23,7 +23,7 @@ public sealed class AuthorInfoChunk : DatChunk
     }
 
     /// <summary>
-    /// Gets or sets an unknown <see cref="long"/> value.
+    /// Gets or sets an unknown <see cref="long" /> value.
     /// </summary>
     public long Unknown { get; set; }
 
@@ -46,28 +46,26 @@ public sealed class AuthorInfoChunk : DatChunk
     {
         var regionStream = stream as RegionStream;
 
-        using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
+        using var reader = new BinaryReader(stream, FileEncoding.Default, true);
+        Unknown = ReadUnknownData(reader, r => r.ReadInt64(), "No idea");
+
+        Author = reader.ReadNullTerminatedString();
+        Description = stream.Position < stream.Length ? reader.ReadNullTerminatedString() : null;
+
+        if (stream.Position == stream.Length)
         {
-            Unknown = ReadUnknownData(reader, r => r.ReadInt64(), "No idea");
-
-            Author = reader.ReadNullTerminatedString();
-            Description = stream.Position < stream.Length ? reader.ReadNullTerminatedString() : null;
-
-            if (stream.Position == stream.Length)
-            {
-                return Task.CompletedTask;
-            }
-
-            // S3D adds a signature. Ignore.
-            string s3dSignature = reader.ReadString((int)(stream.Length - stream.Position - 1))?.TrimEnd(" \0".ToCharArray());
-            Debug.WriteLine(s3dSignature);
-            if (stream.Length > stream.Position)
-            {
-                stream.Position = stream.Length;
-            }
-
             return Task.CompletedTask;
         }
+
+        // S3D adds a signature. Ignore.
+        string s3dSignature = reader.ReadString((int)(stream.Length - stream.Position - 1))?.TrimEnd(" \0".ToCharArray());
+        Debug.WriteLine(s3dSignature);
+        if (stream.Length > stream.Position)
+        {
+            stream.Position = stream.Length;
+        }
+
+        return Task.CompletedTask;
     }
 
     /// <inheritdoc />

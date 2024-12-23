@@ -23,7 +23,7 @@ public partial class DatFile : ChunkFile<DatChunk>, ISilentHunterFile
     private Header _header;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DatFile"/> class using specified resolver and activator.
+    /// Initializes a new instance of the <see cref="DatFile" /> class using specified resolver and activator.
     /// </summary>
     public DatFile(IChunkResolver<Magics> chunkResolver, IChunkActivator chunkActivator)
     {
@@ -92,11 +92,11 @@ public partial class DatFile : ChunkFile<DatChunk>, ISilentHunterFile
     }
 
     /// <summary>
-    /// Loads from specified <paramref name="stream"/>.
+    /// Loads from specified <paramref name="stream" />.
     /// </summary>
     /// <param name="stream">The stream to load from.</param>
     /// <exception cref="DatFileException">Thrown when a parsing error occurs.</exception>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="stream"/> is null.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="stream" /> is null.</exception>
     /// <exception cref="ObjectDisposedException">Thrown when the instance is disposed.</exception>
     public override async Task LoadAsync(Stream stream)
     {
@@ -147,13 +147,13 @@ public partial class DatFile : ChunkFile<DatChunk>, ISilentHunterFile
     }
 
     /// <summary>
-    /// Saves to specified <paramref name="stream"/>.
+    /// Saves to specified <paramref name="stream" />.
     /// </summary>
     /// <param name="stream">The stream to write to.</param>
     /// <exception cref="IOException">Thrown when an IO error occurs.</exception>
     /// <exception cref="SilentHunterParserException">Thrown when a parsing error occurs.</exception>
     /// <exception cref="DatFileException">Thrown when a parsing error occurs.</exception>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="stream"/> is null.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="stream" /> is null.</exception>
     /// <exception cref="ObjectDisposedException">Thrown when the instance is disposed.</exception>
     public override async Task SaveAsync(Stream stream)
     {
@@ -198,7 +198,7 @@ public partial class DatFile : ChunkFile<DatChunk>, ISilentHunterFile
     }
 
     /// <summary>
-    /// Creates a new chunk using a <see cref="IChunkActivator"/>.
+    /// Creates a new chunk using a <see cref="IChunkActivator" />.
     /// </summary>
     /// <typeparam name="T">The chunk type.</typeparam>
     /// <returns>The created chunk instance.</returns>
@@ -209,7 +209,7 @@ public partial class DatFile : ChunkFile<DatChunk>, ISilentHunterFile
     }
 
     /// <summary>
-    /// Creates a new chunk using a <see cref="IChunkActivator"/>.
+    /// Creates a new chunk using a <see cref="IChunkActivator" />.
     /// </summary>
     /// <param name="chunkType">The chunk type.</param>
     /// <returns>The created chunk instance.</returns>
@@ -224,7 +224,7 @@ public partial class DatFile : ChunkFile<DatChunk>, ISilentHunterFile
     }
 
     /// <summary>
-    /// Creates a new chunk using a <see cref="IChunkActivator"/>.
+    /// Creates a new chunk using a <see cref="IChunkActivator" />.
     /// </summary>
     /// <param name="magic">The chunk magic.</param>
     /// <returns>The created chunk instance.</returns>

@@ -12,7 +12,6 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization;
 /// </summary>
 /// <remarks>
 /// There are two types of lists in the DAT-file format. One is prefixed by a count field indicating the number of items, where the other is not.
-///
 /// The first method is specifically for animation controllers.
 /// </remarks>
 public class ListValueSerializer : IControllerValueSerializer
@@ -20,7 +19,7 @@ public class ListValueSerializer : IControllerValueSerializer
     private readonly IControllerFieldSerializer _controllerFieldSerializer;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ListValueSerializer"/>.
+    /// Initializes a new instance of the <see cref="ListValueSerializer" />.
     /// </summary>
     /// <param name="controllerFieldSerializer">The field serializer.</param>
     public ListValueSerializer(IControllerFieldSerializer controllerFieldSerializer)

@@ -12,7 +12,7 @@ public interface IChunkResolver
     /// </summary>
     /// <param name="magic">The magic to resolve a type for.</param>
     /// <returns>The type or null if the magic is not supported/implemented.</returns>
-    Type Resolve(object magic);
+    public Type Resolve(object magic);
 }
 
 /// <summary>
@@ -27,5 +27,5 @@ public interface IChunkResolver<in TMagic>
     /// </summary>
     /// <param name="magic">The magic to resolve a type for.</param>
     /// <returns>The type or null if the magic is not supported/implemented.</returns>
-    Type Resolve(TMagic magic);
+    public Type Resolve(TMagic magic);
 }

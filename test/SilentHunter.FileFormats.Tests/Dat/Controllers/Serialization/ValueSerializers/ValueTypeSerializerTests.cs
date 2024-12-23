@@ -1,10 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using FluentAssertions;
-using Moq;
 using SilentHunter.Controllers;
-using Xunit;
 
 namespace SilentHunter.FileFormats.Dat.Controllers.Serialization;
 
@@ -35,7 +32,8 @@ public class ValueTypeSerializerTests
     {
         // Act & assert
         _sut.IsSupported(new ControllerSerializationContext(type, new Mock<Controller>().Object))
-            .Should().BeTrue();
+            .Should()
+            .BeTrue();
     }
 
     [Fact]
@@ -45,7 +43,8 @@ public class ValueTypeSerializerTests
 
         // Act & assert
         _sut.IsSupported(new ControllerSerializationContext(field, new Mock<Controller>().Object))
-            .Should().BeFalse();
+            .Should()
+            .BeFalse();
     }
 
     [Theory]
@@ -56,15 +55,13 @@ public class ValueTypeSerializerTests
         FieldInfo field = typeWithSupportedField.GetField("Supported");
         var serializationContext = new ControllerSerializationContext(field, new Mock<Controller>().Object);
 
-        using (var ms = new MemoryStream())
-        using (var writer = new BinaryWriter(ms, FileEncoding.Default))
-        {
-            // Act
-            _sut.Serialize(writer, serializationContext, value);
+        using var ms = new MemoryStream();
+        using var writer = new BinaryWriter(ms, FileEncoding.Default);
+        // Act
+        _sut.Serialize(writer, serializationContext, value);
 
-            // Assert
-            BitConverter.GetBytes((int)value).Should().Equal(ms.ToArray());
-        }
+        // Assert
+        BitConverter.GetBytes((int)value).Should().Equal(ms.ToArray());
     }
 
     [Theory]
@@ -75,16 +72,14 @@ public class ValueTypeSerializerTests
         FieldInfo field = expectedType.GetField("Supported");
         var serializationContext = new ControllerSerializationContext(field, new Mock<Controller>().Object);
 
-        using (var ms = new MemoryStream(BitConverter.GetBytes((int)value)))
-        using (var reader = new BinaryReader(ms, FileEncoding.Default))
-        {
-            // Act
-            object actual = _sut.Deserialize(reader, serializationContext);
+        using var ms = new MemoryStream(BitConverter.GetBytes((int)value));
+        using var reader = new BinaryReader(ms, FileEncoding.Default);
+        // Act
+        object actual = _sut.Deserialize(reader, serializationContext);
 
-            // Assert
-            actual.Should()
-                .BeOfType(field.FieldType)
-                .And.Be(value);
-        }
+        // Assert
+        actual.Should()
+            .BeOfType(field.FieldType)
+            .And.Be(value);
     }
 }

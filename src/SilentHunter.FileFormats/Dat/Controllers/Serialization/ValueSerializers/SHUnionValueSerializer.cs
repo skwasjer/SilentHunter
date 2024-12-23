@@ -10,7 +10,7 @@ using SilentHunter.FileFormats.Extensions;
 namespace SilentHunter.FileFormats.Dat.Controllers.Serialization;
 
 /// <summary>
-/// Serializes and deserializes <see cref="SHUnion{TTypeA,TTypeB}"/>.
+/// Serializes and deserializes <see cref="SHUnion{TTypeA,TTypeB}" />.
 /// </summary>
 public class SHUnionValueSerializer : IControllerValueSerializer
 {
@@ -55,7 +55,6 @@ public class SHUnionValueSerializer : IControllerValueSerializer
         propertyCache.TypeProperty.SetValue(union, valueType, null);
         propertyCache.ValueProperty.SetValue(union, reader.ReadStruct(valueType), null);
         return union;
-
     }
 
     private static SHUnionPropertyCache GetCachedProperties(Type type)
@@ -65,11 +64,7 @@ public class SHUnionValueSerializer : IControllerValueSerializer
             return PropertyCache[type];
         }
 
-        var x = new SHUnionPropertyCache
-        {
-            TypeProperty = type.GetProperty("Type"),
-            ValueProperty = type.GetProperty("Value")
-        };
+        var x = new SHUnionPropertyCache { TypeProperty = type.GetProperty("Type"), ValueProperty = type.GetProperty("Value") };
         PropertyCache.Add(type, x);
         return x;
     }

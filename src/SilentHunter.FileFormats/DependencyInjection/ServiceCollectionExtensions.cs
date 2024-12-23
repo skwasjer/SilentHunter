@@ -12,7 +12,7 @@ using SilentHunter.FileFormats.Sdl;
 namespace SilentHunter.FileFormats.DependencyInjection;
 
 /// <summary>
-/// Extensions for <see cref="IServiceCollection"/>.
+/// Extensions for <see cref="IServiceCollection" />.
 /// </summary>
 public static class ServiceCollectionExtensions
 {
@@ -69,11 +69,7 @@ public static class ServiceCollectionExtensions
         {
             services.AddTransient<TSerializer>();
             services.AddTransient<IControllerSerializer, TSerializer>();
-            services.AddTransient(s => new ControllerSerializerResolver.Mapping
-            {
-                ControllerType = typeof(TController),
-                ImplementationFactory = s.GetRequiredService<TSerializer>
-            });
+            services.AddTransient(s => new ControllerSerializerResolver.Mapping { ControllerType = typeof(TController), ImplementationFactory = s.GetRequiredService<TSerializer> });
         }
 
         services.AddScoped<ControllerSerializerResolver>();

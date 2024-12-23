@@ -11,7 +11,7 @@ using SilentHunter.FileFormats.IO;
 namespace SilentHunter.FileFormats.Sdl;
 
 /// <summary>
-/// Represents a sound info entry for <see cref="SdlFile"/>s.
+/// Represents a sound info entry for <see cref="SdlFile" />s.
 /// </summary>
 [DebuggerDisplay("Name = {Name}, WaveName = {WaveName}")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -24,7 +24,7 @@ public sealed class SoundInfo : IRawSerializable, ICloneable, IEquatable<SoundIn
     private string _name, _waveName;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SoundInfo"/> class.
+    /// Initializes a new instance of the <see cref="SoundInfo" /> class.
     /// </summary>
     public SoundInfo()
     {
@@ -204,7 +204,7 @@ public sealed class SoundInfo : IRawSerializable, ICloneable, IEquatable<SoundIn
     }
 
     /// <summary>
-    /// Serializes a property using specified <paramref name="writer"/>.
+    /// Serializes a property using specified <paramref name="writer" />.
     /// </summary>
     /// <param name="writer">The writer.</param>
     /// <param name="propertyName">The name of the property.</param>
@@ -280,7 +280,7 @@ public sealed class SoundInfo : IRawSerializable, ICloneable, IEquatable<SoundIn
     /// <inheritdoc />
     public override bool Equals(object obj)
     {
-        return ReferenceEquals(this, obj) || obj is SoundInfo other && Equals(other);
+        return ReferenceEquals(this, obj) || (obj is SoundInfo other && Equals(other));
     }
 
     /// <inheritdoc />
@@ -289,7 +289,7 @@ public sealed class SoundInfo : IRawSerializable, ICloneable, IEquatable<SoundIn
         unchecked
         {
             // ReSharper disable NonReadonlyMemberInGetHashCode
-            int hashCode = (_name != null ? _name.GetHashCode() : 0);
+            int hashCode = _name != null ? _name.GetHashCode() : 0;
             hashCode = (hashCode * 397) ^ (_waveName != null ? _waveName.GetHashCode() : 0);
             hashCode = (hashCode * 397) ^ Is3D.GetHashCode();
             hashCode = (hashCode * 397) ^ Play.GetHashCode();

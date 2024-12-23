@@ -14,7 +14,7 @@ public class DdsImageFormatDetector : IImageFormatDetector
     public string GetImageFormat(Stream stream)
     {
         const int magicSize = 4;
-        var buffer = new byte[magicSize];
+        byte[] buffer = new byte[magicSize];
         if (stream.Read(buffer, 0, magicSize) != magicSize)
         {
             return null;

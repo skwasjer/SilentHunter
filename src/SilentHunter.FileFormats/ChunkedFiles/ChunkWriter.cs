@@ -83,7 +83,7 @@ public class ChunkWriter<TMagic, TChunk> : IDisposable
     /// <summary>
     /// Gets the underlying stream.
     /// </summary>
-    public virtual Stream BaseStream => _writer.BaseStream;
+    public virtual Stream BaseStream { get => _writer.BaseStream; }
 
     /// <summary>
     /// Writes the magic to the stream.

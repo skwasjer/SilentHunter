@@ -31,7 +31,7 @@ public class UnknownChunkData
     /// <summary>
     /// Gets the type of the data.
     /// </summary>
-    public Type Type => Data.GetType();
+    public Type Type { get => Data.GetType(); }
 
     /// <summary>
     /// Gets the estimated descriptive guess that this data represents.
@@ -56,14 +56,10 @@ public class UnknownChunkData
         }
 
         // Convert data to byte array.
-        using (var ms = new MemoryStream())
-        {
-            using (var writer = new BinaryWriter(ms, FileEncoding.Default))
-            {
-                writer.WriteStruct(Data);
-                return ms.ToArray();
-            }
-        }
+        using var ms = new MemoryStream();
+        using var writer = new BinaryWriter(ms, FileEncoding.Default);
+        writer.WriteStruct(Data);
+        return ms.ToArray();
     }
 
     /// <summary>

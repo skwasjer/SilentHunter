@@ -1,11 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using FluentAssertions;
-using Moq;
 using SilentHunter.Controllers;
 using SilentHunter.Testing.FluentAssertions;
-using Xunit;
 
 namespace SilentHunter.FileFormats.Dat.Controllers.Serialization;
 
@@ -56,15 +53,13 @@ public class BooleanValueSerializerTests
     [InlineData(true, (byte)1)]
     public void Given_boolean_when_serializing_should_write_correct_byte(bool value, byte expectedSerialized)
     {
-        using (var ms = new MemoryStream())
-        using (var writer = new BinaryWriter(ms, FileEncoding.Default))
-        {
-            // Act
-            _sut.Serialize(writer, _serializationContext, value);
+        using var ms = new MemoryStream();
+        using var writer = new BinaryWriter(ms, FileEncoding.Default);
+        // Act
+        _sut.Serialize(writer, _serializationContext, value);
 
-            // Assert
-            ms.ToArray().Should().BeEquivalentTo(new[] { expectedSerialized });
-        }
+        // Assert
+        ms.ToArray().Should().BeEquivalentTo([expectedSerialized]);
     }
 
     [Theory]
@@ -74,15 +69,13 @@ public class BooleanValueSerializerTests
     [InlineData(true, (byte)1, byte.MinValue, byte.MinValue, byte.MinValue)]
     public void Given_serialized_boolean_when_deserializing_should_read_correct_boolean(bool expectedSerialized, params byte[] buffer)
     {
-        using (var ms = new MemoryStream(buffer))
-        using (var reader = new BinaryReader(ms, FileEncoding.Default))
-        {
-            // Act
-            bool actual = _sut.Deserialize(reader, _serializationContext);
+        using var ms = new MemoryStream(buffer);
+        using var reader = new BinaryReader(ms, FileEncoding.Default);
+        // Act
+        bool actual = _sut.Deserialize(reader, _serializationContext);
 
-            // Assert
-            actual.Should().Be(expectedSerialized);
-        }
+        // Assert
+        actual.Should().Be(expectedSerialized);
     }
 
     [Fact]
@@ -93,12 +86,10 @@ public class BooleanValueSerializerTests
         // Act
         Action act = () =>
         {
-            using (var ms = new MemoryStream(BitConverter.GetBytes(impossibleValue)))
-            using (var reader = new BinaryReader(ms, FileEncoding.Default))
-            {
-                _sut.Deserialize(reader, _serializationContext);
-                ms.Should().BeEof();
-            }
+            using var ms = new MemoryStream(BitConverter.GetBytes(impossibleValue));
+            using var reader = new BinaryReader(ms, FileEncoding.Default);
+            _sut.Deserialize(reader, _serializationContext);
+            ms.Should().BeEof();
         };
 
         // Assert

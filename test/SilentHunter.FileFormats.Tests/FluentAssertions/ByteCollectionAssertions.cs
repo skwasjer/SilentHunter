@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentAssertions;
 using FluentAssertions.Collections;
 using FluentAssertions.Execution;
 using SilentHunter.FileFormats;
@@ -15,15 +14,15 @@ public class ByteCollectionAssertions : GenericCollectionAssertions<byte>
     {
     }
 
-    protected override string Identifier => "byteCollection";
+    protected override string Identifier { get => "byteCollection"; }
 
     private class CombinedState : IDisposable
     {
         public CompareState Expected { get; set; }
         public CompareState Subject { get; set; }
 
-        public bool IsDone => Expected.IsDone && Subject.IsDone;
-        public bool IsDoneSuccessfully => IsDone && Expected.Position == Subject.Position;
+        public bool IsDone { get => Expected.IsDone && Subject.IsDone; }
+        public bool IsDoneSuccessfully { get => IsDone && Expected.Position == Subject.Position; }
 
         public void Dispose()
         {
@@ -34,7 +33,7 @@ public class ByteCollectionAssertions : GenericCollectionAssertions<byte>
 
     private class CompareState : IDisposable
     {
-        private IEnumerator<byte> _enumerator;
+        private readonly IEnumerator<byte> _enumerator;
 
         public CompareState(IEnumerable<byte> obj)
         {
@@ -45,8 +44,9 @@ public class ByteCollectionAssertions : GenericCollectionAssertions<byte>
         public byte Current { get; private set; }
         public long Position { get; set; } = -1;
         private IEnumerable<byte> Object { get; }
-        private Queue<byte> RingBuffer { get; } = new Queue<byte>();
+        private Queue<byte> RingBuffer { get; } = new();
         public bool IsDone { get; private set; }
+
         public string GetArea(int offset)
         {
             string hex = string.Join(" ", RingBuffer.Skip(offset).Select(b => b.ToString("x2")));
@@ -72,6 +72,7 @@ public class ByteCollectionAssertions : GenericCollectionAssertions<byte>
             {
                 IsDone = true;
             }
+
             return r;
         }
 
@@ -138,11 +139,7 @@ public class ByteCollectionAssertions : GenericCollectionAssertions<byte>
              || subject.Current != expected.Current // Bytes not equal
                 )
             {
-                return new CombinedState
-                {
-                    Subject = subject,
-                    Expected = expected
-                };
+                return new CombinedState { Subject = subject, Expected = expected };
             }
         }
     }

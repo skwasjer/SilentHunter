@@ -85,7 +85,7 @@ public class ChunkReader<TMagic, TChunk> : IDisposable
     /// <summary>
     /// Gets the underlying stream.
     /// </summary>
-    public virtual Stream BaseStream => _reader.BaseStream;
+    public virtual Stream BaseStream { get => _reader.BaseStream; }
 
     /// <summary>
     /// Reads the magic from the stream.

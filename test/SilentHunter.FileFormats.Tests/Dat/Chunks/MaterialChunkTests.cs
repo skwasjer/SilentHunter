@@ -1,10 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using SilentHunter.Testing.FluentAssertions;
-using Xunit;
 
 namespace SilentHunter.FileFormats.Dat.Chunks;
 
@@ -65,7 +62,7 @@ public class MaterialChunkTests
     [Fact]
     public async Task When_serializing_should_produce_correct_binary_data()
     {
-        byte[] expectedRawData = { 0xc8, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x32, 0x64, 0xc8, 0x01, 0x4e, 0x0d, 0xfc, 0xc1, 0x40, 0x4e, 0x00, 0x02, 0x80, 0x00, 0x00, 0x15, 0x03, 0x00, 0x00, 0xc5, 0x10, 0xa3, 0x48, 0x00, 0x00, 0x00, 0x00, 0x6d, 0x79, 0x20, 0x74, 0x65, 0x78, 0x74, 0x75, 0x72, 0x65, 0x2e, 0x74, 0x67, 0x61, 0x00 };
+        byte[] expectedRawData = [0xc8, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x32, 0x64, 0xc8, 0x01, 0x4e, 0x0d, 0xfc, 0xc1, 0x40, 0x4e, 0x00, 0x02, 0x80, 0x00, 0x00, 0x15, 0x03, 0x00, 0x00, 0xc5, 0x10, 0xa3, 0x48, 0x00, 0x00, 0x00, 0x00, 0x6d, 0x79, 0x20, 0x74, 0x65, 0x78, 0x74, 0x75, 0x72, 0x65, 0x2e, 0x74, 0x67, 0x61, 0x00];
         var chunk = new MaterialChunk
         {
             Id = 456,
@@ -82,14 +79,12 @@ public class MaterialChunkTests
             TgaTextureSize = 789
         };
 
-        using (var ms = new MemoryStream())
-        {
-            // Act
-            await chunk.SerializeAsync(ms, false);
+        using var ms = new MemoryStream();
+        // Act
+        await chunk.SerializeAsync(ms, false);
 
-            // Assert
-            ms.ToArray().Should().BeEquivalentTo(expectedRawData);
-        }
+        // Assert
+        ms.ToArray().Should().BeEquivalentTo(expectedRawData);
     }
 
     /// <summary>
@@ -115,55 +110,52 @@ public class MaterialChunkTests
             TgaTextureSize = tgaTextureSize
         };
 
-        using (var ms = new MemoryStream())
+        using var ms = new MemoryStream();
+        await chunk.SerializeAsync(ms, false);
+        ms.Position = 0;
+
+        // Act
+        var deserializedChunk = new MaterialChunk();
+        await deserializedChunk.DeserializeAsync(ms, false);
+
+        // Assert
+        if (deserializedChunk.HasTextureReference)
         {
-            await chunk.SerializeAsync(ms, false);
-            ms.Position = 0;
-
-            // Act
-            var deserializedChunk = new MaterialChunk();
-            await deserializedChunk.DeserializeAsync(ms, false);
-
-            // Assert
-            if (deserializedChunk.HasTextureReference)
-            {
-                deserializedChunk.Should().BeEquivalentTo(chunk);
-            }
-            else
-            {
-                deserializedChunk.Should().BeEquivalentTo(chunk,
+            deserializedChunk.Should().BeEquivalentTo(chunk);
+        }
+        else
+        {
+            deserializedChunk.Should()
+                .BeEquivalentTo(chunk,
                     opts => opts
                         .Excluding(c => c.CreationTime)
                         .Excluding(c => c.Texture));
-            }
-
-            ms.Should().BeEof();
         }
+
+        ms.Should().BeEof();
     }
 
     [Fact]
     public async Task Given_stream_contains_more_data_than_chunk_needs_should_advance_to_end()
     {
         var chunk = new MaterialChunk();
-        using (var ms = new MemoryStream())
-        {
-            await chunk.SerializeAsync(ms, false);
-            // Add garbage to end.
-            ms.Write(new byte[] { 0x1, 0x2 }, 0, 2);
-            ms.Position = 0;
+        using var ms = new MemoryStream();
+        await chunk.SerializeAsync(ms, false);
+        // Add garbage to end.
+        ms.Write([0x1, 0x2], 0, 2);
+        ms.Position = 0;
 
-            // Act
-            await chunk.DeserializeAsync(ms, false);
+        // Act
+        await chunk.DeserializeAsync(ms, false);
 
-            // Assert
-            ms.Should().BeEof();
-        }
+        // Assert
+        ms.Should().BeEof();
     }
 
     [Fact]
     public void When_toggling_z_buffer_write_should_update_material_attributes()
     {
-        var otherAttribute = MaterialAttributes.CullNone;
+        MaterialAttributes otherAttribute = MaterialAttributes.CullNone;
         var chunk = new MaterialChunk
         {
             // Add sut attribute + some other flag
@@ -191,7 +183,7 @@ public class MaterialChunkTests
     [Fact]
     public void When_toggling_cull_none_should_update_material_attributes()
     {
-        var otherAttribute = MaterialAttributes.MagFilterLinear;
+        MaterialAttributes otherAttribute = MaterialAttributes.MagFilterLinear;
         var chunk = new MaterialChunk
         {
             // Add sut attribute + some other flag
@@ -219,7 +211,7 @@ public class MaterialChunkTests
     [Fact]
     public void When_toggling_min_filter_linear_should_update_material_attributes()
     {
-        var otherAttribute = MaterialAttributes.DisableZBufferWrite;
+        MaterialAttributes otherAttribute = MaterialAttributes.DisableZBufferWrite;
         var chunk = new MaterialChunk
         {
             // Add sut attribute + some other flag
@@ -247,7 +239,7 @@ public class MaterialChunkTests
     [Fact]
     public void When_toggling_mag_filter_linear_should_update_material_attributes()
     {
-        var otherAttribute = MaterialAttributes.DisableZBufferWrite;
+        MaterialAttributes otherAttribute = MaterialAttributes.DisableZBufferWrite;
         var chunk = new MaterialChunk
         {
             // Add sut attribute + some other flag
@@ -275,7 +267,7 @@ public class MaterialChunkTests
     [Fact]
     public void When_toggling_dxt_compression_should_update_material_attributes()
     {
-        var otherAttribute = MaterialAttributes.MagFilterLinear;
+        MaterialAttributes otherAttribute = MaterialAttributes.MagFilterLinear;
         var chunk = new MaterialChunk
         {
             // Add sut attribute + some other flag

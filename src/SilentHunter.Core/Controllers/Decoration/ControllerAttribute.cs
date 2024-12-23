@@ -10,7 +10,7 @@ namespace SilentHunter.Controllers.Decoration;
 public sealed class ControllerAttribute : Attribute
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="ControllerAttribute"/> class.
+    /// Initializes a new instance of the <see cref="ControllerAttribute" /> class.
     /// </summary>
     public ControllerAttribute()
     {

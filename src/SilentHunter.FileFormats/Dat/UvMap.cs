@@ -12,7 +12,7 @@ public struct UvMap : IEquatable<UvMap>
     private byte _channel;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="UvMap"/> type.
+    /// Initializes a new instance of the <see cref="UvMap" /> type.
     /// </summary>
     /// <param name="channel">The map channel.</param>
     /// <param name="textureIndices">The texture indices.</param>
@@ -39,6 +39,7 @@ public struct UvMap : IEquatable<UvMap>
             {
                 throw new ArgumentOutOfRangeException(nameof(value), "Map channels must be 1 or higher.");
             }
+
             _channel = value;
         }
     }
@@ -52,7 +53,7 @@ public struct UvMap : IEquatable<UvMap>
     /// </summary>
     public bool Equals(UvMap other)
     {
-        return Channel == other.Channel && (TextureIndices == null && other.TextureIndices == null || TextureIndices != null && other.TextureIndices != null && TextureIndices.SequenceEqual(other.TextureIndices));
+        return Channel == other.Channel && ((TextureIndices == null && other.TextureIndices == null) || (TextureIndices != null && other.TextureIndices != null && TextureIndices.SequenceEqual(other.TextureIndices)));
     }
 
     /// <inheritdoc />

@@ -10,7 +10,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks;
 public sealed class EofChunk : DatChunk
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="EofChunk"/> class.
+    /// Initializes a new instance of the <see cref="EofChunk" /> class.
     /// </summary>
     public EofChunk()
         : base(DatFile.Magics.Eof)

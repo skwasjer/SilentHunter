@@ -43,7 +43,7 @@ internal class ControllerReader : IControllerReader
         // PROBLEM: In the odd unlucky case the size of a controller may match exactly, and it is then assumed to be a behavior controller.
         bool isBaseController = controllerSize + 4 != availableData;
 
-        var profile = ControllerProfile.Unknown;
+        ControllerProfile profile = ControllerProfile.Unknown;
         // Base or animation controller? (byte stream)
         if (isBaseController)
         {

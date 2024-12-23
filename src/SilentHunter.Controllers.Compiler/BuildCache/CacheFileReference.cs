@@ -120,7 +120,7 @@ internal class CacheFileReference : IXmlSerializable, IEquatable<CacheFileRefere
     {
         unchecked
         {
-            int hashCode = (Name != null ? Name.GetHashCode() : 0);
+            int hashCode = Name != null ? Name.GetHashCode() : 0;
             hashCode = (hashCode * 397) ^ LastModified.GetHashCode();
             hashCode = (hashCode * 397) ^ Length.GetHashCode();
             return hashCode;

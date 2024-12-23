@@ -12,21 +12,21 @@ public interface IControllerValueSerializer
     /// </summary>
     /// <param name="context">The context describing the field name and type.</param>
     /// <returns></returns>
-    bool IsSupported(ControllerSerializationContext context);
+    public bool IsSupported(ControllerSerializationContext context);
 
     /// <summary>
-    /// Deserializes a field and value from the <paramref name="reader"/> using the specified <paramref name="serializationContext"/>.
+    /// Deserializes a field and value from the <paramref name="reader" /> using the specified <paramref name="serializationContext" />.
     /// </summary>
     /// <param name="reader">The reader to read from.</param>
     /// <param name="serializationContext">The context describing the type and name of the field to read.</param>
     /// <returns>The value that was read.</returns>
-    object Deserialize(BinaryReader reader, ControllerSerializationContext serializationContext);
+    public object Deserialize(BinaryReader reader, ControllerSerializationContext serializationContext);
 
     /// <summary>
-    /// Serializes a field and value to the <paramref name="writer"/> using the specified <paramref name="serializationContext"/>.
+    /// Serializes a field and value to the <paramref name="writer" /> using the specified <paramref name="serializationContext" />.
     /// </summary>
     /// <param name="writer">The writer to write to.</param>
     /// <param name="serializationContext">The context describing the type and name of the field to read.</param>
     /// <param name="value">The value to serialize.</param>
-    void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext, object value);
+    public void Serialize(BinaryWriter writer, ControllerSerializationContext serializationContext, object value);
 }

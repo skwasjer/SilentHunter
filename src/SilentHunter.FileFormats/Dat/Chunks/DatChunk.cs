@@ -49,12 +49,12 @@ public class DatChunk : Chunk<DatFile.Magics>, IChunk<DatFile.Magics>, ICloneabl
     /// <summary>
     /// Gets whether the chunk supports an id field.
     /// </summary>
-    public virtual bool SupportsId => false;
+    public virtual bool SupportsId { get => false; }
 
     /// <summary>
     /// Gets whether the chunk supports a parent id field.
     /// </summary>
-    public virtual bool SupportsParentId => false;
+    public virtual bool SupportsParentId { get => false; }
 
     /// <summary>
     /// Gets or sets the chunk id.
@@ -93,14 +93,14 @@ public class DatChunk : Chunk<DatFile.Magics>, IChunk<DatFile.Magics>, ICloneabl
     /// <summary>
     /// Gets the size of the chunk.
     /// </summary>
-    public override long Size => _size;
+    public override long Size { get => _size; }
 
     private List<UnknownChunkData> _unknownData;
 
     /// <summary>
     /// Gets the unknown data.
     /// </summary>
-    public List<UnknownChunkData> UnknownData => _unknownData ?? (_unknownData = new List<UnknownChunkData>());
+    public List<UnknownChunkData> UnknownData { get => _unknownData ?? (_unknownData = new List<UnknownChunkData>()); }
 
     /// <summary>
     /// Deserializes the chunk. Note that the first 12 bytes (type, subtype and chunk size) are already read by the base class. Inheritors can override the default behavior, which is nothing more then reading all data, and caching it for later (ie. for serialization).
@@ -147,48 +147,46 @@ public class DatChunk : Chunk<DatFile.Magics>, IChunk<DatFile.Magics>, ICloneabl
     async Task IRawSerializable.DeserializeAsync(Stream stream)
     {
         // Deserialize the chunk header. The magic is already read for this chunk.
-        using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
+        using var reader = new BinaryReader(stream, FileEncoding.Default, true);
+        // Read the subtype.
+        SubType = reader.ReadInt32();
+
+        // Read chunk size.
+        int chunkSize = reader.ReadInt32();
+        _size = chunkSize + ChunkHeaderSize;
+        if (_size < 0)
         {
-            // Read the subtype.
-            SubType = reader.ReadInt32();
-
-            // Read chunk size.
-            int chunkSize = reader.ReadInt32();
-            _size = chunkSize + ChunkHeaderSize;
-            if (_size < 0)
-            {
-                stream.Position -= 4;
-                throw new SilentHunterParserException($"Invalid chunk size ({_size} bytes). Can't be negative.");
-            }
-
-            long startPos = stream.Position;
-            if (startPos + chunkSize > stream.Length)
-            {
-                stream.Position -= 4;
-                throw new SilentHunterParserException($"Invalid chunk size ({_size} bytes). The stream has {stream.Length - stream.Position} bytes left.");
-            }
-
-            // Allow inheritors to deserialize the remainder of the chunk.
-            using (var regionStream = new RegionStream(stream, chunkSize))
-            {
-                await DeserializeAsync(regionStream).ConfigureAwait(false);
-            }
-
-            // Verify that the inheritor read the entire chunk. If not, the inheritor does not implement it correctly, so we have to halt.
-            if (stream.Position == startPos + chunkSize)
-            {
-                return;
-            }
-
-            if (stream.Position < startPos + chunkSize)
-            {
-                throw new SilentHunterParserException("Invalid deserialization of " + ToString() + ". More unparsed data in chunk.");
-
-                //				stream.Position = startPos + chunkSize;
-            }
-
-            throw new SilentHunterParserException("Invalid deserialization of " + ToString() + ". Too much data was read while deserializing. This may indicate an invalid size specifier somewhere.");
+            stream.Position -= 4;
+            throw new SilentHunterParserException($"Invalid chunk size ({_size} bytes). Can't be negative.");
         }
+
+        long startPos = stream.Position;
+        if (startPos + chunkSize > stream.Length)
+        {
+            stream.Position -= 4;
+            throw new SilentHunterParserException($"Invalid chunk size ({_size} bytes). The stream has {stream.Length - stream.Position} bytes left.");
+        }
+
+        // Allow inheritors to deserialize the remainder of the chunk.
+        using (var regionStream = new RegionStream(stream, chunkSize))
+        {
+            await DeserializeAsync(regionStream).ConfigureAwait(false);
+        }
+
+        // Verify that the inheritor read the entire chunk. If not, the inheritor does not implement it correctly, so we have to halt.
+        if (stream.Position == startPos + chunkSize)
+        {
+            return;
+        }
+
+        if (stream.Position < startPos + chunkSize)
+        {
+            throw new SilentHunterParserException("Invalid deserialization of " + ToString() + ". More unparsed data in chunk.");
+
+            //				stream.Position = startPos + chunkSize;
+        }
+
+        throw new SilentHunterParserException("Invalid deserialization of " + ToString() + ". Too much data was read while deserializing. This may indicate an invalid size specifier somewhere.");
     }
 
     /// <summary>
@@ -197,21 +195,19 @@ public class DatChunk : Chunk<DatFile.Magics>, IChunk<DatFile.Magics>, ICloneabl
     /// <param name="stream">The stream.</param>
     async Task IRawSerializable.SerializeAsync(Stream stream)
     {
-        using (var writer = new BinaryWriter(stream, FileEncoding.Default, true))
-        {
-            writer.Write(SubType);
+        using var writer = new BinaryWriter(stream, FileEncoding.Default, true);
+        writer.Write(SubType);
 
-            long origin = stream.Position;
-            writer.Write(0); // Empty placeholder for size.
+        long origin = stream.Position;
+        writer.Write(0); // Empty placeholder for size.
 
-            await SerializeAsync(stream).ConfigureAwait(false);
+        await SerializeAsync(stream).ConfigureAwait(false);
 
-            long currentPos = stream.Position;
-            stream.Seek(origin, SeekOrigin.Begin);
-            _size = currentPos - origin - 4 + ChunkHeaderSize;
-            writer.Write((uint)(_size - ChunkHeaderSize));
-            stream.Seek(currentPos, SeekOrigin.Begin);
-        }
+        long currentPos = stream.Position;
+        stream.Seek(origin, SeekOrigin.Begin);
+        _size = currentPos - origin - 4 + ChunkHeaderSize;
+        writer.Write((uint)(_size - ChunkHeaderSize));
+        stream.Seek(currentPos, SeekOrigin.Begin);
     }
 
     /// <inheritdoc />
@@ -223,30 +219,28 @@ public class DatChunk : Chunk<DatFile.Magics>, IChunk<DatFile.Magics>, ICloneabl
     /// <inheritdoc />
     public virtual object Clone()
     {
-        using (var ms = new MemoryStream())
+        using var ms = new MemoryStream();
+        using (var writer = new ChunkWriter<DatFile.Magics, DatChunk>(ms, true))
         {
-            using (var writer = new ChunkWriter<DatFile.Magics, DatChunk>(ms, true))
-            {
-                writer.WriteAsync(this).GetAwaiter().GetResult();
-            }
+            writer.WriteAsync(this).GetAwaiter().GetResult();
+        }
 
-            ms.Position = 0;
+        ms.Position = 0;
 
-            using (ChunkReader<DatFile.Magics, DatChunk> reader = ((DatFile)ParentFile).CreateReader(ms))
-            {
-                return reader.ReadAsync().GetAwaiter().GetResult();
-            }
+        using (ChunkReader<DatFile.Magics, DatChunk> reader = ((DatFile)ParentFile).CreateReader(ms))
+        {
+            return reader.ReadAsync().GetAwaiter().GetResult();
         }
     }
 
     /// <summary>
-    /// Reads data with the <paramref name="reader"/> using specified <paramref name="func"/> and registers it as 'unknown' data.
+    /// Reads data with the <paramref name="reader" /> using specified <paramref name="func" /> and registers it as 'unknown' data.
     /// </summary>
     /// <typeparam name="T">The data type.</typeparam>
     /// <param name="reader">The reader.</param>
     /// <param name="func">The func providing the data.</param>
     /// <param name="description">The description of it, if any</param>
-    /// <returns>Returns the value read using the <paramref name="func"/>.</returns>
+    /// <returns>Returns the value read using the <paramref name="func" />.</returns>
     protected T ReadUnknownData<T>(BinaryReader reader, Func<BinaryReader, T> func, string description)
         where T : struct
     {
@@ -260,7 +254,7 @@ public class DatChunk : Chunk<DatFile.Magics>, IChunk<DatFile.Magics>, ICloneabl
     }
 
     /// <summary>
-    /// Registers data as 'unknown' data, at a specific <paramref name="absoluteOffset"/> and <paramref name="relativeOffset"/>.
+    /// Registers data as 'unknown' data, at a specific <paramref name="absoluteOffset" /> and <paramref name="relativeOffset" />.
     /// </summary>
     /// <typeparam name="T">The data type.</typeparam>
     /// <param name="absoluteOffset">The absolute offset where the data is located in the file.</param>

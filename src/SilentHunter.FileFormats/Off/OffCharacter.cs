@@ -9,7 +9,7 @@ using SilentHunter.FileFormats.IO;
 namespace SilentHunter.FileFormats.Off;
 
 /// <summary>
-/// Represents a character definition for <see cref="OffFile"/>s.
+/// Represents a character definition for <see cref="OffFile" />s.
 /// </summary>
 [DebuggerDisplay("{Character}, {BoundingBox}")]
 public sealed class OffCharacter : IRawSerializable, ICloneable, IEquatable<OffCharacter>
@@ -49,11 +49,7 @@ public sealed class OffCharacter : IRawSerializable, ICloneable, IEquatable<OffC
     /// <inheritdoc />
     public object Clone()
     {
-        return new OffCharacter
-        {
-            Character = Character,
-            BoundingBox = BoundingBox
-        };
+        return new OffCharacter { Character = Character, BoundingBox = BoundingBox };
     }
 
     /// <summary>
@@ -76,7 +72,7 @@ public sealed class OffCharacter : IRawSerializable, ICloneable, IEquatable<OffC
     /// <inheritdoc />
     public override bool Equals(object obj)
     {
-        return ReferenceEquals(this, obj) || obj is OffCharacter other && Equals(other);
+        return ReferenceEquals(this, obj) || (obj is OffCharacter other && Equals(other));
     }
 
     /// <inheritdoc />

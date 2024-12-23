@@ -10,7 +10,7 @@ namespace SilentHunter.FileFormats.Dat.Controllers.Serialization;
 public class ControllerSerializationContext
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="ControllerSerializationContext"/> class.
+    /// Initializes a new instance of the <see cref="ControllerSerializationContext" /> class.
     /// </summary>
     /// <param name="member">The member info.</param>
     /// <param name="controller">The controller.</param>

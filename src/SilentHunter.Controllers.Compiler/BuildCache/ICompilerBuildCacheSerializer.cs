@@ -4,7 +4,7 @@ namespace SilentHunter.Controllers.Compiler.BuildCache;
 
 internal interface ICompilerBuildCacheSerializer
 {
-    void Serialize(Stream stream, CompilerBuildCache buildCache);
+    public void Serialize(Stream stream, CompilerBuildCache buildCache);
 
-    CompilerBuildCache Deserialize(Stream stream);
+    public CompilerBuildCache Deserialize(Stream stream);
 }

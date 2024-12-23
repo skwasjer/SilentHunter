@@ -14,10 +14,10 @@ public sealed class MaterialChunk : DatChunk
 {
     private long _creationTimeSinceEpoch;
     private string _texture;
-    private static readonly DateTime Epoch = new DateTime(1970, 1, 1);
+    private static readonly DateTime Epoch = new(1970, 1, 1);
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MaterialChunk"/> class.
+    /// Initializes a new instance of the <see cref="MaterialChunk" /> class.
     /// </summary>
     public MaterialChunk()
         : base(DatFile.Magics.Material)
@@ -32,14 +32,13 @@ public sealed class MaterialChunk : DatChunk
     /// <summary>
     /// Gets whether the chunk supports an id field.
     /// </summary>
-    public override bool SupportsId => true;
+    public override bool SupportsId { get => true; }
 
     /// <summary>
     /// Gets or sets the material attributes.
     /// </summary>
     /// <remarks>
     /// Not all flags are supported/understood. Some flags are not used with auto detected texture references.
-    ///
     /// OBJ spec regarding material attributes: http://people.scs.fsu.edu/~burkardt/data/mtl/mtl.html
     /// </remarks>
     public MaterialAttributes Attributes { get; set; }
@@ -58,7 +57,7 @@ public sealed class MaterialChunk : DatChunk
     /// <summary>
     /// Gets whether the material references a texture by filename, or otherwise should autodetect from other meta data (like label chunk).
     /// </summary>
-    public bool HasTextureReference => TgaTextureSize != 0;
+    public bool HasTextureReference { get => TgaTextureSize != 0; }
 
     /// <summary>
     /// Gets or sets the file date/time of the texture.

@@ -13,7 +13,7 @@ public interface ICSharpCompiler
     /// </summary>
     /// <param name="fileNames">The (controller) source file names.</param>
     /// <param name="options">The compiler options.</param>
-    /// <param name="loadAssembly"><see langword="true"/> to immediately load the assembly or <see langword="false"/> otherwise</param>
+    /// <param name="loadAssembly"><see langword="true" /> to immediately load the assembly or <see langword="false" /> otherwise</param>
     /// <returns></returns>
-    Assembly CompileCode(ICollection<string> fileNames, CompilerOptions options, bool loadAssembly = false);
+    public Assembly CompileCode(ICollection<string> fileNames, CompilerOptions options, bool loadAssembly = false);
 }
