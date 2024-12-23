@@ -5,7 +5,9 @@ This repository contains:
 - Silent Hunter controller templates
 - Dynamic code compiler (for controller templates)
 
-[![Build status](https://ci.appveyor.com/api/projects/status/cg0l2nchhnjngcu2/branch/master?svg=true)](https://ci.appveyor.com/project/skwasjer/silenthunter/branch/master)
+---
+
+[![Main workflow](https://github.com/skwasjer/SilentHunter/actions/workflows/main.yml/badge.svg)](https://github.com/skwasjer/SilentHunter/actions/workflows/main.yml)
 
 | | |
 |---|---|
