@@ -4,116 +4,115 @@ using System.Text;
 using System.Threading.Tasks;
 using SilentHunter.FileFormats.Extensions;
 
-namespace SilentHunter.FileFormats.ChunkedFiles
+namespace SilentHunter.FileFormats.ChunkedFiles;
+
+/// <summary>
+/// Represents a writer with which <see cref="IChunk" />'s can be written to a stream.
+/// </summary>
+/// <typeparam name="TMagic">The type of the magic.</typeparam>
+/// <typeparam name="TChunk">The type of the chunk.</typeparam>
+public class ChunkWriter<TMagic, TChunk> : IDisposable
+    where TMagic : struct
+    where TChunk : IChunk
 {
-	/// <summary>
-	/// Represents a writer with which <see cref="IChunk" />'s can be written to a stream.
-	/// </summary>
-	/// <typeparam name="TMagic">The type of the magic.</typeparam>
-	/// <typeparam name="TChunk">The type of the chunk.</typeparam>
-	public class ChunkWriter<TMagic, TChunk> : IDisposable
-		where TMagic : struct
-		where TChunk : IChunk
-	{
-		private BinaryWriter _writer;
+    private BinaryWriter _writer;
 
-		/// <summary>
-		/// Initializes a new instance of <see cref="ChunkWriter{TMagic,TChunk}" />.
-		/// </summary>
-		/// <param name="stream">The stream to write to.</param>
-		/// <param name="leaveOpen">True to leave the stream open.</param>
-		public ChunkWriter(Stream stream, bool leaveOpen)
-		{
-			if (stream == null)
-			{
-				throw new ArgumentNullException(nameof(stream));
-			}
+    /// <summary>
+    /// Initializes a new instance of <see cref="ChunkWriter{TMagic,TChunk}" />.
+    /// </summary>
+    /// <param name="stream">The stream to write to.</param>
+    /// <param name="leaveOpen">True to leave the stream open.</param>
+    public ChunkWriter(Stream stream, bool leaveOpen)
+    {
+        if (stream == null)
+        {
+            throw new ArgumentNullException(nameof(stream));
+        }
 
-			_writer = new BinaryWriter(stream, Encoding.Default, leaveOpen);
-		}
+        _writer = new BinaryWriter(stream, Encoding.Default, leaveOpen);
+    }
 
-		/// <summary>
-		/// Clean up any remaining resources.
-		/// </summary>
-		~ChunkWriter()
-		{
-			Dispose(false);
-		}
+    /// <summary>
+    /// Clean up any remaining resources.
+    /// </summary>
+    ~ChunkWriter()
+    {
+        Dispose(false);
+    }
 
-		/// <summary>
-		/// Release managed and unmanaged resources.
-		/// </summary>
-		/// <param name="disposing">True if disposing.</param>
-		protected virtual void Dispose(bool disposing)
-		{
-			if (IsDisposed)
-			{
-				return;
-			}
+    /// <summary>
+    /// Release managed and unmanaged resources.
+    /// </summary>
+    /// <param name="disposing">True if disposing.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (IsDisposed)
+        {
+            return;
+        }
 
-			if (disposing)
-			{
-				// Dispose managed.
-				_writer?.Dispose();
-				_writer = null;
-			}
-			// Dispose unmanaged.
+        if (disposing)
+        {
+            // Dispose managed.
+            _writer?.Dispose();
+            _writer = null;
+        }
+        // Dispose unmanaged.
 
-			IsDisposed = true;
-		}
+        IsDisposed = true;
+    }
 
-		/// <summary>
-		/// Releases all resources associated with this <see cref="ChunkWriter{TMagic,TChunk}" /> object.
-		/// </summary>
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
+    /// <summary>
+    /// Releases all resources associated with this <see cref="ChunkWriter{TMagic,TChunk}" /> object.
+    /// </summary>
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 
-		/// <summary>
-		/// Gets whether the object is disposed.
-		/// </summary>
-		protected bool IsDisposed
-		{
-			get;
-			private set;
-		}
+    /// <summary>
+    /// Gets whether the object is disposed.
+    /// </summary>
+    protected bool IsDisposed
+    {
+        get;
+        private set;
+    }
 
-		/// <summary>
-		/// Gets the underlying stream.
-		/// </summary>
-		public virtual Stream BaseStream => _writer.BaseStream;
+    /// <summary>
+    /// Gets the underlying stream.
+    /// </summary>
+    public virtual Stream BaseStream { get => _writer.BaseStream; }
 
-		/// <summary>
-		/// Writes the magic to the stream.
-		/// </summary>
-		/// <param name="magic">The magic.</param>
-		public virtual void WriteMagic(TMagic magic)
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException(GetType().Name);
-			}
+    /// <summary>
+    /// Writes the magic to the stream.
+    /// </summary>
+    /// <param name="magic">The magic.</param>
+    public virtual void WriteMagic(TMagic magic)
+    {
+        if (IsDisposed)
+        {
+            throw new ObjectDisposedException(GetType().Name);
+        }
 
-			_writer.WriteStruct(magic);
-		}
+        _writer.WriteStruct(magic);
+    }
 
-		/// <summary>
-		/// Writes the specified <paramref name="chunk" /> to the stream.
-		/// </summary>
-		/// <param name="chunk">The chunk to write to stream.</param>
-		public virtual Task WriteAsync(TChunk chunk)
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException(GetType().Name);
-			}
+    /// <summary>
+    /// Writes the specified <paramref name="chunk" /> to the stream.
+    /// </summary>
+    /// <param name="chunk">The chunk to write to stream.</param>
+    public virtual Task WriteAsync(TChunk chunk)
+    {
+        if (IsDisposed)
+        {
+            throw new ObjectDisposedException(GetType().Name);
+        }
 
-			chunk.FileOffset = BaseStream.Position;
-			WriteMagic((TMagic)chunk.Magic);
+        chunk.FileOffset = BaseStream.Position;
+        WriteMagic((TMagic)chunk.Magic);
 
-			return ((IChunk)chunk).SerializeAsync(BaseStream);
-		}
-	}
+        return ((IChunk)chunk).SerializeAsync(BaseStream);
+    }
 }

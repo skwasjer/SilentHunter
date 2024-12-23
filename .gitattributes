@@ -1,0 +1,27 @@
+* text=auto
+
+*.md    text eol=lf
+*.js    text eol=lf
+*.json  text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.xml   text eol=lf
+
+*.cs            text=auto diff=csharp
+*.tt            text=auto
+*.csproj        text=auto
+*.props         text=auto
+*.targets       text=auto
+*.sln           text=auto
+
+.editorconfig   text eol=lf
+.gitignore      text eol=lf
+.gitattributes  text eol=lf
+
+*.png   binary
+*.gif   binary
+*.jpg   binary
+*.jpeg  binary
+
+*.received.*    text eol=lf
+*.verified.*    text eol=lf

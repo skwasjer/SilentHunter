@@ -1,0 +1,16 @@
+﻿root = false
+
+[*.cs]
+csharp_style_namespace_declarations = block_scoped:error
+
+# IDE0055: Fix formatting
+dotnet_diagnostic.IDE0055.severity = none
+
+# CA1051: Do not declare visible instance fields
+dotnet_diagnostic.CA1051.severity = none
+
+# S1104: Fields should not have public accessibility
+dotnet_diagnostic.S1104.severity = none
+
+# IDE0130: Namespace does not match folder structure
+dotnet_diagnostic.IDE0130.severity = none

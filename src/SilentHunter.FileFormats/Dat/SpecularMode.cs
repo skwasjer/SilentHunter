@@ -1,19 +1,18 @@
-﻿namespace SilentHunter.FileFormats.Dat
+﻿namespace SilentHunter.FileFormats.Dat;
+
+/// <summary>
+/// </summary>
+public enum SpecularMode
 {
-	/// <summary>
-	/// </summary>
-	public enum SpecularMode
-	{
-		/// <summary>
-		/// </summary>
-		Normal,
+    /// <summary>
+    /// </summary>
+    Normal,
 
-		/// <summary>
-		/// </summary>
-		SunOnly,
+    /// <summary>
+    /// </summary>
+    SunOnly,
 
-		/// <summary>
-		/// </summary>
-		Unknown = 255
-	}
+    /// <summary>
+    /// </summary>
+    Unknown = 255
 }

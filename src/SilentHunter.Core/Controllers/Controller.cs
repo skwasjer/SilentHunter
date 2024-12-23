@@ -1,9 +1,8 @@
-﻿namespace SilentHunter.Controllers
+﻿namespace SilentHunter.Controllers;
+
+/// <summary>
+/// Represents the base for all controllers.
+/// </summary>
+public abstract class Controller
 {
-	/// <summary>
-	/// Represents the base for all controllers.
-	/// </summary>
-	public abstract class Controller
-	{
-	}
 }

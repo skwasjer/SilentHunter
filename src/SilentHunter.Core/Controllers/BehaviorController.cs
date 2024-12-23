@@ -1,9 +1,8 @@
-﻿namespace SilentHunter.Controllers
+﻿namespace SilentHunter.Controllers;
+
+/// <summary>
+/// Represents controller data.
+/// </summary>
+public abstract class BehaviorController : Controller
 {
-	/// <summary>
-	/// Represents controller data.
-	/// </summary>
-	public abstract class BehaviorController : Controller
-	{
-	}
 }
