@@ -28,7 +28,7 @@ jobs:
       file-version: ${{ steps.gitversion.outputs.assemblySemFileVer }}
       informational-version: ${{ steps.gitversion.outputs.informationalVersion }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
           fetch-tags: true
@@ -63,7 +63,7 @@ jobs:
       - run: dotnet --info
 
       # Checkout
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 1
 
@@ -106,7 +106,7 @@ jobs:
           dotnet-version: ${{ env.dotnet-version }}
 
       # Checkout
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 1
 
@@ -131,7 +131,7 @@ jobs:
           dotnet-version: ${{ env.dotnet-version }}
 
       # Checkout
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 1
 
