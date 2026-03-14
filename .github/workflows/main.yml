@@ -56,7 +56,7 @@ jobs:
       msbuild-version-args: ${{ env.msbuild-version-args }}
     steps:
       # Setup
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.dotnet-version }}
 
@@ -101,7 +101,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       # Setup
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.dotnet-version }}
 
@@ -126,7 +126,7 @@ jobs:
     runs-on: windows-latest
     steps:
       # Setup
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.dotnet-version }}
 
