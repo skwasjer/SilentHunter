@@ -34,12 +34,12 @@ jobs:
           fetch-tags: true
 
       - name: Install GitVersion ${{ env.GITVERSION }}
-        uses: gittools/actions/gitversion/setup@v3.1.1
+        uses: gittools/actions/gitversion/setup@v4.4.2
         with:
           versionSpec: ${{ env.GITVERSION }}
 
       - name: Determine version
-        uses: gittools/actions/gitversion/execute@v3.1.1
+        uses: gittools/actions/gitversion/execute@v4.4.2
         id: gitversion
         with:
           useConfigFile: true
