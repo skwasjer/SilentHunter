@@ -170,6 +170,8 @@ jobs:
       - pack
     if: github.event_name == 'release'
     environment: production
+    permissions:
+      id-token: write
     runs-on: ubuntu-latest
     steps:
       # Restore release artifacts
@@ -178,7 +180,13 @@ jobs:
         with:
           name: release-${{ needs.determine-version.outputs.package-version }}
 
+      - name: NuGet login (OIDC → temp API key)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
       - name: push - nuget.org
         env:
           NUGET_SOURCE_URL: https://api.nuget.org/v3/index.json
-        run: dotnet nuget push **/*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s ${{ env.NUGET_SOURCE_URL }}
+        run: dotnet nuget push **/*.nupkg -k ${{ steps.login.outputs.NUGET_API_KEY }} -s ${{ env.NUGET_SOURCE_URL }}
