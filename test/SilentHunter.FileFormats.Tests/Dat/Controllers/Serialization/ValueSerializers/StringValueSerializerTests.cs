@@ -26,7 +26,7 @@ public class StringValueSerializerTests
         _sut = new StringValueSerializer();
 
         FieldInfo field = typeof(TestClass).GetField(nameof(TestClass.Supported));
-        _serializationContext = new ControllerSerializationContext(field, new Mock<Controller>().Object);
+        _serializationContext = new ControllerSerializationContext(field, Substitute.For<Controller>());
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public class StringValueSerializerTests
         FieldInfo field = typeof(TestClass).GetField(nameof(TestClass.NotSupported));
 
         // Act & assert
-        _sut.IsSupported(new ControllerSerializationContext(field, new Mock<Controller>().Object))
+        _sut.IsSupported(new ControllerSerializationContext(field, Substitute.For<Controller>()))
             .Should()
             .BeFalse();
     }

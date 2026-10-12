@@ -39,17 +39,17 @@ public class EmbeddedImageChunkTests
     public async Task When_writing_imageData_should_attempt_to_detect_image_format(string imageIdentifier, ImageFormat expectedImageFormat)
     {
         byte[] fakeImageData = [0x1, 0x2, 0x3, 0x4];
-        var imageFormatDetectorMock = new Mock<IImageFormatDetector>();
+        IImageFormatDetector imageFormatDetectorMock = Substitute.For<IImageFormatDetector>();
         imageFormatDetectorMock
-            .Setup(m => m.GetImageFormat(It.IsAny<Stream>()))
+            .GetImageFormat(Arg.Any<Stream>())
             .Returns(imageIdentifier);
-        var chunk = new EmbeddedImageChunk(new ImageFormatDetection([imageFormatDetectorMock.Object]));
+        var chunk = new EmbeddedImageChunk(new ImageFormatDetection([imageFormatDetectorMock]));
 
         // Act
         await chunk.WriteAsync(fakeImageData);
 
         // Assert
-        imageFormatDetectorMock.Verify(m => m.GetImageFormat(It.IsAny<Stream>()), Times.Once);
+        imageFormatDetectorMock.Received(1).GetImageFormat(Arg.Any<Stream>());
         chunk.ImageFormat.Should().Be(expectedImageFormat);
     }
 
@@ -75,9 +75,9 @@ public class EmbeddedImageChunkTests
     public async Task When_serializing_and_then_deserializing_should_produce_equivalent(string imageIdentifier, ImageFormat expectedImageFormat)
     {
         byte[] fakeImageData = [0x1, 0x2, 0x3, 0x4];
-        var imageFormatDetectorMock = new Mock<IImageFormatDetector>();
+        IImageFormatDetector imageFormatDetectorMock = Substitute.For<IImageFormatDetector>();
         imageFormatDetectorMock
-            .Setup(m => m.GetImageFormat(It.IsAny<Stream>()))
+            .GetImageFormat(Arg.Any<Stream>())
             .Returns(imageIdentifier);
         var chunk = new EmbeddedImageChunk();
 
@@ -87,7 +87,7 @@ public class EmbeddedImageChunkTests
         ms.Position = 0;
 
         // Act
-        var deserializedChunk = new EmbeddedImageChunk(new ImageFormatDetection([imageFormatDetectorMock.Object]));
+        var deserializedChunk = new EmbeddedImageChunk(new ImageFormatDetection([imageFormatDetectorMock]));
         await deserializedChunk.DeserializeAsync(ms, false);
 
         // Assert
@@ -144,9 +144,8 @@ public class EmbeddedImageChunkTests
     [Fact]
     public async Task Given_non_readable_stream_when_writing_should_throw()
     {
-        var streamMock = new Mock<Stream>();
-        streamMock.Setup(m => m.CanRead).Returns(false);
-        Stream imageData = streamMock.Object;
+        Stream imageData = Substitute.For<Stream>();
+        imageData.CanRead.Returns(false);
         var chunk = new EmbeddedImageChunk();
 
         // Act
@@ -181,27 +180,26 @@ public class EmbeddedImageChunkTests
         byte[] fakeImageData = [0x1, 0x2, 0x3, 0x4];
 
         // Create stream stub that does not support seeking.
-        var streamMock = new Mock<MemoryStream> { CallBase = true };
-        streamMock.Setup(m => m.CanSeek).Returns(false);
-        Stream imageData = streamMock.Object;
-        imageData.Write(fakeImageData, 0, fakeImageData.Length);
-        imageData.Position = 0;
+        MemoryStream imageDataMock = Substitute.ForPartsOf<MemoryStream>();
+        imageDataMock.CanSeek.Returns(false);
+        imageDataMock.Write(fakeImageData, 0, fakeImageData.Length);
+        imageDataMock.Position = 0;
 
-        var imageFormatDetectorMock = new Mock<IImageFormatDetector>();
+        IImageFormatDetector imageFormatDetectorMock = Substitute.For<IImageFormatDetector>();
         imageFormatDetectorMock
-            .Setup(m => m.GetImageFormat(It.IsAny<Stream>()))
-            .Returns("tga")
-            .Verifiable();
+            .GetImageFormat(Arg.Any<Stream>())
+            .Returns("tga");
 
-        var chunk = new EmbeddedImageChunk(new ImageFormatDetection([imageFormatDetectorMock.Object]));
+        var chunk = new EmbeddedImageChunk(new ImageFormatDetection([imageFormatDetectorMock]));
 
         // Act
-        Func<Task> act = () => chunk.WriteAsync(imageData);
+        Func<Task> act = () => chunk.WriteAsync(imageDataMock);
 
         // Assert
         await act.Should().NotThrowAsync<Exception>();
         chunk.ImageFormat.Should().Be(ImageFormat.Tga);
         (await chunk.ReadAsByteArrayAsync()).Should().BeEquivalentTo(fakeImageData);
-        imageFormatDetectorMock.Verify();
+        imageFormatDetectorMock.DidNotReceive().GetImageFormat(imageDataMock);
+        imageFormatDetectorMock.Received().GetImageFormat(Arg.Any<Stream>());
     }
 }

@@ -38,11 +38,9 @@ public class IndexChunkTests
     {
         byte[] expectedRawData = [0x06, 0x12, 0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0xe2, 0x01, 0x00, 0xb1, 0x68, 0xde, 0x3a, 0x00, 0x00, 0x00, 0x00, 0x15, 0xcd, 0x5b, 0x07];
 
-        var parentFileMock = new Mock<IChunkFile>();
-        parentFileMock
-            .Setup(m => m.Chunks)
-            .Returns(new Collection<DatChunk> { new TextureMapChunk { Id = 987654, FileOffset = 123456 }, new TextureMapChunk { Id = 987654321, FileOffset = 123456789 } });
-        var chunk = new IndexChunk { ParentFile = parentFileMock.Object };
+        IChunkFile parentFileMock = Substitute.For<IChunkFile>();
+        parentFileMock.Chunks.Returns(new Collection<DatChunk> { new TextureMapChunk { Id = 987654, FileOffset = 123456 }, new TextureMapChunk { Id = 987654321, FileOffset = 123456789 } });
+        var chunk = new IndexChunk { ParentFile = parentFileMock };
 
         using var ms = new MemoryStream();
         // Act
@@ -56,12 +54,10 @@ public class IndexChunkTests
     public async Task When_serializing_and_then_deserializing_should_produce_equivalent()
     {
         var referenceChunks = new Collection<DatChunk> { new TextureMapChunk { Id = 987654, FileOffset = 123456 }, new TextureMapChunk { Id = 987654321, FileOffset = 123456789 } };
-        var parentFileMock = new Mock<IChunkFile>();
-        parentFileMock
-            .Setup(m => m.Chunks)
-            .Returns(referenceChunks);
+        IChunkFile parentFileMock = Substitute.For<IChunkFile>();
+        parentFileMock.Chunks.Returns(referenceChunks);
 
-        var chunk = new IndexChunk { ParentFile = parentFileMock.Object };
+        var chunk = new IndexChunk { ParentFile = parentFileMock };
 
         using var ms = new MemoryStream();
         await chunk.SerializeAsync(ms, false);

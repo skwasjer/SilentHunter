@@ -9,18 +9,18 @@ namespace SilentHunter.FileFormats.Dat.Chunks;
 
 public class ControllerDataChunkTests
 {
-    private readonly Mock<IControllerReader> _controllerReaderMock;
-    private readonly Mock<IControllerWriter> _controllerWriterMock;
+    private readonly IControllerReader _controllerReaderMock;
+    private readonly IControllerWriter _controllerWriterMock;
     private readonly ControllerDataChunk _sut;
 
     public ControllerDataChunkTests()
     {
-        _controllerReaderMock = new Mock<IControllerReader>();
-        _controllerWriterMock = new Mock<IControllerWriter>();
+        _controllerReaderMock = Substitute.For<IControllerReader>();
+        _controllerWriterMock = Substitute.For<IControllerWriter>();
 
         _sut = new ControllerDataChunk(
-            _controllerReaderMock.Object,
-            _controllerWriterMock.Object
+            _controllerReaderMock,
+            _controllerWriterMock
         );
     }
 
@@ -32,8 +32,8 @@ public class ControllerDataChunkTests
         // Act
         Action act = () =>
             new ControllerDataChunk(
-                _controllerReaderMock.Object,
-                _controllerWriterMock.Object
+                _controllerReaderMock,
+                _controllerWriterMock
             ).Id = id;
 
         // Assert
@@ -48,8 +48,8 @@ public class ControllerDataChunkTests
         // Act
         Action act = () =>
             new ControllerDataChunk(
-                _controllerReaderMock.Object,
-                _controllerWriterMock.Object
+                _controllerReaderMock,
+                _controllerWriterMock
             ).ParentId = id;
 
         // Assert
@@ -60,12 +60,12 @@ public class ControllerDataChunkTests
     public void When_creating_new_instance_should_set_defaults()
     {
         var newInstance = new ControllerDataChunk(
-            _controllerReaderMock.Object,
-            _controllerWriterMock.Object
+            _controllerReaderMock,
+            _controllerWriterMock
         );
         var compareToInstance = new ControllerDataChunk(
-            _controllerReaderMock.Object,
-            _controllerWriterMock.Object
+            _controllerReaderMock,
+            _controllerWriterMock
         )
         {
             ParentFile = null,
@@ -88,13 +88,17 @@ public class ControllerDataChunkTests
             .ToArray();
 
         _controllerWriterMock
-            .Setup(m => m.Write(It.IsAny<Stream>(), It.IsAny<object>()))
-            .Callback<Stream, object>((ms, _) => ms.Write(fakeControllerData, 0, fakeControllerData.Length));
+            .When(m => m.Write(Arg.Any<Stream>(), Arg.Any<object>()))
+            .Do(ci =>
+            {
+                Stream ms = ci.Arg<Stream>();
+                ms.Write(fakeControllerData, 0, fakeControllerData.Length);
+            });
 
         object controller = new();
         var chunk = new ControllerDataChunk(
-            _controllerReaderMock.Object,
-            _controllerWriterMock.Object
+            _controllerReaderMock,
+            _controllerWriterMock
         ) { ParentId = 123, ControllerData = controller };
 
         using (var ms = new MemoryStream())
@@ -104,7 +108,7 @@ public class ControllerDataChunkTests
 
             // Assert
             ms.ToArray().Should().BeEquivalentTo(expectedRawData);
-            _controllerWriterMock.Verify(m => m.Write(ms, controller), Times.Once);
+            _controllerWriterMock.Received(1).Write(ms, controller);
         }
     }
 
@@ -125,7 +129,7 @@ public class ControllerDataChunkTests
 
         // Assert
         ms.ToArray().Should().BeEquivalentTo(rawData);
-        _controllerWriterMock.Verify(m => m.Write(It.IsAny<Stream>(), It.IsAny<object>()), Times.Never);
+        _controllerWriterMock.DidNotReceive().Write(Arg.Any<Stream>(), Arg.Any<object>());
     }
 
     [Fact]
@@ -135,7 +139,7 @@ public class ControllerDataChunkTests
 
         object controller = new();
         _controllerReaderMock
-            .Setup(m => m.Read(It.IsAny<Stream>(), It.IsAny<string>()))
+            .Read(Arg.Any<Stream>(), Arg.Any<string>())
             .Returns(controller);
 
         using var ms = new MemoryStream(rawData);
@@ -145,7 +149,7 @@ public class ControllerDataChunkTests
 
         // Assert
         _sut.ControllerData.Should().BeSameAs(controller);
-        _controllerReaderMock.Verify(m => m.Read(It.IsAny<Stream>(), null), Times.Once);
+        _controllerReaderMock.Received(1).Read(Arg.Any<Stream>(), null);
     }
 
     [Fact]
@@ -155,7 +159,7 @@ public class ControllerDataChunkTests
 
         object controller = new();
         _controllerReaderMock
-            .Setup(m => m.Read(It.IsAny<Stream>(), It.IsAny<string>()))
+            .Read(Arg.Any<Stream>(), Arg.Any<string>())
             .Returns(controller);
 
         using var ms = new MemoryStream(rawData);
@@ -167,7 +171,7 @@ public class ControllerDataChunkTests
         await _sut.SerializeAsync(ms, false);
 
         // Assert
-        _controllerWriterMock.Verify(m => m.Write(It.IsAny<Stream>(), ctrl), Times.Once);
+        _controllerWriterMock.Received(1).Write(ms, ctrl);
     }
 
     [Fact]
@@ -177,20 +181,20 @@ public class ControllerDataChunkTests
 
         object controller = new();
         _controllerReaderMock
-            .Setup(m => m.Read(It.IsAny<Stream>(), It.IsAny<string>()))
+            .Read(Arg.Any<Stream>(), Arg.Any<string>())
             .Returns(controller);
 
         using var ms = new MemoryStream(rawData);
         await _sut.DeserializeAsync(ms, false);
         // ReSharper disable once RedundantAssignment
         object ctrl = _sut.ControllerData;
-        _controllerWriterMock.Reset();
+        _controllerWriterMock.ClearReceivedCalls();
 
         // Act
         ctrl = _sut.ControllerData;
 
         // Assert
-        _controllerWriterMock.Verify(m => m.Write(It.IsAny<Stream>(), ctrl), Times.Never);
+        _controllerWriterMock.DidNotReceive().Write(Arg.Any<Stream>(), ctrl);
     }
 
     [Fact]
@@ -200,7 +204,7 @@ public class ControllerDataChunkTests
 
         byte[] unsupportedController = [0x20, 0x6c, 0x61, 0x62];
         _controllerReaderMock
-            .Setup(m => m.Read(It.IsAny<Stream>(), It.IsAny<string>()))
+            .Read(Arg.Any<Stream>(), Arg.Any<string>())
             .Returns(unsupportedController);
 
         using var ms = new MemoryStream(rawData);
@@ -213,7 +217,7 @@ public class ControllerDataChunkTests
         ctrl.Should()
             .BeOfType<byte[]>()
             .And.BeSameAs(unsupportedController);
-        _controllerReaderMock.Verify(m => m.Read(It.IsAny<Stream>(), It.IsAny<string>()), Times.Once);
+        _controllerReaderMock.Received(1).Read(Arg.Any<Stream>(), Arg.Any<string>());
     }
 
     [Fact]
@@ -231,8 +235,8 @@ public class ControllerDataChunkTests
         await _sut.SerializeAsync(ms, false);
 
         // Assert
-        _controllerReaderMock.Verify(m => m.Read(It.IsAny<Stream>(), It.IsAny<string>()), Times.Never);
-        _controllerWriterMock.Verify(m => m.Write(It.IsAny<Stream>(), newController), Times.Once);
+        _controllerReaderMock.DidNotReceive().Read(Arg.Any<Stream>(), Arg.Any<string>());
+        _controllerWriterMock.Received(1).Write(ms, newController);
     }
 
     [Fact]
@@ -243,11 +247,8 @@ public class ControllerDataChunkTests
 
         ControllerChunk[] parentFileChunks = [new ControllerChunk { Id = 123, Name = "I have the same id, but don't match me!" }, new ControllerChunk { Id = 123, Name = "Match me!" }, new ControllerChunk { Id = 1234, Name = "I have a different id" }];
 
-        var parentFileMock = new Mock<IChunkFile>();
-        parentFileMock
-            .Setup(m => m.Chunks)
-            .Returns(parentFileChunks);
-        _sut.ParentFile = parentFileMock.Object;
+        _sut.ParentFile = Substitute.For<IChunkFile>();
+        _sut.ParentFile.Chunks.Returns(parentFileChunks);
 
         using var ms = new MemoryStream(rawData);
         await _sut.DeserializeAsync(ms, false);
@@ -256,6 +257,6 @@ public class ControllerDataChunkTests
         object ctrl = _sut.ControllerData;
 
         // Assert
-        _controllerReaderMock.Verify(m => m.Read(It.IsAny<Stream>(), "Match me!"), Times.Once);
+        _controllerReaderMock.Received(1).Read(Arg.Any<Stream>(), "Match me!");
     }
 }
