@@ -12,7 +12,7 @@ public class EnvironmentUtilitiesTests
 #if NETFRAMEWORK
         targetFramework.Should().Be("net472");
 #else
-        targetFramework.Should().Be("netcoreapp8.0");
+        targetFramework.Should().Be("netcoreapp10.0");
 #endif
     }
 }
