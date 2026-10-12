@@ -31,7 +31,7 @@ public class ValueTypeSerializerTests
     public void When_member_type_is_value_type_should_return_true(Type type)
     {
         // Act & assert
-        _sut.IsSupported(new ControllerSerializationContext(type, new Mock<Controller>().Object))
+        _sut.IsSupported(new ControllerSerializationContext(type, Substitute.For<Controller>()))
             .Should()
             .BeTrue();
     }
@@ -42,7 +42,7 @@ public class ValueTypeSerializerTests
         FieldInfo field = typeof(TestClass<float>).GetField(nameof(TestClass<float>.NotSupported));
 
         // Act & assert
-        _sut.IsSupported(new ControllerSerializationContext(field, new Mock<Controller>().Object))
+        _sut.IsSupported(new ControllerSerializationContext(field, Substitute.For<Controller>()))
             .Should()
             .BeFalse();
     }
@@ -53,7 +53,7 @@ public class ValueTypeSerializerTests
     public void Given_value_when_serializing_should_write_value_type(Type typeWithSupportedField, object value)
     {
         FieldInfo field = typeWithSupportedField.GetField("Supported");
-        var serializationContext = new ControllerSerializationContext(field, new Mock<Controller>().Object);
+        var serializationContext = new ControllerSerializationContext(field, Substitute.For<Controller>());
 
         using var ms = new MemoryStream();
         using var writer = new BinaryWriter(ms, FileEncoding.Default);
@@ -70,7 +70,7 @@ public class ValueTypeSerializerTests
     public void Given_serialized_value_type_when_deserializing_should_return_typed_value_type(object value, Type expectedType)
     {
         FieldInfo field = expectedType.GetField("Supported");
-        var serializationContext = new ControllerSerializationContext(field, new Mock<Controller>().Object);
+        var serializationContext = new ControllerSerializationContext(field, Substitute.For<Controller>());
 
         using var ms = new MemoryStream(BitConverter.GetBytes((int)value));
         using var reader = new BinaryReader(ms, FileEncoding.Default);

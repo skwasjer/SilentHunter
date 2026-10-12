@@ -16,14 +16,14 @@ public class MeshAnimationControllerSerializerTests
     public MeshAnimationControllerSerializerTests()
     {
         _sut = new MeshAnimationControllerSerializer();
-        _controller = new Mock<MeshAnimationController>().Object;
+        _controller = Substitute.For<MeshAnimationController>();
     }
 
     [Fact]
     public void Given_invalid_controller_type_when_serializing_should_throw()
     {
         // Act
-        Action act = () => _sut.Serialize(Stream.Null, new Mock<Controller>().Object);
+        Action act = () => _sut.Serialize(Stream.Null, Substitute.For<Controller>());
 
         // Assert
         act.Should()
@@ -35,7 +35,7 @@ public class MeshAnimationControllerSerializerTests
     public void Given_invalid_controller_type_when_deserializing_should_throw()
     {
         // Act
-        Action act = () => _sut.Deserialize(Stream.Null, new Mock<Controller>().Object);
+        Action act = () => _sut.Deserialize(Stream.Null, Substitute.For<Controller>());
 
         // Assert
         act.Should()
@@ -77,7 +77,7 @@ public class MeshAnimationControllerSerializerTests
         ];
         _controller.Unknown0 = [0x10, 0xFF, 0xC0];
 
-        MeshAnimationController deserializedController = new Mock<MeshAnimationController>().Object;
+        MeshAnimationController deserializedController = Substitute.For<MeshAnimationController>();
 
         // Act
         using var ms = new MemoryStream();

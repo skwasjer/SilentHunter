@@ -17,7 +17,7 @@ public class StateMachineControllerSerializerTests
     public StateMachineControllerSerializerTests()
     {
         _sut = new StateMachineControllerSerializer();
-        _controller = new Mock<StateMachineController>().Object;
+        _controller = Substitute.For<StateMachineController>();
 
         _rawControllerData = GetType().Assembly.GetManifestResourceStream(GetType(), "StateMachineController.chunkdata").ToArray();
     }
@@ -26,7 +26,7 @@ public class StateMachineControllerSerializerTests
     public void Given_invalid_controller_type_when_serializing_should_throw()
     {
         // Act
-        Action act = () => _sut.Serialize(Stream.Null, new Mock<Controller>().Object);
+        Action act = () => _sut.Serialize(Stream.Null, Substitute.For<Controller>());
 
         // Assert
         act.Should()
@@ -38,7 +38,7 @@ public class StateMachineControllerSerializerTests
     public void Given_invalid_controller_type_when_deserializing_should_throw()
     {
         // Act
-        Action act = () => _sut.Deserialize(Stream.Null, new Mock<Controller>().Object);
+        Action act = () => _sut.Deserialize(Stream.Null, Substitute.For<Controller>());
 
         // Assert
         act.Should()
@@ -111,7 +111,7 @@ public class StateMachineControllerSerializerTests
             }
         ];
 
-        StateMachineController deserializedController = new Mock<StateMachineController>().Object;
+        StateMachineController deserializedController = Substitute.For<StateMachineController>();
 
         // Act
         using var ms = new MemoryStream();

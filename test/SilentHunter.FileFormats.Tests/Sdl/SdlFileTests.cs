@@ -97,11 +97,11 @@ public class SdlFileTests
     [Fact]
     public async Task Given_stream_is_not_readable_when_loading_should_throw()
     {
-        var unreadableStreamMock = new Mock<Stream>();
-        unreadableStreamMock.Setup(m => m.CanRead).Returns(false);
+        Stream unreadableStreamMock = Substitute.For<Stream>();
+        unreadableStreamMock.CanRead.Returns(false);
 
         // Act
-        Func<Task> act = () => _sut.LoadAsync(unreadableStreamMock.Object);
+        Func<Task> act = () => _sut.LoadAsync(unreadableStreamMock);
 
         // Assert
         await act.Should()
@@ -113,11 +113,11 @@ public class SdlFileTests
     [Fact]
     public async Task Given_stream_is_not_writable_when_saving_should_throw()
     {
-        var unwritableStreamMock = new Mock<Stream>();
-        unwritableStreamMock.Setup(m => m.CanWrite).Returns(false);
+        Stream unwritableStreamMock = Substitute.For<Stream>();
+        unwritableStreamMock.CanWrite.Returns(false);
 
         // Act
-        Func<Task> act = () => _sut.SaveAsync(unwritableStreamMock.Object);
+        Func<Task> act = () => _sut.SaveAsync(unwritableStreamMock);
 
         // Assert
         await act.Should()
