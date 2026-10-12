@@ -152,12 +152,12 @@ PR's are welcome. Please rebase before submitting, provide test coverage, and en
 
 ### Target Frameworks
 - .NET Standard 2.0
-- .NET 4.6.1
+- .NET 4.7.2
 
 ### Build requirements
-- Visual Studio 2017/2019
-- .NET Core 2.2 SDK
-- .NET 4.6.1 targetting pack
+- Visual Studio 2026
+- .NET 10
+- .NET 4.7.2 targetting pack
 
 ### Useful info
 
