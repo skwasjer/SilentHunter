@@ -7,6 +7,7 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using SilentHunter.Controllers.Compiler.BuildCache;
+using Testably.Abstractions;
 
 namespace SilentHunter.Controllers.Compiler;
 
@@ -57,7 +58,7 @@ public class ControllerAssemblyCompiler : IControllerAssemblyCompiler
     /// <param name="applicationName">The application name. This is used in the temp path used to generate the assembly, as to not conflict with other applications that also dynamically compile SilentHunter controllers.</param>
     /// <param name="controllerDir">The path containing controller source files.</param>
     public ControllerAssemblyCompiler(ICSharpCompiler compiler, string applicationName, string controllerDir)
-        : this(new FileSystem(), new CompilerBuildCacheJsonSerializer(), compiler, applicationName, controllerDir)
+        : this(new RealFileSystem(), new CompilerBuildCacheJsonSerializer(), compiler, applicationName, controllerDir)
     {
     }
 
@@ -156,7 +157,7 @@ public class ControllerAssemblyCompiler : IControllerAssemblyCompiler
                         {
                             Name = rd.Location,
                             LastModified = includeDetails ? (DateTime?)_fileSystem.File.GetLastWriteTimeUtc(path) : null,
-                            Length = includeDetails ? (long?)_fileSystem.FileInfo.FromFileName(path).Length : null
+                            Length = includeDetails ? (long?)_fileSystem.FileInfo.New(path).Length : null
                         };
                     })
 
