@@ -11,6 +11,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Text;
+using Testably.Abstractions;
 
 namespace SilentHunter.Controllers.Compiler
 {
@@ -26,7 +27,7 @@ namespace SilentHunter.Controllers.Compiler
         /// Initializes a new instance of the <see cref="RoslynCompiler" />.
         /// </summary>
         public RoslynCompiler()
-            : this(new FileSystem())
+            : this(new RealFileSystem())
         {
         }
 

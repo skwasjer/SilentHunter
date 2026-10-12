@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using SilentHunter.Controllers.Compiler.BuildCache;
+using Testably.Abstractions;
 
 namespace SilentHunter.Controllers.Compiler;
 
@@ -14,7 +15,7 @@ internal class CacheFileReferenceEnumerator : IEnumerable<CacheFileReference>
     private readonly string _sourceFileDir;
 
     public CacheFileReferenceEnumerator(string sourceFileDir)
-        : this(new FileSystem(), sourceFileDir)
+        : this(new RealFileSystem(), sourceFileDir)
     {
     }
 
@@ -27,7 +28,7 @@ internal class CacheFileReferenceEnumerator : IEnumerable<CacheFileReference>
     public IEnumerator<CacheFileReference> GetEnumerator()
     {
         string p = _fileSystem.Path.GetFullPath(_fileSystem.Path.Combine(_fileSystem.Directory.GetCurrentDirectory(), _sourceFileDir));
-        return _fileSystem.DirectoryInfo.FromDirectoryName(p)
+        return _fileSystem.DirectoryInfo.New(p)
             .GetFiles("*.cs", SearchOption.AllDirectories)
             .Select(f =>
                 new CacheFileReference
