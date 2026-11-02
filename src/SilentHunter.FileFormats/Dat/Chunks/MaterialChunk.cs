@@ -10,7 +10,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks;
 /// Represents the material chunk.
 /// </summary>
 [DebuggerDisplay("{ToString(),nq}: Opacity = {Opacity}, Diffuse = {Diffuse}, SpecularMode = {SpecularMode}, Specular = {Specular} Attributes = {Attributes}, Texture = {Texture}")]
-public sealed class MaterialChunk : DatChunk
+public sealed class MaterialChunk : DatChunk, ITextureChunk
 {
     private long _creationTimeSinceEpoch;
     private string _texture;

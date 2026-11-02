@@ -10,7 +10,7 @@ namespace SilentHunter.FileFormats.Dat.Chunks;
 /// Represents a texture map chunk.
 /// </summary>
 [DebuggerDisplay("{ToString(),nq}: {MapType}, texture: {Texture})")]
-public sealed class TextureMapChunk : DatChunk
+public sealed class TextureMapChunk : DatChunk, ITextureChunk
 {
     private const int TextureMapNameLength = 8;
     private static readonly DateTime Epoch = new(1970, 1, 1);
