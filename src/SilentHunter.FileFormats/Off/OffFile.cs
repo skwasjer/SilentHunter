@@ -13,7 +13,7 @@ namespace SilentHunter.FileFormats.Off;
 /// <summary>
 /// Represents an OFF file parser (font file).
 /// </summary>
-public sealed class OffFile : KeyedCollection<char, OffCharacter>, ISilentHunterFile
+public sealed class OffFile : KeyedCollection<char, OffCharacter>, ISilentHunterFile<OffCharacter>
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="OffFile" /> class.
@@ -28,6 +28,8 @@ public sealed class OffFile : KeyedCollection<char, OffCharacter>, ISilentHunter
     /// </summary>
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     public Point CharacterSpacing { get; set; }
+
+    IList<OffCharacter> ISilentHunterFile<OffCharacter>.Items => this;
 
     /// <inheritdoc />
     protected override char GetKeyForItem(OffCharacter item)

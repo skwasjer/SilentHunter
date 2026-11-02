@@ -295,6 +295,12 @@ public class SdlFileTests
             }
         ];
     }
+
+    [Fact]
+    public void Items_yields_same_collection()
+    {
+        (_sut as ISilentHunterFile<SoundInfo>).Items.Should().BeSameAs(_sut);
+    }
 }
 
 public class SoundInfoTestCase

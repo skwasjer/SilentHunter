@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using SilentHunter.FileFormats.ChunkedFiles;
@@ -10,7 +11,7 @@ namespace SilentHunter.FileFormats.Dat;
 /// <summary>
 /// Represents an DAT/SIM/ZON/DSD/CAM/ANM file parser.
 /// </summary>
-public partial class DatFile : ChunkFile<DatChunk>, ISilentHunterFile
+public partial class DatFile : ChunkFile<DatChunk>, ISilentHunterFile<DatChunk>
 {
     private readonly IChunkResolver<Magics> _chunkResolver;
     private readonly IChunkActivator _chunkActivator;
@@ -90,6 +91,8 @@ public partial class DatFile : ChunkFile<DatChunk>, ISilentHunterFile
             }
         }
     }
+
+    IList<DatChunk> ISilentHunterFile<DatChunk>.Items => Chunks;
 
     /// <summary>
     /// Loads from specified <paramref name="stream" />.
