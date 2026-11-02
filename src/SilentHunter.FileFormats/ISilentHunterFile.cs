@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -27,3 +28,18 @@ public interface ISilentHunterFile
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="stream" /> is null.</exception>
     public Task SaveAsync(Stream stream);
 }
+
+/// <summary>
+/// Describes means of loading/saving Silent Hunter files.
+/// </summary>
+public interface ISilentHunterFile<T> : ISilentHunterFile
+{
+    /// <summary>
+    /// Gets the items in the file.
+    /// </summary>
+    /// <remarks>
+    /// <para>If <see cref="ISilentHunterFile.LoadAsync" /> is called, it replaces the items in this collection with the items loaded from the file.</para>
+    /// <para>If <see cref="ISilentHunterFile.SaveAsync" /> is called, it saves the items in this collection to the file.</para>
+    /// </remarks>
+    IList<T> Items { get; }
+};

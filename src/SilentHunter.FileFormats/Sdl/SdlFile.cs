@@ -10,7 +10,7 @@ namespace SilentHunter.FileFormats.Sdl;
 /// <summary>
 /// Represents an SDL file parser.
 /// </summary>
-public sealed class SdlFile : KeyedCollection<string, SoundInfo>, ISilentHunterFile
+public sealed class SdlFile : KeyedCollection<string, SoundInfo>, ISilentHunterFile<SoundInfo>
 {
     private const string S3DAssemblyPath = "Sdl.dll";
 
@@ -21,6 +21,8 @@ public sealed class SdlFile : KeyedCollection<string, SoundInfo>, ISilentHunterF
         : base(EqualityComparer<string>.Default, -1)
     {
     }
+
+    IList<SoundInfo> ISilentHunterFile<SoundInfo>.Items => this;
 
     /// <inheritdoc />
     protected override string GetKeyForItem(SoundInfo item)
