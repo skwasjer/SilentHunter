@@ -104,4 +104,26 @@ public class DatFileIntegrationTests : IDisposable
 
         savedBytes.Should().BeEquivalentTo(sourceBytes);
     }
+
+    [Fact]
+    public async Task LoadAsync_should_clear_items_before_loading()
+    {
+        DatFile sut = _compiledControllers.ServiceProvider.GetRequiredService<DatFile>();
+
+        var authorInfoChunk = new AuthorInfoChunk { Author = "test" };
+        sut.Chunks.Add(authorInfoChunk);
+
+        // Act
+        await sut.LoadAsync(_datFileStream);
+
+        // Assert
+        AuthorInfoChunk actualAuthorInfoChunk = sut.Chunks.Should()
+            .HaveCountGreaterThan(1)
+            .And.Subject.OfType<AuthorInfoChunk>()
+            .Should()
+            .ContainSingle()
+            .Which;
+        actualAuthorInfoChunk.Should().NotBeSameAs(authorInfoChunk);
+        actualAuthorInfoChunk.Author.Should().NotBe("test");
+    }
 }

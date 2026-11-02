@@ -110,6 +110,8 @@ public partial class DatFile : ChunkFile<DatChunk>, ISilentHunterFile<DatChunk>
 
         ThrowIfDisposed();
 
+        Chunks.Clear();
+
         // Check the magic.
         using (var reader = new BinaryReader(stream, FileEncoding.Default, true))
         {
