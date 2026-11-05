@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using SilentHunter.FileFormats.Extensions;
 
@@ -79,7 +80,8 @@ internal class ItemFactory : IItemFactory
             return "";
         }
 
-        object newObject = t.Assembly.CreateInstance(t.FullName);
+        object newObject = Activator.CreateInstance(t);
+        Debug.Assert(newObject is not null, $"Create item yields null for {t}");
         foreach (FieldInfo fi in t.GetFields(BindingFlags.Public | BindingFlags.Instance))
         {
             Type fieldType = fi.FieldType;
@@ -105,7 +107,9 @@ internal class ItemFactory : IItemFactory
                             {
                                 // Reset value to default.
                                 Type objectType = unionFi.GetValue(union, null).GetType();
-                                unionFi.SetValue(newUnion, objectType.Assembly.CreateInstance(objectType.FullName), null);
+                                object instance = Activator.CreateInstance(objectType);
+                                Debug.Assert(instance is not null, $"Create item yields null for {t}");
+                                unionFi.SetValue(newUnion, instance, null);
                             }
                         }
                     }
