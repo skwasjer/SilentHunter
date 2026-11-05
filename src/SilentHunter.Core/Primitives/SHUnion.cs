@@ -91,4 +91,22 @@ public struct SHUnion<TTypeA, TTypeB> : ICloneable
         var clone = new SHUnion<TTypeA, TTypeB> { _currentType = _currentType, _value = _value };
         return clone;
     }
+
+    /// <inheritdoc />
+    public override bool Equals(object obj)
+    {
+        return obj is SHUnion<TTypeA, TTypeB> other && Type == other.Type && Equals(Value, other.Value);
+    }
+
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            int hash = 17;
+            hash = hash * 23 + Type.GetHashCode();
+            hash = hash * 23 + Value.GetHashCode();
+            return hash;
+        }
+    }
 }

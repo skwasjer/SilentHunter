@@ -15,9 +15,14 @@ internal class ItemFactory : IItemFactory
     /// <returns>Returns the new instance.  All (child) fields that are reference types are also instantiated using the default constructor.</returns>
     public object CreateNewItem(Type type)
     {
+        if (type is null)
+        {
+            throw new ArgumentNullException(nameof(type));
+        }
+
         if (type == typeof(string))
         {
-            return "";
+            return string.Empty;
         }
 
         // Handle nullable.
