@@ -114,6 +114,7 @@ public class ItemFactoryTests
     [InlineData("EnvSim.Rain")] // Color
     [InlineData("anim.AnimationObject")] // List
     [InlineData("Particles.ObjectParticles")]
+    [InlineData("anim.MeshAnimationData")] // Array
     public void CreateNewItem_should_return_instance_when_type_is_ref_or_value_type_and_equal_clone(string typeName)
     {
         Type? type = _particleGenerator.GetType().Assembly.GetType(typeName);
