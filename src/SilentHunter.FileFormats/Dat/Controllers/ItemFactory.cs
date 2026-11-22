@@ -25,6 +25,12 @@ internal class ItemFactory : IItemFactory
             return string.Empty;
         }
 
+        if (type.IsArray)
+        {
+            Type elementType = type.GetElementType();
+            return Array.CreateInstance(elementType!, 0);
+        }
+
         // Handle nullable.
         type = Nullable.GetUnderlyingType(type) ?? type;
 
@@ -78,16 +84,22 @@ internal class ItemFactory : IItemFactory
             return null;
         }
 
-        Type t = original.GetType();
+        Type type = original.GetType();
 
-        if (t == typeof(string))
+        if (type == typeof(string))
         {
-            return "";
+            return string.Empty;
         }
 
-        object newObject = Activator.CreateInstance(t);
-        Debug.Assert(newObject is not null, $"Create item yields null for {t}");
-        foreach (FieldInfo fi in t.GetFields(BindingFlags.Public | BindingFlags.Instance))
+        if (type.IsArray)
+        {
+            Type elementType = type.GetElementType();
+            return Array.CreateInstance(elementType!, 0);
+        }
+
+        object newObject = Activator.CreateInstance(type);
+        Debug.Assert(newObject is not null, $"Create item yields null for {type}");
+        foreach (FieldInfo fi in type.GetFields(BindingFlags.Public | BindingFlags.Instance))
         {
             Type fieldType = fi.FieldType;
             if (fieldType.IsGenericType)
@@ -113,7 +125,7 @@ internal class ItemFactory : IItemFactory
                                 // Reset value to default.
                                 Type objectType = unionFi.GetValue(union, null).GetType();
                                 object instance = Activator.CreateInstance(objectType);
-                                Debug.Assert(instance is not null, $"Create item yields null for {t}");
+                                Debug.Assert(instance is not null, $"Create item yields null for {type}");
                                 unionFi.SetValue(newUnion, instance, null);
                             }
                         }
